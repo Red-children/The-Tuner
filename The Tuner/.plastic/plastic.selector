@@ -1,0 +1,4 @@
+repository "The Tuner@tj_wechat_os_qy02pwsa_qcqtlelwuehmejrq@cloud.cn"
+  path "/"
+    br "/main"
+    co "/main"
