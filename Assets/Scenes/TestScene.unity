@@ -3165,7 +3165,7 @@ GameObject:
   - component: {fileID: 819580725}
   - component: {fileID: 819580724}
   - component: {fileID: 819580723}
-  - component: {fileID: 819580722}
+  - component: {fileID: 819580727}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -3173,20 +3173,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &819580722
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 819580721}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1a42bf3719dd6043af1be6f8cb504bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 5
-  rb: {fileID: 819580723}
 --- !u!50 &819580723
 Rigidbody2D:
   serializedVersion: 4
@@ -3290,9 +3276,38 @@ Transform:
   m_Children:
   - {fileID: 519420032}
   - {fileID: 1175393866}
+  - {fileID: 1983967056}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &819580727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819580721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baa066ca88383764493a4a0dccce7db2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  atk: 0
+  maxHp: 0
+  nowHp: 0
+  moveSpeed: 10
+  DiedEff: {fileID: 0}
+  camera: {fileID: 519420031}
+  FirePos: {fileID: 1983967056}
+  fireInterval: 0.5
+  fireTimer: 0
+  bulletPrefab: {fileID: 0}
+  nowPos: {x: 0, y: 0, z: 0}
+  frontPos: {x: 0, y: 0, z: 0}
+  offsetFactor: 0.3
+  cameraSmoothness: 5
+  z: 0
+  cameraZ: -10
 --- !u!1 &978560005
 GameObject:
   m_ObjectHideFlags: 0
@@ -15239,6 +15254,37 @@ TilemapCollider2D:
   m_Offset: {x: 0, y: 0}
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
+--- !u!1 &1983967055
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1983967056}
+  m_Layer: 0
+  m_Name: FirePos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1983967056
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1983967055}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.518, y: -0.111, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 819580726}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2105530818
 GameObject:
   m_ObjectHideFlags: 0
