@@ -31,6 +31,11 @@ MonoBehaviour:
   m_RegistryInfoDraft:
     m_Modified: 0
     m_ErrorMessage: 
+<<<<<<< Updated upstream:The Tuner/ProjectSettings/PackageManagerSettings.asset
     m_UserModificationsInstanceId: -832
     m_OriginalInstanceId: -834
+=======
+    m_UserModificationsInstanceId: -822
+    m_OriginalInstanceId: -824
+>>>>>>> Stashed changes:ProjectSettings/PackageManagerSettings.asset
   m_LoadAssets: 0
