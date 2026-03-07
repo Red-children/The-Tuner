@@ -7,6 +7,7 @@ TagManager:
   - Moutains
   - Boundarys
   - Enemy
+  - Bullet
   layers:
   - Default
   - TransparentFX

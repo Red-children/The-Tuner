@@ -5,8 +5,16 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 
+struct PlayerTagEvent
+{
+    public int id;
+    
+}
+
+
 public class PlayerIObject : BaseObject
 {
+    PlayerTagEvent playerTagEvent;
 
     //主摄像机 负责追踪玩家位置
     public Camera camera;
@@ -56,7 +64,11 @@ public class PlayerIObject : BaseObject
 
     public void Start()
     {
+        playerTagEvent = new PlayerTagEvent();
+        playerTagEvent.id =152;
         
+
+
         #region 子弹加载测试 后面用配置文件来决定子弹类型当前为硬编码
         data = new BulletData();
         data.resPath = "Bullet";
@@ -101,7 +113,10 @@ public class PlayerIObject : BaseObject
         #endregion
 
         #region 开火检测
+
         //开火点空置检测
+
+        
         if (FirePos != null && bulletPrefab != null && Input.GetMouseButtonDown(0) )
         {
             Fire();
@@ -136,4 +151,6 @@ public class PlayerIObject : BaseObject
         #endregion
 
     }
+
+    
 }

@@ -1,60 +1,55 @@
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
-using UnityEditor.Profiling.Memory.Experimental;
 using UnityEngine;
 
 public class IdleState : IState
 {
     private FSM manager;
     private Parameter parameter;
+    private float timer;
 
-    public IdleState(FSM manager) 
+    public IdleState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
     }
 
-    private float timer;
-
-    public void OnExit()
-    {
-        timer = 0;
-    }
-
     public void OnStart()
     {
-        //parameter.animator.Play("Idle");
         Debug.Log("进入Idle状态");
+        timer = 0f;
     }
 
     public void OnUpdate()
     {
         if (parameter.getHit)
         {
-            manager.ChangeState(StateType.Hit);
+            manager.ChangeState(StateType.Wound);
+            return;
         }
+
         timer += Time.deltaTime;
-        if(timer >= parameter.idleTime)
+        if (timer >= parameter.idleTime)
         {
-            timer = 0;
             manager.ChangeState(StateType.Patrol);
+            return;
         }
-        if(parameter.target!= null)
+
+        if (parameter.target != null)
         {
             manager.ChangeState(StateType.Chase);
         }
-        
-
     }
 
+    public void OnExit()
+    {
+        timer = 0f;
+    }
 }
 
 public class PatrolState : IState
 {
     private FSM manager;
     private Parameter parameter;
-    private Vector2 targetPosition;
+    private Vector2 targetPos;
     private float minDistance = 0.1f;
 
     public PatrolState(FSM manager)
@@ -65,40 +60,36 @@ public class PatrolState : IState
 
     public void OnStart()
     {
-        //parameter.animator.Play("Walk");
         Debug.Log("进入Patrol状态");
-        GetNewRandomTarget(); // 进入状态时获取第一个随机点
+        GetNewRandomTarget();
     }
 
     public void OnUpdate()
     {
-        // 面向目标点（可选）
-        manager.LookAtTarget(targetPosition); // 需要你自己实现面向向量的方法
-
-        if (targetPosition != Vector2.zero)
+        if (parameter.getHit)
         {
-            // 向目标点移动
-            manager.transform.position = Vector2.MoveTowards(
-            manager.transform.position,
-            targetPosition,
-            parameter.moveSpeed * Time.deltaTime);
+            manager.ChangeState(StateType.Wound);
+            return;
         }
-        // 到达目标点后，获取下一个随机点
-        if (Vector2.Distance(manager.transform.position, targetPosition) < minDistance)
+
+        if (parameter.target != null)
+        {
+            manager.ChangeState(StateType.Chase);
+            return;
+        }
+
+        manager.LookAtTarget(targetPos);
+        manager.transform.position = Vector2.MoveTowards(manager.transform.position, targetPos, parameter.moveSpeed * Time.deltaTime);
+
+        if (Vector2.Distance(manager.transform.position, targetPos) < minDistance)
         {
             GetNewRandomTarget();
         }
-
-        // 原有的受击和发现玩家逻辑
-        if (parameter.getHit)
-            manager.ChangeState(StateType.Hit);
-        if(parameter.target!=null)
-            manager.ChangeState(StateType.Chase);
     }
 
     public void OnExit()
     {
-        targetPosition = Vector2.zero;
+        targetPos = Vector2.zero;
     }
 
     private void GetNewRandomTarget()
@@ -109,13 +100,10 @@ public class PatrolState : IState
             return;
         }
         Vector2 center = parameter.patrolCenter.position;
-        // 在圆内随机取点：随机角度和半径
         float angle = Random.Range(0f, 2f * Mathf.PI);
         float radius = Random.Range(0f, parameter.patrolRadius);
-        // 为了使随机点分布更均匀，可以用 sqrt 处理半径（可选）
-        // float radius = Mathf.Sqrt(Random.value) * parameter.patrolRadius;
-        Vector2 offset = new Vector2(Mathf.Cos(angle) * radius, Mathf.Sin(angle) * radius);
-        targetPosition = center + offset;
+        Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+        targetPos = center + offset;
     }
 }
 
@@ -123,100 +111,157 @@ public class ChaseState : IState
 {
     private FSM manager;
     private Parameter parameter;
+
     public ChaseState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
     }
-    public void OnExit()
-    {
-        
-    }
+
     public void OnStart()
     {
-        //parameter.animator.Play("Walk");
         Debug.Log("进入Chase状态");
     }
+
     public void OnUpdate()
     {
+        if (parameter.getHit)
+        {
+            manager.ChangeState(StateType.Wound);
+            return;
+        }
+
         if (parameter.target == null)
         {
             manager.ChangeState(StateType.Patrol);
             return;
         }
-        manager.LookAtTarget(parameter.target.position); // 面向玩家
-        if(parameter.target != null)
-        {
-            manager.transform.position = Vector2.MoveTowards(
-                manager.transform.position,
-                parameter.target.position,
-                parameter.moveSpeed * Time.deltaTime);
-        }
-        
-        if (Physics2D.OverlapCircle(parameter.attackPoint.position,parameter.attatkRange,parameter.targatLayer)) 
+
+        manager.LookAtTarget(parameter.target);
+        manager.transform.position = Vector2.MoveTowards(
+            manager.transform.position,
+            parameter.target.position,
+            parameter.chaseSpeed * Time.deltaTime);
+
+        if (Physics2D.OverlapCircle(parameter.attackPoint.position, parameter.attackRange, parameter.targetLayer))
         {
             manager.ChangeState(StateType.Attack);
         }
+    }
 
-    }
-}
-
-public class ReactState : IState
-{
-    private FSM manager;
-    private Parameter parameter;
-    public ReactState(FSM manager)
-    {
-        this.manager = manager;
-        this.parameter = manager.parameter;
-    }
-    public void OnExit()
-    {
-        throw new System.NotImplementedException();
-    }
-    public void OnStart()
-    {
-        throw new System.NotImplementedException();
-    }
-    public void OnUpdate()
-    {
-        throw new System.NotImplementedException();
-    }
+    public void OnExit() { }
 }
 
 public class AttackState : IState
 {
     private FSM manager;
     private Parameter parameter;
-    //用来获取动画状态信息，判断动画是否播放完毕
-    private AnimatorStateInfo info;
+    private float attackTimer;
+
     public AttackState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
     }
-    public void OnExit()
-    {
-        
-    }
+
     public void OnStart()
     {
-        //parameter.animator.Play("Attack");
         Debug.Log("进入Attack状态");
+        attackTimer = 0f;
     }
+
     public void OnUpdate()
     {
-        info = parameter.animator.GetCurrentAnimatorStateInfo(0);
-
         if (parameter.getHit)
         {
-            manager.ChangeState(StateType.Hit);
+            manager.ChangeState(StateType.Wound);
+            return;
         }
-        if (info.normalizedTime >= .95f)
+
+        if (parameter.target == null || !IsTargetInRange())
         {
             manager.ChangeState(StateType.Chase);
+            return;
+        }
+
+        attackTimer += Time.deltaTime;
+        if (attackTimer >= 1f) // 攻击间隔，可调整
+        {
+            attackTimer = 0f;
+            PlayerIObject player = parameter.target.GetComponent<PlayerIObject>();
+            //if (player != null)
+            //{
+            //    player.TakeDamage(parameter.attackDamage);
+            //}
         }
     }
+
+    private bool IsTargetInRange()
+    {
+        return Physics2D.OverlapCircle(parameter.attackPoint.position, parameter.attackRange, parameter.targetLayer) != null;
+    }
+
+    public void OnExit() { }
 }
 
+public class WoundState : IState
+{
+    private FSM manager;
+    private Parameter parameter;
+    private float timer;
 
+    public WoundState(FSM manager)
+    {
+        this.manager = manager;
+        this.parameter = manager.parameter;
+    }
+
+    public void OnStart()
+    {
+        Debug.Log("进入Wound状态");
+        parameter.getHit = false;
+        parameter.health -= 10; // 扣血
+        timer = 0f;
+    }
+
+    public void OnUpdate()
+    {
+        if (parameter.health <= 0)
+        {
+            manager.ChangeState(StateType.Dead);
+            return;
+        }
+
+        timer += Time.deltaTime;
+        if (timer >= 0.5f) // 受击硬直时间
+        {
+            if (parameter.target != null)
+                manager.ChangeState(StateType.Chase);
+            else
+                manager.ChangeState(StateType.Patrol);
+        }
+    }
+
+    public void OnExit() { }
+}
+
+public class DeadState : IState
+{
+    private FSM manager;
+    private Parameter parameter;
+
+    public DeadState(FSM manager)
+    {
+        this.manager = manager;
+        this.parameter = manager.parameter;
+    }
+
+    public void OnStart()
+    {
+        Debug.Log("敌人死亡");
+        manager.Dead();
+    }
+
+    public void OnUpdate() { }
+    public void OnExit() { }
+}
