@@ -14,7 +14,15 @@ public class UICrosshair : MonoBehaviour
     public Image crosshairBig;   // 大同心圆（动态缩放）
     private float Mulitplier;
     private float time;
+    private bool isCritical = false;
 
+
+    public struct GlobalAttackMultiplierChangedEvent
+{
+    public float newMultiplier; // 最新倍率
+    public bool isCritical; // 是否暴击
+    public float time; // 事件发生时间（可选）
+}
     public struct TimerOnlineEvent
     {
         //  TODO:
@@ -27,8 +35,6 @@ public class UICrosshair : MonoBehaviour
     public struct PlayerAtkEvent
     {
         //  TODO:
-        // public bool isCritical; // 是否暴击（可选）
-        // public float damage;    // 造成的伤害（可选）
     }
 
     private void CrosshairInit()
@@ -44,10 +50,16 @@ public class UICrosshair : MonoBehaviour
         Debug.Log($"UICrosshair: Initialized at time {time:F1} seconds");
     }
     //  精准命中动画
-    private void AnimSucess()
+    private void AnimCriticalHit()
     {
         //  TODO:
-        //  暂停普通状态动画，显示变色效果，持续0.05s
+        //  暂停普通状态动画，外圈变蓝色，持续0.05s
+        //  重置动画状态，继续普通状态动画
+    }
+    private void AnimNormalHit()
+    {
+        //  TODO:
+        //  暂停普通状态动画，外圈变红色，持续0.05s
         //  重置动画状态，继续普通状态动画
     }
     //  普通状态动画
@@ -58,9 +70,14 @@ public class UICrosshair : MonoBehaviour
     }
     private void OnEnemyHit(EnemyHitEvent evt)
     {
-        //  播放命中动画
-        AnimSucess();
-
+        if (isCritical)
+        {
+            AnimCriticalHit();
+        }
+        else
+        {
+            AnimNormalHit();
+        }
     }
     private void OnTimerOnline(TimerOnlineEvent evt)
     {
@@ -71,9 +88,10 @@ public class UICrosshair : MonoBehaviour
     // 全局伤害倍率变化的回调方法
     private void OnMultiplierChanged(GlobalAttackMultiplierChangedEvent evt)
     {
-        Mulitplier = evt.newMultiplier;
+        isCritical = evt.isCritical;
     }
 
+    //  更新准星位置到鼠标位置
     private void UpdateCrosshairToMouse()
     {
         //  TODO:

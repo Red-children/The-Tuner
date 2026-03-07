@@ -5,6 +5,7 @@ using UnityEngine;
 public struct GlobalAttackMultiplierChangedEvent
 {
     public float newMultiplier; // 最新倍率
+    public bool isCritical; // 是否暴击
     public float time; // 事件发生时间（可选）
 }
 
