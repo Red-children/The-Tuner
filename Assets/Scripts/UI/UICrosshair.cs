@@ -26,19 +26,6 @@ public class UICrosshair : MonoBehaviour
     // 图片路径常量（Resources目录下的相对路径，无需后缀）
     private const string BigCirclePath = "PicUI/Circle"; 
 
-    // private void CrosshairInit()
-    // {
-    //     Debug.Log("UICrosshair: Initializing crosshair...");
-
-    //             // 初始化准星基础状态
-    //     crosshairSmall.enabled = true;
-    //     crosshairBig.enabled = true;
-    //     // crosshairSmall.color = _originSmallColor;
-    //     // crosshairBig.color = _originBigColor;
-
-    //     Debug.Log($"UICrosshair: Initialized at _time {_time:F1} seconds");
-    // }
-
     private void CrosshairInit()
     {
         Debug.Log("UICrosshair: Initializing crosshair...");
@@ -143,7 +130,6 @@ public class UICrosshair : MonoBehaviour
     private void OnMultiplierChanged(GlobalAttackMultiplierChangedEvent evt)
     {
         _isCritical = evt.isCritical;
-        Debug.Log("UICrosshair:Received new multiplier");
     }
 
     //  更新准星位置到鼠标位置
