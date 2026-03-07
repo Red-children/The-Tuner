@@ -3161,6 +3161,7 @@ GameObject:
   - component: {fileID: 819580724}
   - component: {fileID: 819580723}
   - component: {fileID: 819580727}
+  - component: {fileID: 819580728}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -3301,6 +3302,24 @@ MonoBehaviour:
   cameraSmoothness: 5
   z: 0
   cameraZ: -10
+--- !u!114 &819580728
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819580721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e51d445ced32704f955fc6b1f7ecdc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  weaponName: 
+  obtainMethod: 
+  weaponSprite: {fileID: 0}
+  weaponBase: {fileID: 11400000, guid: 3235009560117754c9f8659524fcb898, type: 2}
+  weaponType: 1
+  firePos: {fileID: 1983967056}
 --- !u!1 &978560005
 GameObject:
   m_ObjectHideFlags: 0
