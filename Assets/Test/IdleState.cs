@@ -210,6 +210,8 @@ public class WoundState : IState
     private Parameter parameter;
     private float timer;
 
+    public float finallyDamage;
+
     public WoundState(FSM manager)
     {
         this.manager = manager;
@@ -220,7 +222,7 @@ public class WoundState : IState
     {
         Debug.Log("½øÈëWound×´Ì¬");
         parameter.getHit = false;
-        parameter.health -= 10; // ¿ÛÑª
+        parameter.health -= finallyDamage; // ¿ÛÑª
         timer = 0f;
     }
 

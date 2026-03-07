@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-
+using Unity.Jobs;
+using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
@@ -14,16 +15,22 @@ struct PlayerTagEvent
 
 public class PlayerIObject : BaseObject
 {
+    [Header("Weapon")]
+    public WeaponInfo currentWeapon;   // 当前使用的武器
+    
+    public List<WeaponStats> weaponInfos;   // 武器数据列表（从 WeaponBase 获取）
+
+
+   
+
+
     PlayerTagEvent playerTagEvent;
 
     //主摄像机 负责追踪玩家位置
-    public Camera camera;
+    public Camera playerCamera;
 
     //子弹数据后期转移至武器系统
     public BulletData data;
-
-    //开火点位置，在层级窗口中拖动到枪口对应的位置
-    public Transform FirePos;
 
     //开火间隔时间 记得后面转武器然后用配置文件来决定开火间隔时间
     public float fireInterval = 0.5f;
@@ -54,16 +61,17 @@ public class PlayerIObject : BaseObject
     //相机的z轴位置，确保相机在玩家前面
     public float cameraZ = -10f;
 
-    public override void Fire()
-    {
-        Bullet newBullet = Instantiate(bulletPrefab, FirePos.position, FirePos.rotation);
-        newBullet.transform.position = FirePos.position;
-        newBullet.transform.rotation = FirePos.rotation;
-    }
-
+  
 
     public void Start()
     {
+
+        // 从当前武器绑定的 WeaponBase 中获取数据列表
+        weaponInfos = currentWeapon.weaponBase.weaponList;
+        // 初始化武器数据
+        currentWeapon.InitializeWeapon(currentWeapon.weaponType);
+
+
         playerTagEvent = new PlayerTagEvent();
         playerTagEvent.id =152;
         
@@ -80,7 +88,7 @@ public class PlayerIObject : BaseObject
         //动态加载子弹预制体，后续改为武器系统来决定加载哪个子弹预制体
         bulletPrefab = Resources.Load<Bullet>("Bullet") as Bullet;
         //调整当前相机的景深
-        cameraZ = camera.transform.position.z;
+        cameraZ = playerCamera.transform.position.z;
         #endregion
 
     }
@@ -116,12 +124,17 @@ public class PlayerIObject : BaseObject
 
         //开火点空置检测
 
-        
-        if (FirePos != null && bulletPrefab != null && Input.GetMouseButtonDown(0) )
-        {
-            Fire();
-        }
 
+        if (Input.GetMouseButton(0))
+            currentWeapon.Shoot();
+
+        // 切换武器（数字键）
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            currentWeapon.SwitchWeapon(WeaponType.Pistol);
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+            currentWeapon.SwitchWeapon(WeaponType.Shotgun);
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+            currentWeapon.SwitchWeapon(WeaponType.Rifle);
         #endregion
 
         #region 鼠标追踪逻辑
@@ -147,10 +160,45 @@ public class PlayerIObject : BaseObject
         //玩家和准星之间的向量上取一点 相机对这一点做线性插值
         Vector2 cameraOffset =  directionMouse * offsetFactor;
         Vector3 targetCameraPos = transform.position + new Vector3(cameraOffset.x, cameraOffset.y, cameraZ); // 确保相机在玩家前面
-        camera.transform.position =  Vector3.Lerp(camera.transform.position, targetCameraPos, Time.deltaTime * cameraSmoothness);
+        playerCamera.transform.position =  Vector3.Lerp(playerCamera.transform.position, targetCameraPos, Time.deltaTime * cameraSmoothness);
         #endregion
 
+        #region 武器切换
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            currentWeapon.SwitchWeapon(WeaponType.Pistol);
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+            currentWeapon.SwitchWeapon(WeaponType.Shotgun);
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+            currentWeapon.SwitchWeapon(WeaponType.Rifle);
+
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll != 0)
+        {
+            var weaponList = currentWeapon.weaponBase.weaponList;
+            int count = weaponList.Count;
+            if (count == 0) return; // 安全防护
+
+            // 通过当前武器的类型查找在列表中的索引
+            int currentIndex = weaponList.FindIndex(w => w.weaponType == currentWeapon.weaponType);
+            if (currentIndex == -1)
+            {
+                Debug.LogWarning("当前武器类型不在武器列表中，默认切换到第一个");
+                currentIndex = 0;
+            }
+
+            int delta = scroll > 0 ? 1 : -1;
+            // (currentIndex + delta + count) % count 保证结果在 [0, count-1] 之间
+            int newIndex = (currentIndex + delta + count) % count;
+
+            WeaponType newType = weaponList[newIndex].weaponType;
+            currentWeapon.SwitchWeapon(newType);
+        }
+        #endregion
     }
+ 
+}
+
+
 
     
-}
+

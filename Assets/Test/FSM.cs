@@ -15,7 +15,7 @@ public class Parameter
     public Collider2D chaseArea;          // 追逐范围触发器
     public Transform patrolCenter;        // 巡逻中心点
     public float patrolRadius = 5f;       // 巡逻半径
-    public int health;                    // 当前生命值
+    public float health;                    // 当前生命值
     public float moveSpeed;               // 移动速度
     public float chaseSpeed;               // 追逐速度
     public float idleTime;                 // 空闲等待时间
@@ -92,6 +92,14 @@ public class FSM : MonoBehaviour
         if (other.CompareTag("Bullet"))
         {
             parameter.getHit = true;
+            Bullet bullet = other.GetComponent<Bullet>();
+            if (bullet != null)
+            {
+                // 先设置伤害值
+                (states[StateType.Wound] as WoundState).finallyDamage = bullet.damage;
+                // 再切换状态
+                ChangeState(StateType.Wound);
+            }
         }
     }
 

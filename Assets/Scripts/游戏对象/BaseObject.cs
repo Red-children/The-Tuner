@@ -17,10 +17,7 @@ public abstract class BaseObject : MonoBehaviour
     //死亡特效
     public GameObject DiedEff;
 
-    /// <summary>
-    /// 开火方法
-    /// </summary>
-    public abstract void Fire();
+    
 
     /// <summary>
     ///  受伤判断方法
