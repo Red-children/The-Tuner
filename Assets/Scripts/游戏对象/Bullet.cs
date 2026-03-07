@@ -31,7 +31,7 @@ public class Bullet : MonoBehaviour
     }
     private void Start()
     {
-         DestoryEff = Resources.Load<GameObject>("UnitDestroyedEffect") as GameObject;
+         DestoryEff = Resources.Load<GameObject>("Eff") as GameObject;
     }
     void Update()
     {
@@ -39,9 +39,9 @@ public class Bullet : MonoBehaviour
     }
     public void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "Enenry")
+        if (other.gameObject.tag == "Enemy")
         {
-
+            DestroyMyself();
         }
         else if (other.gameObject.tag == "Wall")
         {
