@@ -80,6 +80,9 @@ public class WeaponInfo : MonoBehaviour
         Bullet bulletScript = bulletObj.GetComponent<Bullet>();
         //后续可以把伤害计算放在这里，考虑暴击、元素伤害等因素
         bulletScript.damage  = stats.damage;
+        float multiplier = GlobalManager.Instance != null ? GlobalManager.Instance.GlobalDamageMultiplier : 1f;
+        bulletScript.damage = stats.damage * multiplier;
+
 
         if (bulletScript != null)
         {

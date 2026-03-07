@@ -126,6 +126,8 @@ public class PlayerIObject : BaseObject
 
 
         if (Input.GetMouseButton(0))
+
+
             currentWeapon.Shoot();
 
         // ÇÐ»»ÎäÆ÷£¨Êý×Ö¼ü£©
