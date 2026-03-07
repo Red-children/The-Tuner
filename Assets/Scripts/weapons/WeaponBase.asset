@@ -12,4 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a9a431af008b774e92ca59c1de3066d, type: 3}
   m_Name: WeaponBase
   m_EditorClassIdentifier: 
-  weaponList: []
+  weaponList:
+  - weaponType: 0
+    weaponName: 
+    damage: 20
+    fireRate: 1.2
+    maxAmmo: 15
+    attackType: 0
+    multiBulletCount: 0
+    bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
+  - weaponType: 1
+    weaponName: 
+    damage: 10
+    fireRate: 2
+    maxAmmo: 2
+    attackType: 1
+    multiBulletCount: 10
+    bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
+  - weaponType: 2
+    weaponName: 
+    damage: 25
+    fireRate: 1
+    maxAmmo: 35
+    attackType: 0
+    multiBulletCount: 0
+    bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
