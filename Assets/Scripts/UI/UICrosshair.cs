@@ -26,26 +26,6 @@ public class UICrosshair : MonoBehaviour
     // 图片路径常量（Resources目录下的相对路径，无需后缀）
     private const string BigCirclePath = "PicUI/Circle"; 
 
-    public struct GlobalAttackMultiplierChangedEvent
-{
-    public float newMultiplier; // 最新倍率
-    public bool _isCritical; // 是否暴击
-    public float _time; // 事件发生时间
-}
-    public struct TimerOnlineEvent
-    {
-        //  TODO:
-        public float _time; // 事件发生时间
-    }
-    public struct EnemyHitEvent
-    {
-        //  TODO:
-    }
-    public struct PlayerAtkEvent
-    {
-        //  TODO:
-    }
-
     // private void CrosshairInit()
     // {
     //     Debug.Log("UICrosshair: Initializing crosshair...");
@@ -155,19 +135,20 @@ public class UICrosshair : MonoBehaviour
     private void OnTimerOnline(TimerOnlineEvent evt)
     {
         //  TODO:
-        _time = evt._time;
+        _time = evt.time;
+        Debug.Log("UICrosshair:Received TimerOnlineEvent");
     }
 
     // 全局伤害倍率变化的回调方法
     private void OnMultiplierChanged(GlobalAttackMultiplierChangedEvent evt)
     {
-        _isCritical = evt._isCritical;
+        _isCritical = evt.isCritical;
+        Debug.Log("UICrosshair:Received new multiplier");
     }
 
     //  更新准星位置到鼠标位置
     private void UpdateCrosshairToMouse()
     {
-        //  TODO:
         Vector2 pos = Input.mousePosition;
         transform.position = pos;
     }
@@ -181,14 +162,15 @@ public class UICrosshair : MonoBehaviour
 
     void OnDisable()
     {
+        EventBus.Instance.Unsubscribe<TimerOnlineEvent>(OnTimerOnline);
         EventBus.Instance.Unsubscribe<GlobalAttackMultiplierChangedEvent>(OnMultiplierChanged);
         EventBus.Instance.Unsubscribe<EnemyHitEvent>(OnEnemyHit);
     }
 
     private void Awake()
     {
-            crosshairSmall = transform.Find("CrosshairSmall")?.GetComponent<Image>();
-            crosshairBig = transform.Find("CrosshairBig")?.GetComponent<Image>();
+        crosshairSmall = transform.Find("CrosshairSmall")?.GetComponent<Image>();
+        crosshairBig = transform.Find("CrosshairBig")?.GetComponent<Image>();
         if (crosshairBig != null)
         {
             _originBigScale = crosshairBig.transform.localScale;

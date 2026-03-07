@@ -2,19 +2,6 @@ using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
-public struct GlobalAttackMultiplierChangedEvent
-{
-    public float newMultiplier; // 最新倍率
-    public bool isCritical; // 是否暴击
-    public float time; // 事件发生时间（可选）
-}
-
-public struct TimerOnlineEvent
-{
-    //  TODO:
-    public float time; // 事件发生时间
-}
-
 public class GlobalManager : MonoBehaviour
 {
     public static GlobalManager Instance { get; private set; }
@@ -40,12 +27,7 @@ public class GlobalManager : MonoBehaviour
             // 创建空物体并挂载管理器
             GameObject managerObj = new GameObject("GlobalManager");
             Instance = managerObj.AddComponent<GlobalManager>();
-            //  发布计时器上线事件
-            EventBus.Instance.Trigger(new TimerOnlineEvent
-            {
-                time = Time.time
-            });
-            Debug.Log($"GlobalManager已创建(时间:{Time.time:F1}秒), 并发布了TimerOnlineEvent");
+
             DontDestroyOnLoad(managerObj);
         }
     }
@@ -57,7 +39,7 @@ public class GlobalManager : MonoBehaviour
         if (timer >= updateInterval)
         {
             timer %= updateInterval;
-            Debug.Log($"计时器已重置（当前时间：{Time.time:F1}秒）");
+            // Debug.Log($"计时器已重置（当前时间：{Time.time:F1}秒）");
         }
     }
 
@@ -67,6 +49,7 @@ public class GlobalManager : MonoBehaviour
         EventBus.Instance.Trigger(new GlobalAttackMultiplierChangedEvent
         {
             newMultiplier = globalDamageMultiplier,
+            isCritical = globalDamageMultiplier > 0.5f,
             time = Time.time
         });
         Debug.Log($"倍率已更新：{globalDamageMultiplier}（更新时间：{Time.time:F1}秒）");
@@ -86,6 +69,16 @@ public class GlobalManager : MonoBehaviour
             return;
         globalDamageMultiplier = Multiplier[index];
         PublishMultiplierChangedEvent();
+    }
+
+    void Start()
+    {
+        //  发布计时器上线事件
+        EventBus.Instance.Trigger(new TimerOnlineEvent
+        {
+            time = Time.time
+        });
+        Debug.Log($"GlobalManager已创建(时间:{Time.time:F1}秒), 并发布了TimerOnlineEvent");
     }
     void Update()
     {
