@@ -6,6 +6,12 @@ using UnityEngine;
 
 public class WeaponInfo : MonoBehaviour
 {
+    [Header("切换设置")]
+    public float switchCooldown = 0.5f;   // 切换冷却时间（秒）
+    private float lastSwitchTime = -Mathf.Infinity;
+    private bool isSwitching = false;
+    private WeaponType pendingWeapon;      // 正在切换的目标武器
+
     [Header("Weapon Display Info")]
     public string weaponName;
     public string obtainMethod;
@@ -34,6 +40,7 @@ public class WeaponInfo : MonoBehaviour
 
     public void Shoot()
     {
+        if (isSwitching) return;           // 切换期间不能开火
         if (isReloading) return; // 正在换弹时不能开枪
 
         if (currentAmmo <= 0)
@@ -112,9 +119,40 @@ public class WeaponInfo : MonoBehaviour
 
     public void SwitchWeapon(WeaponType newType)
     {
-        if (newType == weaponType) return;
+        if (newType == weaponType) return;          // 相同武器不切换
+        if (isSwitching) return;                     // 正在切换中，不响应
+
+        bool inRhythm = GlobalManager.Instance != null && GlobalManager.Instance.IsInRhythmWindow;
+
         weaponType = newType;
         InitializeWeapon(newType);        // 每次切换都重新初始化
+        if (inRhythm)
+        {
+            // 完美切换：立即完成
+            CompleteSwitch(newType);
+        }
+        else
+        {
+            // 普通切换：进入冷却
+            isSwitching = true;
+            pendingWeapon = newType;
+            StartCoroutine(SwitchCooldownCoroutine());
+        }
+    }
+    // 切换冷却协程
+    private IEnumerator SwitchCooldownCoroutine()
+    {
+        yield return new WaitForSeconds(switchCooldown);
+        CompleteSwitch(pendingWeapon);
+    }
+    //完美切换 立即完成切换
+    private void CompleteSwitch(WeaponType newType)
+    {
+        weaponType = newType;
+        InitializeWeapon(newType);   // 重置弹药、开火冷却
+        lastSwitchTime = Time.time;
+        isSwitching = false;
+        // 可选：发布切换完成事件
     }
 }
 

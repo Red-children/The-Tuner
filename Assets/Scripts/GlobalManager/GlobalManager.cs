@@ -21,7 +21,9 @@ public class GlobalManager : MonoBehaviour
     //  (0, 1)
     private float globalDamageMultiplier = 0.99f;
     public float GlobalDamageMultiplier => globalDamageMultiplier;
-    private float[] Multiplier = {0.99f, 0.01f};
+    private float[] Multiplier = { 0.99f, 0.01f };
+
+    public bool IsInRhythmWindow { get; private set; } // 是否在踩点窗口内
 
 
     //  计时周期 0.5s
@@ -57,7 +59,7 @@ public class GlobalManager : MonoBehaviour
         if (timer >= updateInterval)
         {
             timer %= updateInterval;
-            
+
         }
     }
 
@@ -69,7 +71,7 @@ public class GlobalManager : MonoBehaviour
             newMultiplier = globalDamageMultiplier,
             time = Time.time
         });
-        
+
     }
     private void UpdateGlobalDamageMultiplier()
     {
@@ -77,12 +79,14 @@ public class GlobalManager : MonoBehaviour
         if (Mathf.Abs(updateInterval - timer) < stepInterval)
         {
             index = 0;
+            IsInRhythmWindow = true;   // 在窗口内
         }
         else
         {
             index = 1;
+            IsInRhythmWindow = false;   // 在窗口内
         }
-        if (globalDamageMultiplier == Multiplier[index]) 
+        if (globalDamageMultiplier == Multiplier[index])
             return;
         globalDamageMultiplier = Multiplier[index];
         PublishMultiplierChangedEvent();
@@ -106,4 +110,6 @@ public class GlobalManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    
+
 }
