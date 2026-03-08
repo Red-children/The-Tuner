@@ -92,6 +92,13 @@ public class Bullet : MonoBehaviour
         {
             DestroyMyself();
         }
+
+        DstrObjInfo destructible = other.GetComponent<DstrObjInfo>();
+        if (destructible != null)
+        {
+            destructible.TakeDamage(damage); // ¿ÛÑª
+            DestroyMyself();                  // ×Óµ¯ÏûÊ§
+        }
     }
 
     #region ÏÔÊ¾ÉËº¦Æ®×Ö
