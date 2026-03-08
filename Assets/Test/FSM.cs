@@ -30,7 +30,7 @@ public class Parameter
 
 public class FSM : MonoBehaviour
 {
-    private IState currentState;
+    public IState currentState;
     public Parameter parameter;
     private Dictionary<StateType, IState> states = new Dictionary<StateType, IState>();
 

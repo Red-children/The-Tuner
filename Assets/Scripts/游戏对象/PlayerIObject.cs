@@ -6,10 +6,15 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 
-struct PlayerTagEvent
+public struct PlayerDamagedEvent
 {
-    public int id;
-    
+    public PlayerIObject player;
+    public int damage;
+}
+
+public struct PlayerDiedEvent
+{
+    public PlayerIObject player;
 }
 
 
@@ -20,11 +25,10 @@ public class PlayerIObject : BaseObject
     
     public List<WeaponStats> weaponInfos;   // 武器数据列表（从 WeaponBase 获取）
 
+    public bool isInvincible { get; private set; }  // 是否无敌
 
-   
+    private float invincibleTimer;   //无敌计时器
 
-
-    PlayerTagEvent playerTagEvent;
 
     //主摄像机 负责追踪玩家位置
     public Camera playerCamera;
@@ -37,17 +41,14 @@ public class PlayerIObject : BaseObject
     //计时器
     public float fireTimer = 0f;
 
-    // 用于存放子弹预制体，可在Inspector拖拽或Resources加载
-    //子弹对象，后期记得挂载到武器上面，由武器决定发射子弹的类型,此处仅做测试
-    public Bullet bulletPrefab;
-
+  
     //当前屏幕上的点
     public Vector3 nowPos;
     //上一次玩家的位置 就是在位移前 玩家的位置
     public Vector3 frontPos;
 
     //墙的层级
-    //LayerMask wallLayer = LayerMask.GetMask("Wall");
+    LayerMask wallLayer;
 
     //摄像头取点的位置
     public float offsetFactor = 0.3f;
@@ -65,33 +66,85 @@ public class PlayerIObject : BaseObject
 
     public void Start()
     {
+        
 
         // 从当前武器绑定的 WeaponBase 中获取数据列表
         weaponInfos = currentWeapon.weaponBase.weaponList;
         // 初始化武器数据
         currentWeapon.InitializeWeapon(currentWeapon.weaponType);
 
-
-        playerTagEvent = new PlayerTagEvent();
-        playerTagEvent.id =152;
-        
-
-
-        #region 子弹加载测试 后面用配置文件来决定子弹类型当前为硬编码
-        data = new BulletData();
-        data.resPath = "Bullet";
-        #endregion
-
         #region 初始化
         //得到墙的层级 用来优化玩家碰撞
-        LayerMask wallLayer = LayerMask.GetMask("Wall");
-        //动态加载子弹预制体，后续改为武器系统来决定加载哪个子弹预制体
-        bulletPrefab = Resources.Load<Bullet>("Bullet") as Bullet;
+        wallLayer = LayerMask.GetMask("Wall");
         //调整当前相机的景深
         cameraZ = playerCamera.transform.position.z;
         #endregion
 
     }
+
+    #region 重写受伤方法
+
+    
+    // 重写 Wound 方法  传入伤害数值
+    public override void Wound(int damage)
+    {
+
+        if (isInvincible || nowHp <= 0) return;  // 无敌或已死亡则不处理
+
+        // 扣血
+        nowHp -= Mathf.Max(damage, 0);
+        Debug.Log($"玩家受伤，当前血量: {nowHp}");
+
+        // 发布玩家受伤事件（供UI、音效等监听）
+        EventBus.Instance.Trigger(new PlayerDamagedEvent { player = this, damage = damage });
+
+        // 开启无敌帧
+        StartCoroutine(InvincibilityCoroutine(1f)); // 无敌1秒
+
+        if (nowHp <= 0)
+        {
+            nowHp = 0;
+            Died();  // 调用自己的死亡方法（可以是重写的 Died）
+        }
+    }
+    #endregion  
+
+    #region 无敌帧的协程函数
+
+
+    // 无敌协程 传入持续时间
+    private IEnumerator InvincibilityCoroutine(float duration)
+    {
+        // 开始无敌
+        isInvincible = true;
+
+        //时间计数器
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            // 每0.1秒闪烁一次（示例）
+            // 这里可以设置 SpriteRenderer 的透明度或颜色
+            yield return new WaitForSeconds(0.1f);
+            elapsed += 0.1f;
+        }
+        isInvincible = false;
+    }
+    #endregion
+
+    #region 重写死亡方法 发布玩家死亡事件
+
+
+    // 重写死亡方法（可选）
+    public override void Died()
+    {
+       
+        Debug.Log("玩家死亡");
+        // 发布玩家死亡事件（供UI、音效等监听）
+        EventBus.Instance.Trigger(new PlayerDiedEvent { player = this });
+        // 播放死亡动画、销毁等（可暂不销毁，而是显示 GameOver 界面）
+        base.Died();  // 会销毁对象，如果不想立即销毁，可以注释 base.Died()
+    }
+    #endregion
 
     public void Update()
     {
@@ -102,7 +155,7 @@ public class PlayerIObject : BaseObject
         Vector2 direction = new Vector2(moveX, moveY).normalized;
         float rayLengthX = 0.9f; // 略大于玩家半径
         float rayLengthY = 0.9f;
-        LayerMask wallLayer = LayerMask.GetMask("Wall");
+        wallLayer = LayerMask.GetMask("Wall");
 
         // 分别检测X和Y方向，避免对角线同时被锁
         if (moveX != 0)

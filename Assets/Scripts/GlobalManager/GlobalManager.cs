@@ -57,7 +57,7 @@ public class GlobalManager : MonoBehaviour
         if (timer >= updateInterval)
         {
             timer %= updateInterval;
-            Debug.Log($"计时器已重置（当前时间：{Time.time:F1}秒）");
+            
         }
     }
 
@@ -69,7 +69,7 @@ public class GlobalManager : MonoBehaviour
             newMultiplier = globalDamageMultiplier,
             time = Time.time
         });
-        Debug.Log($"倍率已更新：{globalDamageMultiplier}（更新时间：{Time.time:F1}秒）");
+        
     }
     private void UpdateGlobalDamageMultiplier()
     {

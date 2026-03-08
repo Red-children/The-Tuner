@@ -1,9 +1,13 @@
+using System.Data.Common;
 using UnityEngine;
+
+#region 等待状态
 
 public class IdleState : IState
 {
     private FSM manager;
     private Parameter parameter;
+    // 等待计时器
     private float timer;
 
     public IdleState(FSM manager)
@@ -20,6 +24,7 @@ public class IdleState : IState
 
     public void OnUpdate()
     {
+        // 如果受到攻击，立即切换到受击状态
         if (parameter.getHit)
         {
             manager.ChangeState(StateType.Wound);
@@ -27,12 +32,13 @@ public class IdleState : IState
         }
 
         timer += Time.deltaTime;
+        // 如果等待时间超过设定值，切换到巡逻状态
         if (timer >= parameter.idleTime)
         {
             manager.ChangeState(StateType.Patrol);
             return;
         }
-
+        // 如果在等待期间发现玩家，立即切换到追逐状态
         if (parameter.target != null)
         {
             manager.ChangeState(StateType.Chase);
@@ -44,13 +50,16 @@ public class IdleState : IState
         timer = 0f;
     }
 }
+#endregion
 
+#region 巡逻状态
 public class PatrolState : IState
 {
     private FSM manager;
     private Parameter parameter;
     private Vector2 targetPos;
     private float minDistance = 0.1f;
+    private float rotationSpeed = 180f; // 旋转速度（度/秒），可调整
 
     public PatrolState(FSM manager)
     {
@@ -78,9 +87,16 @@ public class PatrolState : IState
             return;
         }
 
-        manager.LookAtTarget(targetPos);
-        manager.transform.position = Vector2.MoveTowards(manager.transform.position, targetPos, parameter.moveSpeed * Time.deltaTime);
+        // 平滑旋转面向目标点
+        RotateTowardsTarget();
 
+        // 向目标点移动
+        manager.transform.position = Vector2.MoveTowards(
+            manager.transform.position,
+            targetPos,
+            parameter.moveSpeed * Time.deltaTime);
+
+        // 到达目标点后获取下一个随机点
         if (Vector2.Distance(manager.transform.position, targetPos) < minDistance)
         {
             GetNewRandomTarget();
@@ -92,6 +108,29 @@ public class PatrolState : IState
         targetPos = Vector2.zero;
     }
 
+    private void RotateTowardsTarget()
+    {
+        //目标点与当前敌人位置的方向向量
+        Vector2 direction = targetPos - (Vector2)manager.transform.position;
+        if (direction.magnitude < 0.01f) return;
+
+        // 计算目标角度
+        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // 获取当前角度（将四元数转换为欧拉角，注意我们只需要Z轴旋转）
+        float currentAngle = manager.transform.eulerAngles.z;
+
+        // 计算最短旋转角度差
+        float angleDiff = Mathf.DeltaAngle(currentAngle, targetAngle);
+
+        // 根据旋转速度限制每帧最大旋转角度
+        float maxDelta = rotationSpeed * Time.deltaTime;
+        float newAngle = currentAngle + Mathf.Clamp(angleDiff, -maxDelta, maxDelta);
+
+        // 应用新旋转
+        manager.transform.rotation = Quaternion.Euler(0, 0, newAngle);
+    }
+
     private void GetNewRandomTarget()
     {
         if (parameter.patrolCenter == null)
@@ -99,14 +138,30 @@ public class PatrolState : IState
             Debug.LogWarning("巡逻中心点未设置！");
             return;
         }
+
+        // 优化随机点生成：偏向当前朝向的前方区域，减少突然掉头
         Vector2 center = parameter.patrolCenter.position;
-        float angle = Random.Range(0f, 2f * Mathf.PI);
+
+        // 获取当前敌人的朝向（单位向量）
+        Vector2 currentDir = manager.transform.right; // 假设敌人默认向右
+
+        // 在朝向 ±90 度范围内随机角度，避免直接生成后方点
+        float angleRange = 90f; // 可调整，越大越可能转向后方
+        float randomAngle = Random.Range(-angleRange, angleRange) * Mathf.Deg2Rad;
+        Vector2 randomDir = new Vector2(
+            Mathf.Cos(randomAngle) * currentDir.x - Mathf.Sin(randomAngle) * currentDir.y,
+            Mathf.Sin(randomAngle) * currentDir.x + Mathf.Cos(randomAngle) * currentDir.y
+        ).normalized;
+
+        // 随机半径
         float radius = Random.Range(0f, parameter.patrolRadius);
-        Vector2 offset = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * radius;
+        Vector2 offset = randomDir * radius;
+
+        // 最终目标点 = 巡逻中心 + 偏移
         targetPos = center + offset;
     }
 }
-
+#endregion
 public class ChaseState : IState
 {
     private FSM manager;
@@ -168,6 +223,8 @@ public class AttackState : IState
     {
         Debug.Log("进入Attack状态");
         attackTimer = 0f;
+        parameter.animator.SetTrigger("Attack"); // 播放攻击动画
+
     }
 
     public void OnUpdate()
@@ -196,12 +253,39 @@ public class AttackState : IState
         }
     }
 
-    private bool IsTargetInRange()
+
+    public void OnExit()
     {
-        return Physics2D.OverlapCircle(parameter.attackPoint.position, parameter.attackRange, parameter.targetLayer) != null;
+        // 可以停止攻击动画等
     }
 
-    public void OnExit() { }
+    // 检查玩家是否在攻击范围内
+    private bool IsTargetInRange()
+    {
+        if (parameter.target == null) return false;
+        Collider2D[] hits = Physics2D.OverlapCircleAll(parameter.attackPoint.position, parameter.attackRange, parameter.targetLayer);
+        foreach (var hit in hits)
+        {
+            if (hit.transform == parameter.target)
+                return true;
+        }
+        return false;
+    }
+
+    // 由动画事件调用的方法
+    public void OnAttackHit()
+    {
+        // 再次检查玩家是否仍在范围内（因为动画播放期间玩家可能移动）
+        if (!IsTargetInRange()) return;
+        Debug.Log("攻击指令发出");
+
+        // 获取玩家组件并造成伤害
+        PlayerIObject player = parameter.target.GetComponent<PlayerIObject>();
+        if (player != null)
+        {
+            player.Wound(parameter.attackDamage);
+        }
+    }
 }
 
 public class WoundState : IState
@@ -267,3 +351,4 @@ public class DeadState : IState
     public void OnUpdate() { }
     public void OnExit() { }
 }
+

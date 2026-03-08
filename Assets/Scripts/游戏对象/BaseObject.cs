@@ -19,19 +19,15 @@ public abstract class BaseObject : MonoBehaviour
 
     
 
-    /// <summary>
-    ///  受伤判断方法
-    /// </summary>
-    /// <param name="other"></param>
-    public virtual void Wound(BaseObject other)
+    //以弃用 在玩家类中实现了伤害和死亡方法
+    public virtual void Wound(int damage )
     {
-
-        nowHp -= Mathf.Max(other.atk, 0);
-        if (nowHp <= 0)
-        {
-            nowHp = 0;
-            Died();
-        }
+        //nowHp -= Mathf.Max(damage, 0);
+        //if (nowHp <= 0)
+        //{
+        //    nowHp = 0;
+        //    Died();
+        //}
     }
 
     /// <summary>
@@ -46,10 +42,10 @@ public abstract class BaseObject : MonoBehaviour
             GameObject gameObject = Instantiate(DiedEff, this.transform.position, this.transform.rotation);
             print(gameObject.name);
             //由于特效本身带有音效
-            AudioSource audioSource = gameObject.GetComponent<AudioSource>();
+            //AudioSource audioSource = gameObject.GetComponent<AudioSource>();
             //audioSource.volume = settingData.SoundToggle ? settingData.SoundVolume : 0;
             //audioSource.mute = !settingData.SoundToggle;
-            audioSource.Play();
+            //audioSource.Play();
 
             ////设置音量 
             //SettingPlane[] settings = Object.FindSceneObjectsOfType(typeof(SettingPlane)) as SettingPlane[];
