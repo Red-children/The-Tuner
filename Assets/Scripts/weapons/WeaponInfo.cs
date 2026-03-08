@@ -32,6 +32,11 @@ public class WeaponInfo : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
             StartCoroutine(Reload());
+
+        if (currentAmmo <= 0 && !isReloading)
+        {
+            StartCoroutine(Reload());
+        }
     }
 
     void Shoot()
