@@ -9,7 +9,6 @@ using UnityEngine.UI;
 // 准星UI
 public class UICrosshair : MonoBehaviour
 {
-
     [Header("准星组件")]
     public Image crosshairSmall; // 小圆准星（静态）
     public Image crosshairBig;   // 大同心圆（动态缩放）
@@ -187,6 +186,8 @@ public class UICrosshair : MonoBehaviour
         EventBus.Instance.Unsubscribe<AttackMultiplierChangedEvent>(OnMultiplierChanged);
         EventBus.Instance.Unsubscribe<EnemyHitEvent>(OnEnemyHit);
     }
+
+
 
     private void Awake()
     {
