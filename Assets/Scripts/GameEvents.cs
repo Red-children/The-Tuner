@@ -17,10 +17,24 @@ public struct PlayerAtkEvent
     //  TODO:
 }
 
-public struct GlobalAttackMultiplierChangedEvent
+public struct AttackMultiplierChangedEvent
 {
     public float newMultiplier; // 最新倍率
     public bool isCritical; // 是否暴击
-    public float time; // 事件发生时间
+    public double time; // 事件发生时间
 }
 
+
+
+
+struct PlayBGMEvent
+{
+    //  TODO:
+    public double time; // 事件发生时间
+}
+struct BGMProgressUpdateEvent
+{
+    public double Progress;
+    public double PreciseTime;
+    public double TotalDuration;
+}

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -22,9 +23,14 @@ public class UICrosshair : MonoBehaviour
     private float _scaleProgress = 0f; // 缩放进度（0~1）
     private Vector3 _originBigScale;   // 外圈原始缩放大小
 
+    [Header("BGM相关")]
+    private double _dspStartTime;
+    private double _BGMProgress;
+    private double _totalDuration;
 
     // 图片路径常量（Resources目录下的相对路径，无需后缀）
-    private const string BigCirclePath = "PicUI/Circle"; 
+    private const string SmallCirclePath = "PicUI/CircleSmall"; 
+    private const string BigCirclePath = "PicUI/CircleBig"; 
 
     private void CrosshairInit()
     {
@@ -32,6 +38,7 @@ public class UICrosshair : MonoBehaviour
 
         // 1. 加载外圈图片（核心逻辑）
         LoadBigCircleSprite();
+        LoadSmallCircleSprite();
 
         // 2. 初始化准星基础状态
         crosshairSmall.enabled = true;
@@ -67,7 +74,32 @@ public class UICrosshair : MonoBehaviour
         // 确保Image显示模式正确（适配图片大小）
         crosshairBig.type = Image.Type.Simple;
         crosshairBig.preserveAspect = true; // 保持图片宽高比，避免拉伸
-        Debug.Log("UICrosshair: 外圈图片加载成功！");
+        Debug.Log("UICrosshair: 外圈图片加载成功!");
+    }
+
+    private void LoadSmallCircleSprite()
+    {
+        // 空值保护
+        if (crosshairSmall == null)
+        {
+            Debug.LogError("UICrosshair: crosshairSmall组件未赋值!");
+            return;
+        }
+
+        // 加载Sprite（Resources.Load无需写后缀，路径是Resources下的相对路径）
+        Sprite smallCircleSprite = Resources.Load<Sprite>(SmallCirclePath);
+        if (smallCircleSprite == null)
+        {
+            Debug.LogError($"UICrosshair: 未找到图片资源,路径:Resources/{SmallCirclePath}.png");
+            return;
+        }
+
+        // 赋值给外圈Image的sprite
+        crosshairBig.sprite = smallCircleSprite;
+        // 确保Image显示模式正确（适配图片大小）
+        crosshairBig.type = Image.Type.Simple;
+        crosshairBig.preserveAspect = true; // 保持图片宽高比，避免拉伸
+        Debug.Log("UICrosshair: 内圈图片加载成功!");
     }
 
     //  精准命中动画
@@ -83,29 +115,23 @@ public class UICrosshair : MonoBehaviour
         //  暂停普通状态动画，外圈变红色，持续0.05s
         //  重置动画状态，继续普通状态动画
     }
-    //  普通状态动画
-    // private void AnimIdle()
-    // {
-    //     //  TODO:
-    //     // 缩小的动画效果，准星一个半径更大的同心圆，逐渐缩小到准星大小
-    // }
 
     // 普通状态动画（大圆环缩放核心逻辑）
     private void AnimIdle()
     {
-        // 空值保护
-        if (crosshairBig == null) return;
-        // 1. 更新缩放进度[0, 1)
-        _scaleProgress += Time.deltaTime / idleAnimCycle;
-        // 2. 循环
-        if (_scaleProgress >= 1f)
-        {
-            _scaleProgress = 0f;
-        }
-        // 3. 线性插值
-        float currentScale = Mathf.Lerp(maxScale, 1f, _scaleProgress);
-        // 4. 应用缩放到外圈圆环（仅缩放，不影响位置/旋转）
-        crosshairBig.transform.localScale = _originBigScale * currentScale;
+        // // 空值保护
+        // if (crosshairBig == null) return;
+        // // 1. 更新缩放进度[0, 1)
+        // _scaleProgress += Time.deltaTime / idleAnimCycle;
+        // // 2. 循环
+        // if (_scaleProgress >= 1f)
+        // {
+        //     _scaleProgress = 0f;
+        // }
+        // // 3. 线性插值
+        // float currentScale = Mathf.Lerp(maxScale, 1f, _scaleProgress);
+        // // 4. 应用缩放到外圈圆环（仅缩放，不影响位置/旋转）
+        // crosshairBig.transform.localScale = _originBigScale * currentScale;
     }
 
     private void OnEnemyHit(EnemyHitEvent evt)
@@ -119,17 +145,22 @@ public class UICrosshair : MonoBehaviour
             AnimNormalHit();
         }
     }
-    private void OnTimerOnline(TimerOnlineEvent evt)
+
+    private void OnProgressUpdate(BGMProgressUpdateEvent evt)
     {
-        //  TODO:
-        _time = evt.time;
-        Debug.Log("UICrosshair:Received TimerOnlineEvent");
+        _BGMProgress = evt.PreciseTime;
     }
 
+    private void OnPlayBGM(PlayBGMEvent evt)
+    {
+        _dspStartTime = evt.time;
+    }
     // 全局伤害倍率变化的回调方法
-    private void OnMultiplierChanged(GlobalAttackMultiplierChangedEvent evt)
+    private void OnMultiplierChanged(AttackMultiplierChangedEvent evt)
     {
         _isCritical = evt.isCritical;
+        Debug.Log("Crosshair:Received Multiplier Changed Event");
+
     }
 
     //  更新准星位置到鼠标位置
@@ -141,15 +172,19 @@ public class UICrosshair : MonoBehaviour
 
     void OnEnable()
     {
-        EventBus.Instance.Subscribe<TimerOnlineEvent>(OnTimerOnline);
-        EventBus.Instance.Subscribe<GlobalAttackMultiplierChangedEvent>(OnMultiplierChanged);
+        //  订阅bgm播放进度 & 倍率变动 & 敌人受伤事件
+        PreciseEventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);
+        PreciseEventBus.Instance.Subscribe<BGMProgressUpdateEvent>(OnProgressUpdate);
+        EventBus.Instance.Subscribe<AttackMultiplierChangedEvent>(OnMultiplierChanged);
         EventBus.Instance.Subscribe<EnemyHitEvent>(OnEnemyHit);
     }
 
     void OnDisable()
     {
-        EventBus.Instance.Unsubscribe<TimerOnlineEvent>(OnTimerOnline);
-        EventBus.Instance.Unsubscribe<GlobalAttackMultiplierChangedEvent>(OnMultiplierChanged);
+        //  取消订阅bgm播放进度 & 倍率变动 & 敌人受伤事件
+        PreciseEventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);
+        PreciseEventBus.Instance.Unsubscribe<BGMProgressUpdateEvent>(OnProgressUpdate);
+        EventBus.Instance.Unsubscribe<AttackMultiplierChangedEvent>(OnMultiplierChanged);
         EventBus.Instance.Unsubscribe<EnemyHitEvent>(OnEnemyHit);
     }
 

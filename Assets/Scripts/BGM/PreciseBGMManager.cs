@@ -2,21 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-struct PlayBGMEvent
-{
-    //  TODO:
-    public float time; // 事件发生时间
-}
-struct BGMProgressUpdateEvent
-{
-    //  TODO:
-}
-
 public class PreciseBGMManager : MonoBehaviour
 {
     [SerializeField] private AudioSource _bgmAudioSource;
     [SerializeField] private AudioClip _bgmClip;
-    [Tooltip("采样间隔(毫秒),音游建议10ms(100Hz)兼顾精度和性能")]
+    [Tooltip("采样间隔(毫秒),建议10ms(100Hz)兼顾精度和性能")]
     [Range(1, 20)] public int sampleIntervalMs = 10;
 
 /************/
@@ -26,7 +16,7 @@ public class PreciseBGMManager : MonoBehaviour
 
     private void OnPlayBGM(PlayBGMEvent evt)
     {
-        Debug.Log("BGMTest:Received");
+        Debug.Log("BGMTest:BGMManger Received");
         if (_bgmAudioSource.isPlaying)
         {
             Debug.Log("BGMTest isPlaying");
@@ -60,10 +50,9 @@ public class PreciseBGMManager : MonoBehaviour
             // 推送精准进度事件（复用之前的事件类）
             BGMProgressUpdateEvent progressEvent = new BGMProgressUpdateEvent
             {
-                //  TODO:
-                // Progress = progress,
-                // CurrentTime = preciseTime,
-                // TotalDuration = _bgmClip.length
+                Progress = progress,
+                PreciseTime = preciseTime,
+                TotalDuration = _bgmClip.length
             };
             PreciseEventBus.Instance.Trigger(progressEvent);
 

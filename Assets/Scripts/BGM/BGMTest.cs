@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class BGMTest : MonoBehaviour
 {
     private Button _btn;
-
+    public double delay = 100;
     void Awake()
     {
         // 自动获取按钮组件
@@ -20,7 +20,7 @@ public class BGMTest : MonoBehaviour
         // 1. 构造播放BGM事件（用你GameEvents里的结构体）
         PlayBGMEvent evt = new PlayBGMEvent
         {
-            time = Time.time // 事件发生时间（可选）
+            time = AudioSettings.dspTime + delay // 事件发生时间（可选）
         };
 
         // 2. 发送到事件中心
