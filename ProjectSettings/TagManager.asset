@@ -19,7 +19,7 @@ TagManager:
   - Player
   - 
   - 
-  - 
+  - DamageNumber
   - 
   - 
   - 
@@ -47,4 +47,7 @@ TagManager:
     locked: 0
   - name: Player
     uniqueID: 509429205
+    locked: 0
+  - name: DamageNumber
+    uniqueID: 238511875
     locked: 0
