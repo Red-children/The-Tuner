@@ -93,4 +93,33 @@ public class WeaponInfo : MonoBehaviour
     {
         return currentAmmo;
     }
+<<<<<<< Updated upstream
+=======
+
+    public void InitializeWeapon(WeaponType type)
+    {
+        stats = weaponBase.GetWeaponStats(type);
+        if (stats == null)
+        {
+            Debug.LogError($"武器类型 {type} 未在 WeaponBase 中配置！");
+            return;
+        }
+        currentAmmo = stats.maxAmmo;
+        lastFireTime = -stats.fireRate;   // 重置冷却，使新武器可立即开火
+        isReloading = false;
+    }
+
+    public void SwitchWeapon(WeaponType newType)
+    {
+        if (newType == weaponType) return;
+        weaponType = newType;
+        // 重新初始化数据，但不重置冷却时间
+        stats = weaponBase.GetWeaponStats(newType);
+        if (stats == null) return;
+        currentAmmo = stats.maxAmmo;
+        //保留 lastFireTime 不变，而不是重置为 -stats.fireRate
+        //// lastFireTime 保持为上次开火的时间，因此新武器同样需要遵守冷却
+        isReloading = false;
+    }
+>>>>>>> Stashed changes
 }

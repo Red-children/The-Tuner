@@ -49,6 +49,13 @@ public class Bullet : MonoBehaviour
             //DestoryEff.transform.position = this.transform.position;
             DestroyMyself();
         }
+        // 处理可破坏物体
+        DstrObjInfo destructible = other.GetComponent<DstrObjInfo>();
+        if (destructible != null)
+        {
+            destructible.TakeDamage(damage); // 扣血
+            DestroyMyself();                  // 子弹消失
+        }
     }
     private void PlayBulletEffect(GameObject effectPrefab)
     {
