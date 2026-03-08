@@ -11,9 +11,11 @@ public enum StateType
 [Serializable]
 public class Parameter
 {
+    public SpriteRenderer spriteRenderer; // 拖入敌人的 SpriteRenderer
     public GameObject DeadEff;           // 死亡特效
     public Collider2D chaseArea;          // 追逐范围触发器
     public Transform patrolCenter;        // 巡逻中心点
+    public Transform[] patrolPoints;        // 巡逻点数组
     public float patrolRadius = 5f;       // 巡逻半径
     public float health;                    // 当前生命值
     public float moveSpeed;               // 移动速度
@@ -26,6 +28,7 @@ public class Parameter
     public Transform attackPoint;           // 攻击点
     public float attackRange;               // 攻击范围
     public int attackDamage = 10;           // 攻击力
+    public Vector2 attackOffset = new Vector2(1f, 0f); // 攻击点相对于敌人中心的偏移（敌人默认朝右）
 }
 
 public class FSM : MonoBehaviour
@@ -36,6 +39,8 @@ public class FSM : MonoBehaviour
 
     void Start()
     {
+        if (parameter.spriteRenderer == null)
+            parameter.spriteRenderer = GetComponent<SpriteRenderer>();
         states.Add(StateType.Idle, new IdleState(this));
         states.Add(StateType.Patrol, new PatrolState(this));
         states.Add(StateType.Chase, new ChaseState(this));
@@ -61,20 +66,22 @@ public class FSM : MonoBehaviour
         currentState.OnStart();
     }
 
-    public void LookAtTarget(Transform target)
-    {
-        if (target == null) return;
-        Vector2 dir = target.position - transform.position;
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
-    }
+    //转用 SpriteRenderer 的 flipX 来控制朝向，避免旋转导致的动画问题
+    //该方法仍然保留，但不再直接设置 transform.rotation，而是根据目标位置来决定是否翻转精灵
+    //public void LookAtTarget(Transform target)
+    //{
+    //    if (target == null) return;
+    //    Vector2 dir = target.position - transform.position;
+    //    float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+    //    transform.rotation = Quaternion.Euler(0, 0, angle);
+    //}
 
-    public void LookAtTarget(Vector2 targetPos)
-    {
-        Vector2 dir = targetPos - (Vector2)transform.position;
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, angle);
-    }
+    //public void LookAtTarget(Vector2 targetPos)
+    //{
+    //    Vector2 dir = targetPos - (Vector2)transform.position;
+    //    float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+    //    transform.rotation = Quaternion.Euler(0, 0, angle);
+    //}
 
     public void OnPlayerEnter(Transform player)
     {
@@ -113,6 +120,15 @@ public class FSM : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (parameter.attackPoint != null)
-            Gizmos.DrawWireSphere(parameter.attackPoint.position, parameter.attackRange);
+        {
+            Vector2 pos = Application.isPlaying ? GetAttackWorldPos() : (Vector2)parameter.attackPoint.position;
+            Gizmos.DrawWireSphere(pos, parameter.attackRange);
+        }
+    }
+
+    public Vector2 GetAttackWorldPos()
+    {
+        float dir = parameter.spriteRenderer.flipX ? -1f : 1f;
+        return (Vector2)transform.position + new Vector2(dir * parameter.attackOffset.x, parameter.attackOffset.y);
     }
 }

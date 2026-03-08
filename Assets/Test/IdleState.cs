@@ -1,5 +1,6 @@
 using System.Data.Common;
 using UnityEngine;
+using static UnityEngine.RuleTile.TilingRuleOutput;
 
 #region 等待状态
 
@@ -55,22 +56,34 @@ public class IdleState : IState
 #region 巡逻状态
 public class PatrolState : IState
 {
-    private FSM manager;
+    private FSM manager;             
     private Parameter parameter;
     private Vector2 targetPos;
     private float minDistance = 0.1f;
     private float rotationSpeed = 180f; // 旋转速度（度/秒），可调整
+
+
 
     public PatrolState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
     }
+    private int currentPointIndex = 0;
+    private bool movingForward = true; // 用于往返
 
     public void OnStart()
     {
         Debug.Log("进入Patrol状态");
-        GetNewRandomTarget();
+        if (parameter.patrolPoints == null || parameter.patrolPoints.Length == 0)
+        {
+            Debug.LogWarning("没有设置巡逻点，使用随机巡逻");
+            GetNewRandomTarget(); // 保底逻辑
+        }
+        else
+        {
+            SetNextTarget();
+        }
     }
 
     public void OnUpdate()
@@ -87,8 +100,13 @@ public class PatrolState : IState
             return;
         }
 
-        // 平滑旋转面向目标点
-        RotateTowardsTarget();
+
+
+        // 根据目标点方向设置 flipX
+        if (targetPos.x > manager.transform.position.x)
+            parameter.spriteRenderer.flipX = false; // 目标在右，不翻转
+        else if (targetPos.x < manager.transform.position.x)
+            parameter.spriteRenderer.flipX = true;  // 目标在左，翻转
 
         // 向目标点移动
         manager.transform.position = Vector2.MoveTowards(
@@ -96,13 +114,37 @@ public class PatrolState : IState
             targetPos,
             parameter.moveSpeed * Time.deltaTime);
 
-        // 到达目标点后获取下一个随机点
+        // 到达目标点后获取下一个点
         if (Vector2.Distance(manager.transform.position, targetPos) < minDistance)
         {
-            GetNewRandomTarget();
+            if (parameter.patrolPoints.Length > 0)
+                SetNextTarget();
+            else
+                GetNewRandomTarget();
         }
     }
 
+    private void SetNextTarget()
+    {
+        if (parameter.patrolPoints.Length == 0) return;
+        targetPos = parameter.patrolPoints[currentPointIndex].position;
+
+        // 更新索引（往返模式）
+        if (movingForward)
+        {
+            if (currentPointIndex == parameter.patrolPoints.Length - 1)
+                movingForward = false;
+            else
+                currentPointIndex++;
+        }
+        else
+        {
+            if (currentPointIndex == 0)
+                movingForward = true;
+            else
+                currentPointIndex--;
+        }
+    }
     public void OnExit()
     {
         targetPos = Vector2.zero;
@@ -131,6 +173,7 @@ public class PatrolState : IState
         manager.transform.rotation = Quaternion.Euler(0, 0, newAngle);
     }
 
+    //现在改用巡逻点设置 暂时弃用
     private void GetNewRandomTarget()
     {
         if (parameter.patrolCenter == null)
@@ -162,6 +205,10 @@ public class PatrolState : IState
     }
 }
 #endregion
+
+#region 追逐状态
+
+
 public class ChaseState : IState
 {
     private FSM manager;
@@ -188,25 +235,35 @@ public class ChaseState : IState
 
         if (parameter.target == null)
         {
-            manager.ChangeState(StateType.Patrol);
+            manager.ChangeState(StateType.Patrol); // 或 Idle
             return;
         }
 
-        manager.LookAtTarget(parameter.target);
+        // 根据玩家位置设置 flipX
+        if (parameter.target.position.x > manager.transform.position.x)
+            parameter.spriteRenderer.flipX = false;
+        else
+            parameter.spriteRenderer.flipX = true;
+
+        // 向玩家移动
         manager.transform.position = Vector2.MoveTowards(
             manager.transform.position,
             parameter.target.position,
             parameter.chaseSpeed * Time.deltaTime);
 
-        if (Physics2D.OverlapCircle(parameter.attackPoint.position, parameter.attackRange, parameter.targetLayer))
+        // 检查攻击范围
+        if (Physics2D.OverlapCircle(manager.GetAttackWorldPos(), parameter.attackRange, parameter.targetLayer))
         {
             manager.ChangeState(StateType.Attack);
         }
     }
 
-    public void OnExit() { }
-}
 
+
+
+public void OnExit() { }
+}
+#endregion
 public class AttackState : IState
 {
     private FSM manager;
@@ -223,6 +280,7 @@ public class AttackState : IState
     {
         Debug.Log("进入Attack状态");
         attackTimer = 0f;
+        
         parameter.animator.SetTrigger("Attack"); // 播放攻击动画
 
     }
@@ -263,31 +321,22 @@ public class AttackState : IState
     private bool IsTargetInRange()
     {
         if (parameter.target == null) return false;
-        Collider2D[] hits = Physics2D.OverlapCircleAll(parameter.attackPoint.position, parameter.attackRange, parameter.targetLayer);
+        Vector2 attackWorldPos = manager.GetAttackWorldPos(); // 动态计算
+        Collider2D[] hits = Physics2D.OverlapCircleAll(attackWorldPos, parameter.attackRange, parameter.targetLayer);
         foreach (var hit in hits)
-        {
-            if (hit.transform == parameter.target)
-                return true;
-        }
+            if (hit.transform == parameter.target) return true;
         return false;
     }
 
-    // 由动画事件调用的方法
     public void OnAttackHit()
     {
-        // 再次检查玩家是否仍在范围内（因为动画播放期间玩家可能移动）
         if (!IsTargetInRange()) return;
         Debug.Log("攻击指令发出");
-
-        // 获取玩家组件并造成伤害
         PlayerIObject player = parameter.target.GetComponent<PlayerIObject>();
         if (player != null)
-        {
             player.Wound(parameter.attackDamage);
-        }
     }
 }
-
 public class WoundState : IState
 {
     private FSM manager;

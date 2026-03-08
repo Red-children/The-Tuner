@@ -15862,6 +15862,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1251907892}
     m_Modifications:
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
+      propertyPath: parameter.idleTime
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: parameter.chaseArea
       value: 
       objectReference: {fileID: 1989433275}
