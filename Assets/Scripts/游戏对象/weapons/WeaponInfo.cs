@@ -27,10 +27,13 @@ public class WeaponInfo : MonoBehaviour
     private float lastFireTime;
     private bool isReloading;
 
+    public RhythmData nowRhythmData; // 当前节奏数据
    
     void Start()
     {
         InitializeWeapon(weaponType);
+        nowRhythmData = new RhythmData(false,RhythmRank.Miss,1); // 默认不在窗口，倍率1
+        EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
     }
 
     void Update()
@@ -86,7 +89,7 @@ public class WeaponInfo : MonoBehaviour
         // 可在这里设置子弹伤害或速度
         Bullet bulletScript = bulletObj.GetComponent<Bullet>();
         //后续可以把伤害计算放在这里，考虑暴击、元素伤害等因素
-        float multiplier = GlobalManager.Instance != null ? GlobalManager.Instance.GlobalDamageMultiplier : 1f;
+        float multiplier = (float)nowRhythmData.multiplier;
         bulletScript.damage = stats.damage * multiplier;
     }
 
@@ -122,10 +125,14 @@ public class WeaponInfo : MonoBehaviour
         if (newType == weaponType) return;          // 相同武器不切换
         if (isSwitching) return;                     // 正在切换中，不响应
 
-        bool inRhythm = GlobalManager.Instance != null && GlobalManager.Instance.IsInRhythmWindow;
+        //是否在踩点窗口内，决定切换方式
+        bool inRhythm = nowRhythmData.isInWindow;
 
         weaponType = newType;
-        InitializeWeapon(newType);        // 每次切换都重新初始化
+        //下面这一行涉及手感问题 先弃用
+        //InitializeWeapon(newType);        // 每次切换都重新初始化
+
+
         if (inRhythm)
         {
             // 完美切换：立即完成
@@ -154,6 +161,16 @@ public class WeaponInfo : MonoBehaviour
         isSwitching = false;
         // 可选：发布切换完成事件
     }
+    void OnDestroy()
+    {
+        EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
+    }
+    private void OnRhythmData(RhythmData data)
+    {
+        nowRhythmData = data;
+    }
+
+
 }
 
     //切换武器，外部调用
