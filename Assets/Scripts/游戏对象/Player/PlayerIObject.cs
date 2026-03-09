@@ -1,16 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro.EditorUtilities;
 using Unity.Jobs;
 using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 
-public struct PlayerDamagedEvent
+public struct PlayerHealthChangedEventStruct
 {
-    public PlayerIObject player;
-    public int damage;
+    public float currentHealth;
+    public float maxHealth;
+    public float healthPercent => currentHealth / maxHealth; //方便UI直接使用
 }
+
+
 
 public struct PlayerDiedEvent
 {
@@ -20,6 +24,8 @@ public struct PlayerDiedEvent
 
 public class PlayerIObject : BaseObject
 {
+    
+
     [Header("Weapon")]
     public WeaponInfo currentWeapon;   // 当前使用的武器
     
@@ -64,18 +70,25 @@ public class PlayerIObject : BaseObject
 
     public void Start()
     {
-        //传递玩家攻击力到当前武器
-        passPlayerAtk();
-        // 从当前武器绑定的 WeaponBase 中获取数据列表
-        weaponInfos = currentWeapon.weaponBase.weaponList;
-        // 初始化武器数据
-        currentWeapon.InitializeWeapon(currentWeapon.weaponType);
+        //开始发布一次事件 让UI能正确显示初始血量
+        EventBus.Instance.Trigger<PlayerHealthChangedEventStruct>(new PlayerHealthChangedEventStruct
+        {
+            currentHealth = nowHp,
+            maxHealth = maxHp
+
+        }); 
 
         #region 初始化
         //得到墙的层级 用来优化玩家碰撞
         wallLayer = LayerMask.GetMask("Wall");
         //调整当前相机的景深
         cameraZ = playerCamera.transform.position.z;
+        //传递玩家攻击力到当前武器
+        passPlayerAtk();
+        // 从当前武器绑定的 WeaponBase 中获取数据列表
+        weaponInfos = currentWeapon.weaponBase.weaponList;
+        // 初始化武器数据
+        currentWeapon.InitializeWeapon(currentWeapon.weaponType);
         #endregion
 
     }
@@ -93,8 +106,12 @@ public class PlayerIObject : BaseObject
         nowHp -= Mathf.Max(damage, 0);
         Debug.Log($"玩家受伤，当前血量: {nowHp}");
 
-        // 发布玩家受伤事件（供UI、音效等监听）
-        EventBus.Instance.Trigger(new PlayerDamagedEvent { player = this, damage = damage });
+        EventBus.Instance.Trigger<PlayerHealthChangedEventStruct>(new PlayerHealthChangedEventStruct
+        {
+            currentHealth = nowHp,
+            maxHealth = maxHp
+
+        });
 
         // 开启无敌帧
         StartCoroutine(InvincibilityCoroutine(1f)); // 无敌1秒
@@ -141,6 +158,14 @@ public class PlayerIObject : BaseObject
         EventBus.Instance.Trigger(new PlayerDiedEvent { player = this });
         // 播放死亡动画、销毁等（可暂不销毁，而是显示 GameOver 界面）
         base.Died();  // 会销毁对象，如果不想立即销毁，可以注释 base.Died()
+    }
+    #endregion
+
+    #region 玩家血量变化事件
+    public void PlayerHpChange(PlayerHealthChangedEventStruct playerHealthChangedEventStruct)
+    {
+       playerHealthChangedEventStruct.currentHealth = nowHp;
+       playerHealthChangedEventStruct.maxHealth = maxHp;
     }
     #endregion
 
