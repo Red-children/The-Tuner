@@ -17,17 +17,13 @@ public class Bullet : MonoBehaviour
     public GameObject DestoryEff;
     public GameObject damageTextPrefab; // 死亡飘字预制体
 
-   
-
-
-    #region 子弹销毁方法
-
-
+        #region 子弹销毁方法
     public void DestroyMyself()
     {
 
         PlayBulletEffect(DestoryEff.gameObject);//播放子弹特效
         Destroy(this.gameObject);
+
     }
     #endregion
 
@@ -42,6 +38,7 @@ public class Bullet : MonoBehaviour
     }
     void Update()
     {
+
         #region 射线检测与移动(代替碰撞检测)
 
         // 计算移动距离
@@ -61,8 +58,6 @@ public class Bullet : MonoBehaviour
                 {
                     
                     hit.collider.gameObject.GetComponent<FSM>()?.Wound(damage);
-                    //伤害检测 转移到敌人方法中
-                    //ShowDamageText(hit.collider.transform.position, damage); 
                     DestroyMyself();
                     return;
                 }
@@ -79,25 +74,7 @@ public class Bullet : MonoBehaviour
 
     #endregion
 
-    // 该方法已废弃，伤害检测转移到敌人方法中
-        #region 显示伤害飘字
-    // 显示伤害数字
-    //private void ShowDamageText(Vector3 position, float damageValue)
-    //{
-    //    if (damageTextPrefab == null) return;
-    //    // 实例化预制体，位置直接使用敌人位置
-    //    GameObject dmgObj = Instantiate(damageTextPrefab, position, Quaternion.identity);
-    //    // 获取 DamageNumber 组件（挂在 Canvas 上）
-    //    DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
-    //    if (dmgNumber != null)
-    //    {
-    //        // 将伤害值传递给 DamageNumber
-    //        dmgNumber.SetDamage(damageValue);
-    //    }
-    //}
-    #endregion
-
-    #region 播放死亡特效方法
+        #region 播放死亡特效方法
     private void PlayBulletEffect(GameObject effectPrefab)
     {
         print(effectPrefab.name);
@@ -108,6 +85,8 @@ public class Bullet : MonoBehaviour
         //audioSource.volume = settingData.SoundToggle ? settingData.SoundVolume : 0;
         //audioSource.mute = !settingData.SoundToggle;
         audioSource.Play();
+
+        #endregion
+
     }
-    #endregion
 }

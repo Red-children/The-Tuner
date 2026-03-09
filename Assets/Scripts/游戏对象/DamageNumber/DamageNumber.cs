@@ -6,8 +6,8 @@ using UnityEngine.UI;
 public class DamageNumber : MonoBehaviour
 {
     [Header("动画参数")]
-    public float moveHeight = 1f;  
-    public float duration = 1f;
+    public float moveHeight = 1f;  // 飘字向上移动的高度
+    public float duration = 1f;    // 飘字动画持续时间 
 
     [Header("组件引用")]
     public Text damageText;  // 手动拖拽赋值
@@ -25,6 +25,7 @@ public class DamageNumber : MonoBehaviour
             Debug.LogError("DamageNumber: 没有找到 Text 组件！");
     }
 
+    #region 设置伤害值并启动动画
     // 设置伤害值并启动动画
     public void SetDamage(float value)
     {
@@ -36,7 +37,9 @@ public class DamageNumber : MonoBehaviour
 
         StartAnimation();
     }
+    #endregion
 
+    #region 伤害飘字动画
     //飘字动画：向上移动并逐渐变淡，结束后销毁对象
     private void StartAnimation()
     {
@@ -59,4 +62,6 @@ public class DamageNumber : MonoBehaviour
             Destroy(gameObject);
         });
     }
+    #endregion
+
 }

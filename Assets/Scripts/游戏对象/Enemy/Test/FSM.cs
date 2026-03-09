@@ -4,11 +4,21 @@ using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
 
+#region 定义状态类型枚举
 public enum StateType
 {
-    Idle, Patrol, Chase, Attack, Wound, Dead
-}
+    Idle,       // 空闲状态
+    Patrol,     // 巡逻状态
+    Chase,      // 追逐状态
+    Attack,     // 攻击状态
+    Wound,      // 受击状态
+    Dead,       // 死亡状态
+    Approach    // 接近状态（新增）用于优化追逐行为，在玩家进入追逐范围但未进入攻击范围时切换到该状态，调整朝向并准备攻击
 
+}
+#endregion
+
+#region 敌人的参数
 [Serializable]
 public class Parameter
 {
@@ -32,6 +42,7 @@ public class Parameter
     public int attackDamage = 10;           // 攻击力
     public Vector2 attackOffset = new Vector2(1f, 0f); // 攻击点相对于敌人中心的偏移（敌人默认朝右）
 }
+#endregion
 
 public class FSM : MonoBehaviour
 {
@@ -41,23 +52,32 @@ public class FSM : MonoBehaviour
 
     void Start()
     {
+        #region 动态获取组件的代码 允许在 Inspector 中拖入组件，如果未拖入则自动获取
         if (parameter.spriteRenderer == null)
-            parameter.spriteRenderer = GetComponent<SpriteRenderer>();
+        parameter.spriteRenderer = GetComponent<SpriteRenderer>();
+
+        if (parameter.animator == null)
+            parameter.animator = GetComponent<Animator>();
+        #endregion
+
+        #region 注册所有的状态实例 这里可以根据需要添加更多状态
         states.Add(StateType.Idle, new IdleState(this));
         states.Add(StateType.Patrol, new PatrolState(this));
         states.Add(StateType.Chase, new ChaseState(this));
         states.Add(StateType.Attack, new AttackState(this));
         states.Add(StateType.Wound, new WoundState(this));
         states.Add(StateType.Dead, new DeadState(this));
+        states.Add(StateType.Approach, new ApproachState (this));
+        #endregion
 
-        if (parameter.animator == null)
-            parameter.animator = GetComponent<Animator>();
-
+        //开始先进入空闲状态
         ChangeState(StateType.Idle);
     }
 
     void Update()
     {
+        //每帧调用当前状态的更新方法
+        //相当于把Update的逻辑分散到各个状态中，保持 FSM 类的简洁
         currentState?.OnUpdate();
     }
 
@@ -67,25 +87,7 @@ public class FSM : MonoBehaviour
         currentState = states[newState];
         currentState.OnStart();
     }
-    #region 朝向控制方法（已废弃，改用 flipX）
 
-    //转用 SpriteRenderer 的 flipX 来控制朝向，避免旋转导致的动画问题
-    //该方法仍然保留，但不再直接设置 transform.rotation，而是根据目标位置来决定是否翻转精灵
-    //public void LookAtTarget(Transform target)
-    //{
-    //    if (target == null) return;
-    //    Vector2 dir = target.position - transform.position;
-    //    float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-    //    transform.rotation = Quaternion.Euler(0, 0, angle);
-    //}
-
-    //public void LookAtTarget(Vector2 targetPos)
-    //{
-    //    Vector2 dir = targetPos - (Vector2)transform.position;
-    //    float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-    //    transform.rotation = Quaternion.Euler(0, 0, angle);
-    //}
-    #endregion
 
     #region 由其他碰撞器检测玩家进入的方法，供 TriggerForward 调用
     public void OnPlayerEnter(Transform player)

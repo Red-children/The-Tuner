@@ -7,6 +7,11 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 
+public struct CameraShakeEvent
+{
+    public float intensity;   // 震屏强度，可以根据伤害值决定
+}
+
 public struct PlayerHealthChangedEventStruct
 {
     public float currentHealth;
@@ -112,6 +117,9 @@ public class PlayerIObject : BaseObject
             maxHealth = maxHp
 
         });
+
+        // 触发震屏事件，强度可以简单设为 damage / 10f（根据你的数值调整）
+        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = damage / 100f });
 
         // 开启无敌帧
         StartCoroutine(InvincibilityCoroutine(1f)); // 无敌1秒
@@ -240,13 +248,13 @@ public class PlayerIObject : BaseObject
             transform.rotation = Quaternion.Euler(0, 0, angle);
         }
         #endregion
-
-        #region 相机追踪逻辑
-        //玩家和准星之间的向量上取一点 相机对这一点做线性插值
-        Vector2 cameraOffset =  directionMouse * offsetFactor;
-        Vector3 targetCameraPos = transform.position + new Vector3(cameraOffset.x, cameraOffset.y, cameraZ); // 确保相机在玩家前面
-        playerCamera.transform.position =  Vector3.Lerp(playerCamera.transform.position, targetCameraPos, Time.deltaTime * cameraSmoothness);
-        #endregion
+        
+        //#region 相机追踪逻辑
+        ////玩家和准星之间的向量上取一点 相机对这一点做线性插值
+        //Vector2 cameraOffset =  directionMouse * offsetFactor;
+        //Vector3 targetCameraPos = transform.position + new Vector3(cameraOffset.x, cameraOffset.y, cameraZ); // 确保相机在玩家前面
+        //playerCamera.transform.position =  Vector3.Lerp(playerCamera.transform.position, targetCameraPos, Time.deltaTime * cameraSmoothness);
+        //#endregion
 
         #region 武器切换
         if (Input.GetKeyDown(KeyCode.Alpha1))
