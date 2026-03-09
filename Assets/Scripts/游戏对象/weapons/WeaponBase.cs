@@ -30,6 +30,8 @@ public class WeaponStats
     public GameObject bulletPrefab;      // 子弹Prefab
     public float reloadTime;  // 装填时间（秒）
 
+    public float shakeIntensity = 0.01f;
+
 }
 
 [CreateAssetMenu(fileName = "WeaponBase", menuName = "Weapon/WeaponBase")]

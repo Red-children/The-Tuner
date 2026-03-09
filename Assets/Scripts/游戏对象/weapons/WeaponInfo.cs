@@ -84,6 +84,9 @@ public class WeaponInfo : MonoBehaviour
         }
         // 触发开火事件（空结构体）
         EventBus.Instance.Trigger(new PlayerFiredEvent());
+        
+        
+        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = weaponBase.GetWeaponStats(weaponType).shakeIntensity });
     }
 
     void SpawnBullet(Vector3 pos, Quaternion rot)
