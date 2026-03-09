@@ -12,15 +12,11 @@ public class UICrosshair : MonoBehaviour
     [Header("准星组件")]
     public Image crosshairSmall; // 小圆准星（静态）
     public Image crosshairBig;   // 大同心圆（动态缩放）
-    private float Mulitplier;
+    private Animator _animSmall;
+    private Animator _animBig;
+    private float _Mulitplier;
     private float _time;
     private bool _isCritical = false;
-
-    [Header("周期动画参数")]
-    public float idleAnimCycle = 0.5f; // 缩放周期（和全局计时器同步）
-    public float maxScale = 1.5f;      // 最大缩放比例（圆环最大半径）
-    private float _scaleProgress = 0f; // 缩放进度（0~1）
-    private Vector3 _originBigScale;   // 外圈原始缩放大小
 
     [Header("BGM相关")]
     private double _dspStartTime;
@@ -42,13 +38,8 @@ public class UICrosshair : MonoBehaviour
         // 2. 初始化准星基础状态
         crosshairSmall.enabled = true;
         crosshairBig.enabled = true;
-
-        // 3. 保存外圈原始缩放（必须在图片加载后执行）
-        if (crosshairBig != null)
-        {
-            _originBigScale = crosshairBig.transform.localScale;
-        }
-
+        // 3.绑定动画
+        _animBig = gameObject.GetComponentInChildren<Animator>(false);
         Debug.Log($"UICrosshair: Initialized at _time {_time:F1} seconds");
     }
     private void LoadBigCircleSprite()
@@ -74,6 +65,7 @@ public class UICrosshair : MonoBehaviour
         crosshairBig.type = Image.Type.Simple;
         crosshairBig.preserveAspect = true; // 保持图片宽高比，避免拉伸
         Debug.Log("UICrosshair: 外圈图片加载成功!");
+        _animBig = crosshairBig.GetComponent<Animator>();
     }
 
     private void LoadSmallCircleSprite()
@@ -94,55 +86,42 @@ public class UICrosshair : MonoBehaviour
         }
 
         // 赋值给外圈Image的sprite
-        crosshairBig.sprite = smallCircleSprite;
+        crosshairSmall.sprite = smallCircleSprite;
         // 确保Image显示模式正确（适配图片大小）
-        crosshairBig.type = Image.Type.Simple;
-        crosshairBig.preserveAspect = true; // 保持图片宽高比，避免拉伸
+        crosshairSmall.type = Image.Type.Simple;
+        crosshairSmall.preserveAspect = true; // 保持图片宽高比，避免拉伸
         Debug.Log("UICrosshair: 内圈图片加载成功!");
+        _animSmall = crosshairSmall.GetComponent<Animator>();
     }
 
     //  精准命中动画
     private void AnimCriticalHit()
     {
         //  TODO:
-        //  暂停普通状态动画，外圈变蓝色，持续0.05s
-        //  重置动画状态，继续普通状态动画
     }
     private void AnimNormalHit()
     {
         //  TODO:
-        //  暂停普通状态动画，外圈变红色，持续0.05s
-        //  重置动画状态，继续普通状态动画
     }
 
     // 普通状态动画（大圆环缩放核心逻辑）
     private void AnimIdle()
     {
-        // // 空值保护
-        // if (crosshairBig == null) return;
-        // // 1. 更新缩放进度[0, 1)
-        // _scaleProgress += Time.deltaTime / idleAnimCycle;
-        // // 2. 循环
-        // if (_scaleProgress >= 1f)
-        // {
-        //     _scaleProgress = 0f;
-        // }
-        // // 3. 线性插值
-        // float currentScale = Mathf.Lerp(maxScale, 1f, _scaleProgress);
-        // // 4. 应用缩放到外圈圆环（仅缩放，不影响位置/旋转）
-        // crosshairBig.transform.localScale = _originBigScale * currentScale;
+        // if()
+        // _animBig.Play("Normal");
     }
 
     private void OnEnemyHit(EnemyHitEvent evt)
     {
-        if (_isCritical)
-        {
-            AnimCriticalHit();
-        }
-        else
-        {
-            AnimNormalHit();
-        }
+        _animSmall.Play("PreciseHit");
+        // if (_isCritical)
+        // {
+        //     AnimCriticalHit();
+        // }
+        // else
+        // {
+        //     AnimNormalHit();
+        // }
     }
 
     private void OnProgressUpdate(BGMProgressUpdateEvent evt)
@@ -150,6 +129,10 @@ public class UICrosshair : MonoBehaviour
         _BGMProgress = evt.PreciseTime;
     }
 
+    private void OnIndicatorActive(IndicatorActiveEvent evt)
+    {
+        //  TODO:
+    }
     private void OnPlayBGM(PlayBGMEvent evt)
     {
         _dspStartTime = evt.time;
@@ -171,7 +154,8 @@ public class UICrosshair : MonoBehaviour
 
     void OnEnable()
     {
-        //  订阅bgm播放进度 & 倍率变动 & 敌人受伤事件
+        //  订阅bgm播放进度 & 倍率变动 & 敌人受伤事件 & 提示器上线
+        PreciseEventBus.Instance.Subscribe<IndicatorActiveEvent>(OnIndicatorActive);
         PreciseEventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);
         PreciseEventBus.Instance.Subscribe<BGMProgressUpdateEvent>(OnProgressUpdate);
         EventBus.Instance.Subscribe<AttackMultiplierChangedEvent>(OnMultiplierChanged);
@@ -180,7 +164,7 @@ public class UICrosshair : MonoBehaviour
 
     void OnDisable()
     {
-        //  取消订阅bgm播放进度 & 倍率变动 & 敌人受伤事件
+        //  取消订阅bgm播放进度 & 倍率变动 & 敌人受伤事件 & 提示器上线
         PreciseEventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);
         PreciseEventBus.Instance.Unsubscribe<BGMProgressUpdateEvent>(OnProgressUpdate);
         EventBus.Instance.Unsubscribe<AttackMultiplierChangedEvent>(OnMultiplierChanged);
@@ -193,10 +177,6 @@ public class UICrosshair : MonoBehaviour
     {
         crosshairSmall = transform.Find("CrosshairSmall")?.GetComponent<Image>();
         crosshairBig = transform.Find("CrosshairBig")?.GetComponent<Image>();
-        if (crosshairBig != null)
-        {
-            _originBigScale = crosshairBig.transform.localScale;
-        }
     }
     void Start()
     {
@@ -205,10 +185,19 @@ public class UICrosshair : MonoBehaviour
     void Update()
     {
         UpdateCrosshairToMouse();
-        AnimIdle();
+        TestTemp();
+        AnimIdle(); 
     }
     // private void OnDestroy()
     // {
     //     StopAllCoroutines(); // 停止所有动画协程
     // }
+    private void TestTemp()
+    {
+
+        if(Input.GetMouseButtonDown(0))
+        {
+            OnEnemyHit(new EnemyHitEvent());
+        }
+    }
 }
