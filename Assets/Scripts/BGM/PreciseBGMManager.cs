@@ -13,13 +13,6 @@ public class PreciseBGMManager : MonoBehaviour
     [Header("1s/BPM")]
     [Header("周期")]
     private double _period = 0.5f;
-    [Header("指示器设置")]
-    public double lead = 0.02f; //  指示器提前量
-    private double _pointToCome = 0; //  下一个关键点
-    private bool _isCurrentPointPublished = true;
-
-    private int _multiplierIndex = 1;
-
 
     [SerializeField] private AudioSource _bgmAudioSource;
     [SerializeField] private AudioClip _bgmClip;
@@ -32,8 +25,16 @@ public class PreciseBGMManager : MonoBehaviour
     private double _dspStartTime; // BGM开始播放时的DSP时间
     private float _preciseTime;   //  已播放时间
     private bool _isPlaying = false;
+    private Queue<double> _beatTimestampQueue; // 关键音符（节拍）时间戳队列
+    private Queue<double> _indicatorPublishQueue; // Indicator推送时间戳队列
 
 #region 指示器
+    [Header("指示器设置")]
+    public double lead = 0.2f; //  指示器提前量
+    private double _pointToCome = 0; //  下一个关键点
+    private bool _hasPublishedCurrentPoint  = true;
+
+    private int _multiplierIndex = 1;
     private class IndicatorState
     {
         public double NextPoint { get; set; }
@@ -44,35 +45,24 @@ public class PreciseBGMManager : MonoBehaviour
     // 1. 纯过滤：判断是否需要执行后续逻辑
     private bool IsIndicatorEventValid()
     {
-        if (_preciseTime < 0.4) return false;
-        if (_pointToCome > _bgmClip.length) return false;
-        return true;
+        //  TODO:
+        return false;
     }
-    // 2. 纯计算：只算不判断，返回封装的状态
-    private IndicatorState CalculateIndicatorState()
-    {
-        double publishTime = _pointToCome - (lead + windowPeriod);
-        return new IndicatorState
-        {
-            NextPoint = _pointToCome,
-            PublishTime = publishTime,
-            IsPointExpired = _preciseTime > _pointToCome,
-            IsPublishTimeReached = _preciseTime >= publishTime
-        };
-    }
+
     // 3. 纯逻辑：仅处理标记更新
     private void UpdateIndicatorFlag(IndicatorState state)
     {
-        if (!_isCurrentPointPublished) return;
-        
-        // 用布尔运算消除嵌套，直接赋值
-        _isCurrentPointPublished = !(state.IsPointExpired || state.IsPublishTimeReached);
-        
-        // 未到发布时间则终止执行
-        if (!state.IsPublishTimeReached)
+        // 关键点过期：标记为已发布（避免重复发布）
+        if (state.IsPointExpired)
         {
-            // Debug.Log($"未到发布时间 | 当前时间:{_preciseTime:F4} | 发布时间:{state.PublishTime:F4}");
+            _hasPublishedCurrentPoint = true;
             return;
+        }
+
+        // 到达发布时间但未发布：标记为待发布
+        if (state.IsPublishTimeReached && !_hasPublishedCurrentPoint)
+        {
+            _hasPublishedCurrentPoint = true; // 标记为已发布，避免重复
         }
     }
     // 4. 纯执行：仅发布事件
@@ -90,37 +80,54 @@ public class PreciseBGMManager : MonoBehaviour
 
     private void PushIndicatorEvent()
     {
-        //  前置过滤
-        if (!IsIndicatorEventValid()) return;
+        // 边界检查：无待处理项/时间未到0.4s
+        if (_preciseTime < 0.4 || _indicatorPublishQueue.Count == 0)
+            return;
 
-        //  计算核心状态
-        IndicatorState state = CalculateIndicatorState();
+        // 查看队列首个待推送时间（Peek不删除，仅查看）
+        double targetPublishTime = _indicatorPublishQueue.Peek();
 
-        //  处理标记
-        UpdateIndicatorFlag(state);
-
-        //  发布事件
-        if (state.IsPublishTimeReached)
+        // 时间匹配：到达推送时间 → 出队并发布事件
+        if (targetPublishTime - _preciseTime < 1e-3)
         {
-            if (!_isCurrentPointPublished)
-            {
-                PublishIndicatorEvent(state.NextPoint);
-                _pointToCome += _period;
-                _isCurrentPointPublished = true;
-            }
-        }
-        else
-        {
-            if(_preciseTime > state.NextPoint)
-            {
-                _isCurrentPointPublished = false;
-            }
-        }
+            // 出队（移除已处理项，核心区别）
+            double publishTime = _indicatorPublishQueue.Dequeue();
+            double currentBeatTime = _beatTimestampQueue.Dequeue();
 
-
-        // Debug.Log($"PushIndicatorEvent | PreciseTime:{_preciseTime:F4} | NextPoint:{state.NextPoint:F4}");
+            // 发布事件
+            var evt = new IndicatorActiveEvent
+            {
+                time = _preciseTime,
+                nextPoint = currentBeatTime
+            };
+            PreciseEventBus.Instance.Trigger<IndicatorActiveEvent>(evt);
+            Debug.Log($"推送Indicator | 节拍时间：{currentBeatTime:F8} | 实际推送时间：{_preciseTime:F8} | 目标推送时间：{publishTime:F8}");
+        }
     }
 #endregion 指示器
+
+    private void PreGenerateTimestamps()
+    {
+        _beatTimestampQueue = new Queue<double>();
+        _indicatorPublishQueue = new Queue<double>();
+
+        // 计算单个节拍的Indicator推送提前量（逻辑不变）
+        double judgeWindowOffset = windowPeriod;
+        double totalPublishAdvance = judgeWindowOffset + lead;
+
+        // 生成所有时间戳并加入队列
+        double currentBeatTime = _period;
+        while (currentBeatTime < _bgmClip.length)
+        {
+            _beatTimestampQueue.Enqueue(currentBeatTime); // 入队节拍时间
+            double publishTime = currentBeatTime - totalPublishAdvance;
+            _indicatorPublishQueue.Enqueue(publishTime); // 入队推送时间
+
+            currentBeatTime += _period;
+        }
+
+        Debug.Log($"预生成完成 | 总节拍数：{_beatTimestampQueue.Count} | 第一个推送时间：{_indicatorPublishQueue.Peek():F8}");
+    }
 
     private void PushMutiplierChangeEvent()
     {
@@ -139,22 +146,21 @@ public class PreciseBGMManager : MonoBehaviour
                 time = AudioSettings.dspTime
             };
         EventBus.Instance.Trigger<AttackMultiplierChangedEvent>(newMulitiplierEvent);
-        // Debug.Log("Trigger Multipier Changed Event" + _multiplierArray[newIndex]);
         Debug.Log("PushMutiplierChangeEvent\nPreciseTime:"+ _preciseTime);
         }
     }
 
     private void PushBGMProgressEvent()
     {
-        // 核心：用DSP时间计算精准进度（无帧延迟）
+        // 核心：用DSP时间计算精准进度
         double currentDspTime = AudioSettings.dspTime;
         _preciseTime = (float)(currentDspTime - _dspStartTime);
-        // 防止进度超过总时长（音频结束前的最后一帧）
+        // 防止进度超过总时长
         _preciseTime = Mathf.Clamp(_preciseTime, 0, _bgmClip.length);
         // 计算进度数据
         float progress = _preciseTime / _bgmClip.length;
 
-        // 推送精准进度事件（复用之前的事件类）
+        // 推送精准进度事件
         BGMProgressUpdateEvent progressEvent = new BGMProgressUpdateEvent
         {
             Progress = progress,
@@ -174,11 +180,11 @@ public class PreciseBGMManager : MonoBehaviour
             return;
         }
         // 记录DSP开始时间（音频硬件的时间，比Time.time精准）
+        PreGenerateTimestamps();    //  生成关键时间戳序列
         _dspStartTime = AudioSettings.dspTime;
-        _pointToCome = _period;                      //  关键点时间
         _bgmAudioSource.PlayScheduled(_dspStartTime); // 精准调度播放
         _isPlaying = true;
-        _isCurrentPointPublished = true;
+        _hasPublishedCurrentPoint = false;
         // 启动高频采样协程（替代Update，减少空判断）
         StartCoroutine(PreciseProgressSampler());
 
@@ -225,7 +231,8 @@ public class PreciseBGMManager : MonoBehaviour
         // 取消订阅，清理资源
         PreciseEventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);
         _isPlaying = false;
-        StopCoroutine(PreciseProgressSampler());
+        // StopCoroutine(PreciseProgressSampler());
+        StopAllCoroutines();
     }
     void Awake()
     {

@@ -131,7 +131,9 @@ public class UICrosshair : MonoBehaviour
 
     private void OnIndicatorActive(IndicatorActiveEvent evt)
     {
+        // double targetDuration = (evt.nextPoint -  evt.time) / _animBig.GetClipByName.
         //  TODO:
+        _animBig.Play("Normal", 0, 0);
     }
     private void OnPlayBGM(PlayBGMEvent evt)
     {
