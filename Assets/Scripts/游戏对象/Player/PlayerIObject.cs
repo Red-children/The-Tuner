@@ -64,8 +64,8 @@ public class PlayerIObject : BaseObject
 
     public void Start()
     {
-        
-
+        //传递玩家攻击力到当前武器
+        passPlayerAtk();
         // 从当前武器绑定的 WeaponBase 中获取数据列表
         weaponInfos = currentWeapon.weaponBase.weaponList;
         // 初始化武器数据
@@ -144,6 +144,13 @@ public class PlayerIObject : BaseObject
     }
     #endregion
 
+    #region 玩家传递攻击力到武器
+    // 传递攻击力到当前武器
+    public void passPlayerAtk()
+    {
+        currentWeapon.playerAtk = this.atk;
+    }
+    #endregion
     public void Update()
     {
         #region 移动逻辑
@@ -248,6 +255,7 @@ public class PlayerIObject : BaseObject
         }
         #endregion
     }
+
  
 }
 

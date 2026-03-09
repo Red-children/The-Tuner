@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Xml;
 using UnityEngine;
+using UnityEngine.UI;
 
 public enum StateType
 {
@@ -11,6 +12,7 @@ public enum StateType
 [Serializable]
 public class Parameter
 {
+    public GameObject damageTextPrefab; // 伤害飘字预制体
     public SpriteRenderer spriteRenderer; // 拖入敌人的 SpriteRenderer
     public GameObject DeadEff;           // 死亡特效
     public Collider2D chaseArea;          // 追逐范围触发器
@@ -65,6 +67,7 @@ public class FSM : MonoBehaviour
         currentState = states[newState];
         currentState.OnStart();
     }
+    #region 朝向控制方法（已废弃，改用 flipX）
 
     //转用 SpriteRenderer 的 flipX 来控制朝向，避免旋转导致的动画问题
     //该方法仍然保留，但不再直接设置 transform.rotation，而是根据目标位置来决定是否翻转精灵
@@ -82,7 +85,9 @@ public class FSM : MonoBehaviour
     //    float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
     //    transform.rotation = Quaternion.Euler(0, 0, angle);
     //}
+    #endregion
 
+    #region 由其他碰撞器检测玩家进入的方法，供 TriggerForward 调用
     public void OnPlayerEnter(Transform player)
     {
         parameter.target = player;
@@ -93,6 +98,7 @@ public class FSM : MonoBehaviour
         if (parameter.target == player)
             parameter.target = null;
     }
+    #endregion
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -102,10 +108,7 @@ public class FSM : MonoBehaviour
             Bullet bullet = other.GetComponent<Bullet>();
             if (bullet != null)
             {
-                // 先设置伤害值
-                (states[StateType.Wound] as WoundState).finallyDamage = bullet.damage;
-                // 再切换状态
-                ChangeState(StateType.Wound);
+               Wound(bullet.damage);
             }
         }
     }
@@ -126,14 +129,36 @@ public class FSM : MonoBehaviour
         }
     }
 
+    #region 动态获得攻击点位置的方法（考虑朝向）
     public Vector2 GetAttackWorldPos()
     {
         float dir = parameter.spriteRenderer.flipX ? -1f : 1f;
         return (Vector2)transform.position + new Vector2(dir * parameter.attackOffset.x, parameter.attackOffset.y);
     }
+    #endregion
+
+    #region 切换到受击状态的方法 这里可以进行伤害的计算 考虑敌人的减伤相关
     public void Wound(float damage) 
     {
         (states[StateType.Wound] as WoundState).finallyDamage = damage;
         ChangeState(StateType.Wound);
+        
     }
+    #endregion
+
+    
+    
+    
+    #region 显示伤害飘字的方法（需要在 Parameter 中添加 damageTextPrefab）
+    public void ShowDamageText(Vector3 position, float damageValue)
+    {
+        if (parameter.damageTextPrefab == null) return; // 需要在 Parameter 中添加 damageTextPrefab
+        GameObject dmgObj = Instantiate(parameter.damageTextPrefab, position, Quaternion.identity) ;
+        DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
+        if (dmgNumber != null)
+            dmgNumber.SetDamage(damageValue);
+    }
+    #endregion
+
+
 }

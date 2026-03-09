@@ -28,9 +28,12 @@ public class WeaponInfo : MonoBehaviour
     private bool isReloading;
 
     public RhythmData nowRhythmData; // 当前节奏数据
-   
+    public int playerAtk; // 玩家攻击力 放在 PlayerIObject 中
+
+
     void Start()
     {
+
         InitializeWeapon(weaponType);
         nowRhythmData = new RhythmData(false,RhythmRank.Miss,1); // 默认不在窗口，倍率1
         EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
@@ -88,9 +91,10 @@ public class WeaponInfo : MonoBehaviour
         GameObject bulletObj = Instantiate(stats.bulletPrefab, pos, rot);
         // 可在这里设置子弹伤害或速度
         Bullet bulletScript = bulletObj.GetComponent<Bullet>();
-        //后续可以把伤害计算放在这里，考虑暴击、元素伤害等因素
+        //后续可以把伤害计算放在这里，考虑暴击、元素伤害等因素 
         float multiplier = (float)nowRhythmData.multiplier;
-        bulletScript.damage = stats.damage * multiplier;
+
+        bulletScript.damage = (playerAtk +stats.damage ) * multiplier;
     }
 
     public IEnumerator Reload()
@@ -159,7 +163,7 @@ public class WeaponInfo : MonoBehaviour
         InitializeWeapon(newType);   // 重置弹药、开火冷却
         lastSwitchTime = Time.time;
         isSwitching = false;
-        // 可选：发布切换完成事件
+        
     }
     void OnDestroy()
     {
@@ -173,16 +177,4 @@ public class WeaponInfo : MonoBehaviour
 
 }
 
-    //切换武器，外部调用
-    //public void SwitchWeapon(WeaponType newType)
-    //{
-    //    if (newType == weaponType) return;
-    //    weaponType = newType;
-    //    // 重新初始化数据，但不重置冷却时间
-    //    stats = weaponBase.GetWeaponStats(newType);
-    //    if (stats == null) return;
-    //    currentAmmo = stats.maxAmmo;
-    //// 保留 lastFireTime 不变，而不是重置为 -stats.fireRate
-    //// lastFireTime 保持为上次开火的时间，因此新武器同样需要遵守冷却
-    //isReloading = false;
-    //}
+    

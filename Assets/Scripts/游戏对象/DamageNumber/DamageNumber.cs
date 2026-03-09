@@ -25,6 +25,7 @@ public class DamageNumber : MonoBehaviour
             Debug.LogError("DamageNumber: 没有找到 Text 组件！");
     }
 
+    // 设置伤害值并启动动画
     public void SetDamage(float value)
     {
         Debug.Log($"SetDamage 调用，伤害值: {value}");
@@ -36,6 +37,7 @@ public class DamageNumber : MonoBehaviour
         StartAnimation();
     }
 
+    //飘字动画：向上移动并逐渐变淡，结束后销毁对象
     private void StartAnimation()
     {
         Debug.Log("StartAnimation 开始");

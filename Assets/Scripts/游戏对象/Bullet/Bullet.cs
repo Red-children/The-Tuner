@@ -17,7 +17,7 @@ public class Bullet : MonoBehaviour
     public GameObject DestoryEff;
     public GameObject damageTextPrefab; // 死亡飘字预制体
 
-    private bool hasDealtDamage = false; // 是否已处理伤害
+   
 
 
     #region 子弹销毁方法
@@ -42,8 +42,7 @@ public class Bullet : MonoBehaviour
     }
     void Update()
     {
-        #region MyRegion
-
+        #region 射线检测与移动(代替碰撞检测)
 
         // 计算移动距离
         float moveDistance = Time.deltaTime * moveSpeed;
@@ -58,11 +57,12 @@ public class Bullet : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, stepDistance, layerMask);
             if (hit.collider != null)
             {
-                if (hit.collider.gameObject.tag == "Enemy" && !hasDealtDamage)
+                if (hit.collider.gameObject.tag == "Enemy" )
                 {
-                    hasDealtDamage = true;
+                    
                     hit.collider.gameObject.GetComponent<FSM>()?.Wound(damage);
-                    ShowDamageText(hit.collider.transform.position, damage);
+                    //伤害检测 转移到敌人方法中
+                    //ShowDamageText(hit.collider.transform.position, damage); 
                     DestroyMyself();
                     return;
                 }
@@ -79,36 +79,22 @@ public class Bullet : MonoBehaviour
 
     #endregion
 
-    public void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Enemy") && !hasDealtDamage)
-        {
-            hasDealtDamage = true;
-            other.GetComponent<FSM>()?.Wound(damage);  // 添加受伤调用
-            ShowDamageText(other.transform.position, damage);
-            DestroyMyself();
-        }
-        else if (other.gameObject.tag == "Wall")
-        {
-            DestroyMyself();
-        }
-    }
-
-    #region 显示伤害飘字
+    // 该方法已废弃，伤害检测转移到敌人方法中
+        #region 显示伤害飘字
     // 显示伤害数字
-    private void ShowDamageText(Vector3 position, float damageValue)
-    {
-        if (damageTextPrefab == null) return;
-        // 实例化预制体，位置直接使用敌人位置
-        GameObject dmgObj = Instantiate(damageTextPrefab, position, Quaternion.identity);
-        // 获取 DamageNumber 组件（挂在 Canvas 上）
-        DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
-        if (dmgNumber != null)
-        {
-            // 将伤害值传递给 DamageNumber
-            dmgNumber.SetDamage(damageValue);
-        }
-    }
+    //private void ShowDamageText(Vector3 position, float damageValue)
+    //{
+    //    if (damageTextPrefab == null) return;
+    //    // 实例化预制体，位置直接使用敌人位置
+    //    GameObject dmgObj = Instantiate(damageTextPrefab, position, Quaternion.identity);
+    //    // 获取 DamageNumber 组件（挂在 Canvas 上）
+    //    DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
+    //    if (dmgNumber != null)
+    //    {
+    //        // 将伤害值传递给 DamageNumber
+    //        dmgNumber.SetDamage(damageValue);
+    //    }
+    //}
     #endregion
 
     #region 播放死亡特效方法

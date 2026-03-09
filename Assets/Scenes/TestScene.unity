@@ -3099,6 +3099,7 @@ MonoBehaviour:
     multiBulletCount: 5
     bulletPrefab: {fileID: 0}
     reloadTime: 0
+  playerAtk: 0
 --- !u!212 &388984420
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3547,7 +3548,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baa066ca88383764493a4a0dccce7db2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  atk: 0
+  atk: 10
   maxHp: 100
   nowHp: 100
   moveSpeed: 10
@@ -15943,6 +15944,10 @@ PrefabInstance:
       propertyPath: parameter.patrolCenter
       value: 
       objectReference: {fileID: 1251907892}
+    - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
+      propertyPath: parameter.damageTextPrefab
+      value: 
+      objectReference: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_RootOrder
       value: 0

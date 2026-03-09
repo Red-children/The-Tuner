@@ -124,6 +124,7 @@ public class PatrolState : IState
         }
     }
 
+    #region 巡逻点切换方法
     private void SetNextTarget()
     {
         if (parameter.patrolPoints.Length == 0) return;
@@ -145,35 +146,41 @@ public class PatrolState : IState
                 currentPointIndex--;
         }
     }
+    #endregion
     public void OnExit()
     {
         targetPos = Vector2.zero;
     }
 
-    private void RotateTowardsTarget()
-    {
-        //目标点与当前敌人位置的方向向量
-        Vector2 direction = targetPos - (Vector2)manager.transform.position;
-        if (direction.magnitude < 0.01f) return;
+    #region 旋转方法（暂时弃用）
+    //private void RotateTowardsTarget()
+    //{
+    //    //目标点与当前敌人位置的方向向量
+    //    Vector2 direction = targetPos - (Vector2)manager.transform.position;
+    //    if (direction.magnitude < 0.01f) return;
 
-        // 计算目标角度
-        float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+    //    // 计算目标角度
+    //    float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // 获取当前角度（将四元数转换为欧拉角，注意我们只需要Z轴旋转）
-        float currentAngle = manager.transform.eulerAngles.z;
+    //    // 获取当前角度（将四元数转换为欧拉角，注意我们只需要Z轴旋转）
+    //    float currentAngle = manager.transform.eulerAngles.z;
 
-        // 计算最短旋转角度差
-        float angleDiff = Mathf.DeltaAngle(currentAngle, targetAngle);
+    //    // 计算最短旋转角度差
+    //    float angleDiff = Mathf.DeltaAngle(currentAngle, targetAngle);
 
-        // 根据旋转速度限制每帧最大旋转角度
-        float maxDelta = rotationSpeed * Time.deltaTime;
-        float newAngle = currentAngle + Mathf.Clamp(angleDiff, -maxDelta, maxDelta);
+    //    // 根据旋转速度限制每帧最大旋转角度
+    //    float maxDelta = rotationSpeed * Time.deltaTime;
+    //    float newAngle = currentAngle + Mathf.Clamp(angleDiff, -maxDelta, maxDelta);
 
-        // 应用新旋转
-        manager.transform.rotation = Quaternion.Euler(0, 0, newAngle);
-    }
+    //    // 应用新旋转
+    //    manager.transform.rotation = Quaternion.Euler(0, 0, newAngle);
+    //}
 
-    //现在改用巡逻点设置 暂时弃用
+
+
+    #endregion
+
+    #region 随机巡逻点生成方法
     private void GetNewRandomTarget()
     {
         if (parameter.patrolCenter == null)
@@ -203,6 +210,7 @@ public class PatrolState : IState
         // 最终目标点 = 巡逻中心 + 偏移
         targetPos = center + offset;
     }
+    #endregion
 }
 #endregion
 
@@ -341,9 +349,9 @@ public class WoundState : IState
 {
     private FSM manager;
     private Parameter parameter;
-    private float timer;
+    private float timer;        // 受击硬直计时器
 
-    public float finallyDamage;
+    public float finallyDamage;//最终伤害值 在Wound方法中计算并赋值
 
     public WoundState(FSM manager)
     {
@@ -353,10 +361,12 @@ public class WoundState : IState
 
     public void OnStart()
     {
+        parameter.health -= finallyDamage; // 直接在这里扣血，确保状态切换时已经计算好最终伤害
         Debug.Log("进入Wound状态");
         parameter.getHit = false;
-        parameter.health -= finallyDamage; // 扣血
+        manager.ShowDamageText(manager.transform.position, finallyDamage);
         timer = 0f;
+    
     }
 
     public void OnUpdate()
