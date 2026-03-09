@@ -22,8 +22,8 @@ public class WeaponInfo : MonoBehaviour
     public WeaponType weaponType;       // 当前武器
     public Transform firePos;           // 射击位置
 
-    public WeaponStats stats;
-    private int currentAmmo;
+    public WeaponStats stats;           //当前武器状态数据    
+    private int currentAmmo;            
     private float lastFireTime;
     private bool isReloading;
 
@@ -33,7 +33,7 @@ public class WeaponInfo : MonoBehaviour
 
     void Start()
     {
-
+        //实例化武器
         InitializeWeapon(weaponType);
         nowRhythmData = new RhythmData(false,RhythmRank.Miss,1); // 默认不在窗口，倍率1
         EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
@@ -44,10 +44,11 @@ public class WeaponInfo : MonoBehaviour
         
     }
 
+    #region 射击方法
     public void Shoot()
     {
         if (isSwitching) return;           // 切换期间不能开火
-        if (isReloading) return; // 正在换弹时不能开枪
+        if (isReloading) return;           // 正在换弹时不能开枪
 
         if (currentAmmo <= 0)
         {
@@ -84,11 +85,13 @@ public class WeaponInfo : MonoBehaviour
         }
         // 触发开火事件（空结构体）
         EventBus.Instance.Trigger(new PlayerFiredEvent());
-        
-        
-        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = weaponBase.GetWeaponStats(weaponType).shakeIntensity });
-    }
 
+
+        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = stats.shakeIntensity });
+    }
+    #endregion
+
+    #region 实例化子弹
     void SpawnBullet(Vector3 pos, Quaternion rot)
     {
         GameObject bulletObj = Instantiate(stats.bulletPrefab, pos, rot);
@@ -99,7 +102,9 @@ public class WeaponInfo : MonoBehaviour
 
         bulletScript.damage = (playerAtk +stats.damage ) * multiplier;
     }
+    #endregion
 
+    #region 换弹冷却协程
     public IEnumerator Reload()
     {
         isReloading = true;
@@ -107,6 +112,7 @@ public class WeaponInfo : MonoBehaviour
         currentAmmo = stats.maxAmmo;
         isReloading = false;
     }
+    #endregion
 
     // 获取当前弹药数量，可绑定 UI
     public int GetCurrentAmmo()
@@ -114,6 +120,7 @@ public class WeaponInfo : MonoBehaviour
         return currentAmmo;
     }
 
+    #region 实例化武器
     public void InitializeWeapon(WeaponType type)
     {
         stats = weaponBase.GetWeaponStats(type);
@@ -127,6 +134,9 @@ public class WeaponInfo : MonoBehaviour
         isReloading = false;
     }
 
+    #endregion
+
+    #region 切换武器
     public void SwitchWeapon(WeaponType newType)
     {
         if (newType == weaponType) return;          // 相同武器不切换
@@ -153,12 +163,18 @@ public class WeaponInfo : MonoBehaviour
             StartCoroutine(SwitchCooldownCoroutine());
         }
     }
+    #endregion
+
+    #region 切枪冷却协程
     // 切换冷却协程
     private IEnumerator SwitchCooldownCoroutine()
     {
         yield return new WaitForSeconds(switchCooldown);
         CompleteSwitch(pendingWeapon);
     }
+    #endregion 
+
+    #region 完美切换
     //完美切换 立即完成切换
     private void CompleteSwitch(WeaponType newType)
     {
@@ -168,16 +184,22 @@ public class WeaponInfo : MonoBehaviour
         isSwitching = false;
         
     }
+    #endregion
+
+    #region 取消节奏数据订阅
     void OnDestroy()
     {
         EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
     }
+    #endregion
+
+    #region 订阅节奏数据
     private void OnRhythmData(RhythmData data)
     {
         nowRhythmData = data;
     }
-
+    #endregion
 
 }
 
-    
+

@@ -7,6 +7,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 
+public struct PlayerMeleeEvent
+{
+    public float damage;
+    public Vector2 hitPoint;
+}
+
 public struct CameraShakeEvent
 {
     public float intensity;   // 震屏强度，可以根据伤害值决定
@@ -29,7 +35,15 @@ public struct PlayerDiedEvent
 
 public class PlayerIObject : BaseObject
 {
-    
+
+    [Header("近战攻击设置")]
+    public float meleeRange = 1.5f;          // 近战范围
+    public LayerMask enemyLayer;              // 敌人层级
+    public float meleeBaseDamage = 20f;       // 基础伤害
+    public float meleeCooldown = 0.5f;        // 近战冷却
+    private float lastMeleeTime = -999f;
+    private float rhythmMultiplier = 1f; // 默认倍率1
+
 
     [Header("Weapon")]
     public WeaponInfo currentWeapon;   // 当前使用的武器
@@ -98,9 +112,23 @@ public class PlayerIObject : BaseObject
 
     }
 
+    private void OnEnable()
+    {
+        EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
+    }
+    private void OnDisable()
+    {
+        EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
+    }
+    private void OnRhythmData(RhythmData data)
+    {
+        rhythmMultiplier = (float)data.multiplier;
+    }
+
+
     #region 重写受伤方法
 
-    
+
     // 重写 Wound 方法  传入伤害数值
     public override void Wound(int damage)
     {
@@ -184,6 +212,34 @@ public class PlayerIObject : BaseObject
         currentWeapon.playerAtk = this.atk;
     }
     #endregion
+
+    #region 近战攻击方法 计算伤害并检测敌人
+    private void MeleeAttack()
+    {
+        lastMeleeTime = Time.time;
+
+        // 计算最终伤害
+        float finalDamage = (atk + meleeBaseDamage) * rhythmMultiplier;
+
+        // 检测敌人
+        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, meleeRange, enemyLayer);
+        foreach (var enemy in hitEnemies)
+        {
+            FSM enemyFSM = enemy.GetComponent<FSM>();
+            if (enemyFSM != null)
+            {
+                enemyFSM.Wound(finalDamage);
+            }
+        }
+
+        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = finalDamage * 0.1f }); // 示例强度
+
+        // 触发近战事件（供音效等使用）
+        EventBus.Instance.Trigger(new PlayerMeleeEvent { damage = finalDamage, hitPoint = transform.position });
+
+    }
+    #endregion
+
     public void Update()
     {
         #region 移动逻辑
@@ -248,7 +304,18 @@ public class PlayerIObject : BaseObject
             transform.rotation = Quaternion.Euler(0, 0, angle);
         }
         #endregion
-        
+
+        #region 近战攻击检测
+        if (Input.GetKeyDown(KeyCode.V) && Time.time > lastMeleeTime + meleeCooldown)
+        {
+            MeleeAttack();
+        }
+        #endregion
+
+
+
+
+
         //#region 相机追踪逻辑
         ////玩家和准星之间的向量上取一点 相机对这一点做线性插值
         //Vector2 cameraOffset =  directionMouse * offsetFactor;
@@ -287,6 +354,8 @@ public class PlayerIObject : BaseObject
             currentWeapon.SwitchWeapon(newType);
         }
         #endregion
+
+
     }
 
  

@@ -3298,6 +3298,7 @@ MonoBehaviour:
     multiBulletCount: 5
     bulletPrefab: {fileID: 0}
     reloadTime: 0
+    shakeIntensity: 0.01
   playerAtk: 0
 --- !u!212 &388984420
 SpriteRenderer:
@@ -3752,6 +3753,12 @@ MonoBehaviour:
   nowHp: 100
   moveSpeed: 10
   DiedEff: {fileID: 0}
+  meleeRange: 1.5
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  meleeBaseDamage: 20
+  meleeCooldown: 0.5
   currentWeapon: {fileID: 388984419}
   weaponInfos: []
   playerCamera: {fileID: 519420031}
