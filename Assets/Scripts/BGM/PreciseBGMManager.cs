@@ -12,7 +12,8 @@ public class PreciseBGMManager : MonoBehaviour
     public double windowPeriod = 0.2f;
     [Header("1s/BPM")]
     [Header("周期")]
-    private double _period = 0.5f;
+    private double BPM = 0.5f;
+    public double fistOffset = 1.1f;
 
     [SerializeField] private AudioSource _bgmAudioSource;
     [SerializeField] private AudioClip _bgmClip;
@@ -81,7 +82,7 @@ public class PreciseBGMManager : MonoBehaviour
     private void PushIndicatorEvent()
     {
         // 边界检查：无待处理项/时间未到0.4s
-        if (_preciseTime < 0.4 || _indicatorPublishQueue.Count == 0)
+        if (_preciseTime < 1.1f || _indicatorPublishQueue.Count == 0)
             return;
 
         // 查看队列首个待推送时间（Peek不删除，仅查看）
@@ -97,6 +98,7 @@ public class PreciseBGMManager : MonoBehaviour
             // 发布事件
             var evt = new IndicatorActiveEvent
             {
+                BPM = BPM,
                 time = _preciseTime,
                 nextPoint = currentBeatTime
             };
@@ -116,14 +118,14 @@ public class PreciseBGMManager : MonoBehaviour
         double totalPublishAdvance = judgeWindowOffset + lead;
 
         // 生成所有时间戳并加入队列
-        double currentBeatTime = _period;
+        double currentBeatTime = BPM;
         while (currentBeatTime < _bgmClip.length)
         {
             _beatTimestampQueue.Enqueue(currentBeatTime); // 入队节拍时间
             double publishTime = currentBeatTime - totalPublishAdvance;
             _indicatorPublishQueue.Enqueue(publishTime); // 入队推送时间
 
-            currentBeatTime += _period;
+            currentBeatTime += BPM;
         }
 
         Debug.Log($"预生成完成 | 总节拍数：{_beatTimestampQueue.Count} | 第一个推送时间：{_indicatorPublishQueue.Peek():F8}");
@@ -132,8 +134,8 @@ public class PreciseBGMManager : MonoBehaviour
     private void PushMutiplierChangeEvent()
     {
         //  TODO:检查倍率是否更新
-        double offset = _preciseTime % _period;
-        double ahead = _period - offset;
+        double offset = _preciseTime % BPM;
+        double ahead = BPM - offset;
         int newIndex = ahead < windowPeriod ? 0:1;
         Debug.Log("newIndex:" + newIndex + "\noffset:" + offset);
         //  发布倍率变动

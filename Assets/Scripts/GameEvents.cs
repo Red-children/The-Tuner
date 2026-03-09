@@ -41,6 +41,7 @@ struct BGMProgressUpdateEvent
 
 struct IndicatorActiveEvent
 {
+    public double BPM;   //  1s/BPM
     public double time;     //  已播放时间
     public double nextPoint;    //  下一个关键点在音乐中的时间
 }

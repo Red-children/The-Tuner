@@ -27,6 +27,11 @@ public class UICrosshair : MonoBehaviour
     private const string SmallCirclePath = "PicUI/CircleSmall"; 
     private const string BigCirclePath = "PicUI/CircleBig"; 
 
+
+    private void getClipByName()
+    {
+        
+    }
     private void CrosshairInit()
     {
         Debug.Log("UICrosshair: Initializing crosshair...");
@@ -103,10 +108,11 @@ public class UICrosshair : MonoBehaviour
     {
         //  TODO:
     }
-
+#region 回调函数
     // 普通状态动画（大圆环缩放核心逻辑）
     private void AnimIdle()
     {
+        //  TODO:
         // if()
         // _animBig.Play("Normal");
     }
@@ -131,9 +137,12 @@ public class UICrosshair : MonoBehaviour
 
     private void OnIndicatorActive(IndicatorActiveEvent evt)
     {
-        // double targetDuration = (evt.nextPoint -  evt.time) / _animBig.GetClipByName.
         //  TODO:
-        _animBig.Play("Normal", 0, 0);
+        //  计算剩余动画进程
+        float left = (float) (evt.BPM * (evt.nextPoint - evt.time) / 60);
+        // left = 1 - left;    // 开始节点
+        _animBig.Play("CrosshairNormal", 0, left);
+        Debug.Log($"Animation Start at {left}");
     }
     private void OnPlayBGM(PlayBGMEvent evt)
     {
@@ -146,14 +155,8 @@ public class UICrosshair : MonoBehaviour
         Debug.Log("Crosshair:Received Multiplier Changed Event");
 
     }
-
-    //  更新准星位置到鼠标位置
-    private void UpdateCrosshairToMouse()
-    {
-        Vector2 pos = Input.mousePosition;
-        transform.position = pos;
-    }
-
+#endregion
+#region 生命周期
     void OnEnable()
     {
         //  订阅bgm播放进度 & 倍率变动 & 敌人受伤事件 & 提示器上线
@@ -167,6 +170,7 @@ public class UICrosshair : MonoBehaviour
     void OnDisable()
     {
         //  取消订阅bgm播放进度 & 倍率变动 & 敌人受伤事件 & 提示器上线
+        PreciseEventBus.Instance.Unsubscribe<IndicatorActiveEvent>(OnIndicatorActive);
         PreciseEventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);
         PreciseEventBus.Instance.Unsubscribe<BGMProgressUpdateEvent>(OnProgressUpdate);
         EventBus.Instance.Unsubscribe<AttackMultiplierChangedEvent>(OnMultiplierChanged);
@@ -194,6 +198,12 @@ public class UICrosshair : MonoBehaviour
     // {
     //     StopAllCoroutines(); // 停止所有动画协程
     // }
+    //  更新准星位置到鼠标位置
+    private void UpdateCrosshairToMouse()
+    {
+        Vector2 pos = Input.mousePosition;
+        transform.position = pos;
+    }
     private void TestTemp()
     {
 
@@ -202,4 +212,5 @@ public class UICrosshair : MonoBehaviour
             OnEnemyHit(new EnemyHitEvent());
         }
     }
+#endregion
 }
