@@ -1,3 +1,4 @@
+using DG.Tweening.Core.Easing;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro.EditorUtilities;
@@ -25,6 +26,15 @@ public struct PlayerHealthChangedEventStruct
     public float healthPercent => currentHealth / maxHealth; //方便UI直接使用
 }
 
+#region 用来传递节奏数据的事件结构体 供玩家和武器监听
+public struct RhythmHitEvent
+{
+    public RhythmRank rank;      // 判定等级
+    public float intensity;      // 根据等级决定的强度（可选）
+
+
+}
+#endregion
 
 
 public struct PlayerDiedEvent
@@ -35,6 +45,18 @@ public struct PlayerDiedEvent
 
 public class PlayerIObject : BaseObject
 {
+    [Header("闪避设置")]
+    public float dashDistance = 3f;          // 最大闪避距离
+    public float dashDuration = 0.3f;        // 闪避持续时间
+    public float dashCooldown = 1f;           // 闪避冷却
+    public bool isDashing = false;             // 是否正在闪避
+    public AnimationCurve dashCurve;              // 闪避位移曲线（可选，用于控制闪避的加速/减速效果）
+    private float lastDashTime = -999f;
+
+
+
+
+
 
     [Header("近战攻击设置")]
     public float meleeRange = 1.5f;          // 近战范围
@@ -374,12 +396,41 @@ public class PlayerIObject : BaseObject
         }
         #endregion
 
+        Vector3 dashDir = directionMouse.normalized;
+        Vector3 targatPos = this.transform.position + dashDir * dashDistance;
+
+        if (Input.GetMouseButtonDown(1) && Time.time > lastDashTime + dashCooldown)
+        {
+            StartCoroutine(DashCoroutine(this.transform.position , targatPos , dashDuration ));
+        }
+
+
 
     }
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, meleeRange);
+    }
+
+    private IEnumerator DashCoroutine(Vector3 start, Vector3 target, float duration)
+    {
+        isDashing = true;
+        isInvincible = true; // 开启无敌
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            float t = elapsed / duration;
+            // 使用曲线控制位移进度，例如先加速后减速
+            float curveT = dashCurve.Evaluate(t); // 你需要一个 AnimationCurve 字段
+            transform.position = Vector3.Lerp(start, target, curveT);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = target; // 确保最终位置准确
+        isDashing = false;
+        isInvincible = false;
     }
 
 }

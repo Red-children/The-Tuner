@@ -86,8 +86,16 @@ public class WeaponInfo : MonoBehaviour
         // 触发开火事件（空结构体）
         EventBus.Instance.Trigger(new PlayerFiredEvent());
 
-
+        //触发命名振动
         EventBus.Instance.Trigger(new CameraShakeEvent { intensity = stats.shakeIntensity });
+
+        // 触发节奏命中事件（携带当前节奏数据）
+        EventBus.Instance.Trigger(new RhythmHitEvent
+        {
+            rank = nowRhythmData.rank,
+            intensity = nowRhythmData.rank == RhythmRank.Perfect ? 1f :
+                        nowRhythmData.rank == RhythmRank.Great ? 0.6f : 0.3f
+        });
     }
     #endregion
 
