@@ -52,3 +52,6 @@ TagManager:
   - name: DamageNumber
     uniqueID: 238511875
     locked: 0
+  - name: Weapon
+    uniqueID: 2225659765
+    locked: 0

@@ -85,7 +85,8 @@ public class PlayerIObject : BaseObject
     //相机的z轴位置，确保相机在玩家前面
     public float cameraZ = -10f;
 
-  
+    //玩家的SpriteRenderer组件 用于翻转角色
+    public SpriteRenderer spriteRenderer;
 
     public void Start()
     {
@@ -265,6 +266,8 @@ public class PlayerIObject : BaseObject
 
         // 应用移动
         transform.Translate(new Vector3(moveX, moveY, 0) * moveSpeed * Time.deltaTime, Space.World);
+
+
         #endregion
 
         #region 开火检测
@@ -295,14 +298,22 @@ public class PlayerIObject : BaseObject
         // 计算向量（从角色指向鼠标）
         Vector2 directionMouse = mouseWorldPos - transform.position;
 
-        // 如果鼠标和角色重合，不旋转
-        if (directionMouse.magnitude > 0.01f)
-        {
-            // 计算方向与X轴的夹角（弧度），转为角度
-            float angle = Mathf.Atan2(directionMouse.y, directionMouse.x) * Mathf.Rad2Deg;
-            //转向
-            transform.rotation = Quaternion.Euler(0, 0, angle);
-        }
+        //// 如果鼠标和角色重合，不旋转
+        //if (directionMouse.magnitude > 0.01f)
+        //{
+        //    // 计算方向与X轴的夹角（弧度），转为角度
+        //    float angle = Mathf.Atan2(directionMouse.y, directionMouse.x) * Mathf.Rad2Deg;
+        //    //转向
+        //    transform.rotation = Quaternion.Euler(0, 0, angle);
+        //}
+
+        // 在鼠标追踪逻辑后添加：
+        if (directionMouse.x > 0)
+            spriteRenderer.flipX = false; // 朝右
+        else if (directionMouse.x < 0)
+            spriteRenderer.flipX = true;  // 朝左       
+                            // 注意：这里仅根据X轴方向决定翻转，如果鼠标在正上方，会保持上次朝向，但通常够用。
+                                          // 更精细的可以结合方向角度，但先这样。
         #endregion
 
         #region 近战攻击检测
@@ -312,6 +323,14 @@ public class PlayerIObject : BaseObject
         }
         #endregion
 
+
+        // 武器指向鼠标
+        if (currentWeapon != null)
+        {
+            Vector2 weaponDir = directionMouse; // 方向与玩家到鼠标一致
+            float weaponAngle = Mathf.Atan2(weaponDir.y, weaponDir.x) * Mathf.Rad2Deg;
+            currentWeapon.transform.rotation = Quaternion.Euler(0, 0, weaponAngle);
+        }
 
 
 
@@ -357,8 +376,12 @@ public class PlayerIObject : BaseObject
 
 
     }
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, meleeRange);
+    }
 
- 
 }
 
 

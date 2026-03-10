@@ -1,4 +1,5 @@
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ public class DamageNumber : MonoBehaviour
     public float duration = 1f;    // 飘字动画持续时间 
 
     [Header("组件引用")]
-    public Text damageText;  // 手动拖拽赋值
+    public TextMeshProUGUI  damageText;  // 手动拖拽赋值
 
     void Awake()
     {
@@ -20,7 +21,7 @@ public class DamageNumber : MonoBehaviour
             canvas.worldCamera = Camera.main; // 自动获取主摄像机
         }
         if (damageText == null)
-            damageText = GetComponentInChildren<Text>();
+            damageText = GetComponentInChildren<TextMeshProUGUI>();
         if (damageText == null)
             Debug.LogError("DamageNumber: 没有找到 Text 组件！");
     }

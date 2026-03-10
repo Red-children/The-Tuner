@@ -22,6 +22,7 @@ MonoBehaviour:
     multiBulletCount: 0
     bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
     reloadTime: 1.47
+    shakeIntensity: 0.01
   - weaponType: 1
     weaponName: 2
     damage: 10
@@ -31,6 +32,7 @@ MonoBehaviour:
     multiBulletCount: 10
     bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
     reloadTime: 2.99
+    shakeIntensity: 0.1
   - weaponType: 2
     weaponName: 3
     damage: 25
@@ -40,3 +42,4 @@ MonoBehaviour:
     multiBulletCount: 0
     bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
     reloadTime: 1.56
+    shakeIntensity: 0.01
