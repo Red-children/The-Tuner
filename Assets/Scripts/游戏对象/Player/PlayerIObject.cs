@@ -51,6 +51,7 @@ public class PlayerIObject : BaseObject
     public float dashCooldown = 1f;           // 闪避冷却
     public bool isDashing = false;             // 是否正在闪避
     public AnimationCurve dashCurve;              // 闪避位移曲线（可选，用于控制闪避的加速/减速效果）
+    public bool isHasWallOnDashPath = false;        //用于射线检测，冲刺路径上是否有墙
     private float lastDashTime = -999f;
 
 
@@ -396,12 +397,22 @@ public class PlayerIObject : BaseObject
         }
         #endregion
 
-        Vector3 dashDir = directionMouse.normalized;
-        Vector3 targatPos = this.transform.position + dashDir * dashDistance;
+        Vector3 dashDir = directionMouse.normalized; // 原 Vector3
+        Vector2 dashDir2D = new Vector2(dashDir.x, dashDir.y); // 转换为 Vector2
+        Vector3 targetPos = transform.position + dashDir * dashDistance; // targetPos 仍用 Vector3
+
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDir2D, dashDistance, wallLayer);
+        if (hit.collider != null)
+        {
+            // hit.point 是 Vector2，dashDir2D 也是 Vector2，可以相减
+            Vector2 adjustedPoint = hit.point - dashDir2D * 0.2f;
+            targetPos = new Vector3(adjustedPoint.x, adjustedPoint.y, transform.position.z);
+        }
 
         if (Input.GetMouseButtonDown(1) && Time.time > lastDashTime + dashCooldown)
         {
-            StartCoroutine(DashCoroutine(this.transform.position , targatPos , dashDuration ));
+            lastDashTime = Time.time;
+            StartCoroutine(DashCoroutine(transform.position, targetPos, dashDuration));
         }
 
 
@@ -416,19 +427,19 @@ public class PlayerIObject : BaseObject
     private IEnumerator DashCoroutine(Vector3 start, Vector3 target, float duration)
     {
         isDashing = true;
-        isInvincible = true; // 开启无敌
+        isInvincible = true;
 
         float elapsed = 0f;
         while (elapsed < duration)
         {
             float t = elapsed / duration;
-            // 使用曲线控制位移进度，例如先加速后减速
-            float curveT = dashCurve.Evaluate(t); // 你需要一个 AnimationCurve 字段
+            float curveT = dashCurve.Evaluate(t);
             transform.position = Vector3.Lerp(start, target, curveT);
             elapsed += Time.deltaTime;
             yield return null;
         }
         transform.position = target; // 确保最终位置准确
+
         isDashing = false;
         isInvincible = false;
     }
