@@ -2994,6 +2994,8 @@ GameObject:
   - component: {fileID: 484277548}
   - component: {fileID: 484277550}
   - component: {fileID: 484277549}
+  - component: {fileID: 484277552}
+  - component: {fileID: 484277551}
   m_Layer: 5
   m_Name: CrosshairSmall
   m_TagString: Untagged
@@ -3059,6 +3061,41 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 484277547}
   m_CullTransparentMesh: 1
+--- !u!95 &484277551
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 484277547}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: c0b060b5a8241ef40823b601ca972b19, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &484277552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 484277547}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08c2ce892001cbc439da1d6876669c0f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  anim: {fileID: 484277551}
+  animStateName: PreciseHit
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -3178,54 +3215,6 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
---- !u!1 &574653226
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 574653228}
-  - component: {fileID: 574653227}
-  m_Layer: 0
-  m_Name: RhythmTimer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &574653227
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 574653226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ac799775d7dc0814a9f6853359bf2414, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _multiplierArray:
-  - 0.99
-  - 0.01
-  interval: 0.05
---- !u!4 &574653228
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 574653226}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.4614104, y: 2.2359378, z: -241.14519}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &608924682
 GameObject:
   m_ObjectHideFlags: 0
@@ -5000,12 +4989,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1610443776}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: dc8307b5d032c544bbad6b43f49d774d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   anim: {fileID: 1610443780}
+  animStateName: CrosshairNormal
 --- !u!1 &1612883553
 GameObject:
   m_ObjectHideFlags: 0
@@ -14994,9 +14984,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b62944750c7859d4290374191b6960af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _multiplierArray:
+  - 0.99
+  - 0.01
+  windowPeriod: 0.1
+  fistOffset: 1.100000023841858
   _bgmAudioSource: {fileID: 1794257805}
   _bgmClip: {fileID: 8300000, guid: 30f36fe8ee10e744db764aa43bc22572, type: 3}
   sampleIntervalMs: 10
+  lead: 0.1
 --- !u!4 &1794257804
 Transform:
   m_ObjectHideFlags: 0
@@ -15161,10 +15157,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a164b7080a972543b5421e9e5ac69b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  crosshairSmall: {fileID: 0}
+  crosshairSmall: {fileID: 484277549}
   crosshairBig: {fileID: 1610443778}
-  idleAnimCycle: 0.5
-  maxScale: 10
 --- !u!114 &1844501599
 MonoBehaviour:
   m_ObjectHideFlags: 0

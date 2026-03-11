@@ -103,6 +103,7 @@ public class UICrosshair : MonoBehaviour
     private void AnimCriticalHit()
     {
         //  TODO:
+        _animSmall.Play("PreciseHit");
     }
     private void AnimNormalHit()
     {
@@ -119,7 +120,10 @@ public class UICrosshair : MonoBehaviour
 
     private void OnEnemyHit(EnemyHitEvent evt)
     {
-        _animSmall.Play("PreciseHit");
+        double currentTime = AudioSettings.dspTime - _dspStartTime;
+        if (_isCritical)
+            _animSmall.Play("PreciseHit");
+            Debug.Log($"精准命中PreciseHit\nCurrent:{currentTime}\n******************");
         // if (_isCritical)
         // {
         //     AnimCriticalHit();
@@ -139,8 +143,8 @@ public class UICrosshair : MonoBehaviour
     {
         //  TODO:
         //  计算剩余动画进程
-        float left = (float) (evt.BPM * (evt.nextPoint - evt.time) / 60);
-        // left = 1 - left;    // 开始节点
+        // float left = (float) (evt.BPM * (evt.nextPoint - evt.time) / 60);
+        float left = 1f - (float) (evt.nextPoint - evt.time) / 0.2f;
         _animBig.Play("CrosshairNormal", 0, left);
         Debug.Log($"Animation Start at {left}");
     }
