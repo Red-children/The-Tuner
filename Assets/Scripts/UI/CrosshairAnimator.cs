@@ -66,7 +66,7 @@ public class CrosshairAnimator : MonoBehaviour
     {
         if (_animBig == null) 
         {
-            throw new System.NullReferenceException("UICrosshairController: _animator为空！无法调用PlayScaleAnimation");
+            throw new System.NullReferenceException("UICrosshairController: _animator为空!无法调用PlayScaleAnimation");
         }
 
         Debug.Log($"Indicator Active at {AudioSettings.dspTime - _dspStartTime}");
