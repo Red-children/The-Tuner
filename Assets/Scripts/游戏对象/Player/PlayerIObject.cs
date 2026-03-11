@@ -48,11 +48,16 @@ public class PlayerIObject : BaseObject
     [Header("闪避设置")]
     public float dashDistance = 3f;          // 最大闪避距离
     public float dashDuration = 0.3f;        // 闪避持续时间
-    public float dashCooldown = 1f;           // 闪避冷却
+    
     public bool isDashing = false;             // 是否正在闪避
     public AnimationCurve dashCurve;              // 闪避位移曲线（可选，用于控制闪避的加速/减速效果）
-    public bool isHasWallOnDashPath = false;        //用于射线检测，冲刺路径上是否有墙
-    private float lastDashTime = -999f;
+    
+    public float maxDashEnergy = 2;          // 闪避条上限
+    public float currentDashEnergy = 2;   // 当前闪避条
+    public float dashEnergyRegenRate = 1f;    // 闪避条恢复速率（每秒恢复多少）
+    public bool isDashOnWindow = false;             // 是否在节奏窗口内可以闪避
+
+
 
 
 
@@ -66,6 +71,7 @@ public class PlayerIObject : BaseObject
     public float meleeCooldown = 0.5f;        // 近战冷却
     private float lastMeleeTime = -999f;
     private float rhythmMultiplier = 1f; // 默认倍率1
+    
 
 
     [Header("Weapon")]
@@ -80,19 +86,6 @@ public class PlayerIObject : BaseObject
 
     //主摄像机 负责追踪玩家位置
     public Camera playerCamera;
-
-
-    //开火间隔时间 记得后面转武器然后用配置文件来决定开火间隔时间
-    public float fireInterval = 0.5f;
-    //计时器
-    public float fireTimer = 0f;
-
-  
-    //当前屏幕上的点
-    public Vector3 nowPos;
-    //上一次玩家的位置 就是在位移前 玩家的位置
-    public Vector3 frontPos;
-
     //墙的层级
     LayerMask wallLayer;
 
@@ -101,10 +94,6 @@ public class PlayerIObject : BaseObject
 
     //相机移动的平滑度
     public float cameraSmoothness = 5f;
-
-    //玩家的Z轴位置，确保相机在玩家前面
-    public float z = 0;
-
     //相机的z轴位置，确保相机在玩家前面
     public float cameraZ = -10f;
 
@@ -147,6 +136,7 @@ public class PlayerIObject : BaseObject
     private void OnRhythmData(RhythmData data)
     {
         rhythmMultiplier = (float)data.multiplier;
+        isDashOnWindow = data.isInWindow; // 根据节奏窗口状态更新闪避可用性
     }
 
 
@@ -397,6 +387,15 @@ public class PlayerIObject : BaseObject
         }
         #endregion
 
+        #region  节奏闪避
+        if (currentDashEnergy < maxDashEnergy)
+        {
+            currentDashEnergy += dashEnergyRegenRate * Time.deltaTime;
+            if (currentDashEnergy > maxDashEnergy)
+                currentDashEnergy = maxDashEnergy;
+        }
+
+
         Vector3 dashDir = directionMouse.normalized; // 原 Vector3
         Vector2 dashDir2D = new Vector2(dashDir.x, dashDir.y); // 转换为 Vector2
         Vector3 targetPos = transform.position + dashDir * dashDistance; // targetPos 仍用 Vector3
@@ -409,12 +408,16 @@ public class PlayerIObject : BaseObject
             targetPos = new Vector3(adjustedPoint.x, adjustedPoint.y, transform.position.z);
         }
 
-        if (Input.GetMouseButtonDown(1) && Time.time > lastDashTime + dashCooldown)
+        if (Input.GetMouseButtonDown(1) &&(currentDashEnergy>1||isDashOnWindow))
         {
-            lastDashTime = Time.time;
+            if (!isDashOnWindow)
+            {
+                currentDashEnergy -= 1; // 消耗闪避能量
+            }
+            
             StartCoroutine(DashCoroutine(transform.position, targetPos, dashDuration));
         }
-
+        #endregion
 
 
     }
@@ -429,6 +432,7 @@ public class PlayerIObject : BaseObject
         isDashing = true;
         isInvincible = true;
 
+         
         float elapsed = 0f;
         while (elapsed < duration)
         {

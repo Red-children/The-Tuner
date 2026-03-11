@@ -3753,6 +3753,48 @@ MonoBehaviour:
   nowHp: 100
   moveSpeed: 10
   DiedEff: {fileID: 0}
+  dashDistance: 3
+  dashDuration: 0.3
+  dashCooldown: 1
+  isDashing: 0
+  dashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2.739204
+      outSlope: 2.739204
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.3539831
+      value: 0.9696319
+      inSlope: 0.35443613
+      outSlope: 0.35443613
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.3602088
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.047008198
+      outSlope: 0.047008198
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  isHasWallOnDashPath: 0
+  maxDashEnergy: 2
+  currentDashEnergy: 2
+  dashEnergyRegenRate: 0.2
+  isDashOnWindow: 0
   meleeRange: 1.5
   enemyLayer:
     serializedVersion: 2
@@ -4738,8 +4780,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1234041244}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.77, y: 0.27, z: 0}
-  m_LocalScale: {x: 2.2319, y: 8.226, z: 1}
+  m_LocalPosition: {x: 4.7412, y: -0.1514, z: 0}
+  m_LocalScale: {x: 6.1743283, y: 9.069164, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
