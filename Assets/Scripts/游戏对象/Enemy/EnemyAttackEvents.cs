@@ -15,7 +15,7 @@ public class EnemyAttackEvents : MonoBehaviour
     public void OnAttackHit()
     {
         // 获取当前状态，如果是 AttackState，则调用它的 OnAttackHit 方法
-        if (fsm.currentState is AttackState attackState)
+        if (fsm.currentState is EnemyAttackState attackState)
         {
             attackState.OnAttackHit();
         }

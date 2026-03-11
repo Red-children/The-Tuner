@@ -4,14 +4,14 @@ using static UnityEngine.RuleTile.TilingRuleOutput;
 
 #region 等待状态
 
-public class IdleState : IState
+public class EnemyIdleState : IState
 {
     private FSM manager;
     private Parameter parameter;
     // 等待计时器
     private float timer;
 
-    public IdleState(FSM manager)
+    public EnemyIdleState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
@@ -54,7 +54,7 @@ public class IdleState : IState
 #endregion
 
 #region 巡逻状态
-public class PatrolState : IState
+public class EnemyPatrolState : IState
 {
     private FSM manager;             
     private Parameter parameter;
@@ -64,7 +64,7 @@ public class PatrolState : IState
 
 
 
-    public PatrolState(FSM manager)
+    public EnemyPatrolState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
@@ -217,12 +217,12 @@ public class PatrolState : IState
 #region 追逐状态
 
 
-public class ChaseState : IState
+public class EnemyChaseState : IState
 {
     private FSM manager;
     private Parameter parameter;
 
-    public ChaseState(FSM manager)
+    public EnemyChaseState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
@@ -272,13 +272,13 @@ public class ChaseState : IState
 public void OnExit() { }
 }
 #endregion
-public class AttackState : IState
+public class EnemyAttackState : IState
 {
     private FSM manager;
     private Parameter parameter;
     private float attackTimer;
 
-    public AttackState(FSM manager)
+    public EnemyAttackState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
@@ -345,7 +345,7 @@ public class AttackState : IState
             player.Wound(parameter.attackDamage);
     }
 }
-public class WoundState : IState
+public class EnemyWoundState : IState
 {
     private FSM manager;
     private Parameter parameter;
@@ -353,7 +353,7 @@ public class WoundState : IState
 
     public float finallyDamage;//最终伤害值 在Wound方法中计算并赋值
 
-    public WoundState(FSM manager)
+    public EnemyWoundState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
@@ -390,12 +390,12 @@ public class WoundState : IState
     public void OnExit() { }
 }
 
-public class DeadState : IState
+public class EnemyDeadState : IState
 {
     private FSM manager;
     private Parameter parameter;
 
-    public DeadState(FSM manager)
+    public EnemyDeadState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
@@ -411,7 +411,7 @@ public class DeadState : IState
     public void OnExit() { }
 }
 
-public class ApproachState : IState
+public class EnemyApproachState : IState
 {
     private FSM manager;
     private Parameter parameter;
@@ -424,7 +424,7 @@ public class ApproachState : IState
     // 转向限制
     private float maxTurnAnglePerSec = 120f; // 每秒最多转120度
 
-    public ApproachState(FSM manager)
+    public EnemyApproachState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;

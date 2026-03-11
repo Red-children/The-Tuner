@@ -61,13 +61,13 @@ public class FSM : MonoBehaviour
         #endregion
 
         #region 注册所有的状态实例 这里可以根据需要添加更多状态
-        states.Add(StateType.Idle, new IdleState(this));
-        states.Add(StateType.Patrol, new PatrolState(this));
-        states.Add(StateType.Chase, new ChaseState(this));
-        states.Add(StateType.Attack, new AttackState(this));
-        states.Add(StateType.Wound, new WoundState(this));
-        states.Add(StateType.Dead, new DeadState(this));
-        states.Add(StateType.Approach, new ApproachState (this));
+        states.Add(StateType.Idle, new EnemyIdleState(this));
+        states.Add(StateType.Patrol, new EnemyPatrolState(this));
+        states.Add(StateType.Chase, new EnemyChaseState(this));
+        states.Add(StateType.Attack, new EnemyAttackState(this));
+        states.Add(StateType.Wound, new EnemyWoundState(this));
+        states.Add(StateType.Dead, new EnemyDeadState(this));
+        states.Add(StateType.Approach, new EnemyApproachState(this));
         #endregion
 
         //开始先进入空闲状态
@@ -142,7 +142,7 @@ public class FSM : MonoBehaviour
     #region 切换到受击状态的方法 这里可以进行伤害的计算 考虑敌人的减伤相关
     public void Wound(float damage) 
     {
-        (states[StateType.Wound] as WoundState).finallyDamage = damage;
+        (states[StateType.Wound] as EnemyWoundState).finallyDamage = damage;
         ChangeState(StateType.Wound);
         
     }
