@@ -82,7 +82,7 @@ public class UICrosshair : MonoBehaviour
             return;
         }
 
-        // 加载Sprite（Resources.Load无需写后缀，路径是Resources下的相对路径）
+        // 加载Sprite
         Sprite smallCircleSprite = Resources.Load<Sprite>(SmallCirclePath);
         if (smallCircleSprite == null)
         {
@@ -121,9 +121,16 @@ public class UICrosshair : MonoBehaviour
     private void OnEnemyHit(EnemyHitEvent evt)
     {
         double currentTime = AudioSettings.dspTime - _dspStartTime;
+        // if (_isCritical)
+        // {
+        //     _animSmall.Play("PreciseHit");
+        //     Debug.Log($"精准命中PreciseHit\nCurrent:{currentTime}\n");
+        // }
         if (_isCritical)
+        {
             _animSmall.Play("PreciseHit");
-            Debug.Log($"精准命中PreciseHit\nCurrent:{currentTime}\n******************");
+            Debug.Log($"精准命中PreciseHit\nCurrent:{currentTime}\n");
+        }
         // if (_isCritical)
         // {
         //     AnimCriticalHit();
@@ -141,12 +148,15 @@ public class UICrosshair : MonoBehaviour
 
     private void OnIndicatorActive(IndicatorActiveEvent evt)
     {
+        // Debug.Log($"接收Indicator | 节拍时间：{evt.nextPoint:F8} | 实际接收时间：{AudioSettings.dspTime - _dspStartTime:F8} | 目标推送时间：{evt.time:F8}");
         //  TODO:
         //  计算剩余动画进程
         // float left = (float) (evt.BPM * (evt.nextPoint - evt.time) / 60);
-        float left = 1f - (float) (evt.nextPoint - evt.time) / 0.2f;
-        _animBig.Play("CrosshairNormal", 0, left);
-        Debug.Log($"Animation Start at {left}");
+        // float left = 1f - (float) (evt.nextPoint - evt.time) / 0.3f;
+        // _animBig.Play("CrosshairNormal", 0, left);
+        // Debug.Log($"Animation Start at {left}");
+        Debug.Log($"Indicator Active at {AudioSettings.dspTime - _dspStartTime}");
+        _animBig.Play("CrosshairNormal");
     }
     private void OnPlayBGM(PlayBGMEvent evt)
     {
@@ -156,7 +166,7 @@ public class UICrosshair : MonoBehaviour
     private void OnMultiplierChanged(AttackMultiplierChangedEvent evt)
     {
         _isCritical = evt.isCritical;
-        Debug.Log("Crosshair:Received Multiplier Changed Event");
+        // Debug.Log("Crosshair:Received Multiplier Changed Event");
 
     }
 #endregion

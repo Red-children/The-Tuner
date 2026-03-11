@@ -27,19 +27,18 @@ public struct AttackMultiplierChangedEvent
 
 
 
-struct PlayBGMEvent
+public struct PlayBGMEvent
 {
     //  TODO:
     public double time; // 事件发生时间
 }
-struct BGMProgressUpdateEvent
+public struct BGMProgressUpdateEvent
 {
     public double Progress;
     public double PreciseTime;
     public double TotalDuration;
 }
-
-struct IndicatorActiveEvent
+public struct IndicatorActiveEvent
 {
     public double BPM;   //  1s/BPM
     public double time;     //  已播放时间

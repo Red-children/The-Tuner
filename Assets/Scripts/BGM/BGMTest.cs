@@ -20,7 +20,8 @@ public class BGMTest : MonoBehaviour
         // 1. 构造播放BGM事件（用你GameEvents里的结构体）
         PlayBGMEvent evt = new PlayBGMEvent
         {
-            time = AudioSettings.dspTime + delay // 事件发生时间（可选）
+            // time = AudioSettings.dspTime + delay // 事件发生时间（可选）
+            time = AudioSettings.dspTime
         };
 
         // 2. 发送到事件中心
