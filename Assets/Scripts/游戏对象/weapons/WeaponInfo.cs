@@ -83,6 +83,14 @@ public class WeaponInfo : MonoBehaviour
 
             currentAmmo--;
         }
+
+        // 触发开火事件
+        EventBus.Instance.Trigger(new PlayerFireEvent
+        {
+            isPerfect = nowRhythmData.rank == RhythmRank.Perfect, // 根据需要调整
+            rank = nowRhythmData.rank
+        });
+
         // 触发开火事件（空结构体）
         EventBus.Instance.Trigger(new PlayerFiredEvent());
 
@@ -96,6 +104,12 @@ public class WeaponInfo : MonoBehaviour
             intensity = nowRhythmData.rank == RhythmRank.Perfect ? 1f :
                         nowRhythmData.rank == RhythmRank.Great ? 0.6f : 0.3f
         });
+
+        double now = AudioSettings.dspTime;
+        double nextBeat = RhythmManager.Instance.GetNextBeatTime();
+        double timeToNext = nextBeat - now;
+        Debug.Log($"[Shoot] 玩家开火 at {now:F8}, 下一拍 at {nextBeat:F8}, 时间差 {timeToNext:F8}, 判定等级 {nowRhythmData.rank}, 是否在窗口 {nowRhythmData.isInWindow}");
+
     }
     #endregion
 

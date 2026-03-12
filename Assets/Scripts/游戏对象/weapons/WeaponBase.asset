@@ -16,7 +16,7 @@ MonoBehaviour:
   - weaponType: 0
     weaponName: 1
     damage: 20
-    fireRate: 1.2
+    fireRate: 0.1
     maxAmmo: 15
     attackType: 0
     multiBulletCount: 0

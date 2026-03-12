@@ -45,7 +45,7 @@ public class RhythmManager : MonoBehaviour
 
     public int bpm = 120;           //歌曲bpm 后续可以改成从音乐文件中读取
 
-    public double previewLead = 0.2;          // 指示器提前量（秒），可在Inspector调整
+    public double previewLead = 0;          // 指示器提前量（秒），可在Inspector调整
     private bool previewTriggeredForNextBeat = false; // 防止同一拍多次触发预告
 
 
@@ -148,4 +148,10 @@ public class RhythmManager : MonoBehaviour
         #endregion
 
     }
+
+    public double GetNextBeatTime()
+    {
+        return nextBeatTime;
+    }
+
 }

@@ -40,12 +40,14 @@ public class UICrosshair : MonoBehaviour
         // 订阅你自己的节奏事件
         EventBus.Instance.Subscribe<BeatPreviewEvent>(OnBeatPreview);
         EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
+        EventBus.Instance.Subscribe<PlayerFireEvent>(OnPlayerFire); // 新增
     }
 
     private void OnDisable()
     {
         EventBus.Instance.Unsubscribe<BeatPreviewEvent>(OnBeatPreview);
         EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
+        EventBus.Instance.Unsubscribe<PlayerFireEvent>(OnPlayerFire);
     }
 
     // 加载图片资源
@@ -82,12 +84,10 @@ public class UICrosshair : MonoBehaviour
     // 节拍预告：大准星开始缩放动画
     private void OnBeatPreview(BeatPreviewEvent evt)
     {
-        if (animBig == null) return;
-        // 从动画开头播放，假设动画长度等于 previewLead
-        animBig.Play("CrosshairNormal", 0, 0f);
-        Debug.Log($"[UICrosshair] 收到节拍预告 | 时间差：{evt.timeToBeat:F4}");
+        double now = AudioSettings.dspTime;
+        Debug.Log($"[UICrosshair] 收到节拍预告 at {now:F8}, 下一拍 at {evt.nextBeatTime:F8}, 时间差 {evt.timeToBeat:F8}");
+        // ... 播放动画 ...
     }
-
     // 节奏数据（用于倍率和窗口状态）
     private void OnRhythmData(RhythmData data)
     {
@@ -113,5 +113,12 @@ public class UICrosshair : MonoBehaviour
     {
         // 准星跟随鼠标
         transform.position = Input.mousePosition;
+    }
+
+    private void OnPlayerFire(PlayerFireEvent evt)
+    {
+        double now = AudioSettings.dspTime;
+        Debug.Log($"[UICrosshair] 收到玩家开火 at {now:F8}, 精准={evt.isPerfect}");
+        // ... 播放动画 ...
     }
 }

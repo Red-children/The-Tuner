@@ -8,6 +8,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Timeline;
 
+public struct PlayerHitEvent
+{
+    public bool isCritical;   // 是否精准命中
+    public float damage;       // 伤害值（可选）
+}
+
 public struct PlayerMeleeEvent
 {
     public float damage;
@@ -35,6 +41,13 @@ public struct RhythmHitEvent
 
 }
 #endregion
+
+public struct PlayerFireEvent
+{
+    public bool isPerfect;   // 是否完美命中（根据你的判定等级）
+    public RhythmRank rank;   // 可选，传递具体等级
+}
+
 
 
 public struct PlayerDiedEvent
