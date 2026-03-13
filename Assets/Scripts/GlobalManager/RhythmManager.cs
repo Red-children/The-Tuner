@@ -55,6 +55,7 @@ public class RhythmManager : MonoBehaviour
     
     private RhythmRank lastRank; // 记录上一帧的判定等级，用于检测变化
     private RhythmRank currentRank;
+    public double BeatProgress { get; private set; } // 0~1
 
     #region 节拍变化数据库 用于调整节拍的各项数据 
 
@@ -83,14 +84,20 @@ public class RhythmManager : MonoBehaviour
 
     void Start()
     {
-        beatInterval = 60.0 / bpm;    //计算每拍的时间间隔
-        nextBeatTime = AudioSettings.dspTime + beatInterval; // 初始化下一拍时间为当前时间加一个拍的间隔
-        lastRank = RhythmRank.Miss; // 初始状态为 Miss
+        beatInterval = 60.0 / bpm;
+        nextBeatTime = AudioSettings.dspTime + beatInterval;
+        lastRank = RhythmRank.Miss;
+        Debug.Log($"[RhythmManager] 启动: 当前dspTime={AudioSettings.dspTime:F8}, 下一拍={nextBeatTime:F8}, beatInterval={beatInterval:F8}");
     }
 
     void Update()
     {
         double now = AudioSettings.dspTime;                     // 获取当前时间
+
+        double timeSinceLastBeat = now - (nextBeatTime - beatInterval); // 距离上一拍的时间
+        BeatProgress = Mathf.Clamp01((float)(timeSinceLastBeat / beatInterval));
+
+        
         double timeToNext = nextBeatTime - now;                 // 计算距离下一拍的时间差
         double absTimeToNext = Mathf.Abs((float)timeToNext);    // 绝对值用于比较窗口大小
 
@@ -105,7 +112,12 @@ public class RhythmManager : MonoBehaviour
                 currentTime = now,
                 timeToBeat = timeToNext
             });
-            Debug.Log($"[RhythmManager] 预告下一拍 | 时间差：{timeToNext:F4}");
+            
+        }
+        if (now >= nextBeatTime)
+        {
+            nextBeatTime += beatInterval;
+           
         }
 
 

@@ -3307,7 +3307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bpm: 120
-  previewLead: 0
+  previewLead: 0.38
   isInWindow: 0
   rankConfigs:
   - rank: 0
@@ -3636,7 +3636,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 53cfd41da2c3a414bba447defa6062bf, type: 3}
+  m_audioClip: {fileID: 8300000, guid: a0edc2e60b19bb543a25ae0b3e2adde3, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1

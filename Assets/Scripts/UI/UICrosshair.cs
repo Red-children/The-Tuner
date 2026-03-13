@@ -33,8 +33,14 @@ public class UICrosshair : MonoBehaviour
         GetAnimators();
         crosshairSmall.enabled = true;
         crosshairBig.enabled = true;
-    }
 
+        // 新增：记录动画初始状态
+        if (animBig != null)
+        {
+            AnimatorStateInfo stateInfo = animBig.GetCurrentAnimatorStateInfo(0);
+            Debug.Log($"[UICrosshair] 初始动画状态: clip={stateInfo.shortNameHash}, normalizedTime={stateInfo.normalizedTime}, length={stateInfo.length}, loop={stateInfo.loop}");
+        }
+    }
     private void OnEnable()
     {
         // 订阅你自己的节奏事件
@@ -50,6 +56,7 @@ public class UICrosshair : MonoBehaviour
         EventBus.Instance.Unsubscribe<PlayerFireEvent>(OnPlayerFire);
     }
 
+    #region 加载图片 资源
     // 加载图片资源
     private void LoadSprites()
     {
@@ -71,7 +78,9 @@ public class UICrosshair : MonoBehaviour
                 Debug.LogError($"UICrosshair: 加载大准星图片失败，路径 Resources/{BigCirclePath}.png");
         }
     }
+    #endregion
 
+    #region 获取动画组件
     // 获取动画组件
     private void GetAnimators()
     {
@@ -79,15 +88,23 @@ public class UICrosshair : MonoBehaviour
         if (crosshairBig != null) animBig = crosshairBig.GetComponent<Animator>();
     }
 
+    #endregion
     // ==================== 事件回调 ====================
 
     // 节拍预告：大准星开始缩放动画
     private void OnBeatPreview(BeatPreviewEvent evt)
     {
+        if (animBig == null) return;
+
         double now = AudioSettings.dspTime;
-        Debug.Log($"[UICrosshair] 收到节拍预告 at {now:F8}, 下一拍 at {evt.nextBeatTime:F8}, 时间差 {evt.timeToBeat:F8}");
-        // ... 播放动画 ...
+        Debug.Log($"[UICrosshair] 预告触发前: now={now:F8}, 动画normalizedTime={animBig.GetCurrentAnimatorStateInfo(0).normalizedTime}");
+
+        animBig.Play("CrosshairNormal", 0, 0f);
+
+        Debug.Log($"[UICrosshair] 预告触发后: now={now:F8}, 动画normalizedTime={animBig.GetCurrentAnimatorStateInfo(0).normalizedTime}");
     }
+
+
     // 节奏数据（用于倍率和窗口状态）
     private void OnRhythmData(RhythmData data)
     {
@@ -109,16 +126,32 @@ public class UICrosshair : MonoBehaviour
 
     // ==================== 每帧更新 ====================
 
+    private float scaleMin = 1f;   // 最小缩放（例如小准星大小）
+    private float scaleMax = 1.5f;   // 最大缩放
+    private float currentScale = 1f;
+
     private void Update()
     {
         // 准星跟随鼠标
         transform.position = Input.mousePosition;
+
+        // 根据节拍进度动态缩放（需 RhythmManager 提供 BeatProgress 属性）
+        if (RhythmManager.Instance != null)
+        {
+            float progress = (float)RhythmManager.Instance.BeatProgress; // 0~1
+                                                                         // 设计缩放曲线：例如在节拍前 0.2 秒达到最小，之后恢复
+                                                                         // 这里简化：将 BeatProgress 映射到缩放
+            currentScale = Mathf.Lerp(scaleMax, scaleMin, progress);
+            crosshairBig.rectTransform.localScale = Vector3.one * currentScale;
+        }
     }
 
     private void OnPlayerFire(PlayerFireEvent evt)
     {
-        double now = AudioSettings.dspTime;
-        Debug.Log($"[UICrosshair] 收到玩家开火 at {now:F8}, 精准={evt.isPerfect}");
-        // ... 播放动画 ...
+        if (animSmall == null) return;
+        if (evt.isPerfect) // 根据你的判定规则，可能还需要 Great 也算精准
+            animSmall.Play("PreciseHit", 0, 0f);
+        else
+            animSmall.Play("NormalHit", 0, 0f);
     }
 }

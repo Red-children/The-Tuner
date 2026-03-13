@@ -21,7 +21,7 @@ MonoBehaviour:
     attackType: 0
     multiBulletCount: 0
     bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
-    reloadTime: 1.47
+    reloadTime: 0
     shakeIntensity: 0.01
   - weaponType: 1
     weaponName: 2
