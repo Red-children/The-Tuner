@@ -45,7 +45,8 @@ public class PreciseBGMController : MonoBehaviour
         if (_indicatorManager == null) _indicatorManager = GetComponent<BgmIndicatorManager>();
 
         // 检查子模块是否齐全
-        if (_songData == null || _progressManager == null || _multiplierManager == null || _indicatorManager == null)
+        // if (_songData == null || _progressManager == null || _multiplierManager == null || _indicatorManager == null)
+        if (_songData == null || _progressManager == null || _multiplierManager == null)
         {
             Debug.LogError("PreciseBGMController: 缺少子模块！请确保所有子模块挂载在同一对象上");
         }
