@@ -6,7 +6,7 @@ public class BgmIndicatorManager : MonoBehaviour
 {
     [Header("【指示器配置】")]
     [Tooltip("指示器提前推送时间（秒）")]
-    public double lead = 0.2f;
+    public const double publishAdavance = 0.3f;
 
     private BgmSongData _songData;               // 依赖歌曲配置
     private BgmProgressManager _progressManager; // 依赖进度模块
@@ -38,16 +38,20 @@ public class BgmIndicatorManager : MonoBehaviour
         }
 
         double beatInterval = 60 / _songData.BPM; // 每拍间隔（秒）
-        double totalPublishAdvance = _songData.windowPeriod + lead; // 总提前量
-        double currentBeatTime = beatInterval; // 第一拍时间
+        double currentBeatTime = _songData.firstOffset; // 第一拍时间
 
         // 生成所有节拍的时间戳和推送时间戳
         while (currentBeatTime < _songData.BgmClip.length)
         {
             _beatTimestampQueue.Enqueue(currentBeatTime);
-            double publishTime = currentBeatTime - totalPublishAdvance;
+            double publishTime = currentBeatTime - publishAdavance;
             _indicatorPublishQueue.Enqueue(publishTime);
             currentBeatTime += beatInterval;
+        }
+        //  Test调试
+        foreach(var ptime in _indicatorPublishQueue)
+        {
+            Debug.Log("预计算指示器时间戳：" + ptime);
         }
     }
 
@@ -63,7 +67,8 @@ public class BgmIndicatorManager : MonoBehaviour
         // 获取首个待推送时间
         double targetPublishTime = _indicatorPublishQueue.Peek();
         // 时间匹配：到达推送时间（误差1ms内）
-        if ((targetPublishTime - preciseTime) < 1e-3)
+        // if ((targetPublishTime - preciseTime) < 1e-3)
+        if (preciseTime >= targetPublishTime )
         {
             // 出队并推送事件
             double publishTime = _indicatorPublishQueue.Dequeue();
@@ -80,7 +85,7 @@ public class BgmIndicatorManager : MonoBehaviour
     {
         var evt = new IndicatorActiveEvent
         {
-            BPM = _songData.BPM,
+            advance = publishAdavance,
             time = currentTime,
             nextPoint = nextPoint
         };

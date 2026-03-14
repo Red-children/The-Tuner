@@ -12,7 +12,8 @@ public class UICrosshairController : MonoBehaviour
     public CrosshairAnimator _animator;
 
     // BGM相关数据（转发给子脚本）
-    private double _dspStartTime;
+    // private double _dspStartTime;
+    public double _dspStartTime;
     private bool _isCritical = false;
 
     #region 生命周期

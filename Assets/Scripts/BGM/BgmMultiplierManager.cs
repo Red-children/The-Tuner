@@ -28,7 +28,11 @@ public class BgmMultiplierManager : MonoBehaviour
         double timeToNextBeat = beatInterval - offset; // 距离下一拍的时间
 
         // 判断是否切换倍率（精准区间内=精准倍率，否则=普通倍率）
-        int newIndex = timeToNextBeat < _songData.windowPeriod ? 0 : 1;
+        // int newIndex = timeToNextBeat < _songData.windowPeriod ? 0 : 1;
+        int newIndex;
+        if (timeToNextBeat < _songData.windowPeriod || timeToNextBeat > beatInterval - _songData.windowPeriod)
+            newIndex = 0;
+        else newIndex = 1;
 
         // 倍率未变化则不推送事件
         if (newIndex == _currentMultiplierIndex) return;

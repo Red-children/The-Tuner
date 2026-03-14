@@ -72,11 +72,11 @@ public class CrosshairAnimator : MonoBehaviour
         Debug.Log($"Indicator Active at {AudioSettings.dspTime - _dspStartTime}");
         // 计算动画进度（修复负数问题）
         double remainingTime = evt.nextPoint - evt.time;
-        float progress = Mathf.Clamp01((float)(remainingTime / 0.2f));
+        float progress = Mathf.Clamp01((float)(remainingTime / 0.3f));
         float left = 1f - progress;
 
         _animBig.Play("Indicator", 0, left);
-        Debug.Log($"Animation Start at {left:F4}");
+        Debug.Log($"Animation Start at range{left:F4}");
     }
 
     // 更新闲置状态动画

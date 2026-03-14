@@ -8,11 +8,11 @@ public class BgmSongData : MonoBehaviour
     [Tooltip("伤害倍率（精准/普通）")]
     public float[] multiplierArray = { 0.99f, 0.01f };
     [Tooltip("精准判定区间（秒）")]
-    public double windowPeriod = 0.2f;
+    public readonly double windowPeriod = 0.1f;
     [Tooltip("歌曲BPM(每分钟节拍数)")]
     public double BPM = 120;
-    [Tooltip("前N秒不触发指示器(秒)")]
-    public double firstOffset = 1.1f;
+    [Tooltip("第一拍位置")]
+    public readonly double firstOffset = 1.0f;
 
     [Header("【音频资源】")]
     [SerializeField] private AudioSource bgmAudioSource;

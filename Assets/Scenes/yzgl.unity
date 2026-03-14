@@ -14963,8 +14963,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1794257804}
-  - component: {fileID: 1794257803}
   - component: {fileID: 1794257805}
+  - component: {fileID: 1794257810}
+  - component: {fileID: 1794257809}
+  - component: {fileID: 1794257808}
+  - component: {fileID: 1794257807}
+  - component: {fileID: 1794257806}
   m_Layer: 0
   m_Name: PreciseBGMManager
   m_TagString: Untagged
@@ -14972,27 +14976,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1794257803
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1794257802}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b62944750c7859d4290374191b6960af, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _multiplierArray:
-  - 0.99
-  - 0.01
-  windowPeriod: 0.1
-  fistOffset: 1.100000023841858
-  _bgmAudioSource: {fileID: 1794257805}
-  _bgmClip: {fileID: 8300000, guid: 30f36fe8ee10e744db764aa43bc22572, type: 3}
-  sampleIntervalMs: 10
-  lead: 0.1
 --- !u!4 &1794257804
 Transform:
   m_ObjectHideFlags: 0
@@ -15104,6 +15087,80 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &1794257806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794257802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 484fe6001d2bf82489f2beef46b0d49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  multiplierArray:
+  - 0.99
+  - 0.01
+  windowPeriod: 0.20000000298023224
+  BPM: 120
+  firstOffset: 1.100000023841858
+  bgmAudioSource: {fileID: 1794257805}
+  bgmClip: {fileID: 8300000, guid: 30f36fe8ee10e744db764aa43bc22572, type: 3}
+  sampleIntervalMs: 10
+--- !u!114 &1794257807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794257802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d6563c9a86a5a43a452a467bb89929, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1794257808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794257802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b95d4e59a1cdd2f48a87f2459fadad2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1794257809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794257802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ec29d2622e3084da350b6bd27d7e30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lead: 0.20000000298023224
+--- !u!114 &1794257810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1794257802}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bbffe90a5112664992fbda56a2efbef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _songData: {fileID: 0}
+  _progressManager: {fileID: 0}
+  _multiplierManager: {fileID: 0}
+  _indicatorManager: {fileID: 0}
 --- !u!1 &1844501596
 GameObject:
   m_ObjectHideFlags: 0
@@ -15115,7 +15172,9 @@ GameObject:
   - component: {fileID: 1844501597}
   - component: {fileID: 1844501600}
   - component: {fileID: 1844501599}
-  - component: {fileID: 1844501598}
+  - component: {fileID: 1844501603}
+  - component: {fileID: 1844501602}
+  - component: {fileID: 1844501601}
   m_Layer: 5
   m_Name: UICrosshair
   m_TagString: Untagged
@@ -15145,20 +15204,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1844501598
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1844501596}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a164b7080a972543b5421e9e5ac69b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  crosshairSmall: {fileID: 484277549}
-  crosshairBig: {fileID: 1610443778}
 --- !u!114 &1844501599
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15197,6 +15242,48 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1844501596}
   m_CullTransparentMesh: 1
+--- !u!114 &1844501601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1844501596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38474644692cc344e8cc3c75f969e6fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _spriteLoader: {fileID: 1844501603}
+  _animator: {fileID: 1844501602}
+--- !u!114 &1844501602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1844501596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 619417a5db149ee4380e2edebc2cb497, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animSmall: {fileID: 0}
+  _animBig: {fileID: 0}
+--- !u!114 &1844501603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1844501596}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006d53623c60b214d98a803ea8838581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _crosshairSmall: {fileID: 0}
+  _crosshairBig: {fileID: 0}
 --- !u!1 &1858742549
 GameObject:
   m_ObjectHideFlags: 0
