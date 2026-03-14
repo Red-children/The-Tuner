@@ -5,6 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
+public enum BulletOwner
+{
+    Player,
+    Enemy
+}
 
 
 
@@ -14,9 +19,9 @@ public class Bullet : MonoBehaviour
     public int moveSpeed = 10;
     public float damage = 10f;
 
+    public BulletOwner owner;          // 由生成时设置
     public GameObject DestoryEff;
-    public GameObject damageTextPrefab; // 死亡飘字预制体
-
+   
         #region 子弹销毁方法
     public void DestroyMyself()
     {
@@ -38,30 +43,38 @@ public class Bullet : MonoBehaviour
     }
     void Update()
     {
-
-        #region 射线检测与移动(代替碰撞检测)
-
-        // 计算移动距离
         float moveDistance = Time.deltaTime * moveSpeed;
-        // 射线检测，检测路径上的碰撞
-        // 使用较小的距离增量，确保不会跳过碰撞
         float stepDistance = Mathf.Min(moveDistance, 0.1f);
         int steps = Mathf.CeilToInt(moveDistance / stepDistance);
 
+        // 根据所有者决定检测层
+        int layerMask;
+        if (owner == BulletOwner.Player)
+            layerMask = LayerMask.GetMask("Enemy", "Wall");
+        else
+            layerMask = LayerMask.GetMask("Player", "Wall");
+
         for (int i = 0; i < steps; i++)
         {
-            int layerMask = LayerMask.GetMask("Enemy", "Wall");
             RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, stepDistance, layerMask);
             if (hit.collider != null)
             {
-                if (hit.collider.gameObject.tag == "Enemy" )
+                // 玩家子弹击中敌人
+                if (owner == BulletOwner.Player && hit.collider.CompareTag("Enemy"))
                 {
-                    
-                    hit.collider.gameObject.GetComponent<FSM>()?.Wound(damage);
+                    hit.collider.GetComponent<FSM>()?.Wound(damage);
                     DestroyMyself();
                     return;
                 }
-                else if (hit.collider.gameObject.tag == "Wall")
+                // 敌人子弹击中玩家
+                else if (owner == BulletOwner.Enemy && hit.collider.CompareTag("Player"))
+                {
+                    hit.collider.GetComponent<PlayerIObject>()?.Wound((int)damage);
+                    DestroyMyself();
+                    return;
+                }
+                // 任何子弹击中墙壁
+                else if (hit.collider.CompareTag("Wall"))
                 {
                     DestroyMyself();
                     return;
@@ -72,9 +85,8 @@ public class Bullet : MonoBehaviour
     }
 
 
-    #endregion
 
-        #region 播放死亡特效方法
+    #region 播放死亡特效方法
     private void PlayBulletEffect(GameObject effectPrefab)
     {
         print(effectPrefab.name);

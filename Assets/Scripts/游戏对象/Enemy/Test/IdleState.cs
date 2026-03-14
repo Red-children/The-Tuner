@@ -235,17 +235,8 @@ public class EnemyChaseState : IState
 
     public void OnUpdate()
     {
-        if (parameter.getHit)
-        {
-            manager.ChangeState(StateType.Wound);
-            return;
-        }
-
-        if (parameter.target == null)
-        {
-            manager.ChangeState(StateType.Patrol); // 或 Idle
-            return;
-        }
+        if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
+        if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
         // 根据玩家位置设置 flipX
         if (parameter.target.position.x > manager.transform.position.x)
@@ -259,19 +250,32 @@ public class EnemyChaseState : IState
             parameter.target.position,
             parameter.chaseSpeed * Time.deltaTime);
 
-        // 检查攻击范围
-        if (Physics2D.OverlapCircle(manager.GetAttackWorldPos(), parameter.attackRange, parameter.targetLayer))
+        // 检查是否进入攻击范围（区分近战和远程）
+        if (parameter.enemyType == EnemyType.Ranged)
         {
-            manager.ChangeState(StateType.Approach);
+            float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
+            if (distance <= parameter.attackRange)
+            {
+                manager.ChangeState(StateType.Approach);
+            }
+        }
+        else // 近战
+        {
+            if (Physics2D.OverlapCircle(manager.GetAttackWorldPos(), parameter.attackRange, parameter.targetLayer))
+            {
+                manager.ChangeState(StateType.Approach);
+            }
         }
     }
 
 
 
 
-public void OnExit() { }
+    public void OnExit() { }
 }
 #endregion
+
+#region 敌人受伤方法
 
 public class EnemyWoundState : IState
 {
@@ -317,6 +321,8 @@ public class EnemyWoundState : IState
 
     public void OnExit() { }
 }
+
+#endregion
 
 public class EnemyDeadState : IState
 {
@@ -495,13 +501,19 @@ public class EnemyRangedAttackState : IState
     public void OnUpdate()
     {
         if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
-        if (parameter.target == null || !IsTargetInRange())
+        if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
+
+        float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
+        float attackRange = parameter.attackRange;
+
+        // 如果太远或太近，回到接近状态
+        if (distance > attackRange || distance < attackRange * 0.5f)
         {
-            manager.ChangeState(StateType.Chase);
+            manager.ChangeState(StateType.Approach);
             return;
         }
 
-        // 远程攻击使用武器组件射击
+        // 在有效范围内，使用武器射击
         if (parameter.rangedWeapon != null)
         {
             parameter.rangedWeapon.Shoot(); // 武器内部处理冷却
@@ -510,26 +522,13 @@ public class EnemyRangedAttackState : IState
 
     public void OnExit() { }
 
-    private bool IsTargetInRange()
-    {
-        if (parameter.target == null) return false;
-        float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
-        return distance <= parameter.attackRange;
-    }
-
     // 动画事件调用（如果需要）
-    public void OnAttackHit()
-    {
-        // 远程攻击也可由动画事件触发，但武器通常自己控制射击时机
-        // 这里可以留空，或者直接调用武器 Shoot
-    }
+    public void OnAttackHit() { }
 }
-
 public class EnemyRangedApproachState : IState
 {
     private FSM manager;
     private Parameter parameter;
-    private float timer;
     private Vector2 currentDirection;
 
     public EnemyRangedApproachState(FSM manager)
@@ -541,7 +540,6 @@ public class EnemyRangedApproachState : IState
     public void OnStart()
     {
         Debug.Log("进入远程接近状态");
-        timer = 0f;
         if (parameter.target != null)
             currentDirection = (parameter.target.position - manager.transform.position).normalized;
     }
@@ -552,27 +550,33 @@ public class EnemyRangedApproachState : IState
         if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
         float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
-        // 远程敌人希望保持在攻击范围内但不贴脸
-        float desiredDistance = parameter.attackRange * 0.8f; // 例如攻击范围的80%
+        float attackRange = parameter.attackRange;
+
+        // 定义理想距离范围：攻击范围的 60%~90%
+        float minDesired = attackRange * 0.6f;
+        float maxDesired = attackRange * 0.9f;
+
         Vector2 toTarget = (parameter.target.position - manager.transform.position).normalized;
 
-        if (distance > desiredDistance + 0.5f)
+        // 判断距离是否合适
+        if (distance < minDesired)
         {
-            // 太远，靠近
-            currentDirection = toTarget;
-        }
-        else if (distance < desiredDistance - 0.5f)
-        {
-            // 太近，远离
+            // 太近，远离玩家
             currentDirection = -toTarget;
+        }
+        else if (distance > maxDesired)
+        {
+            // 太远，靠近玩家
+            currentDirection = toTarget;
         }
         else
         {
-            // 距离合适，横向移动（增加闪避）
-            currentDirection = Vector2.Perpendicular(toTarget).normalized;
+            // 距离合适，立即切换到攻击状态
+            manager.ChangeState(StateType.Attack);
+            return;
         }
 
-        // 移动
+        // 执行移动
         manager.transform.position += (Vector3)currentDirection * parameter.moveSpeed * Time.deltaTime;
 
         // 面朝玩家（翻转）
@@ -580,12 +584,6 @@ public class EnemyRangedApproachState : IState
             parameter.spriteRenderer.flipX = false;
         else
             parameter.spriteRenderer.flipX = true;
-
-        timer += Time.deltaTime;
-        if (timer >= 2f) // 接近时间足够后切回攻击
-        {
-            manager.ChangeState(StateType.Attack);
-        }
     }
 
     public void OnExit() { }

@@ -27,6 +27,10 @@ public class WeaponInfo : MonoBehaviour
     private float lastFireTime;
     private bool isReloading;
 
+    [Header("武器所有者")]
+    public BulletOwner owner; // 在 Inspector 中设置，玩家武器设为 Player，敌人武器设为 Enemy
+
+
     public RhythmData nowRhythmData; // 当前节奏数据
     public float ownerDamage = 0; // 由持有者传入的基础攻击力（敌人用）
 
@@ -117,12 +121,13 @@ public class WeaponInfo : MonoBehaviour
     void SpawnBullet(Vector3 pos, Quaternion rot)
     {
         GameObject bulletObj = Instantiate(stats.bulletPrefab, pos, rot);
-        // 可在这里设置子弹伤害或速度
         Bullet bulletScript = bulletObj.GetComponent<Bullet>();
-        //后续可以把伤害计算放在这里，考虑暴击、元素伤害等因素 
+        bulletScript.owner = this.owner; // 传递所有者
+                                         // 伤害计算（可根据所有者调整）
         float multiplier = (float)nowRhythmData.multiplier;
-
-        bulletScript.damage = (ownerDamage +stats.damage ) * multiplier;
+        float baseDamage = owner == BulletOwner.Player ? (ownerDamage + stats.damage) : (stats.damage); // 敌人子弹可能不需要玩家攻击力
+        bulletScript.damage = baseDamage * multiplier;
+        // ... 其他初始化 ...
     }
     #endregion
 

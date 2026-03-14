@@ -64,8 +64,8 @@ public class Parameter
     public Collider2D chaseArea;            // 追逐范围触发器（用于检测玩家进入）
 
     [Header("⏱️ 运行时状态（由代码自动管理）")]
-    [HideInInspector] public Transform target;   // 当前目标（玩家）
-    [HideInInspector] public bool getHit;         // 是否受击（用于切换到受击状态）
+     public Transform target;   // 当前目标（玩家）
+     public bool getHit;         // 是否受击（用于切换到受击状态）
 }
 #endregion
 
@@ -133,7 +133,9 @@ public class FSM : MonoBehaviour
     #region 由其他碰撞器检测玩家进入的方法，供 TriggerForward 调用
     public void OnPlayerEnter(Transform player)
     {
+        Debug.Log($"[FSM] OnPlayerEnter 前 target = {parameter.target}");
         parameter.target = player;
+        Debug.Log($"[FSM] OnPlayerEnter 后 target = {parameter.target}");
     }
 
     public void OnPlayerExit(Transform player)
@@ -163,6 +165,7 @@ public class FSM : MonoBehaviour
         Destroy(gameObject);
     }
 
+    #region 绘制近战攻击范围
     private void OnDrawGizmos()
     {
         if (parameter.attackPoint != null)
@@ -171,6 +174,7 @@ public class FSM : MonoBehaviour
             Gizmos.DrawWireSphere(pos, parameter.attackRange);
         }
     }
+    #endregion
 
     #region 动态获得攻击点位置的方法（考虑朝向）
     public Vector2 GetAttackWorldPos()
@@ -203,6 +207,7 @@ public class FSM : MonoBehaviour
     }
     #endregion
 
+    #region 让敌人武器转向
     private void UpdateWeaponAim()
     {
         if (parameter.rangedWeapon == null || parameter.target == null)
@@ -220,4 +225,7 @@ public class FSM : MonoBehaviour
         // 应用旋转
         weaponTransform.rotation = Quaternion.Euler(0, 0, angle);
     }
+
+    #endregion
+
 }
