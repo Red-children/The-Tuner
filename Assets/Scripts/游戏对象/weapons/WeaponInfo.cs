@@ -28,7 +28,7 @@ public class WeaponInfo : MonoBehaviour
     private bool isReloading;
 
     public RhythmData nowRhythmData; // 当前节奏数据
-    public int playerAtk; // 玩家攻击力 放在 PlayerIObject 中
+    public float ownerDamage = 0; // 由持有者传入的基础攻击力（敌人用）
 
 
     void Start()
@@ -122,7 +122,7 @@ public class WeaponInfo : MonoBehaviour
         //后续可以把伤害计算放在这里，考虑暴击、元素伤害等因素 
         float multiplier = (float)nowRhythmData.multiplier;
 
-        bulletScript.damage = (playerAtk +stats.damage ) * multiplier;
+        bulletScript.damage = (ownerDamage +stats.damage ) * multiplier;
     }
     #endregion
 

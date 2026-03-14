@@ -236,7 +236,7 @@ public class PlayerIObject : BaseObject
     // 传递攻击力到当前武器
     public void passPlayerAtk()
     {
-        currentWeapon.playerAtk = this.atk;
+        currentWeapon.ownerDamage  = this.atk;
     }
     #endregion
 

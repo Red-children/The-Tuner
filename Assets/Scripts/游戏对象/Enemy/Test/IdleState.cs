@@ -272,79 +272,7 @@ public class EnemyChaseState : IState
 public void OnExit() { }
 }
 #endregion
-public class EnemyAttackState : IState
-{
-    private FSM manager;
-    private Parameter parameter;
-    private float attackTimer;
 
-    public EnemyAttackState(FSM manager)
-    {
-        this.manager = manager;
-        this.parameter = manager.parameter;
-    }
-
-    public void OnStart()
-    {
-        Debug.Log("进入Attack状态");
-        attackTimer = 0f;
-        
-        parameter.animator.SetTrigger("Attack"); // 播放攻击动画
-
-    }
-
-    public void OnUpdate()
-    {
-        if (parameter.getHit)
-        {
-            manager.ChangeState(StateType.Wound);
-            return;
-        }
-
-        if (parameter.target == null || !IsTargetInRange())
-        {
-            manager.ChangeState(StateType.Chase);
-            return;
-        }
-
-        attackTimer += Time.deltaTime;
-        if (attackTimer >= 1f) // 攻击间隔，可调整
-        {
-            attackTimer = 0f;
-            PlayerIObject player = parameter.target.GetComponent<PlayerIObject>();
-            //if (player != null)
-            //{
-            //    player.TakeDamage(parameter.attackDamage);
-            //}
-        }
-    }
-
-
-    public void OnExit()
-    {
-        // 可以停止攻击动画等
-    }
-
-    // 检查玩家是否在攻击范围内
-    private bool IsTargetInRange()
-    {
-        if (parameter.target == null) return false;
-        Vector2 attackWorldPos = manager.GetAttackWorldPos(); // 动态计算
-        Collider2D[] hits = Physics2D.OverlapCircleAll(attackWorldPos, parameter.attackRange, parameter.targetLayer);
-        foreach (var hit in hits)
-            if (hit.transform == parameter.target) return true;
-        return false;
-    }
-
-    public void OnAttackHit()
-    {
-        if (!IsTargetInRange()) return;
-        Debug.Log("攻击指令发出");
-        PlayerIObject player = parameter.target.GetComponent<PlayerIObject>();
-        if (player != null)
-            player.Wound(parameter.attackDamage);
-    }
-}
 public class EnemyWoundState : IState
 {
     private FSM manager;
@@ -411,7 +339,7 @@ public class EnemyDeadState : IState
     public void OnExit() { }
 }
 
-public class EnemyApproachState : IState
+public class EnemyMeleeApproachState: IState
 {
     private FSM manager;
     private Parameter parameter;
@@ -424,7 +352,7 @@ public class EnemyApproachState : IState
     // 转向限制
     private float maxTurnAnglePerSec = 120f; // 每秒最多转120度
 
-    public EnemyApproachState(FSM manager)
+    public EnemyMeleeApproachState(FSM manager)
     {
         this.manager = manager;
         this.parameter = manager.parameter;
@@ -480,6 +408,181 @@ public class EnemyApproachState : IState
         // 6. 计时切换
         timer += Time.deltaTime;
         if (timer >= approachTime)
+        {
+            manager.ChangeState(StateType.Attack);
+        }
+    }
+
+    public void OnExit() { }
+}
+
+
+public class EnemyMeleeAttackState : IState
+{
+    private FSM manager;
+    private Parameter parameter;
+    private float attackTimer;
+
+    public EnemyMeleeAttackState(FSM manager)
+    {
+        this.manager = manager;
+        this.parameter = manager.parameter;
+    }
+
+    public void OnStart()
+    {
+        Debug.Log("进入近战攻击状态");
+        attackTimer = 0f;
+        parameter.animator.SetTrigger("Attack");
+    }
+
+    public void OnUpdate()
+    {
+        if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
+        if (parameter.target == null || !IsTargetInRange())
+        {
+            manager.ChangeState(StateType.Chase);
+            return;
+        }
+
+        attackTimer += Time.deltaTime;
+        if (attackTimer >= 1f) // 攻击间隔，可从配置读取
+        {
+            attackTimer = 0f;
+            // 实际伤害在动画事件中触发，这里只做冷却
+        }
+    }
+
+    public void OnExit() { }
+
+    private bool IsTargetInRange()
+    {
+        if (parameter.target == null) return false;
+        Vector2 attackWorldPos = manager.GetAttackWorldPos();
+        Collider2D[] hits = Physics2D.OverlapCircleAll(attackWorldPos, parameter.attackRange, parameter.targetLayer);
+        foreach (var hit in hits)
+            if (hit.transform == parameter.target) return true;
+        return false;
+    }
+
+    // 动画事件调用
+    public void OnAttackHit()
+    {
+        if (!IsTargetInRange()) return;
+        PlayerIObject player = parameter.target.GetComponent<PlayerIObject>();
+        if (player != null)
+            player.Wound(parameter.attackDamage);
+    }
+}
+
+public class EnemyRangedAttackState : IState
+{
+    private FSM manager;
+    private Parameter parameter;
+
+    public EnemyRangedAttackState(FSM manager)
+    {
+        this.manager = manager;
+        this.parameter = manager.parameter;
+    }
+
+    public void OnStart()
+    {
+        Debug.Log("进入远程攻击状态");
+        parameter.animator.SetTrigger("Attack");
+    }
+
+    public void OnUpdate()
+    {
+        if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
+        if (parameter.target == null || !IsTargetInRange())
+        {
+            manager.ChangeState(StateType.Chase);
+            return;
+        }
+
+        // 远程攻击使用武器组件射击
+        if (parameter.rangedWeapon != null)
+        {
+            parameter.rangedWeapon.Shoot(); // 武器内部处理冷却
+        }
+    }
+
+    public void OnExit() { }
+
+    private bool IsTargetInRange()
+    {
+        if (parameter.target == null) return false;
+        float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
+        return distance <= parameter.attackRange;
+    }
+
+    // 动画事件调用（如果需要）
+    public void OnAttackHit()
+    {
+        // 远程攻击也可由动画事件触发，但武器通常自己控制射击时机
+        // 这里可以留空，或者直接调用武器 Shoot
+    }
+}
+
+public class EnemyRangedApproachState : IState
+{
+    private FSM manager;
+    private Parameter parameter;
+    private float timer;
+    private Vector2 currentDirection;
+
+    public EnemyRangedApproachState(FSM manager)
+    {
+        this.manager = manager;
+        this.parameter = manager.parameter;
+    }
+
+    public void OnStart()
+    {
+        Debug.Log("进入远程接近状态");
+        timer = 0f;
+        if (parameter.target != null)
+            currentDirection = (parameter.target.position - manager.transform.position).normalized;
+    }
+
+    public void OnUpdate()
+    {
+        if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
+        if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
+
+        float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
+        // 远程敌人希望保持在攻击范围内但不贴脸
+        float desiredDistance = parameter.attackRange * 0.8f; // 例如攻击范围的80%
+        Vector2 toTarget = (parameter.target.position - manager.transform.position).normalized;
+
+        if (distance > desiredDistance + 0.5f)
+        {
+            // 太远，靠近
+            currentDirection = toTarget;
+        }
+        else if (distance < desiredDistance - 0.5f)
+        {
+            // 太近，远离
+            currentDirection = -toTarget;
+        }
+        else
+        {
+            // 距离合适，横向移动（增加闪避）
+            currentDirection = Vector2.Perpendicular(toTarget).normalized;
+        }
+
+        // 移动
+        manager.transform.position += (Vector3)currentDirection * parameter.moveSpeed * Time.deltaTime;
+
+        // 面朝玩家（翻转）
+        if (parameter.target.position.x > manager.transform.position.x)
+            parameter.spriteRenderer.flipX = false;
+        else
+            parameter.spriteRenderer.flipX = true;
+
+        timer += Time.deltaTime;
+        if (timer >= 2f) // 接近时间足够后切回攻击
         {
             manager.ChangeState(StateType.Attack);
         }
