@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Security.Cryptography;
 using UnityEngine;
 
 
@@ -6,6 +7,8 @@ using UnityEngine;
 
 public class WeaponInfo : MonoBehaviour
 {
+    public int ID;
+
     [Header("切换设置")]
     public float switchCooldown = 0.5f;   // 切换冷却时间（秒）
     private float lastSwitchTime = -Mathf.Infinity;
@@ -41,6 +44,7 @@ public class WeaponInfo : MonoBehaviour
         InitializeWeapon(weaponType);
         nowRhythmData = new RhythmData(false,RhythmRank.Miss,1); // 默认不在窗口，倍率1
         EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
+        EventBus.Instance.Trigger(new ChangeWeaponStruct(1, stats.id));
     }
 
     void Update()
@@ -199,17 +203,22 @@ public class WeaponInfo : MonoBehaviour
         yield return new WaitForSeconds(switchCooldown);
         CompleteSwitch(pendingWeapon);
     }
-    #endregion 
+    #endregion
 
     #region 完美切换
     //完美切换 立即完成切换
     private void CompleteSwitch(WeaponType newType)
     {
+        // 记录旧武器的 ID
+        int oldID = (stats != null) ? stats.id : -1;
+
         weaponType = newType;
         InitializeWeapon(newType);   // 重置弹药、开火冷却
         lastSwitchTime = Time.time;
         isSwitching = false;
-        
+
+        // 发布切换武器事件，参数为旧ID和新ID
+        EventBus.Instance.Trigger(new ChangeWeaponStruct(oldID, stats.id));
     }
     #endregion
 

@@ -20,6 +20,7 @@ public struct PlayerFiredEvent { }
 [System.Serializable]
 public class WeaponStats
 {
+    public int id;                       // 新增：武器唯一ID（可在 Inspector 中设置）
     public WeaponType weaponType;
     public string weaponName;
     public float damage = 10f;     //造成伤害

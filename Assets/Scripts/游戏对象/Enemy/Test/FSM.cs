@@ -189,7 +189,6 @@ public class FSM : MonoBehaviour
     {
         (states[StateType.Wound] as EnemyWoundState).finallyDamage = damage;
         ChangeState(StateType.Wound);
-        
     }
     #endregion
 

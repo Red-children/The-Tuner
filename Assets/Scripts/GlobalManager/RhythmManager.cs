@@ -41,6 +41,8 @@ public struct BeatPreviewEvent
 
 public class RhythmManager : MonoBehaviour
 {
+    private bool isRunning = false;
+
     public static RhythmManager Instance { get; private set; }
 
     public int bpm = 120;           //歌曲bpm 后续可以改成从音乐文件中读取
@@ -85,14 +87,15 @@ public class RhythmManager : MonoBehaviour
     void Start()
     {
         beatInterval = 60.0 / bpm;
-        nextBeatTime = AudioSettings.dspTime + beatInterval;
+        // 不再自动设置 nextBeatTime，等待外部启动
         lastRank = RhythmRank.Miss;
-        Debug.Log($"[RhythmManager] 启动: 当前dspTime={AudioSettings.dspTime:F8}, 下一拍={nextBeatTime:F8}, beatInterval={beatInterval:F8}");
     }
 
     void Update()
     {
-        double now = AudioSettings.dspTime;                     // 获取当前时间
+        if (!isRunning) return;
+
+        double now = AudioSettings.dspTime;
 
         double timeSinceLastBeat = now - (nextBeatTime - beatInterval); // 距离上一拍的时间
         BeatProgress = Mathf.Clamp01((float)(timeSinceLastBeat / beatInterval));
@@ -117,7 +120,7 @@ public class RhythmManager : MonoBehaviour
         if (now >= nextBeatTime)
         {
             nextBeatTime += beatInterval;
-           
+            previewTriggeredForNextBeat = false; // 新增
         }
 
 
@@ -152,10 +155,10 @@ public class RhythmManager : MonoBehaviour
         #endregion
 
         #region 更新下一拍时间
-        // 如果已经过了拍点，更新下一拍
         if (now >= nextBeatTime)
         {
             nextBeatTime += beatInterval;
+            previewTriggeredForNextBeat = false; // 关键：重置标志，允许下一拍再次触发预告
         }
         #endregion
 
@@ -164,6 +167,31 @@ public class RhythmManager : MonoBehaviour
     public double GetNextBeatTime()
     {
         return nextBeatTime;
+    }
+    /// <summary>
+    /// 启动节奏管理器，与音乐同步
+    /// </summary>
+    /// <param name="dspStartTime">音乐开始播放时的 AudioSettings.dspTime</param>
+    /// <param name="firstBeatOffset">音乐开始后第一拍出现的偏移（秒）</param>
+    public void StartRhythm(double dspStartTime, double firstBeatOffset)
+    {
+        // 计算第一拍的时间
+        nextBeatTime = dspStartTime + firstBeatOffset;
+        // 如果当前时间已经超过第一拍，则跳到下一拍
+        double now = AudioSettings.dspTime;
+        while (nextBeatTime <= now)
+        {
+            nextBeatTime += beatInterval;
+        }
+        previewTriggeredForNextBeat = false;
+        isRunning = true;
+        Debug.Log($"[RhythmManager] 已启动，下一拍时间 {nextBeatTime:F8}");
+    }
+
+    public void StopRhythm()
+    {
+        isRunning = false;
+        Debug.Log("[RhythmManager] 已停止");
     }
 
 }

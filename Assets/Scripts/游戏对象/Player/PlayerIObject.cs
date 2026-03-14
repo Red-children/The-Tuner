@@ -70,13 +70,6 @@ public class PlayerIObject : BaseObject
     public float dashEnergyRegenRate = 1f;    // 闪避条恢复速率（每秒恢复多少）
     public bool isDashOnWindow = false;             // 是否在节奏窗口内可以闪避
 
-
-
-
-
-
-
-
     [Header("近战攻击设置")]
     public float meleeRange = 1.5f;          // 近战范围
     public LayerMask enemyLayer;              // 敌人层级
@@ -236,7 +229,7 @@ public class PlayerIObject : BaseObject
     // 传递攻击力到当前武器
     public void passPlayerAtk()
     {
-        currentWeapon.ownerDamage  = this.atk;
+        currentWeapon.ownerDamage = this.atk;
     }
     #endregion
 
@@ -358,11 +351,17 @@ public class PlayerIObject : BaseObject
 
         #region 武器切换
         if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
             currentWeapon.SwitchWeapon(WeaponType.Pistol);
+        }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
             currentWeapon.SwitchWeapon(WeaponType.Shotgun);
+        }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
             currentWeapon.SwitchWeapon(WeaponType.Rifle);
+        }
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
