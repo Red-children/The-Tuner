@@ -356,15 +356,6 @@ public class PlayerIObject : BaseObject
         }
 
 
-
-
-        //#region 相机追踪逻辑
-        ////玩家和准星之间的向量上取一点 相机对这一点做线性插值
-        //Vector2 cameraOffset =  directionMouse * offsetFactor;
-        //Vector3 targetCameraPos = transform.position + new Vector3(cameraOffset.x, cameraOffset.y, cameraZ); // 确保相机在玩家前面
-        //playerCamera.transform.position =  Vector3.Lerp(playerCamera.transform.position, targetCameraPos, Time.deltaTime * cameraSmoothness);
-        //#endregion
-
         #region 武器切换
         if (Input.GetKeyDown(KeyCode.Alpha1))
             currentWeapon.SwitchWeapon(WeaponType.Pistol);
@@ -405,26 +396,35 @@ public class PlayerIObject : BaseObject
                 currentDashEnergy = maxDashEnergy;
         }
 
+        // 2. 决定闪避方向
+        Vector2 dashDir;
+        if (Mathf.Abs(moveX) > 0.1f || Mathf.Abs(moveY) > 0.1f)
+        {
+            // 有移动输入：使用WASD方向（归一化）
+            dashDir = new Vector2(moveX, moveY).normalized;
+        }
+        else
+        {
+            // 无移动输入：使用鼠标方向
+            dashDir = directionMouse.normalized; // directionMouse 已在前面计算
+        }
+        // 3. 计算闪避目标点（考虑墙壁）
+        Vector3 targetPos = transform.position + (Vector3)dashDir * dashDistance;
 
-        Vector3 dashDir = directionMouse.normalized; // 原 Vector3
-        Vector2 dashDir2D = new Vector2(dashDir.x, dashDir.y); // 转换为 Vector2
-        Vector3 targetPos = transform.position + dashDir * dashDistance; // targetPos 仍用 Vector3
-
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDir2D, dashDistance, wallLayer);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDir, dashDistance, wallLayer);
         if (hit.collider != null)
         {
-            // hit.point 是 Vector2，dashDir2D 也是 Vector2，可以相减
-            Vector2 adjustedPoint = hit.point - dashDir2D * 0.2f;
+            Vector2 adjustedPoint = hit.point - dashDir * 0.2f;
             targetPos = new Vector3(adjustedPoint.x, adjustedPoint.y, transform.position.z);
         }
 
-        if (Input.GetMouseButtonDown(1) &&(currentDashEnergy>1||isDashOnWindow))
+        // 4. 触发闪避
+        if (Input.GetMouseButtonDown(1) && (currentDashEnergy > 1 || isDashOnWindow))
         {
             if (!isDashOnWindow)
             {
-                currentDashEnergy -= 1; // 消耗闪避能量
+                currentDashEnergy -= 1;
             }
-            
             StartCoroutine(DashCoroutine(transform.position, targetPos, dashDuration));
         }
         #endregion
