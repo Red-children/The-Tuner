@@ -366,6 +366,7 @@ public class EnemyMeleeApproachState: IState
     {
         Debug.Log("进入Approach状态");
         timer = 0f;
+        parameter.animator.Play("Attack");
         // 初始方向朝向玩家
         if (parameter.target != null)
         {

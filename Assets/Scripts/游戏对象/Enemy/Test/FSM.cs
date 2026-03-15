@@ -26,6 +26,12 @@ public enum StateType
 }
 #endregion
 
+public struct EnemyDiedStruct
+{
+
+}
+
+
 #region 敌人的参数
 [Serializable]
 public class Parameter
@@ -133,9 +139,9 @@ public class FSM : MonoBehaviour
     #region 由其他碰撞器检测玩家进入的方法，供 TriggerForward 调用
     public void OnPlayerEnter(Transform player)
     {
-        Debug.Log($"[FSM] OnPlayerEnter 前 target = {parameter.target}");
+       
         parameter.target = player;
-        Debug.Log($"[FSM] OnPlayerEnter 后 target = {parameter.target}");
+        
     }
 
     public void OnPlayerExit(Transform player)
@@ -160,6 +166,7 @@ public class FSM : MonoBehaviour
 
     public void Dead()
     {
+        EventBus.Instance.Trigger(new EnemyDiedStruct() );
         if (parameter.DeadEff != null)
             Instantiate(parameter.DeadEff, transform.position, transform.rotation);
         Destroy(gameObject);
