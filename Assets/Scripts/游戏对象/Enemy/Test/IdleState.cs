@@ -60,7 +60,6 @@ public class EnemyPatrolState : IState
     private Parameter parameter;
     private Vector2 targetPos;
     private float minDistance = 0.1f;
-    private float rotationSpeed = 180f; // 旋转速度（度/秒），可调整
 
 
 

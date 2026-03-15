@@ -8,8 +8,7 @@ public class PlayerIdleState : IState
 {
     private PlayerFSM manager;
     private PlayerParameter parameter;
-    // 等待计时器
-    private float timer;
+    
 
     public PlayerIdleState(PlayerFSM manager)
     {
@@ -20,7 +19,7 @@ public class PlayerIdleState : IState
     public void OnStart()
     {
         Debug.Log("进入Idle状态");
-        timer = 0f;
+        
     }
 
     public void OnUpdate()
@@ -122,7 +121,7 @@ public class PlayerShootState
     private PlayerFSM manager;
     private PlayerParameter parameter;
     // 等待计时器
-    private float timer;
+    
 
     public PlayerShootState(PlayerFSM manager)
     {
@@ -133,6 +132,6 @@ public class PlayerShootState
     public void OnStart()
     {
         Debug.Log("进入Idle状态");
-        timer = 0f;
+        
     }
 }
