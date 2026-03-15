@@ -126,12 +126,36 @@ public class WeaponInfo : MonoBehaviour
     {
         GameObject bulletObj = Instantiate(stats.bulletPrefab, pos, rot);
         Bullet bulletScript = bulletObj.GetComponent<Bullet>();
-        bulletScript.owner = this.owner; // 传递所有者
-                                         // 伤害计算（可根据所有者调整）
-        float multiplier = (float)nowRhythmData.multiplier;
-        float baseDamage = owner == BulletOwner.Player ? (ownerDamage + stats.damage) : (stats.damage); // 敌人子弹可能不需要玩家攻击力
+        bulletScript.owner = this.owner;
+
+        // 计算伤害
+        float multiplier = (float)nowRhythmData.multiplier; // 当前节奏倍率
+        float baseDamage;
+
+        if (owner == BulletOwner.Player)
+        {
+            baseDamage = ownerDamage + stats.damage;        // 玩家伤害 = 玩家攻击力 + 武器基础
+        }
+        else
+        {
+            baseDamage = stats.damage;                      // 敌人伤害只用武器基础
+                                                            // 如果敌人不受节奏影响，可以将 multiplier 固定为 1
+            multiplier = 1f;                                 // 取消这行则敌人也受节奏影响
+        }
+
         bulletScript.damage = baseDamage * multiplier;
-        // ... 其他初始化 ...
+
+        // 敌人子弹忽略与发射者的碰撞
+        if (owner == BulletOwner.Enemy)
+        {
+            Collider2D enemyCollider = GetComponentInParent<Collider2D>();
+            if (enemyCollider != null)
+            {
+                Collider2D bulletCollider = bulletObj.GetComponent<Collider2D>();
+                if (bulletCollider != null)
+                    Physics2D.IgnoreCollision(bulletCollider, enemyCollider);
+            }
+        }
     }
     #endregion
 

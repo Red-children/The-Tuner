@@ -153,7 +153,7 @@ public class PlayerIObject : BaseObject
     public override void Wound(int damage)
     {
 
-        if (isInvincible || nowHp <= 0) return;  // 无敌或已死亡则不处理
+        if (isInvincible || nowHp <= 0) { if (isInvincible) Debug.Log("玩家无敌，伤害被忽略"); return; }  // 无敌或已死亡则不处理
 
         // 扣血
         nowHp -= Mathf.Max(damage, 0);

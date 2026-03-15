@@ -506,7 +506,7 @@ public class EnemyRangedAttackState : IState
         float attackRange = parameter.attackRange;
 
         // 如果太远或太近，回到接近状态
-        if (distance > attackRange || distance < attackRange * 0.5f)
+        if (distance > attackRange || distance < attackRange * 0.6f)
         {
             manager.ChangeState(StateType.Approach);
             return;

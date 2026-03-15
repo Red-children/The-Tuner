@@ -230,7 +230,7 @@ MonoBehaviour:
   obtainMethod: 
   weaponSprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 3}
   weaponBase: {fileID: 11400000, guid: 3235009560117754c9f8659524fcb898, type: 2}
-  weaponType: 0
+  weaponType: 2
   firePos: {fileID: 725547109508326868}
   stats:
     id: 0
@@ -244,7 +244,7 @@ MonoBehaviour:
     bulletPrefab: {fileID: 0}
     reloadTime: 0
     shakeIntensity: 0.01
-  owner: 0
+  owner: 1
   ownerDamage: 0
 --- !u!1001 &725547111217512795
 PrefabInstance:
@@ -255,7 +255,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: parameter.health
-      value: 1e+11
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: parameter.idleTime
@@ -268,6 +268,10 @@ PrefabInstance:
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: parameter.enemyType
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
+      propertyPath: parameter.attackRange
+      value: 5.88
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: parameter.patrolCenter

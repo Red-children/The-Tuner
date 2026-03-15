@@ -104,7 +104,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: parameter.health
-      value: 1e+11
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: parameter.idleTime

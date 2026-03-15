@@ -57,8 +57,9 @@ public class Bullet : MonoBehaviour
         for (int i = 0; i < steps; i++)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, stepDistance, layerMask);
-            if (hit.collider != null)
+            if (hit.collider != null) 
             {
+                Debug.Log($"[Bullet] 击中 {hit.collider.tag}, 所有者 {owner}");
                 // 玩家子弹击中敌人
                 if (owner == BulletOwner.Player && hit.collider.CompareTag("Enemy"))
                 {
