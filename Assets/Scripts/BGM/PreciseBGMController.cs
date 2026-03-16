@@ -15,22 +15,24 @@ public class PreciseBGMController : MonoBehaviour
     #region 生命周期
     private void Awake()
     {
-        // 自动获取子模块（确保挂载在同一对象）
         AutoGetSubModules();
-        // 初始化所有子模块
-        InitAllSubModules();
-        // 订阅播放事件
-        PreciseEventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);
+        // 只初始化进度管理器，倍率和指示器模块禁用
+        _progressManager?.Init(_songData);
+        // _multiplierManager?.Init(_songData, _progressManager);  // 注释
+        // _indicatorManager?.Init(_songData, _progressManager);    // 注释
+
+        // 订阅播放事件（使用 EventBus，后文会统一）
+        EventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);
     }
 
     private void OnDestroy()
     {
-        // 清理资源
         StopAllCoroutines();
-        PreciseEventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);
+        EventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);  // 改为 EventBus
         _progressManager?.StopBgmPlay();
         _indicatorManager?.ResetIndicatorState();
     }
+
     #endregion
 
     #region 模块初始化
@@ -43,20 +45,13 @@ public class PreciseBGMController : MonoBehaviour
         if (_indicatorManager == null) _indicatorManager = GetComponent<BgmIndicatorManager>();
 
         // 检查子模块是否齐全
-        if (_songData == null || _progressManager == null || _multiplierManager == null || _indicatorManager == null)
+        // if (_songData == null || _progressManager == null || _multiplierManager == null || _indicatorManager == null)
+        if (_songData == null || _progressManager == null || _multiplierManager == null)
         {
             Debug.LogError("PreciseBGMController: 缺少子模块！请确保所有子模块挂载在同一对象上");
         }
     }
 
-    // 初始化所有子模块
-    private void InitAllSubModules()
-    {
-        _progressManager?.Init(_songData);
-        _multiplierManager?.Init(_songData, _progressManager);
-        _indicatorManager?.Init(_songData, _progressManager);
-        Debug.Log("PreciseBGMController: 所有子模块初始化完成");
-    }
     #endregion
 
     #region 事件回调
@@ -64,8 +59,22 @@ public class PreciseBGMController : MonoBehaviour
     private void OnPlayBGM(PlayBGMEvent evt)
     {
         Debug.Log("PreciseBGMController: 接收到播放BGM事件");
+
         // 启动BGM播放
         _progressManager?.StartBgmPlay();
+
+        // 同步节奏管理器
+        if (RhythmManager.Instance != null && _songData != null)
+        {
+            double dspStart = _progressManager.DspStartTime; // 记录的音乐开始时间
+            double firstOffset = _songData.firstOffset;       // 歌曲第一拍偏移（需在 BgmSongData 中配置）
+            RhythmManager.Instance.StartRhythm(dspStart, firstOffset);
+
+            // 如果需要，同步 BPM
+            // RhythmManager.Instance.bpm = (int)_songData.BPM;
+            // 注意：修改 bpm 后需重新计算 beatInterval，可在 StartRhythm 中处理
+        }
+
         // 启动进度采样协程
         if (_progressSamplerCoroutine != null) StopCoroutine(_progressSamplerCoroutine);
         _progressSamplerCoroutine = StartCoroutine(PreciseProgressSampler());
@@ -79,28 +88,24 @@ public class PreciseBGMController : MonoBehaviour
         if (_songData == null) yield break;
 
         float interval = _songData.sampleIntervalMs / 1000f;
-        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(interval); // 不受TimeScale影响
+        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(interval);
 
         while (_progressManager != null && _progressManager.IsPlaying)
         {
-            // 1. 更新精准进度
             _progressManager.UpdatePreciseProgress();
-            // 2. 计算并推送倍率更新
-            _multiplierManager.CalculateAndPushMultiplier();
-            // 3. 检查并推送指示器
-            _indicatorManager.CheckAndPushIndicator();
+            // _multiplierManager.CalculateAndPushMultiplier(); // 注释
+            // _indicatorManager.CheckAndPushIndicator();       // 注释
 
-            // 检查是否播放完成
             if (_progressManager.IsBgmFinished())
             {
                 _progressManager.StopBgmPlay();
-                _indicatorManager.ResetIndicatorState();
+                // _indicatorManager.ResetIndicatorState();     // 注释
+                // 可选：停止 RhythmManager
+                RhythmManager.Instance?.StopRhythm();
                 break;
             }
-
             yield return wait;
         }
-
         _progressSamplerCoroutine = null;
     }
     #endregion
@@ -118,4 +123,7 @@ public class PreciseBGMController : MonoBehaviour
         }
     }
     #endregion
+
+    
+
 }

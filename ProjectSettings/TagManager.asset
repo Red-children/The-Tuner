@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Moutains
   - Boundarys
+  - Enemy
+  - Bullet
+  - Wall
   layers:
   - Default
   - TransparentFX
@@ -13,11 +16,11 @@ TagManager:
   - 
   - Water
   - UI
+  - Enemy
+  - Player
+  - Wall
   - 
-  - 
-  - 
-  - 
-  - 
+  - DamageNumber
   - 
   - 
   - 
@@ -42,4 +45,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Player
+    uniqueID: 509429205
+    locked: 0
+  - name: DamageNumber
+    uniqueID: 238511875
+    locked: 0
+  - name: Weapon
+    uniqueID: 2225659765
     locked: 0

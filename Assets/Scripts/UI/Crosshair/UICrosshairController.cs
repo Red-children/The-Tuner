@@ -44,26 +44,18 @@ public class UICrosshairController : MonoBehaviour
 
     private void OnEnable()
     {
-        // 订阅所有事件（主控统一订阅，避免子脚本重复订阅）
-        Debug.Log("UICrosshairController: 开始订阅事件");
-        PreciseEventBus.Instance.Subscribe<IndicatorActiveEvent>(OnIndicatorActive);
-        PreciseEventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);
-        PreciseEventBus.Instance.Subscribe<BGMProgressUpdateEvent>(OnProgressUpdate);
-        EventBus.Instance.Subscribe<AttackMultiplierChangedEvent>(OnMultiplierChanged);
-        EventBus.Instance.Subscribe<EnemyHitEvent>(OnEnemyHit);
-        Debug.Log("UICrosshairController: 事件订阅完成");
+        // 订阅你的节奏事件
+        EventBus.Instance.Subscribe<BeatPreviewEvent>(OnBeatPreview);
+        EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
+        EventBus.Instance.Subscribe<EnemyHitEvent>(OnEnemyHit); // 命中事件如果还用就保留
     }
 
     private void OnDisable()
     {
-        // 取消所有事件订阅
-        PreciseEventBus.Instance.Unsubscribe<IndicatorActiveEvent>(OnIndicatorActive);
-        PreciseEventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);
-        PreciseEventBus.Instance.Unsubscribe<BGMProgressUpdateEvent>(OnProgressUpdate);
-        EventBus.Instance.Unsubscribe<AttackMultiplierChangedEvent>(OnMultiplierChanged);
+        EventBus.Instance.Unsubscribe<BeatPreviewEvent>(OnBeatPreview);
+        EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
         EventBus.Instance.Unsubscribe<EnemyHitEvent>(OnEnemyHit);
     }
-
     private void Update()
     {
         // 准星跟随鼠标（主控负责基础交互）
@@ -94,22 +86,9 @@ public class UICrosshairController : MonoBehaviour
     #endregion
 
     #region 事件回调（主控转发给子脚本）
-    // 接收BGM播放事件：记录开始时间
-    private void OnPlayBGM(PlayBGMEvent evt)
-    {
-        _dspStartTime = evt.time;
-        // 转发给动画脚本
-        _animator?.SetDspStartTime(_dspStartTime);
-    }
+   
 
-    // 接收倍率变化事件：更新暴击状态
-    private void OnMultiplierChanged(AttackMultiplierChangedEvent evt)
-    {
-        _isCritical = evt.isCritical;
-        // 转发给动画脚本
-        _animator?.SetCriticalState(_isCritical);
-    }
-
+    
     // 接收敌人命中事件：触发命中动画
     private void OnEnemyHit(EnemyHitEvent evt)
     {
@@ -119,17 +98,19 @@ public class UICrosshairController : MonoBehaviour
     }
 
     // 接收BGM进度更新事件：转发进度
-    private void OnProgressUpdate(BGMProgressUpdateEvent evt)
-    {
-        _animator?.UpdateBgmProgress(evt.PreciseTime);
-    }
+    
+   
+    #endregion
 
-    // 接收指示器激活事件：触发准星缩放动画
-    private void OnIndicatorActive(IndicatorActiveEvent evt)
+    private void OnBeatPreview(BeatPreviewEvent evt)
     {
-        // 通知动画脚本播放缩放动画
-        Debug.Log($"UICrosshairController: 接收到IndicatorActiveEvent！nextPoint={evt.nextPoint}, time={evt.time}"); // 新增日志
         _animator?.PlayScaleAnimation(evt);
     }
-    #endregion
+
+    private void OnRhythmData(RhythmData data)
+    {                                         
+        // 根据节奏数据更新暴击状态
+        _isCritical = data.rank == RhythmRank.Perfect || data.rank == RhythmRank.Great;
+        _animator?.SetCriticalState(_isCritical);
+    }
 }

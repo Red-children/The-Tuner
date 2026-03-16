@@ -4,8 +4,7 @@ using UnityEngine.UI;
 // 准星动画控制脚本（挂载在UICrosshair对象上）
 public class CrosshairAnimator : MonoBehaviour
 {
-    // private Animator _animSmall; // 小圆准星动画
-    // private Animator _animBig;   // 大圆环动画
+    
     public Animator _animSmall; // 小圆准星动画
     public Animator _animBig;   // 大圆环动画
     private CrosshairSpriteLoader _spriteLoader; // 依赖图片加载脚本
@@ -45,6 +44,15 @@ public class CrosshairAnimator : MonoBehaviour
         _isCritical = isCritical;
     }
 
+    public void PlayHitAnimation(bool isCritical, double currentTime)
+    {
+        if (isCritical && _animSmall != null)
+        {
+            _animSmall.Play("PreciseHit", 0, 0f);
+            Debug.Log($"精准命中动画，时间 {currentTime:F1}");
+        }
+    }
+
     // 更新BGM进度
     public void UpdateBgmProgress(double progress)
     {
@@ -52,31 +60,15 @@ public class CrosshairAnimator : MonoBehaviour
     }
 
     // 播放命中动画
-    public void PlayHitAnimation(bool isCritical, double currentTime)
-    {
-        if (isCritical && _animSmall != null)
-        {
-            _animSmall.Play("PreciseHit");
-            Debug.Log($"精准命中PreciseHit\nCurrent:{currentTime:F1}\n");
-        }
-    }
+
 
     // 播放缩放动画（指示器激活时）
-    public void PlayScaleAnimation(IndicatorActiveEvent evt)
+    public void PlayScaleAnimation(BeatPreviewEvent evt)
     {
-        if (_animBig == null) 
-        {
-            throw new System.NullReferenceException("UICrosshairController: _animator为空!无法调用PlayScaleAnimation");
-        }
+        if (_animBig == null) return;
 
-        Debug.Log($"Indicator Active at {AudioSettings.dspTime - _dspStartTime}");
-        // 计算动画进度（修复负数问题）
-        double remainingTime = evt.nextPoint - evt.time;
-        float progress = Mathf.Clamp01((float)(remainingTime / 0.3f));
-        float left = 1f - progress;
-
-        _animBig.Play("Indicator", 0, left);
-        Debug.Log($"Animation Start at range{left:F4}");
+        Debug.Log($"[CrosshairAnimator] 播放缩放动画，Time.time = {Time.time:F3}");
+        _animBig.Play("Indicator", 0, 0f);
     }
 
     // 更新闲置状态动画
@@ -102,4 +94,9 @@ public class CrosshairAnimator : MonoBehaviour
         }
     }
     #endregion
+
+    public void OnAnimationComplete()
+    {
+        Debug.Log("[CrosshairAnimator] 动画完整播放结束");
+    }
 }

@@ -68,6 +68,7 @@ public class BgmIndicatorManager : MonoBehaviour
         double targetPublishTime = _indicatorPublishQueue.Peek();
         // 时间匹配：到达推送时间（误差1ms内）
         // if ((targetPublishTime - preciseTime) < 1e-3)
+
         if (preciseTime >= targetPublishTime )
         {
             // 出队并推送事件
