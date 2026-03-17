@@ -1,9 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 public class UIManager
 {
