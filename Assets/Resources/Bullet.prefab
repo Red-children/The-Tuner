@@ -115,8 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 10
   damage: 10
-  owner: 1
-  DestoryEff: {fileID: 161024, guid: a1a6169fcb0543040a41c85eadcc2f3d, type: 3}
+  destroyEffect: {fileID: 0}
 --- !u!58 &-6224656265629302889
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -20,12 +20,12 @@ public class WaveManager : MonoBehaviour
 
     private int currentWaveIndex = 0;
     private int enemiesRemaining = 0;
-    private bool isWaveActive = false;
+    public bool isWaveActive = false;
     private bool isResting = false;
 
+    private Room currentRoom;
     private void Start()
     {
-        StartNextWave();
     }
 
     private void Update()
@@ -47,7 +47,7 @@ public class WaveManager : MonoBehaviour
         EventBus.Instance.Unsubscribe<EnemyDiedStruct>(DecreasedEnemyNumber);
     }
 
-
+    #region 开始下一波
     private void StartNextWave()
     {
         if (currentWaveIndex >= waves.Length)
@@ -62,27 +62,38 @@ public class WaveManager : MonoBehaviour
         isWaveActive = true;
         StartCoroutine(SpawnEnemies(wave));
     }
+    #endregion
 
+    #region 生成敌人方法
     private IEnumerator SpawnEnemies(WaveConfig wave)
     {
         for (int i = 0; i < wave.enemyCount; i++)
         {
             // 随机选择敌人类型
             GameObject enemyPrefab = wave.enemyPrefabs[Random.Range(0, wave.enemyPrefabs.Length)];
+
+            FSM enemyFSM = enemyPrefab.GetComponent<FSM>();
+            // 将敌人注册到当前房间
+            currentRoom.RegisterEnemy(enemyFSM);
+
             // 随机选择生成点
             Transform spawn = spawnPoints[Random.Range(0, spawnPoints.Length)];
             Instantiate(enemyPrefab, spawn.position, spawn.rotation);
             yield return new WaitForSeconds(wave.spawnInterval);
         }
     }
+    #endregion
 
+    #region 波次结束
     private void EndWave()
     {
         isWaveActive = false;
         currentWaveIndex++;
         StartCoroutine(RestPeriod());
     }
+    #endregion
 
+    #region 波次休息间隙
     private IEnumerator RestPeriod()
     {
         isResting = true;
@@ -92,9 +103,19 @@ public class WaveManager : MonoBehaviour
         isResting = false;
         StartNextWave();
     }
+    #endregion
 
-    public void DecreasedEnemyNumber<EnemyDiedStruct>(EnemyDiedStruct t) 
+    #region 敌人数量减少方法
+    public void DecreasedEnemyNumber(EnemyDiedStruct t)
     {
         enemiesRemaining--;
+    }
+    #endregion
+
+    public void StartWave(Room room)
+    {
+        currentRoom = room;
+        currentWaveIndex = 0;          // 从第一波开始
+        StartNextWave();
     }
 }
