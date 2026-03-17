@@ -9,7 +9,7 @@ public struct ChangeWeaponStruct
     }
 }
 
-public struct PlayHealthChangedEventStruct
+public struct PlayerHealthChangedEventStruct
 {
     public float currentHealth;     //  变化后血量  
     public float maxHealth;         //  血量最大值  

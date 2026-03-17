@@ -14,16 +14,16 @@ public class UIHPForeground : MonoBehaviour
     public float _currentDisplayHealth = 0f; // 当前显示血量
     private float _velocity; // 关键：速度变量（成员变量+初始0）
 
-    void Test()
-    {
-        if(Input.GetMouseButtonDown(0))
-        {
-            _targetHealth -= 0.1f;
-            _targetHealth = Mathf.Clamp01(_targetHealth);
-            Debug.Log("Left Mouse Button Down!!!!!!!" + 
-            $"Current _targetHealth:{_targetHealth}");
-        }
-    }
+    // void Test()
+    // {
+    //     if(Input.GetMouseButtonDown(0))
+    //     {
+    //         _targetHealth -= 0.1f;
+    //         _targetHealth = Mathf.Clamp01(_targetHealth);
+    //         Debug.Log("Left Mouse Button Down!!!!!!!" + 
+    //         $"Current _targetHealth:{_targetHealth}");
+    //     }
+    // }
     void Init()
     {
         if(image == null)
@@ -32,13 +32,9 @@ public class UIHPForeground : MonoBehaviour
         }
         if (image == null)
         {
-            Debug.LogError("血条Image组件未找到!请检查挂载对象或赋值", this);
+            Debug.LogError("UIHPForeground 未找到组件!!!!");
             return;
         }
-    }
-    public void SetTargetPercent(float percent)
-    {
-        _targetHealth = Mathf.Clamp01(percent);
     }
     bool IsHPChanged()
     {
@@ -67,7 +63,12 @@ public class UIHPForeground : MonoBehaviour
     void Update()
     {
         HPChangeAnimation();
-        Test();
     }
-    #endregion
+#endregion
+#region 对外接口
+    public void SetTargetPercent(float percent)
+    {
+        _targetHealth = Mathf.Clamp01(percent);
+    }
+#endregion
 }

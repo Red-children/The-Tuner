@@ -9,21 +9,35 @@ public class UIPlayerHP : MonoBehaviour
     private float _lastHP = 0;
     [Header("剩余生命值条")]
     public UIHPForeground healthPercent;
+    public UIHPText HPText;
 
+#region Test
+    void TestInit()
+    {
+        Init();
+        _maxHP = 100f;
+        _lastHP = 100f;
+    }
+#endregion
     void Init()
     {
         if (healthPercent == null)
         {
             healthPercent = GetComponentInChildren<UIHPForeground>();
         }
-        if (healthPercent == null)
+        if (HPText == null)
         {
-            Debug.LogError("未找到 血条组件 UIHPForeground");
+            HPText = GetComponentInChildren<UIHPText>();
+        }
+        if (healthPercent == null || HPText == null)
+        {
+            Debug.LogError("UIPlayerHP 组件缺失!!!!!!!!!!");
         }
     }
 #region 回调函数
-    void OnPlayerHPChange(PlayHealthChangedEventStruct evt)
+    void OnPlayerHPChange(PlayerHealthChangedEventStruct evt)
     {
+        Debug.Log("TestHP:Receive HPChangeEvent\n");
         //  初始化
         if (_maxHP - evt.maxHealth > 1e-6)
         {
@@ -31,21 +45,19 @@ public class UIPlayerHP : MonoBehaviour
         } 
         //  更新其他信息
         _lastHP = evt.currentHealth;
-        //  播放血条变动动画
+        //  通知播放血条变动动画
         healthPercent.SetTargetPercent(evt.healthPercent);
+        //  通知文字更新
+        HPText.SetDisplayText(_lastHP + " / " + _maxHP);
     }
 #endregion
 #region 生命周期
     void Start()
     {
+        // Init();
+        TestInit();
         //  订阅血量变化事件
-        EventBus.Instance.Subscribe<PlayHealthChangedEventStruct>(OnPlayerHPChange);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        EventBus.Instance.Subscribe<PlayerHealthChangedEventStruct>(OnPlayerHPChange);
     }
 #endregion
 }
