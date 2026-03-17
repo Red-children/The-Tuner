@@ -4,6 +4,11 @@ using UnityEngine;
 
 
 
+public enum WeaponOwner
+{
+    Player,
+    Enemy
+}
 
 public class WeaponInfo : MonoBehaviour
 {
@@ -31,7 +36,7 @@ public class WeaponInfo : MonoBehaviour
     private bool isReloading;
 
     [Header("武器所有者")]
-    public BulletOwner owner; // 在 Inspector 中设置，玩家武器设为 Player，敌人武器设为 Enemy
+    public WeaponOwner owner; // 在 Inspector 中设置，玩家武器设为 Player，敌人武器设为 Enemy
 
 
     public RhythmData nowRhythmData; // 当前节奏数据
@@ -126,36 +131,19 @@ public class WeaponInfo : MonoBehaviour
     {
         GameObject bulletObj = Instantiate(stats.bulletPrefab, pos, rot);
         Bullet bulletScript = bulletObj.GetComponent<Bullet>();
-        bulletScript.owner = this.owner;
+
+        // 根据武器所有者设置子弹的层
+        if (owner == WeaponOwner.Player)
+            bulletObj.layer = LayerMask.NameToLayer("PlayerBullet");
+        else
+            bulletObj.layer = LayerMask.NameToLayer("EnemyBullet");
 
         // 计算伤害
-        float multiplier = (float)nowRhythmData.multiplier; // 当前节奏倍率
-        float baseDamage;
-
-        if (owner == BulletOwner.Player)
-        {
-            baseDamage = ownerDamage + stats.damage;        // 玩家伤害 = 玩家攻击力 + 武器基础
-        }
-        else
-        {
-            baseDamage = stats.damage;                      // 敌人伤害只用武器基础
-                                                            // 如果敌人不受节奏影响，可以将 multiplier 固定为 1
-            multiplier = 1f;                                 // 取消这行则敌人也受节奏影响
-        }
-
+        float multiplier = (float)nowRhythmData.multiplier;
+        float baseDamage = (owner == WeaponOwner.Player) ? (ownerDamage + stats.damage) : stats.damage;
         bulletScript.damage = baseDamage * multiplier;
 
-        // 敌人子弹忽略与发射者的碰撞
-        if (owner == BulletOwner.Enemy)
-        {
-            Collider2D enemyCollider = GetComponentInParent<Collider2D>();
-            if (enemyCollider != null)
-            {
-                Collider2D bulletCollider = bulletObj.GetComponent<Collider2D>();
-                if (bulletCollider != null)
-                    Physics2D.IgnoreCollision(bulletCollider, enemyCollider);
-            }
-        }
+        // 敌人子弹不再手动忽略碰撞（靠层矩阵）
     }
     #endregion
 

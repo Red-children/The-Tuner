@@ -21,8 +21,8 @@ TagManager:
   - Wall
   - 
   - DamageNumber
-  - 
-  - 
+  - PlayerBullet
+  - EnemyBullet
   - 
   - 
   - 

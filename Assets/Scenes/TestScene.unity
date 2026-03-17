@@ -2962,8 +2962,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ff1488763297bbf409daff61883ec4a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moutains: []
-  boundarys: []
 --- !u!61 &191432782
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -15453,8 +15451,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e57042962688524d908ab8c3f9b7835, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mountains: []
-  boundarys: []
 --- !u!1 &1806522837
 GameObject:
   m_ObjectHideFlags: 0
@@ -15485,6 +15481,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   waves:
+  - enemyCount: 5
+    enemyPrefabs:
+    - {fileID: 725547110283411354, guid: 50a29d903c69289498ff954133c13a93, type: 3}
+    - {fileID: 9171717364712834073, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
+    spawnInterval: 1
   - enemyCount: 5
     enemyPrefabs:
     - {fileID: 725547110283411354, guid: 50a29d903c69289498ff954133c13a93, type: 3}
@@ -16982,26 +16983,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 9171717364712834073, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
       propertyPath: m_Name
       value: chesalArea
