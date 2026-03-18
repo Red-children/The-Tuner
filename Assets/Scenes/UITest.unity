@@ -3803,6 +3803,7 @@ GameObject:
   - component: {fileID: 508914127}
   - component: {fileID: 508914126}
   - component: {fileID: 508914128}
+  - component: {fileID: 508914129}
   m_Layer: 5
   m_Name: UIPlayerHP
   m_TagString: Untagged
@@ -3885,6 +3886,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healthPercent: {fileID: 1499054759}
   HPText: {fileID: 1924934555}
+--- !u!114 &508914129
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 508914124}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f28aa39dece3e545be282dc45cfbb63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -17304,8 +17317,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1924934554}
   - component: {fileID: 1924934557}
-  - component: {fileID: 1924934556}
   - component: {fileID: 1924934555}
+  - component: {fileID: 1924934556}
   m_Layer: 5
   m_Name: HPText
   m_TagString: Untagged
@@ -17345,7 +17358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfc532735c6b1e04ea4aafd50dcc7b32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  text: {fileID: 0}
+  text: {fileID: 1924934556}
 --- !u!114 &1924934556
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17366,7 +17379,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 
+  m_text: Test
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: 125cb55b44b24c4393181402bc6200e6, type: 2}
@@ -17393,7 +17406,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 36
+  m_fontSize: 30.15
   m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 1
