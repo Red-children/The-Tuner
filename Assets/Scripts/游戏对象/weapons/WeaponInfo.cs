@@ -60,90 +60,79 @@ public class WeaponInfo : MonoBehaviour
     #region 射击方法
     public void Shoot()
     {
-        if (isSwitching) return;           // 切换期间不能开火
-        if (isReloading) return;           // 正在换弹时不能开枪
-
+        if (isSwitching) return;
+        if (isReloading) return;
         if (currentAmmo <= 0)
         {
-            // 没子弹了，自动换弹
             StartCoroutine(Reload());
             return;
         }
-
-        if (isReloading || currentAmmo <= 0)
-            return;
-
         if (Time.time - lastFireTime < stats.fireRate)
             return;
 
         lastFireTime = Time.time;
 
+        // 实时判定
+        double now = AudioSettings.dspTime;
+        var rankResult = RhythmManager.Instance.GetRank(now);
+
+        // 生成子弹（传入 multiplier）
+        float multiplier = rankResult.multiplier;
         if (stats.attackType == WeaponAttackType.Single)
         {
-            SpawnBullet(firePos.position, firePos.rotation);
+            SpawnBullet(firePos.position, firePos.rotation, multiplier);
             currentAmmo--;
         }
         else if (stats.attackType == WeaponAttackType.Multi)
         {
-            float angleStep = 15f;  // 多发子弹间隔角度
+            float angleStep = 15f;
             float startAngle = -angleStep * (stats.multiBulletCount - 1) / 2f;
-
             for (int i = 0; i < stats.multiBulletCount; i++)
             {
                 Quaternion rotation = firePos.rotation * Quaternion.Euler(0, 0, startAngle + i * angleStep);
-                SpawnBullet(firePos.position, rotation);
+                SpawnBullet(firePos.position, rotation, multiplier);
             }
-
             currentAmmo--;
         }
 
-        // 触发开火事件
+        // 触发各种事件（使用实时等级）
         EventBus.Instance.Trigger(new PlayerFireEvent
         {
-            isPerfect = nowRhythmData.rank == RhythmRank.Perfect, // 根据需要调整
-            rank = nowRhythmData.rank
+            isPerfect = rankResult.rank == RhythmRank.Perfect,
+            rank = rankResult.rank
         });
-
-        // 触发开火事件（空结构体）
         EventBus.Instance.Trigger(new PlayerFiredEvent());
-
-        //触发命名振动
         EventBus.Instance.Trigger(new CameraShakeEvent { intensity = stats.shakeIntensity });
-
-        // 触发节奏命中事件（携带当前节奏数据）
         EventBus.Instance.Trigger(new RhythmHitEvent
         {
-            rank = nowRhythmData.rank,
-            intensity = nowRhythmData.rank == RhythmRank.Perfect ? 1f :
-                        nowRhythmData.rank == RhythmRank.Great ? 0.6f : 0.3f
+            rank = rankResult.rank,
+            intensity = rankResult.rank == RhythmRank.Perfect ? 1f :
+                        rankResult.rank == RhythmRank.Great ? 0.6f : 0.3f
         });
 
-        double now = AudioSettings.dspTime;
+        // 日志（区分玩家/敌人）
         double nextBeat = RhythmManager.Instance.GetNextBeatTime();
-        double timeToNext = nextBeat - now;
-        Debug.Log($"[Shoot] 玩家开火 at {now:F8}, 下一拍 at {nextBeat:F8}, 时间差 {timeToNext:F8}, 判定等级 {nowRhythmData.rank}, 是否在窗口 {nowRhythmData.isInWindow}");
-
+        string ownerStr = owner == WeaponOwner.Player ? "玩家" : "敌人";
+        Debug.Log($"[{ownerStr}开火] at {now:F8}, 下一拍 at {nextBeat:F8}, 判定等级 {rankResult.rank}, 是否在窗口 {rankResult.isInWindow}");
     }
     #endregion
 
     #region 实例化子弹
-    void SpawnBullet(Vector3 pos, Quaternion rot)
+    void SpawnBullet(Vector3 pos, Quaternion rot, float multiplier)
     {
         GameObject bulletObj = Instantiate(stats.bulletPrefab, pos, rot);
         Bullet bulletScript = bulletObj.GetComponent<Bullet>();
 
-        // 根据武器所有者设置子弹的层
+
+        // 设置子弹层级（可选，配合射线检测的层掩码）
         if (owner == WeaponOwner.Player)
             bulletObj.layer = LayerMask.NameToLayer("PlayerBullet");
         else
             bulletObj.layer = LayerMask.NameToLayer("EnemyBullet");
 
         // 计算伤害
-        float multiplier = (float)nowRhythmData.multiplier;
         float baseDamage = (owner == WeaponOwner.Player) ? (ownerDamage + stats.damage) : stats.damage;
         bulletScript.damage = baseDamage * multiplier;
-
-        // 敌人子弹不再手动忽略碰撞（靠层矩阵）
     }
     #endregion
 
