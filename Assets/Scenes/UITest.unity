@@ -3048,6 +3048,7 @@ GameObject:
   - component: {fileID: 158916686}
   - component: {fileID: 158916688}
   - component: {fileID: 158916687}
+  - component: {fileID: 158916689}
   m_Layer: 5
   m_Name: UIWeaponInfo
   m_TagString: Untagged
@@ -3114,6 +3115,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 158916685}
   m_CullTransparentMesh: 1
+--- !u!114 &158916689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 158916685}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f83653ace0b420418b4d28bba1fae83, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: {fileID: 1779783787}
 --- !u!1 &191432779
 GameObject:
   m_ObjectHideFlags: 0
@@ -3462,7 +3476,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bpm: 120
   previewLead: 0.38
-  isInWindow: 0
   rankConfigs:
   - rank: 0
     window: 0.035
