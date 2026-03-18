@@ -25,3 +25,8 @@ public struct ChangeAmmoCapEvent
     public int reserveAmmo; //  备弹
     public int weaponId;    //  
 }
+
+public struct PlayerReloadEvent
+{
+    public float duration;  //  换弹持续时间()
+}
