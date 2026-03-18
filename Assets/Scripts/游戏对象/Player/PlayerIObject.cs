@@ -25,12 +25,7 @@ public struct CameraShakeEvent
     public float intensity;   // 震屏强度，可以根据伤害值决定
 }
 
-public struct PlayerHealthChangedEventStruct
-{
-    public float currentHealth;
-    public float maxHealth;
-    public float healthPercent => currentHealth / maxHealth; //方便UI直接使用
-}
+
 
 #region 用来传递节奏数据的事件结构体 供玩家和武器监听
 public struct RhythmHitEvent

@@ -15,7 +15,7 @@ public class WaveManager : MonoBehaviour
     }
 
     public WaveConfig[] waves;           // 配置好的波次（可在Inspector中编辑）
-    public Transform[] spawnPoints;      // 生成点
+   
     public float restDuration = 5f;      // 休息阶段时长
 
     private int currentWaveIndex = 0;
@@ -69,16 +69,14 @@ public class WaveManager : MonoBehaviour
     {
         for (int i = 0; i < wave.enemyCount; i++)
         {
-            // 随机选择敌人类型
-            GameObject enemyPrefab = wave.enemyPrefabs[Random.Range(0, wave.enemyPrefabs.Length)];
+            // 从当前房间获取有效位置
+            Vector2 spawnPos = currentRoom.GetRandomValidPoint();
 
-            FSM enemyFSM = enemyPrefab.GetComponent<FSM>();
-            // 将敌人注册到当前房间
+            GameObject enemyPrefab = wave.enemyPrefabs[Random.Range(0, wave.enemyPrefabs.Length)];
+            GameObject enemyObj = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
+            FSM enemyFSM = enemyObj.GetComponent<FSM>();
             currentRoom.RegisterEnemy(enemyFSM);
 
-            // 随机选择生成点
-            Transform spawn = spawnPoints[Random.Range(0, spawnPoints.Length)];
-            Instantiate(enemyPrefab, spawn.position, spawn.rotation);
             yield return new WaitForSeconds(wave.spawnInterval);
         }
     }

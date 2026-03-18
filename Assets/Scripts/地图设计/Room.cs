@@ -10,6 +10,8 @@ public class Room : MonoBehaviour
 
     private List<FSM> enemiesInRoom = new List<FSM>();
     private bool isCleared = false;          // 是否已通关
+    public LayerMask obstacleMask;           // 障碍物层（墙壁、装饰等）
+
 
     private void Awake()
     {
@@ -78,5 +80,33 @@ public class Room : MonoBehaviour
 
             // 停止波次？通常不停止，但可根据需要暂停
         }
+    }
+
+    public Vector2 GetRandomValidPoint(float safeRadius = 0.5f)
+    {
+        if (roomTrigger == null) return transform.position;
+
+        Bounds bounds = roomTrigger.bounds;
+        int maxAttempts = 50;
+
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            float x = Random.Range(bounds.min.x, bounds.max.x);
+            float y = Random.Range(bounds.min.y, bounds.max.y);
+            Vector2 point = new Vector2(x, y);
+
+            if (!roomTrigger.OverlapPoint(point)) continue;
+
+            // 检查周围 safeRadius 半径内是否有障碍物
+            Collider2D[] hits = Physics2D.OverlapCircleAll(point, safeRadius, obstacleMask);
+            if (hits.Length > 0) continue;
+
+            return point;
+        }
+
+        
+        // 如果没有预设点，返回房间中心（但建议确保中心安全）
+        Debug.LogWarning("未找到安全生成点，返回房间中心，请检查房间障碍物或增加预设点");
+        return bounds.center;
     }
 }
