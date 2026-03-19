@@ -2,13 +2,13 @@ using System.Data.Common;
 using UnityEngine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
-#region µÈ´ı×´Ì¬
+#region ç­‰å¾…çŠ¶æ€
 
 public class EnemyIdleState : IState
 {
     private FSM manager;
     private Parameter parameter;
-    // µÈ´ı¼ÆÊ±Æ÷
+    // ç­‰å¾…è®¡æ—¶å™¨
     private float timer;
 
     public EnemyIdleState(FSM manager)
@@ -19,13 +19,13 @@ public class EnemyIdleState : IState
 
     public void OnStart()
     {
-        Debug.Log("½øÈëIdle×´Ì¬");
+        Debug.Log("è¿›å…¥IdleçŠ¶æ€");
         timer = 0f;
     }
 
     public void OnUpdate()
     {
-        // Èç¹ûÊÜµ½¹¥»÷£¬Á¢¼´ÇĞ»»µ½ÊÜ»÷×´Ì¬
+        // å¦‚æœå—åˆ°æ”»å‡»ï¼Œç«‹å³åˆ‡æ¢åˆ°å—å‡»çŠ¶æ€
         if (parameter.getHit)
         {
             manager.ChangeState(StateType.Wound);
@@ -33,13 +33,13 @@ public class EnemyIdleState : IState
         }
 
         timer += Time.deltaTime;
-        // Èç¹ûµÈ´ıÊ±¼ä³¬¹ıÉè¶¨Öµ£¬ÇĞ»»µ½Ñ²Âß×´Ì¬
+        // å¦‚æœç­‰å¾…æ—¶é—´è¶…è¿‡è®¾å®šå€¼ï¼Œåˆ‡æ¢åˆ°å·¡é€»çŠ¶æ€
         if (timer >= parameter.idleTime)
         {
             manager.ChangeState(StateType.Patrol);
             return;
         }
-        // Èç¹ûÔÚµÈ´ıÆÚ¼ä·¢ÏÖÍæ¼Ò£¬Á¢¼´ÇĞ»»µ½×·Öğ×´Ì¬
+        // å¦‚æœåœ¨ç­‰å¾…æœŸé—´å‘ç°ç©å®¶ï¼Œç«‹å³åˆ‡æ¢åˆ°è¿½é€çŠ¶æ€
         if (parameter.target != null)
         {
             manager.ChangeState(StateType.Chase);
@@ -53,14 +53,14 @@ public class EnemyIdleState : IState
 }
 #endregion
 
-#region Ñ²Âß×´Ì¬
+#region å·¡é€»çŠ¶æ€
 public class EnemyPatrolState : IState
 {
     private FSM manager;             
     private Parameter parameter;
     private Vector2 targetPos;
     private float minDistance = 0.1f;
-    private float rotationSpeed = 180f; // Ğı×ªËÙ¶È£¨¶È/Ãë£©£¬¿Éµ÷Õû
+    private float rotationSpeed = 180f; // æ—‹è½¬é€Ÿåº¦ï¼ˆåº¦/ç§’ï¼‰ï¼Œå¯è°ƒæ•´
 
 
 
@@ -70,15 +70,15 @@ public class EnemyPatrolState : IState
         this.parameter = manager.parameter;
     }
     private int currentPointIndex = 0;
-    private bool movingForward = true; // ÓÃÓÚÍù·µ
+    private bool movingForward = true; // ç”¨äºå¾€è¿”
 
     public void OnStart()
     {
-        Debug.Log("½øÈëPatrol×´Ì¬");
+        Debug.Log("è¿›å…¥PatrolçŠ¶æ€");
         if (parameter.patrolPoints == null || parameter.patrolPoints.Length == 0)
         {
-            Debug.LogWarning("Ã»ÓĞÉèÖÃÑ²Âßµã£¬Ê¹ÓÃËæ»úÑ²Âß");
-            GetNewRandomTarget(); // ±£µ×Âß¼­
+            Debug.LogWarning("æ²¡æœ‰è®¾ç½®å·¡é€»ç‚¹ï¼Œä½¿ç”¨éšæœºå·¡é€»");
+            GetNewRandomTarget(); // ä¿åº•é€»è¾‘
         }
         else
         {
@@ -102,19 +102,19 @@ public class EnemyPatrolState : IState
 
 
 
-        // ¸ù¾İÄ¿±êµã·½ÏòÉèÖÃ flipX
+        // æ ¹æ®ç›®æ ‡ç‚¹æ–¹å‘è®¾ç½® flipX
         if (targetPos.x > manager.transform.position.x)
-            parameter.spriteRenderer.flipX = false; // Ä¿±êÔÚÓÒ£¬²»·­×ª
+            parameter.spriteRenderer.flipX = false; // ç›®æ ‡åœ¨å³ï¼Œä¸ç¿»è½¬
         else if (targetPos.x < manager.transform.position.x)
-            parameter.spriteRenderer.flipX = true;  // Ä¿±êÔÚ×ó£¬·­×ª
+            parameter.spriteRenderer.flipX = true;  // ç›®æ ‡åœ¨å·¦ï¼Œç¿»è½¬
 
-        // ÏòÄ¿±êµãÒÆ¶¯
+        // å‘ç›®æ ‡ç‚¹ç§»åŠ¨
         manager.transform.position = Vector2.MoveTowards(
             manager.transform.position,
             targetPos,
             parameter.moveSpeed * Time.deltaTime);
 
-        // µ½´ïÄ¿±êµãºó»ñÈ¡ÏÂÒ»¸öµã
+        // åˆ°è¾¾ç›®æ ‡ç‚¹åè·å–ä¸‹ä¸€ä¸ªç‚¹
         if (Vector2.Distance(manager.transform.position, targetPos) < minDistance)
         {
             if (parameter.patrolPoints.Length > 0)
@@ -124,13 +124,13 @@ public class EnemyPatrolState : IState
         }
     }
 
-    #region Ñ²ÂßµãÇĞ»»·½·¨
+    #region å·¡é€»ç‚¹åˆ‡æ¢æ–¹æ³•
     private void SetNextTarget()
     {
         if (parameter.patrolPoints.Length == 0) return;
         targetPos = parameter.patrolPoints[currentPointIndex].position;
 
-        // ¸üĞÂË÷Òı£¨Íù·µÄ£Ê½£©
+        // æ›´æ–°ç´¢å¼•ï¼ˆå¾€è¿”æ¨¡å¼ï¼‰
         if (movingForward)
         {
             if (currentPointIndex == parameter.patrolPoints.Length - 1)
@@ -152,27 +152,27 @@ public class EnemyPatrolState : IState
         targetPos = Vector2.zero;
     }
 
-    #region Ğı×ª·½·¨£¨ÔİÊ±ÆúÓÃ£©
+    #region æ—‹è½¬æ–¹æ³•ï¼ˆæš‚æ—¶å¼ƒç”¨ï¼‰
     //private void RotateTowardsTarget()
     //{
-    //    //Ä¿±êµãÓëµ±Ç°µĞÈËÎ»ÖÃµÄ·½ÏòÏòÁ¿
+    //    //ç›®æ ‡ç‚¹ä¸å½“å‰æ•Œäººä½ç½®çš„æ–¹å‘å‘é‡
     //    Vector2 direction = targetPos - (Vector2)manager.transform.position;
     //    if (direction.magnitude < 0.01f) return;
 
-    //    // ¼ÆËãÄ¿±ê½Ç¶È
+    //    // è®¡ç®—ç›®æ ‡è§’åº¦
     //    float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-    //    // »ñÈ¡µ±Ç°½Ç¶È£¨½«ËÄÔªÊı×ª»»ÎªÅ·À­½Ç£¬×¢ÒâÎÒÃÇÖ»ĞèÒªZÖáĞı×ª£©
+    //    // è·å–å½“å‰è§’åº¦ï¼ˆå°†å››å…ƒæ•°è½¬æ¢ä¸ºæ¬§æ‹‰è§’ï¼Œæ³¨æ„æˆ‘ä»¬åªéœ€è¦Zè½´æ—‹è½¬ï¼‰
     //    float currentAngle = manager.transform.eulerAngles.z;
 
-    //    // ¼ÆËã×î¶ÌĞı×ª½Ç¶È²î
+    //    // è®¡ç®—æœ€çŸ­æ—‹è½¬è§’åº¦å·®
     //    float angleDiff = Mathf.DeltaAngle(currentAngle, targetAngle);
 
-    //    // ¸ù¾İĞı×ªËÙ¶ÈÏŞÖÆÃ¿Ö¡×î´óĞı×ª½Ç¶È
+    //    // æ ¹æ®æ—‹è½¬é€Ÿåº¦é™åˆ¶æ¯å¸§æœ€å¤§æ—‹è½¬è§’åº¦
     //    float maxDelta = rotationSpeed * Time.deltaTime;
     //    float newAngle = currentAngle + Mathf.Clamp(angleDiff, -maxDelta, maxDelta);
 
-    //    // Ó¦ÓÃĞÂĞı×ª
+    //    // åº”ç”¨æ–°æ—‹è½¬
     //    manager.transform.rotation = Quaternion.Euler(0, 0, newAngle);
     //}
 
@@ -180,41 +180,41 @@ public class EnemyPatrolState : IState
 
     #endregion
 
-    #region Ëæ»úÑ²ÂßµãÉú³É·½·¨
+    #region éšæœºå·¡é€»ç‚¹ç”Ÿæˆæ–¹æ³•
     private void GetNewRandomTarget()
     {
         if (parameter.patrolCenter == null)
         {
-            Debug.LogWarning("Ñ²ÂßÖĞĞÄµãÎ´ÉèÖÃ£¡");
+            Debug.LogWarning("å·¡é€»ä¸­å¿ƒç‚¹æœªè®¾ç½®ï¼");
             return;
         }
 
-        // ÓÅ»¯Ëæ»úµãÉú³É£ºÆ«Ïòµ±Ç°³¯ÏòµÄÇ°·½ÇøÓò£¬¼õÉÙÍ»È»µôÍ·
+        // ä¼˜åŒ–éšæœºç‚¹ç”Ÿæˆï¼šåå‘å½“å‰æœå‘çš„å‰æ–¹åŒºåŸŸï¼Œå‡å°‘çªç„¶æ‰å¤´
         Vector2 center = parameter.patrolCenter.position;
 
-        // »ñÈ¡µ±Ç°µĞÈËµÄ³¯Ïò£¨µ¥Î»ÏòÁ¿£©
-        Vector2 currentDir = manager.transform.right; // ¼ÙÉèµĞÈËÄ¬ÈÏÏòÓÒ
+        // è·å–å½“å‰æ•Œäººçš„æœå‘ï¼ˆå•ä½å‘é‡ï¼‰
+        Vector2 currentDir = manager.transform.right; // å‡è®¾æ•Œäººé»˜è®¤å‘å³
 
-        // ÔÚ³¯Ïò ¡À90 ¶È·¶Î§ÄÚËæ»ú½Ç¶È£¬±ÜÃâÖ±½ÓÉú³Éºó·½µã
-        float angleRange = 90f; // ¿Éµ÷Õû£¬Ô½´óÔ½¿ÉÄÜ×ªÏòºó·½
+        // åœ¨æœå‘ Â±90 åº¦èŒƒå›´å†…éšæœºè§’åº¦ï¼Œé¿å…ç›´æ¥ç”Ÿæˆåæ–¹ç‚¹
+        float angleRange = 90f; // å¯è°ƒæ•´ï¼Œè¶Šå¤§è¶Šå¯èƒ½è½¬å‘åæ–¹
         float randomAngle = Random.Range(-angleRange, angleRange) * Mathf.Deg2Rad;
         Vector2 randomDir = new Vector2(
             Mathf.Cos(randomAngle) * currentDir.x - Mathf.Sin(randomAngle) * currentDir.y,
             Mathf.Sin(randomAngle) * currentDir.x + Mathf.Cos(randomAngle) * currentDir.y
         ).normalized;
 
-        // Ëæ»ú°ë¾¶
+        // éšæœºåŠå¾„
         float radius = Random.Range(0f, parameter.patrolRadius);
         Vector2 offset = randomDir * radius;
 
-        // ×îÖÕÄ¿±êµã = Ñ²ÂßÖĞĞÄ + Æ«ÒÆ
+        // æœ€ç»ˆç›®æ ‡ç‚¹ = å·¡é€»ä¸­å¿ƒ + åç§»
         targetPos = center + offset;
     }
     #endregion
 }
 #endregion
 
-#region ×·Öğ×´Ì¬
+#region è¿½é€çŠ¶æ€
 
 public class EnemyChaseState : IState
 {
@@ -229,7 +229,7 @@ public class EnemyChaseState : IState
 
     public void OnStart()
     {
-        Debug.Log("½øÈëChase×´Ì¬");
+        Debug.Log("è¿›å…¥ChaseçŠ¶æ€");
     }
 
     public void OnUpdate()
@@ -237,19 +237,19 @@ public class EnemyChaseState : IState
         if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
         if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
-        // ¸ù¾İÍæ¼ÒÎ»ÖÃÉèÖÃ flipX
+        // æ ¹æ®ç©å®¶ä½ç½®è®¾ç½® flipX
         if (parameter.target.position.x > manager.transform.position.x)
             parameter.spriteRenderer.flipX = false;
         else
             parameter.spriteRenderer.flipX = true;
 
-        // ÏòÍæ¼ÒÒÆ¶¯
+        // å‘ç©å®¶ç§»åŠ¨
         manager.transform.position = Vector2.MoveTowards(
             manager.transform.position,
             parameter.target.position,
             parameter.chaseSpeed * Time.deltaTime);
 
-        // ¼ì²éÊÇ·ñ½øÈë¹¥»÷·¶Î§£¨Çø·Ö½üÕ½ºÍÔ¶³Ì£©
+        // æ£€æŸ¥æ˜¯å¦è¿›å…¥æ”»å‡»èŒƒå›´ï¼ˆåŒºåˆ†è¿‘æˆ˜å’Œè¿œç¨‹ï¼‰
         if (parameter.enemyType == EnemyType.Ranged)
         {
             float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
@@ -258,7 +258,7 @@ public class EnemyChaseState : IState
                 manager.ChangeState(StateType.Approach);
             }
         }
-        else // ½üÕ½
+        else // è¿‘æˆ˜
         {
             if (Physics2D.OverlapCircle(manager.GetAttackWorldPos(), parameter.attackRange, parameter.targetLayer))
             {
@@ -274,15 +274,15 @@ public class EnemyChaseState : IState
 }
 #endregion
 
-#region µĞÈËÊÜÉË·½·¨
+#region æ•Œäººå—ä¼¤æ–¹æ³•
 
 public class EnemyWoundState : IState
 {
     private FSM manager;
     private Parameter parameter;
-    private float timer;        // ÊÜ»÷Ó²Ö±¼ÆÊ±Æ÷
+    private float timer;        // å—å‡»ç¡¬ç›´è®¡æ—¶å™¨
 
-    public float finallyDamage;//×îÖÕÉËº¦Öµ ÔÚWound·½·¨ÖĞ¼ÆËã²¢¸³Öµ
+    public float finallyDamage;//æœ€ç»ˆä¼¤å®³å€¼ åœ¨Woundæ–¹æ³•ä¸­è®¡ç®—å¹¶èµ‹å€¼
 
     public EnemyWoundState(FSM manager)
     {
@@ -292,8 +292,8 @@ public class EnemyWoundState : IState
 
     public void OnStart()
     {
-        parameter.health -= finallyDamage; // Ö±½ÓÔÚÕâÀï¿ÛÑª£¬È·±£×´Ì¬ÇĞ»»Ê±ÒÑ¾­¼ÆËãºÃ×îÖÕÉËº¦
-        Debug.Log("½øÈëWound×´Ì¬");
+        parameter.health -= finallyDamage; // ç›´æ¥åœ¨è¿™é‡Œæ‰£è¡€ï¼Œç¡®ä¿çŠ¶æ€åˆ‡æ¢æ—¶å·²ç»è®¡ç®—å¥½æœ€ç»ˆä¼¤å®³
+        Debug.Log("è¿›å…¥WoundçŠ¶æ€");
         parameter.getHit = false;
         manager.ShowDamageText(manager.transform.position, finallyDamage);
         timer = 0f;
@@ -309,7 +309,7 @@ public class EnemyWoundState : IState
         }
 
         timer += Time.deltaTime;
-        if (timer >= 0.5f) // ÊÜ»÷Ó²Ö±Ê±¼ä
+        if (timer >= 0.5f) // å—å‡»ç¡¬ç›´æ—¶é—´
         {
             if (parameter.target != null)
                 manager.ChangeState(StateType.Chase);
@@ -336,7 +336,7 @@ public class EnemyDeadState : IState
 
     public void OnStart()
     {
-        Debug.Log("µĞÈËËÀÍö");
+        Debug.Log("æ•Œäººæ­»äº¡");
         manager.Dead();
     }
 
@@ -352,10 +352,10 @@ public class EnemyMeleeApproachState: IState
     private float timer;
     private Vector2 currentDirection;
     private float directionChangeTimer;
-    private float directionChangeInterval = 0.5f; // Ã¿0.5Ãë²Å¿¼ÂÇ±äÏò
+    private float directionChangeInterval = 0.5f; // æ¯0.5ç§’æ‰è€ƒè™‘å˜å‘
 
-    // ×ªÏòÏŞÖÆ
-    private float maxTurnAnglePerSec = 120f; // Ã¿Ãë×î¶à×ª120¶È
+    // è½¬å‘é™åˆ¶
+    private float maxTurnAnglePerSec = 120f; // æ¯ç§’æœ€å¤šè½¬120åº¦
 
     public EnemyMeleeApproachState(FSM manager)
     {
@@ -365,9 +365,9 @@ public class EnemyMeleeApproachState: IState
 
     public void OnStart()
     {
-        Debug.Log("½øÈëApproach×´Ì¬");
+        Debug.Log("è¿›å…¥ApproachçŠ¶æ€");
         timer = 0f;
-        // ³õÊ¼·½Ïò³¯ÏòÍæ¼Ò
+        // åˆå§‹æ–¹å‘æœå‘ç©å®¶
         if (parameter.target != null)
         {
             currentDirection = (parameter.target.position - manager.transform.position).normalized;
@@ -380,18 +380,18 @@ public class EnemyMeleeApproachState: IState
         if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
         if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
-        // 1. ¼ÆËãÆÚÍû·½Ïò£¨³¯ÏòÍæ¼Ò£©
+        // 1. è®¡ç®—æœŸæœ›æ–¹å‘ï¼ˆæœå‘ç©å®¶ï¼‰
         Vector2 toPlayer = (parameter.target.position - manager.transform.position).normalized;
 
-        // 2. ÉäÏß¼ì²â±ÜÕÏ£¨¼òµ¥°æ£©
+        // 2. å°„çº¿æ£€æµ‹é¿éšœï¼ˆç®€å•ç‰ˆï¼‰
         RaycastHit2D hit = Physics2D.Raycast(manager.transform.position, currentDirection, 1.5f, LayerMask.GetMask("Wall"));
         if (hit.collider != null)
         {
-            // Èç¹ûÇ°·½ÓĞÇ½£¬Ç¿ÖÆ×ªÏò£¨±ÈÈçÏò×ó×ª£©
+            // å¦‚æœå‰æ–¹æœ‰å¢™ï¼Œå¼ºåˆ¶è½¬å‘ï¼ˆæ¯”å¦‚å‘å·¦è½¬ï¼‰
             toPlayer = Quaternion.Euler(0, 0, 45) * toPlayer;
         }
 
-        // 3. ×ªÏòÏŞÖÆ£º²»ÄÜÖ±½Ó´Óµ±Ç°·½ÏòÍ»±äµ½ÆÚÍû·½Ïò
+        // 3. è½¬å‘é™åˆ¶ï¼šä¸èƒ½ç›´æ¥ä»å½“å‰æ–¹å‘çªå˜åˆ°æœŸæœ›æ–¹å‘
         float angleBetween = Vector2.SignedAngle(currentDirection, toPlayer);
         float maxDelta = maxTurnAnglePerSec * Time.deltaTime;
         float newAngle = Mathf.MoveTowardsAngle(
@@ -401,16 +401,16 @@ public class EnemyMeleeApproachState: IState
         );
         currentDirection = Quaternion.Euler(0, 0, newAngle) * Vector2.right;
 
-        // 4. ÒÆ¶¯
+        // 4. ç§»åŠ¨
         manager.transform.position += (Vector3)currentDirection * parameter.moveSpeed * Time.deltaTime;
 
-        // 5. Ãæ³¯Íæ¼Ò£¨·­×ª£©
+        // 5. é¢æœç©å®¶ï¼ˆç¿»è½¬ï¼‰
         if (parameter.target.position.x > manager.transform.position.x)
             parameter.spriteRenderer.flipX = false;
         else
             parameter.spriteRenderer.flipX = true;
 
-        // 6. ¼ÆÊ±ÇĞ»»
+        // 6. è®¡æ—¶åˆ‡æ¢
         timer += Time.deltaTime;
         if (timer >= approachTime)
         {
@@ -436,7 +436,7 @@ public class EnemyMeleeAttackState : IState
 
     public void OnStart()
     {
-        Debug.Log("½øÈë½üÕ½¹¥»÷×´Ì¬");
+        Debug.Log("è¿›å…¥è¿‘æˆ˜æ”»å‡»çŠ¶æ€");
         attackTimer = 0f;
         parameter.animator.SetTrigger("Attack");
     }
@@ -451,10 +451,10 @@ public class EnemyMeleeAttackState : IState
         }
 
         attackTimer += Time.deltaTime;
-        if (attackTimer >= 1f) // ¹¥»÷¼ä¸ô£¬¿É´ÓÅäÖÃ¶ÁÈ¡
+        if (attackTimer >= 1f) // æ”»å‡»é—´éš”ï¼Œå¯ä»é…ç½®è¯»å–
         {
             attackTimer = 0f;
-            // Êµ¼ÊÉËº¦ÔÚ¶¯»­ÊÂ¼şÖĞ´¥·¢£¬ÕâÀïÖ»×öÀäÈ´
+            // å®é™…ä¼¤å®³åœ¨åŠ¨ç”»äº‹ä»¶ä¸­è§¦å‘ï¼Œè¿™é‡Œåªåšå†·å´
         }
     }
 
@@ -470,7 +470,7 @@ public class EnemyMeleeAttackState : IState
         return false;
     }
 
-    // ¶¯»­ÊÂ¼şµ÷ÓÃ
+    // åŠ¨ç”»äº‹ä»¶è°ƒç”¨
     public void OnAttackHit()
     {
         if (!IsTargetInRange()) return;
@@ -493,7 +493,7 @@ public class EnemyRangedAttackState : IState
 
     public void OnStart()
     {
-        Debug.Log("½øÈëÔ¶³Ì¹¥»÷×´Ì¬");
+        Debug.Log("è¿›å…¥è¿œç¨‹æ”»å‡»çŠ¶æ€");
         parameter.animator.SetTrigger("Attack");
     }
 
@@ -505,23 +505,23 @@ public class EnemyRangedAttackState : IState
         float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
         float attackRange = parameter.attackRange;
 
-        // Èç¹ûÌ«Ô¶»òÌ«½ü£¬»Øµ½½Ó½ü×´Ì¬
+        // å¦‚æœå¤ªè¿œæˆ–å¤ªè¿‘ï¼Œå›åˆ°æ¥è¿‘çŠ¶æ€
         if (distance > attackRange || distance < attackRange * 0.5f)
         {
             manager.ChangeState(StateType.Approach);
             return;
         }
 
-        // ÔÚÓĞĞ§·¶Î§ÄÚ£¬Ê¹ÓÃÎäÆ÷Éä»÷
+        // åœ¨æœ‰æ•ˆèŒƒå›´å†…ï¼Œä½¿ç”¨æ­¦å™¨å°„å‡»
         if (parameter.rangedWeapon != null)
         {
-            parameter.rangedWeapon.Shoot(); // ÎäÆ÷ÄÚ²¿´¦ÀíÀäÈ´
+            parameter.rangedWeapon.Shoot(); // æ­¦å™¨å†…éƒ¨å¤„ç†å†·å´
         }
     }
 
     public void OnExit() { }
 
-    // ¶¯»­ÊÂ¼şµ÷ÓÃ£¨Èç¹ûĞèÒª£©
+    // åŠ¨ç”»äº‹ä»¶è°ƒç”¨ï¼ˆå¦‚æœéœ€è¦ï¼‰
     public void OnAttackHit() { }
 }
 public class EnemyRangedApproachState : IState
@@ -538,7 +538,7 @@ public class EnemyRangedApproachState : IState
 
     public void OnStart()
     {
-        Debug.Log("½øÈëÔ¶³Ì½Ó½ü×´Ì¬");
+        Debug.Log("è¿›å…¥è¿œç¨‹æ¥è¿‘çŠ¶æ€");
         if (parameter.target != null)
             currentDirection = (parameter.target.position - manager.transform.position).normalized;
     }
@@ -551,34 +551,34 @@ public class EnemyRangedApproachState : IState
         float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
         float attackRange = parameter.attackRange;
 
-        // ¶¨ÒåÀíÏë¾àÀë·¶Î§£º¹¥»÷·¶Î§µÄ 60%~90%
+        // å®šä¹‰ç†æƒ³è·ç¦»èŒƒå›´ï¼šæ”»å‡»èŒƒå›´çš„ 60%~90%
         float minDesired = attackRange * 0.6f;
         float maxDesired = attackRange * 0.9f;
 
         Vector2 toTarget = (parameter.target.position - manager.transform.position).normalized;
 
-        // ÅĞ¶Ï¾àÀëÊÇ·ñºÏÊÊ
+        // åˆ¤æ–­è·ç¦»æ˜¯å¦åˆé€‚
         if (distance < minDesired)
         {
-            // Ì«½ü£¬Ô¶ÀëÍæ¼Ò
+            // å¤ªè¿‘ï¼Œè¿œç¦»ç©å®¶
             currentDirection = -toTarget;
         }
         else if (distance > maxDesired)
         {
-            // Ì«Ô¶£¬¿¿½üÍæ¼Ò
+            // å¤ªè¿œï¼Œé è¿‘ç©å®¶
             currentDirection = toTarget;
         }
         else
         {
-            // ¾àÀëºÏÊÊ£¬Á¢¼´ÇĞ»»µ½¹¥»÷×´Ì¬
+            // è·ç¦»åˆé€‚ï¼Œç«‹å³åˆ‡æ¢åˆ°æ”»å‡»çŠ¶æ€
             manager.ChangeState(StateType.Attack);
             return;
         }
 
-        // Ö´ĞĞÒÆ¶¯
+        // æ‰§è¡Œç§»åŠ¨
         manager.transform.position += (Vector3)currentDirection * parameter.moveSpeed * Time.deltaTime;
 
-        // Ãæ³¯Íæ¼Ò£¨·­×ª£©
+        // é¢æœç©å®¶ï¼ˆç¿»è½¬ï¼‰
         if (parameter.target.position.x > manager.transform.position.x)
             parameter.spriteRenderer.flipX = false;
         else
