@@ -27,29 +27,6 @@ public struct CameraShakeEvent
 
 
 
-#region 用来传递节奏数据的事件结构体 供玩家和武器监听
-public struct RhythmHitEvent
-{
-    public RhythmRank rank;      // 判定等级
-    public float intensity;      // 根据等级决定的强度（可选）
-
-
-}
-#endregion
-
-public struct PlayerFireEvent
-{
-    public bool isPerfect;   // 是否完美命中（根据你的判定等级）
-    public RhythmRank rank;   // 可选，传递具体等级
-}
-
-
-
-public struct PlayerDiedEvent
-{
-    public PlayerIObject player;
-}
-
 
 public class PlayerIObject : BaseObject
 {
@@ -117,7 +94,7 @@ public class PlayerIObject : BaseObject
         //调整当前相机的景深
         cameraZ = playerCamera.transform.position.z;
         //传递玩家攻击力到当前武器
-        passPlayerAtk();
+        EventBus.Instance.Trigger(new PlayerAtkChange { atk = this.atk });
         // 从当前武器绑定的 WeaponBase 中获取数据列表
         weaponInfos = currentWeapon.weaponBase.weaponList;
         // 初始化武器数据
@@ -128,6 +105,7 @@ public class PlayerIObject : BaseObject
 
     private void OnEnable()
     {
+        
         EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
     }
     private void OnDisable()
@@ -140,6 +118,7 @@ public class PlayerIObject : BaseObject
         isDashOnWindow = data.isInWindow; // 根据节奏窗口状态更新闪避可用性
     }
 
+    
 
     #region 重写受伤方法
 
@@ -220,13 +199,7 @@ public class PlayerIObject : BaseObject
     }
     #endregion
 
-    #region 玩家传递攻击力到武器
-    // 传递攻击力到当前武器
-    public void passPlayerAtk()
-    {
-        currentWeapon.ownerDamage = this.atk;
-    }
-    #endregion
+   
 
     #region 近战攻击方法 计算伤害并检测敌人
     private void MeleeAttack()
@@ -257,6 +230,9 @@ public class PlayerIObject : BaseObject
 
     public void Update()
     {
+        
+
+
         #region 移动逻辑
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");

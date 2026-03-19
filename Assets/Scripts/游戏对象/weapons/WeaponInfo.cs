@@ -42,13 +42,24 @@ public class WeaponInfo : MonoBehaviour
     public RhythmData nowRhythmData; // 当前节奏数据
     public float ownerDamage = 0; // 由持有者传入的基础攻击力（敌人用）
 
+    private void OnEnable()
+    {
+        EventBus.Instance.Subscribe<PlayerAtkChange>(OnPlayerAtkChange);
+        EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
+    }
+
+    private void OnDisable()
+    {
+        EventBus.Instance.Unsubscribe<PlayerAtkChange > (OnPlayerAtkChange);
+        EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
+    }
 
     void Start()
     {
         //实例化武器
         InitializeWeapon(weaponType);
         nowRhythmData = new RhythmData(false,RhythmRank.Miss,1); // 默认不在窗口，倍率1
-        EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
+       
         EventBus.Instance.Trigger(new ChangeWeaponStruct(1, stats.id));
     }
 
@@ -237,6 +248,14 @@ public class WeaponInfo : MonoBehaviour
     }
     #endregion
 
+    public void OnPlayerAtkChange(PlayerAtkChange playerAtkChange)
+    {
+        ownerDamage = playerAtkChange.atk;
+    }
+
+
 }
+
+
 
 

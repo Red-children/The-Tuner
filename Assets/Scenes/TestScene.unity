@@ -4116,6 +4116,8 @@ GameObject:
   - component: {fileID: 819580723}
   - component: {fileID: 819580727}
   - component: {fileID: 819580728}
+  - component: {fileID: 819580730}
+  - component: {fileID: 819580729}
   m_Layer: 7
   m_Name: Player
   m_TagString: Player
@@ -4306,6 +4308,41 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 819580721}
   m_Enabled: 1
+--- !u!114 &819580729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819580721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f124ad04cd44934bbcde76d1390f67c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  testBuff:
+    buffName: 
+    description: 
+    icon: {fileID: 0}
+    value: 10
+    type: 0
+    isStackable: 1
+    maxStack: 1
+    effectPrefab: {fileID: 0}
+  player: {fileID: 819580727}
+--- !u!114 &819580730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 819580721}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a84b5a9e88332149a68be8ba0f8e62a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 819580727}
 --- !u!1 &849330688
 GameObject:
   m_ObjectHideFlags: 0
