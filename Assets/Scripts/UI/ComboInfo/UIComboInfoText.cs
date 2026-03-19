@@ -6,14 +6,20 @@ using UnityEngine;
 public class UIComboInfoText : MonoBehaviour
 {
     public TextMeshProUGUI text;
-
+    public Animator animator;
+    //  Rank - Animation
+    private Dictionary<RhythmRank, string> _animationDict;
     void Init()
     {
         if (text == null)
         {
             text = GetComponent<TextMeshProUGUI>();
         }
-        if (text == null)
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+        }
+        if (text == null || animator == null)
         {
             Debug.LogError("UIComboInfoText 未找到组件");
             return;
@@ -26,9 +32,17 @@ public class UIComboInfoText : MonoBehaviour
     }
 #endregion
 #region 对外接口
-    void SetDisplayText(string buf)
+    public void SetDisplayText(string buf)
     {
         text.text = buf;
+        Debug.Log($"UIComboInfoText Set Display Text {buf}");
+    }
+    public void TextAnimation(RhythmRank rank)
+    {
+        //  TODO:Miss || Good || Great || Perfect 时字体的动画
+        //  Make sure animation in the dictionary
+        animator.Play(_animationDict[rank]);
+        Debug.Log($"UIComboInfoText Play Animation {rank}");
     }
 #endregion
 }

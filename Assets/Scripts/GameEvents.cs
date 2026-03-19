@@ -11,6 +11,11 @@ public struct TimerOnlineEvent
 public struct EnemyHitEvent
     {
     //  TODO:
+    public int count;
+    public EnemyHitEvent(int count)
+    {
+        this.count = count;
+    }
     }
 public struct PlayerAtkEvent
 {

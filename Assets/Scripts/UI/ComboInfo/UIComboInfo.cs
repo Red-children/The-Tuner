@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class UIComboInfo : MonoBehaviour
@@ -8,11 +9,13 @@ public class UIComboInfo : MonoBehaviour
     public UIComboInfoBar bar;
     //  文本
     public UIComboInfoText text;
+    [Header("间歇时间")]
+    public float coolDownTime = 1f;     //  After coolDownTime seconds, _comboCount <= 0;
+    private int _comboCount = 0;        //  Count except Miss
+    private bool _isTriggered = false;  //  To known if Player Atk
 
-    private int _comboCount = 0;
-    private bool _isTriggered = false;
 
-    private RhythmRank _currentRank;
+    private RhythmRank _currentRank;    //  Rank of now
     void Init()
     {
         if (bar == null)
@@ -37,29 +40,42 @@ public class UIComboInfo : MonoBehaviour
         EventBus.Instance.Subscribe<PlayerAtkEvent>(OnPlayerAtk);
         EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
     }
+    //  Miss(只给延迟重置用)
+    void ResetCounter()
+    {
+        _comboCount = 0;
+        text.SetDisplayText(_comboCount.ToString());
+    }
+    //  PreciseHit
+    void AddCounter(int num)
+    {
+        _comboCount += num;
+        text.SetDisplayText(_comboCount.ToString());
+    }
+    void ResetTrigger()
+    {
+        _isTriggered = false;
+    }
 #region 回调函数
     void OnEnemyHit(EnemyHitEvent evt)
     {
+        Debug.Log($"UIComboInfo Received EnemyHitEvent\n_isTriggered = {_isTriggered}");
         if (_isTriggered)
-        {
-            switch(_currentRank)
-            {
-                case RhythmRank.Miss:
-                    _comboCount = 0;
-                    break;
-                case RhythmRank.Good:
-                    break;
-                case RhythmRank.Great:
-                    break;
-                case RhythmRank.Perfect:
-                    break;
-                default:    break; 
-            }
+        {   
+            ResetTrigger(); //  重置扳机标记
+            if (_currentRank == RhythmRank.Miss)
+                ResetCounter();
+            else AddCounter(evt.count);
+
+            this.ResetTimer(nameof(ResetCounter), 1f);
+            text.TextAnimation(_currentRank);
+
         }
     }
     void OnPlayerAtk(PlayerAtkEvent evt)
     {
         _isTriggered = true;
+        this.StartTimer(nameof(ResetTrigger), 0.2f);
     }
     void OnRhythmData(RhythmData evt)
     {
@@ -72,6 +88,4 @@ public class UIComboInfo : MonoBehaviour
         Init();
     }
 #endregion
-
-
 }
