@@ -124,7 +124,7 @@ public class WeaponInfo : MonoBehaviour
         // 日志（区分玩家/敌人）
         double nextBeat = RhythmManager.Instance.GetNextBeatTime();
         string ownerStr = owner == WeaponOwner.Player ? "玩家" : "敌人";
-        Debug.Log($"[{ownerStr}开火] at {now:F8}, 下一拍 at {nextBeat:F8}, 判定等级 {rankResult.rank}, 是否在窗口 {rankResult.isInWindow}");
+       // Debug.Log($"[{ownerStr}开火] at {now:F8}, 下一拍 at {nextBeat:F8}, 判定等级 {rankResult.rank}, 是否在窗口 {rankResult.isInWindow}");
     }
     #endregion
 

@@ -67,7 +67,7 @@ public class Bullet : MonoBehaviour
     /// </summary>
     private bool HandleHit(RaycastHit2D hit)
     {
-        Debug.Log($"[Bullet] 击中 {hit.collider.name}，层 {LayerMask.LayerToName(hit.collider.gameObject.layer)}");
+        
 
         // 玩家子弹击中敌人
         if (gameObject.layer == LayerMask.NameToLayer("PlayerBullet") && hit.collider.CompareTag("Enemy"))
@@ -103,4 +103,7 @@ public class Bullet : MonoBehaviour
             Instantiate(destroyEffect, transform.position, transform.rotation);
         Destroy(gameObject);
     }
+
+    
+
 }

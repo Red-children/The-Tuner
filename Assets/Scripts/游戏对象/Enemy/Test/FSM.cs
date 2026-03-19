@@ -40,6 +40,7 @@ public class Parameter
     public EnemyType enemyType;          // 敌人类型（近战/远程）
     public float health;                 // 当前生命值（可在 Inspector 中设置初始值）
     public LayerMask targetLayer;        // 目标层级（通常是玩家）
+    public Room ownerRoom;  // 敌人所属的房间（由生成时设置）
 
     [Header("🏃 移动参数")]
     public float moveSpeed;              // 巡逻/常规移动速度
@@ -83,6 +84,7 @@ public class FSM : MonoBehaviour
 
     void Start()
     {
+
         #region 动态获取组件的代码 允许在 Inspector 中拖入组件，如果未拖入则自动获取
         if (parameter.spriteRenderer == null)
         parameter.spriteRenderer = GetComponent<SpriteRenderer>();
@@ -159,6 +161,7 @@ public class FSM : MonoBehaviour
             Bullet bullet = other.GetComponent<Bullet>();
             if (bullet != null)
             {
+               bullet.DestroyMyself();
                Wound(bullet.damage);
             }
         }
@@ -166,7 +169,11 @@ public class FSM : MonoBehaviour
 
     public void Dead()
     {
-        EventBus.Instance.Trigger(new EnemyDiedStruct() );
+        // 通知所属房间：敌人死亡
+        parameter.ownerRoom?.UnregisterEnemy(this);
+
+        // 原有死亡逻辑（触发事件、生成特效、销毁等）
+        EventBus.Instance.Trigger(new EnemyDiedStruct());
         if (parameter.DeadEff != null)
             Instantiate(parameter.DeadEff, transform.position, transform.rotation);
         Destroy(gameObject);

@@ -7,8 +7,9 @@ public class Room : MonoBehaviour
     public Collider2D roomTrigger;          // 门口触发器（通常是一个大区域）
     public WaveManager waveManager;          // 本房间的波次管理器
     public AudioClip bgmClip;                // 本房间的背景音乐（可选）
+    public Door[] doors;                     // 房间的门（数组，支持多个门）
 
-    private List<FSM> enemiesInRoom = new List<FSM>();
+    public List<FSM> enemiesInRoom = new List<FSM>();
     private bool isCleared = false;          // 是否已通关
     public LayerMask obstacleMask;           // 障碍物层（墙壁、装饰等）
 
@@ -41,14 +42,27 @@ public class Room : MonoBehaviour
 
     private void OnRoomCleared()
     {
-        // 可触发宝箱生成、开门、播放音效等
-        Debug.Log("房间已清空");
+        // 打开所有门
+        foreach (var door in doors)
+        {
+            if (door != null)
+                door.Open();
+        }
+        Debug.Log("房间已清空，门已打开");
+        // 可触发宝箱生成、播放音效等
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
         {
+            // 关闭所有门
+            foreach (var door in doors)
+            {
+                if (door != null)
+                    door.Close();
+            }
+
             // 激活所有敌人
             foreach (var enemy in enemiesInRoom)
             {
@@ -60,9 +74,9 @@ public class Room : MonoBehaviour
             if (waveManager != null && !waveManager.isWaveActive)
                 waveManager.StartWave(this);
 
-            //// 切换音乐（可选）
-            //if (bgmClip != null)
-            //    EventBus.Instance.Trigger(new ChangeBgmEvent { clip = bgmClip });
+            // 禁用入口触发器，防止重复触发
+            if (roomTrigger != null)
+                roomTrigger.enabled = false;
         }
     }
 
@@ -71,14 +85,11 @@ public class Room : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // 玩家离开，清空敌人目标（让它们恢复巡逻）
             foreach (var enemy in enemiesInRoom)
             {
                 if (enemy != null)
                     enemy.parameter.target = null;
             }
-
-            // 停止波次？通常不停止，但可根据需要暂停
         }
     }
 
