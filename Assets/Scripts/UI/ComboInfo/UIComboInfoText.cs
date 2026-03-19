@@ -41,7 +41,7 @@ public class UIComboInfoText : MonoBehaviour
     {
         //  TODO:Miss || Good || Great || Perfect 时字体的动画
         //  Make sure animation in the dictionary
-        animator.Play(_animationDict[rank]);
+        // animator.Play(_animationDict[rank]);
         Debug.Log($"UIComboInfoText Play Animation {rank}");
     }
 #endregion

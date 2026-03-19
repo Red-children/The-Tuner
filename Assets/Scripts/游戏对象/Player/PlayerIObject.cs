@@ -158,6 +158,7 @@ public class PlayerIObject : BaseObject
         // ��Ѫ
         nowHp -= Mathf.Max(damage, 0);
         Debug.Log($"������ˣ���ǰѪ��: {nowHp}");
+        Debug.Log($"Current Player Health: {nowHp}");
 
         EventBus.Instance.Trigger<PlayerHealthChangedEventStruct>(new PlayerHealthChangedEventStruct
         {

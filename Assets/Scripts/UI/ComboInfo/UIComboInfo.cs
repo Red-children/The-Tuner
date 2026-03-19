@@ -35,7 +35,9 @@ public class UIComboInfo : MonoBehaviour
 
         _comboCount = 0;
         _isTriggered = false;
+        bar.duration = coolDownTime;
 
+        // bar.StopCoolDown();
         EventBus.Instance.Subscribe<EnemyHitEvent>(OnEnemyHit);
         EventBus.Instance.Subscribe<PlayerAtkEvent>(OnPlayerAtk);
         EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
@@ -45,6 +47,7 @@ public class UIComboInfo : MonoBehaviour
     {
         _comboCount = 0;
         text.SetDisplayText(_comboCount.ToString());
+        bar.StopCoolDown();
     }
     //  PreciseHit
     void AddCounter(int num)
@@ -66,6 +69,14 @@ public class UIComboInfo : MonoBehaviour
             if (_currentRank == RhythmRank.Miss)
                 ResetCounter();
             else AddCounter(evt.count);
+
+            //  启用冷却提示条
+            if (_comboCount > 0)
+            {
+                Debug.Log("UIComboInfo 启用冷却提示条");
+                bar.StartOrResetCoolDown();
+            }
+                
 
             this.ResetTimer(nameof(ResetCounter), 1f);
             text.TextAnimation(_currentRank);
