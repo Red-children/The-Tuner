@@ -21,7 +21,7 @@ public class EnemyPatrolState : EnemyStateBase
     public override void OnStart()
     {
         Debug.Log("进入Patrol状态");
-        if (parameter.patrolPoints == null || parameter.patrolPoints.Length == 0)
+        if (parameter.data.patrolPoints == null || parameter.data.patrolPoints.Length == 0)
         {
             Debug.LogWarning("没有设置巡逻点，使用随机巡逻");
             GetNewRandomTarget(); // 保底逻辑
@@ -50,20 +50,20 @@ public class EnemyPatrolState : EnemyStateBase
 
         // 根据目标点方向设置 flipX
         if (targetPos.x > manager.transform.position.x)
-            parameter.spriteRenderer.flipX = false; // 目标在右，不翻转
+            parameter.data.spriteRenderer.flipX = false; // 目标在右，不翻转
         else if (targetPos.x < manager.transform.position.x)
-            parameter.spriteRenderer.flipX = true;  // 目标在左，翻转
+            parameter.data.spriteRenderer.flipX = true;  // 目标在左，翻转
 
         // 向目标点移动
         manager.transform.position = Vector2.MoveTowards(
             manager.transform.position,
             targetPos,
-            parameter.moveSpeed * Time.deltaTime);
+            parameter.data.moveSpeed * Time.deltaTime);
 
         // 到达目标点后获取下一个点
         if (Vector2.Distance(manager.transform.position, targetPos) < minDistance)
         {
-            if (parameter.patrolPoints.Length > 0)
+            if (parameter.data.patrolPoints.Length > 0)
                 SetNextTarget();
             else
                 GetNewRandomTarget();
@@ -73,13 +73,13 @@ public class EnemyPatrolState : EnemyStateBase
     #region 巡逻点切换方法
     private void SetNextTarget()
     {
-        if (parameter.patrolPoints.Length == 0) return;
-        targetPos = parameter.patrolPoints[currentPointIndex].position;
+        if (parameter.data.patrolPoints.Length == 0) return;
+        targetPos = parameter.data.patrolPoints[currentPointIndex].position;
 
         // 更新索引（往返模式）
         if (movingForward)
         {
-            if (currentPointIndex == parameter.patrolPoints.Length - 1)
+            if (currentPointIndex == parameter.data.patrolPoints.Length - 1)
                 movingForward = false;
             else
                 currentPointIndex++;
@@ -129,14 +129,14 @@ public class EnemyPatrolState : EnemyStateBase
     #region 随机巡逻点生成方法
     private void GetNewRandomTarget()
     {
-        if (parameter.patrolCenter == null)
+        if (parameter.data.patrolCenter == null)
         {
             Debug.LogWarning("巡逻中心点未设置！");
             return;
         }
 
         // 优化随机点生成：偏向当前朝向的前方区域，减少突然掉头
-        Vector2 center = parameter.patrolCenter.position;
+        Vector2 center = parameter.data.patrolCenter.position;
 
         // 获取当前敌人的朝向（单位向量）
         Vector2 currentDir = manager.transform.right; // 假设敌人默认向右
@@ -150,7 +150,7 @@ public class EnemyPatrolState : EnemyStateBase
         ).normalized;
 
         // 随机半径
-        float radius = Random.Range(0f, parameter.patrolRadius);
+        float radius = Random.Range(0f, parameter.data.patrolRadius);
         Vector2 offset = randomDir * radius;
 
         // 最终目标点 = 巡逻中心 + 偏移

@@ -22,7 +22,7 @@ public class EnemyMeleeApproachState : EnemyStateBase
     {
         Debug.Log("进入Approach状态");
         timer = 0f;
-        parameter.animator.Play("Attack");
+        parameter.data.animator.Play("Attack");
         // 初始方向朝向玩家
         if (parameter.target != null)
         {
@@ -58,13 +58,13 @@ public class EnemyMeleeApproachState : EnemyStateBase
         currentDirection = Quaternion.Euler(0, 0, newAngle) * Vector2.right;
 
         // 4. 移动
-        manager.transform.position += (Vector3)currentDirection * parameter.moveSpeed * Time.deltaTime;
+        manager.transform.position += (Vector3)currentDirection * manager.CommonData.moveSpeed * Time.deltaTime;
 
         // 5. 面朝玩家（翻转）
         if (parameter.target.position.x > manager.transform.position.x)
-            parameter.spriteRenderer.flipX = false;
+            parameter.data .spriteRenderer.flipX = false;
         else
-            parameter.spriteRenderer.flipX = true;
+            parameter.data.spriteRenderer.flipX = true;
 
         // 6. 计时切换
         timer += Time.deltaTime;

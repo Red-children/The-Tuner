@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Xml;
 using UnityEngine;
 using UnityEngine.UI;
+
 
 #region 敌人枚举类型
 public enum EnemyType
@@ -37,62 +39,83 @@ public struct EnemyDiedStruct
 public class Parameter
 {
     [Header("★ 基础信息")]
-    public EnemyType enemyType;          // 敌人类型（近战/远程）
-    public float health;                 // 当前生命值（可在 Inspector 中设置初始值）
-    public LayerMask targetLayer;        // 目标层级（通常是玩家）
-    public Room ownerRoom;  // 敌人所属的房间（由生成时设置）
+    public EnemyType enemyType;          // 用于在 FSM 中做类型判断
 
-    [Header("🏃 移动参数")]
-    public float moveSpeed;              // 巡逻/常规移动速度
-    public float chaseSpeed;              // 追逐玩家时的速度
-    public float idleTime;                // 空闲状态的等待时间
+    [Header("🎮 数据配置")]
+    public EnemyData data;               // 运行时引用对应的 ScriptableObject
 
-    [Header("📍 巡逻设置")]
-    public Transform patrolCenter;        // 随机巡逻的中心点（当 patrolPoints 为空时使用）
-    public Transform[] patrolPoints;      // 固定巡逻点数组（优先级高于随机巡逻）
-    public float patrolRadius = 5f;       // 随机巡逻半径
-
-    [Header("⚔️ 近战攻击设置")]
-    public Transform attackPoint;          // 近战攻击点（用于检测范围）
-    public float attackRange;              // 近战攻击范围
-    public int attackDamage = 10;          // 近战攻击力
-    public Vector2 attackOffset = new Vector2(1f, 0f); // 攻击点相对于敌人中心的偏移（朝向影响）
-
-    [Header("🎯 远程攻击设置（仅对 Ranged 类型生效）")]
-    public WeaponInfo rangedWeapon;        // 远程敌人挂载的武器组件
-
-    [Header("✨ 视觉与特效")]
-    public GameObject damageTextPrefab;    // 伤害飘字预制体
-    public GameObject DeadEff;              // 死亡特效预制体
-    public SpriteRenderer spriteRenderer;   // 用于翻转角色朝向
-    public Animator animator;               // 动画控制器
-
-    [Header("🔍 触发器引用")]
-    public Collider2D chaseArea;            // 追逐范围触发器（用于检测玩家进入）
-
-    [Header("⏱️ 运行时状态（由代码自动管理）")]
-     public Transform target;   // 当前目标（玩家）
-     public bool getHit;         // 是否受击（用于切换到受击状态）
+    // 运行时状态（由代码自动管理）
+    public Transform target;
+    public bool getHit;
 }
 #endregion
 
 public class FSM : MonoBehaviour
 {
+    #region 数据缓存
+    // 公共数据（所有敌人共用）
+    public EnemyData CommonData => parameter.data;
+
+    // 具体类型数据（可能为 null，使用时需判断类型）
+    public MeleeEnemyData MeleeData => CommonData as MeleeEnemyData;
+    public RangedEnemyData RangedData => CommonData as RangedEnemyData;
+    public ExplosiveEnemyData ExplosiveData => CommonData as ExplosiveEnemyData;
+
+    // 常用的公共属性（直接从 CommonData 取，避免重复转换）
+    public float MoveSpeed => CommonData != null ? CommonData.moveSpeed : 5f;
+    public float ChaseSpeed => CommonData != null ? CommonData.chaseSpeed : 7f;
+    public float IdleTime => CommonData != null ? CommonData.idleTime : 2f;
+    public SpriteRenderer SpriteRenderer => CommonData?.spriteRenderer;
+    public Animator Animator => CommonData?.animator;
+    public GameObject DamageTextPrefab => CommonData?.damageTextPrefab;
+    public GameObject DeadEff => CommonData?.deadEff;
+    public Collider2D ChaseArea => CommonData?.chaseArea;
+    public LayerMask TargetLayer => CommonData?.targetLayer ?? 0;
+
+    // 近战专用
+    public float MeleeAttackRange => MeleeData != null ? MeleeData.attackRange : 0f;
+    public int MeleeAttackDamage => MeleeData != null ? MeleeData.attackDamage : 0;
+    public Vector2 MeleeAttackOffset => MeleeData != null ? MeleeData.attackOffset : Vector2.zero;
+    public Transform MeleeAttackPoint => MeleeData != null ? MeleeData.attackPoint : null;
+
+    // 远程专用
+    public float RangedAttackRange => RangedData != null ? RangedData.attackRange : 0f;
+    public WeaponInfo RangedWeapon => RangedData != null ? RangedData.rangedWeapon : null;
+
+    // 自爆专用
+    public float ExplosionRadius => ExplosiveData != null ? ExplosiveData.explosionRadius : 0f;
+    public int ExplosionDamage => ExplosiveData != null ? ExplosiveData.explosionDamage : 0;
+    public GameObject ExplosionEffect => ExplosiveData != null ? ExplosiveData.explosionEffectPrefab : null;
+
+    #endregion
+
+
+
     public IState currentState;
     public Parameter parameter;
     private Dictionary<StateType, IState> states = new Dictionary<StateType, IState>();
 
     void Start()
     {
+  
+            // 确保数据已配置
+            if (parameter.data == null)
+            {
+                Debug.LogError($"{gameObject.name} 的 Parameter.data 未配置！");
+                return;
+            }
 
-        #region 动态获取组件的代码 允许在 Inspector 中拖入组件，如果未拖入则自动获取
-        if (parameter.spriteRenderer == null)
-        parameter.spriteRenderer = GetComponent<SpriteRenderer>();
+            // 获取 SpriteRenderer
+            if (parameter.data.spriteRenderer == null)
+                parameter.data.spriteRenderer = GetComponent<SpriteRenderer>();
 
-        if (parameter.animator == null)
-            parameter.animator = GetComponent<Animator>();
-        #endregion
+        // 获取 Animator
+        if (parameter.data.animator == null)
+            parameter.data.animator = GetComponent<Animator>();
 
+        
+        
+       
         #region 注册所有的状态实例 这里可以根据需要添加更多状态
             // ... 通用状态注册 ...
 
@@ -169,73 +192,70 @@ public class FSM : MonoBehaviour
 
     public void Dead()
     {
-        // 通知所属房间：敌人死亡
-        parameter.ownerRoom?.UnregisterEnemy(this);
+        // 通知所属房间（如果敌人有 ownerRoom 属性）
+        parameter.data?.ownerRoom?.UnregisterEnemy(this);
 
-        // 原有死亡逻辑（触发事件、生成特效、销毁等）
         EventBus.Instance.Trigger(new EnemyDiedStruct());
-        if (parameter.DeadEff != null)
-            Instantiate(parameter.DeadEff, transform.position, transform.rotation);
+        if (DeadEff != null)
+            Instantiate(DeadEff, transform.position, transform.rotation);
         Destroy(gameObject);
     }
 
     #region 绘制近战攻击范围
     private void OnDrawGizmos()
     {
-        if (parameter.attackPoint != null)
+        // 只对近战敌人绘制攻击范围
+        if (parameter.enemyType == EnemyType.Melee && MeleeAttackPoint != null)
         {
-            Vector2 pos = Application.isPlaying ? GetAttackWorldPos() : (Vector2)parameter.attackPoint.position;
-            Gizmos.DrawWireSphere(pos, parameter.attackRange);
+            Vector2 pos = Application.isPlaying ? GetAttackWorldPos() : (Vector2)MeleeAttackPoint.position;
+            Gizmos.DrawWireSphere(pos, MeleeAttackRange);
         }
     }
-    #endregion
 
-    #region 动态获得攻击点位置的方法（考虑朝向）
-    public Vector2 GetAttackWorldPos()
+#endregion
+
+#region 动态获得攻击点位置的方法（考虑朝向）
+public Vector2 GetAttackWorldPos()
+{
+    if (parameter.enemyType == EnemyType.Melee && MeleeData != null)
     {
-        float dir = parameter.spriteRenderer.flipX ? -1f : 1f;
-        return (Vector2)transform.position + new Vector2(dir * parameter.attackOffset.x, parameter.attackOffset.y);
+        float dir = SpriteRenderer.flipX ? -1f : 1f;
+        return (Vector2)transform.position + new Vector2(dir * MeleeAttackOffset.x, MeleeAttackOffset.y);
     }
-    #endregion
+    return transform.position; // 保底
+}
+#endregion
 
-    #region 切换到受击状态的方法 这里可以进行伤害的计算 考虑敌人的减伤相关
-    public void Wound(float damage) 
+#region 切换到受击状态的方法 这里可以进行伤害的计算 考虑敌人的减伤相关
+public void Wound(float damage) 
     {
         (states[StateType.Wound] as EnemyWoundState).finallyDamage = damage;
         ChangeState(StateType.Wound);
     }
     #endregion
 
-    
-    
-    
+
+
+
     #region 显示伤害飘字的方法（需要在 Parameter 中添加 damageTextPrefab）
     public void ShowDamageText(Vector3 position, float damageValue)
     {
-        if (parameter.damageTextPrefab == null) return; // 需要在 Parameter 中添加 damageTextPrefab
-        GameObject dmgObj = Instantiate(parameter.damageTextPrefab, position, Quaternion.identity) ;
+        if (DamageTextPrefab == null) return;
+        GameObject dmgObj = Instantiate(DamageTextPrefab, position, Quaternion.identity);
         DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
-        if (dmgNumber != null)
-            dmgNumber.SetDamage(damageValue);
+        if (dmgNumber != null) dmgNumber.SetDamage(damageValue);
     }
     #endregion
 
     #region 让敌人武器转向
     private void UpdateWeaponAim()
     {
-        if (parameter.rangedWeapon == null || parameter.target == null)
-            return;
+        if (parameter.enemyType != EnemyType.Ranged) return;
+        if (RangedWeapon == null || parameter.target == null) return;
 
-        // 获取武器物体的 Transform（通常 WeaponInfo 挂在武器物体上）
-        Transform weaponTransform = parameter.rangedWeapon.transform;
-
-        // 计算从武器位置指向目标的方向
+        Transform weaponTransform = RangedWeapon.transform;
         Vector2 direction = parameter.target.position - weaponTransform.position;
-
-        // 计算角度（2D 游戏，绕 Z 轴旋转）
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-
-        // 应用旋转
         weaponTransform.rotation = Quaternion.Euler(0, 0, angle);
     }
 

@@ -4,51 +4,45 @@ using UnityEngine;
 
 public class EnemyChaseState : EnemyStateBase
 {
-   
+    public EnemyChaseState(FSM manager) : base(manager) { }
+
     public override void OnStart()
     {
         Debug.Log("进入Chase状态");
     }
-
-    public EnemyChaseState(FSM manager) : base(manager) { }
 
     public override void OnUpdate()
     {
         if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
         if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
-        // 根据玩家位置设置 flipX
-        if (parameter.target.position.x > manager.transform.position.x)
-            parameter.spriteRenderer.flipX = false;
-        else
-            parameter.spriteRenderer.flipX = true;
+        // 面朝玩家
+        bool flip = parameter.target.position.x < manager.transform.position.x;
+        manager.SpriteRenderer.flipX = flip;
 
-        // 向玩家移动
+        // 移动
         manager.transform.position = Vector2.MoveTowards(
             manager.transform.position,
             parameter.target.position,
-            parameter.chaseSpeed * Time.deltaTime);
+            manager.ChaseSpeed * Time.deltaTime);
 
-        // 检查是否进入攻击范围（区分近战和远程）
+        // 根据敌人类型判断切换
         if (parameter.enemyType == EnemyType.Ranged)
         {
             float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
-            if (distance <= parameter.attackRange)
+            if (distance <= manager.RangedAttackRange)
             {
                 manager.ChangeState(StateType.Approach);
             }
         }
         else // 近战
         {
-            if (Physics2D.OverlapCircle(manager.GetAttackWorldPos(), parameter.attackRange, parameter.targetLayer))
+            if (Physics2D.OverlapCircle(manager.GetAttackWorldPos(), manager.MeleeAttackRange, manager.TargetLayer))
             {
                 manager.ChangeState(StateType.Approach);
             }
         }
     }
-
-
-
 
     public override void OnExit() { }
 }

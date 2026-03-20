@@ -30,7 +30,7 @@ public class EnemyIdleState : EnemyStateBase
 
         timer += Time.deltaTime;
         // 如果等待时间超过设定值，切换到巡逻状态
-        if (timer >= parameter.idleTime)
+        if (timer >= manager.CommonData.idleTime)
         {
             manager.ChangeState(StateType.Patrol);
             return;

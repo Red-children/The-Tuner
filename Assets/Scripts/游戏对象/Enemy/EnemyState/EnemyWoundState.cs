@@ -17,7 +17,7 @@ public class EnemyWoundState : EnemyStateBase
 
     public override void OnStart()
     {
-        parameter.health -= finallyDamage; // 直接在这里扣血，确保状态切换时已经计算好最终伤害
+        parameter.data.health -= finallyDamage; // 直接在这里扣血，确保状态切换时已经计算好最终伤害
         Debug.Log("进入Wound状态");
         parameter.getHit = false;
         manager.ShowDamageText(manager.transform.position, finallyDamage);
@@ -27,7 +27,7 @@ public class EnemyWoundState : EnemyStateBase
 
     public  override void OnUpdate()
     {
-        if (parameter.health <= 0)
+        if (parameter.data.health <= 0)
         {
             manager.ChangeState(StateType.Dead);
             return;

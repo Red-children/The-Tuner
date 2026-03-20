@@ -6,9 +6,7 @@ public class EnemyRangedApproachState : EnemyStateBase
 {
     private Vector2 currentDirection;
 
-    public EnemyRangedApproachState(FSM manager) : base(manager)
-    {
-    }
+    public EnemyRangedApproachState(FSM manager) : base(manager) { }
 
     public override void OnStart()
     {
@@ -23,7 +21,7 @@ public class EnemyRangedApproachState : EnemyStateBase
         if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
         float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
-        float attackRange = parameter.attackRange;
+        float attackRange = manager.RangedAttackRange;  // 从 manager 获取远程攻击范围
 
         // 定义理想距离范围：攻击范围的 60%~90%
         float minDesired = attackRange * 0.6f;
@@ -49,14 +47,14 @@ public class EnemyRangedApproachState : EnemyStateBase
             return;
         }
 
-        // 执行移动
-        manager.transform.position += (Vector3)currentDirection * parameter.moveSpeed * Time.deltaTime;
+        // 执行移动（使用 manager 中的移动速度）
+        manager.transform.position += (Vector3)currentDirection * manager.MoveSpeed * Time.deltaTime;
 
-        // 面朝玩家（翻转）
+        // 面朝玩家（翻转）使用 manager 中的 SpriteRenderer
         if (parameter.target.position.x > manager.transform.position.x)
-            parameter.spriteRenderer.flipX = false;
+            manager.SpriteRenderer.flipX = false;
         else
-            parameter.spriteRenderer.flipX = true;
+            manager.SpriteRenderer.flipX = true;
     }
 
     public override void OnExit() { }

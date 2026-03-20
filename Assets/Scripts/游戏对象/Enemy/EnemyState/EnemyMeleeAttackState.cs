@@ -6,7 +6,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
 {
     private float attackTimer;
 
-    public EnemyMeleeAttackState(FSM manager):base(manager)
+    public EnemyMeleeAttackState(FSM manager) : base(manager)
     {
     }
 
@@ -14,7 +14,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
     {
         Debug.Log("进入近战攻击状态");
         attackTimer = 0f;
-        parameter.animator.SetTrigger("Attack");
+        manager.Animator.SetTrigger("Attack");
     }
 
     public override void OnUpdate()
@@ -27,10 +27,10 @@ public class EnemyMeleeAttackState : EnemyStateBase
         }
 
         attackTimer += Time.deltaTime;
-        if (attackTimer >= 1f) // 攻击间隔，可从配置读取
+        // 攻击间隔可以从数据中读取，这里先写死或从 manager 获取
+        if (attackTimer >= 1f) // 后续可以改为 manager.MeleeAttackInterval
         {
             attackTimer = 0f;
-            // 实际伤害在动画事件中触发，这里只做冷却
         }
     }
 
@@ -40,7 +40,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
     {
         if (parameter.target == null) return false;
         Vector2 attackWorldPos = manager.GetAttackWorldPos();
-        Collider2D[] hits = Physics2D.OverlapCircleAll(attackWorldPos, parameter.attackRange, parameter.targetLayer);
+        Collider2D[] hits = Physics2D.OverlapCircleAll(attackWorldPos, manager.MeleeAttackRange, manager.TargetLayer);
         foreach (var hit in hits)
             if (hit.transform == parameter.target) return true;
         return false;
@@ -52,7 +52,6 @@ public class EnemyMeleeAttackState : EnemyStateBase
         if (!IsTargetInRange()) return;
         PlayerIObject player = parameter.target.GetComponent<PlayerIObject>();
         if (player != null)
-            player.Wound(parameter.attackDamage);
+            player.Wound(manager.MeleeAttackDamage);
     }
 }
-

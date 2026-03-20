@@ -4,16 +4,12 @@ using UnityEngine;
 
 public class EnemyRangedAttackState : EnemyStateBase
 {
-    public EnemyRangedAttackState(FSM manager):base(manager)
-    {
-        this.manager = manager;
-        this.parameter = manager.parameter;
-    }
+    public EnemyRangedAttackState(FSM manager) : base(manager) { }
 
     public override void OnStart()
     {
         Debug.Log("进入远程攻击状态");
-        parameter.animator.SetTrigger("Attack");
+        manager.Animator.SetTrigger("Attack");
     }
 
     public override void OnUpdate()
@@ -22,7 +18,7 @@ public class EnemyRangedAttackState : EnemyStateBase
         if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
         float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
-        float attackRange = parameter.attackRange;
+        float attackRange = manager.RangedAttackRange;
 
         // 如果太远或太近，回到接近状态
         if (distance > attackRange || distance < attackRange * 0.6f)
@@ -32,9 +28,9 @@ public class EnemyRangedAttackState : EnemyStateBase
         }
 
         // 在有效范围内，使用武器射击
-        if (parameter.rangedWeapon != null)
+        if (manager.RangedWeapon != null)
         {
-            parameter.rangedWeapon.Shoot(); // 武器内部处理冷却
+            manager.RangedWeapon.Shoot();
         }
     }
 

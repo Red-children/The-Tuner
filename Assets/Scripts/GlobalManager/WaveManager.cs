@@ -76,7 +76,7 @@ public class WaveManager : MonoBehaviour
             FSM enemyFSM = enemyObj.GetComponent<TriggerForward>().fsm;
             if (enemyFSM != null)
             {
-                enemyFSM.parameter.ownerRoom = currentRoom;   // 设置所属房间
+                enemyFSM.parameter.data.ownerRoom = currentRoom;   // 设置所属房间
                 currentRoom.RegisterEnemy(enemyFSM);
             }
             yield return new WaitForSeconds(wave.spawnInterval);
