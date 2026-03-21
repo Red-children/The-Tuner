@@ -2,24 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyDeadState : IState
+public class EnemyDeadState : EnemyStateBase
 {
-    private FSM manager;
-    private Parameter parameter;
+    
 
-    public EnemyDeadState(FSM manager)
+    public EnemyDeadState(FSM manager):base(manager)
     {
-        this.manager = manager;
-        this.parameter = manager.parameter;
     }
 
-    public void OnStart()
+    public override void OnStart()
     {
         Debug.Log("µ–»ÀÀ¿Õˆ");
-        manager.Dead();
+       controller.Dead();
     }
 
-    public void OnUpdate() { }
-    public void OnExit() { }
+    public override void OnUpdate() { }
+    public override void OnExit() { }
 }
 

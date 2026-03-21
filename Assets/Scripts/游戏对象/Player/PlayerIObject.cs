@@ -213,10 +213,10 @@ public class PlayerIObject : BaseObject
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, meleeRange, enemyLayer);
         foreach (var enemy in hitEnemies)
         {
-            FSM enemyFSM = enemy.GetComponent<FSM>();
-            if (enemyFSM != null)
+            EnemyController enemyController = enemy.GetComponent<EnemyController>();
+            if (enemyController != null)
             {
-                enemyFSM.Wound(finalDamage);
+                enemyController.Wound(finalDamage);
             }
         }
 

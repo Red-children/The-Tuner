@@ -6,5 +6,4 @@ using UnityEngine;
 public class RangedEnemyData : EnemyData
 {
     public float attackRange = 8f;
-    public WeaponInfo rangedWeapon;
 }

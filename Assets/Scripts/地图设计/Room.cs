@@ -3,14 +3,18 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+   
     [Header("房间配置")]
-    public Collider2D roomTrigger;          // 门口触发器（通常是一个大区域）
+    public Collider2D roomTrigger;      // 入口触发器（用于检测玩家进入）
+    public Collider2D walkableArea;     // 可行走区域（用于敌人生成点检测）
+                                        // ... 其他字段 ...
     public WaveManager waveManager;          // 本房间的波次管理器
     public AudioClip bgmClip;                // 本房间的背景音乐（可选）
     public Door[] doors;                     // 房间的门（数组，支持多个门）
 
-    public List<FSM> enemiesInRoom = new List<FSM>();
+    public List<EnemyController> enemiesInRoom = new List<EnemyController>();
     private bool isCleared = false;          // 是否已通关
+    [Header("我脑子有病")]
     public LayerMask obstacleMask;           // 障碍物层（墙壁、装饰等）
 
 
@@ -20,17 +24,19 @@ public class Room : MonoBehaviour
             roomTrigger = GetComponent<Collider2D>();
         if (waveManager == null)
             waveManager = GetComponent<WaveManager>();
+        if (walkableArea == null) walkableArea = GetComponent<Collider2D>();
+
     }
 
     // 由波次管理器调用，注册敌人
-    public void RegisterEnemy(FSM enemy)
+    public void RegisterEnemy(EnemyController enemy)
     {
         if (!enemiesInRoom.Contains(enemy))
             enemiesInRoom.Add(enemy);
     }
 
     // 敌人死亡时调用，注销
-    public void UnregisterEnemy(FSM enemy)
+    public void UnregisterEnemy(EnemyController enemy)
     {
         enemiesInRoom.Remove(enemy);
         if (enemiesInRoom.Count == 0 && !isCleared)
@@ -67,7 +73,7 @@ public class Room : MonoBehaviour
             foreach (var enemy in enemiesInRoom)
             {
                 if (enemy != null)
-                    enemy.parameter.target = other.transform;
+                    enemy.runtime.target = other.transform;
             }
 
             // 启动波次（如果还没启动）
@@ -75,8 +81,8 @@ public class Room : MonoBehaviour
                 waveManager.StartWave(this);
 
             // 禁用入口触发器，防止重复触发
-            if (roomTrigger != null)
-                roomTrigger.enabled = false;
+            roomTrigger.enabled = false;
+               
         }
     }
 
@@ -88,17 +94,17 @@ public class Room : MonoBehaviour
             foreach (var enemy in enemiesInRoom)
             {
                 if (enemy != null)
-                    enemy.parameter.target = null;
+                    enemy.runtime.target = null;
             }
         }
     }
 
     public Vector2 GetRandomValidPoint(float safeRadius = 0.5f)
     {
-        if (roomTrigger == null) return transform.position;
+        if (walkableArea == null) return transform.position;
 
-        Bounds bounds = roomTrigger.bounds;
-        int maxAttempts = 50;
+        Bounds bounds = walkableArea.bounds;
+        int maxAttempts = 100;
 
         for (int i = 0; i < maxAttempts; i++)
         {
@@ -106,7 +112,7 @@ public class Room : MonoBehaviour
             float y = Random.Range(bounds.min.y, bounds.max.y);
             Vector2 point = new Vector2(x, y);
 
-            if (!roomTrigger.OverlapPoint(point)) continue;
+            if (!walkableArea.OverlapPoint(point)) continue;
 
             // 检查周围 safeRadius 半径内是否有障碍物
             Collider2D[] hits = Physics2D.OverlapCircleAll(point, safeRadius, obstacleMask);

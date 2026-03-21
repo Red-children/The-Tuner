@@ -72,7 +72,7 @@ public class Bullet : MonoBehaviour
         // 玩家子弹击中敌人
         if (gameObject.layer == LayerMask.NameToLayer("PlayerBullet") && hit.collider.CompareTag("Enemy"))
         {
-            hit.collider.GetComponent<FSM>()?.Wound(damage);
+            hit.collider.GetComponent<EnemyController>()?.Wound(damage);
         }
         // 敌人子弹击中玩家
         else if (gameObject.layer == LayerMask.NameToLayer("EnemyBullet") && hit.collider.CompareTag("Player"))

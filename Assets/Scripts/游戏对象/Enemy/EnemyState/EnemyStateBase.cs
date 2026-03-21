@@ -7,12 +7,13 @@ using UnityEngine;
 public abstract class EnemyStateBase : IState
 {
     protected FSM manager;
-    protected Parameter parameter;
+    protected EnemyRuntime runtime => manager.Runtime;
+    protected EnemyData data => manager.Data;
+    protected EnemyController controller => manager.Controller;  // ĞÂÔö
 
     public EnemyStateBase(FSM manager)
     {
         this.manager = manager;
-        this.parameter = manager.parameter;
     }
 
     public virtual void OnStart() { }

@@ -4,74 +4,60 @@ using UnityEngine;
 
 public class EnemyMeleeApproachState : EnemyStateBase
 {
-    private float approachTime = 2f;
-    private float timer;
     private Vector2 currentDirection;
     private float directionChangeTimer;
-    private float directionChangeInterval = 0.5f; // 每0.5秒才考虑变向
+    private float directionChangeInterval = 0.5f;
+    private float maxTurnAnglePerSec = 120f;
 
-    // 转向限制
-    private float maxTurnAnglePerSec = 120f; // 每秒最多转120度
-
-    public EnemyMeleeApproachState(FSM manager):base(manager)
-    {
-       
-    }
+    public EnemyMeleeApproachState(FSM manager) : base(manager) { }
 
     public override void OnStart()
     {
-        Debug.Log("进入Approach状态");
-        timer = 0f;
-        parameter.data.animator.Play("Attack");
-        // 初始方向朝向玩家
-        if (parameter.target != null)
-        {
-            currentDirection = (parameter.target.position - manager.transform.position).normalized;
-        }
+        Debug.Log("进入近战接近状态");
+        if (runtime.target != null)
+            currentDirection = (runtime.target.position - manager.transform.position).normalized;
         directionChangeTimer = directionChangeInterval;
     }
 
     public override void OnUpdate()
     {
-        if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
-        if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
+        if (runtime.getHit) { manager.ChangeState(StateType.Wound); return; }
+        if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
-        // 1. 计算期望方向（朝向玩家）
-        Vector2 toPlayer = (parameter.target.position - manager.transform.position).normalized;
+        // 获取攻击范围数据
+        MeleeEnemyData meleeData = data as MeleeEnemyData;
+        if (meleeData == null) return;
 
-        // 2. 射线检测避障（简单版）
-        RaycastHit2D hit = Physics2D.Raycast(manager.transform.position, currentDirection, 1.5f, LayerMask.GetMask("Wall"));
-        if (hit.collider != null)
+        float distance = Vector2.Distance(manager.transform.position, runtime.target.position);
+        Vector2 toTarget = (runtime.target.position - manager.transform.position).normalized;
+
+        // 如果已经在攻击范围内，立即攻击
+        if (distance <= meleeData.attackRange)
         {
-            // 如果前方有墙，强制转向（比如向左转）
-            toPlayer = Quaternion.Euler(0, 0, 45) * toPlayer;
+            manager.ChangeState(StateType.Attack);
+            return;
         }
 
-        // 3. 转向限制：不能直接从当前方向突变到期望方向
-        float angleBetween = Vector2.SignedAngle(currentDirection, toPlayer);
+        // 否则继续接近玩家
+        // 避障射线检测（简单版）
+        RaycastHit2D hit = Physics2D.Raycast(manager.transform.position, currentDirection, 1.5f, LayerMask.GetMask("Wall"));
+        Vector2 desiredDirection = hit.collider != null ? (toTarget + (Vector2)manager.transform.right).normalized : toTarget;
+
+        // 转向限制
+        float angleDelta = Vector2.SignedAngle(currentDirection, desiredDirection);
         float maxDelta = maxTurnAnglePerSec * Time.deltaTime;
         float newAngle = Mathf.MoveTowardsAngle(
             Vector2.SignedAngle(Vector2.right, currentDirection),
-            Vector2.SignedAngle(Vector2.right, toPlayer),
+            Vector2.SignedAngle(Vector2.right, desiredDirection),
             maxDelta
         );
         currentDirection = Quaternion.Euler(0, 0, newAngle) * Vector2.right;
 
-        // 4. 移动
-        manager.transform.position += (Vector3)currentDirection * manager.CommonData.moveSpeed * Time.deltaTime;
+        // 移动
+        manager.transform.position += (Vector3)currentDirection * data.moveSpeed * Time.deltaTime;
 
-        // 5. 面朝玩家（翻转）
-        if (parameter.target.position.x > manager.transform.position.x)
-            parameter.data .spriteRenderer.flipX = false;
-        else
-            parameter.data.spriteRenderer.flipX = true;
-
-        // 6. 计时切换
-        timer += Time.deltaTime;
-        if (timer >= approachTime)
-        {
-            manager.ChangeState(StateType.Attack);
-        }
+        // 面朝玩家
+        controller.spriteRenderer.flipX = runtime.target.position.x < manager.transform.position.x;
     }
 
     public override void OnExit() { }

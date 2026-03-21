@@ -9,16 +9,16 @@ public class EnemyRangedAttackState : EnemyStateBase
     public override void OnStart()
     {
         Debug.Log("进入远程攻击状态");
-        manager.Animator.SetTrigger("Attack");
+        controller.animator.SetTrigger("Attack");
     }
 
     public override void OnUpdate()
     {
-        if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
-        if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
+        if (runtime.getHit) { manager.ChangeState(StateType.Wound); return; }
+        if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
-        float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
-        float attackRange = manager.RangedAttackRange;
+        float distance = Vector2.Distance(manager.transform.position, runtime.target.position);
+        float attackRange =  (controller.data as RangedEnemyData).attackRange;
 
         // 如果太远或太近，回到接近状态
         if (distance > attackRange || distance < attackRange * 0.6f)
@@ -28,9 +28,9 @@ public class EnemyRangedAttackState : EnemyStateBase
         }
 
         // 在有效范围内，使用武器射击
-        if (manager.RangedWeapon != null)
+        if (controller.weapon != null)
         {
-            manager.RangedWeapon.Shoot();
+            controller.weapon.Shoot();
         }
     }
 

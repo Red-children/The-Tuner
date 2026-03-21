@@ -17,17 +17,17 @@ public class EnemyWoundState : EnemyStateBase
 
     public override void OnStart()
     {
-        parameter.data.health -= finallyDamage; // 直接在这里扣血，确保状态切换时已经计算好最终伤害
+        data.health -= finallyDamage; // 直接在这里扣血，确保状态切换时已经计算好最终伤害
         Debug.Log("进入Wound状态");
-        parameter.getHit = false;
-        manager.ShowDamageText(manager.transform.position, finallyDamage);
+        runtime.getHit = false;
+        controller.ShowDamageText( manager.transform.position, finallyDamage);
         timer = 0f;
 
     }
 
     public  override void OnUpdate()
     {
-        if (parameter.data.health <= 0)
+        if (data.health <= 0)
         {
             manager.ChangeState(StateType.Dead);
             return;
@@ -36,7 +36,7 @@ public class EnemyWoundState : EnemyStateBase
         timer += Time.deltaTime;
         if (timer >= 0.5f) // 受击硬直时间
         {
-            if (parameter.target != null)
+            if (runtime.target != null)
                 manager.ChangeState(StateType.Chase);
             else
                 manager.ChangeState(StateType.Patrol);
@@ -44,6 +44,9 @@ public class EnemyWoundState : EnemyStateBase
     }
 
     public override    void OnExit() { }
+
+
+
 }
 
 #endregion

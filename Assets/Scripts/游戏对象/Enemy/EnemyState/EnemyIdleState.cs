@@ -22,7 +22,7 @@ public class EnemyIdleState : EnemyStateBase
     public  override void OnUpdate()
     {
         // 如果受到攻击，立即切换到受击状态
-        if (parameter.getHit)
+        if (runtime.getHit)
         {
             manager.ChangeState(StateType.Wound);
             return;
@@ -30,13 +30,13 @@ public class EnemyIdleState : EnemyStateBase
 
         timer += Time.deltaTime;
         // 如果等待时间超过设定值，切换到巡逻状态
-        if (timer >= manager.CommonData.idleTime)
+        if (timer >= data.idleTime)
         {
             manager.ChangeState(StateType.Patrol);
             return;
         }
         // 如果在等待期间发现玩家，立即切换到追逐状态
-        if (parameter.target != null)
+        if (runtime.target != null)
         {
             manager.ChangeState(StateType.Chase);
         }

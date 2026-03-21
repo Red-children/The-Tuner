@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 725547109508326868}
-  m_Layer: 7
+  m_Layer: 6
   m_Name: FirePos
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -80,7 +80,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 4
+  m_Radius: 10
 --- !u!114 &725547110283411355
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -93,7 +93,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f757bd52fb7ea438ceeef6be8fb3cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fsm: {fileID: 3688074856532722029}
+  controller: {fileID: 565432112}
 --- !u!1 &725547110778532822
 GameObject:
   m_ObjectHideFlags: 0
@@ -137,7 +137,7 @@ GameObject:
   - component: {fileID: 725547111466931617}
   - component: {fileID: 725547111466931630}
   - component: {fileID: 725547111466931616}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: Weapon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -333,19 +333,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 4125022150300041421, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4125022150844686642, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
---- !u!114 &3688074856532722029 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
-  m_PrefabInstance: {fileID: 725547111217512795}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3688074856532722070}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d4190926dcf0764d80fe5029d867655, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &3688074856532722066 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
@@ -377,3 +374,40 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &565432112
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3688074856532722070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d059f8f29b352bb4b98e26deea668732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: 566f1c200dc324b42832e53641317990, type: 2}
+  ownerRoom: {fileID: 0}
+  spriteRenderer: {fileID: 0}
+  animator: {fileID: 0}
+  weapon: {fileID: 725547111466931616}
+  chaseArea: {fileID: 725547110283411352}
+  patrolCenter: {fileID: 725547110778532823}
+  patrolPoints: []
+  runtime: {fileID: 0}
+  fsm: {fileID: 0}
+--- !u!114 &9064153222004164513
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3688074856532722070}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 783ab7a423d1e5e4e84b8eca626cb65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  getHit: 0
+  currentHealth: 0

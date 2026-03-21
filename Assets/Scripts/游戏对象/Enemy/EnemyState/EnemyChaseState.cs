@@ -13,35 +13,37 @@ public class EnemyChaseState : EnemyStateBase
 
     public override void OnUpdate()
     {
-        if (parameter.getHit) { manager.ChangeState(StateType.Wound); return; }
-        if (parameter.target == null) { manager.ChangeState(StateType.Patrol); return; }
+        if (runtime.getHit) { manager.ChangeState(StateType.Wound); return; }
+        if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
-        // 面朝玩家
-        bool flip = parameter.target.position.x < manager.transform.position.x;
-        manager.SpriteRenderer.flipX = flip;
+        // 面朝玩家（使用 controller 中的 spriteRenderer）
+        bool flip = runtime.target.position.x < manager.transform.position.x;
+        controller.spriteRenderer.flipX = flip;
 
-        // 移动
+        // 移动（速度从 data 读取）
         manager.transform.position = Vector2.MoveTowards(
             manager.transform.position,
-            parameter.target.position,
-            manager.ChaseSpeed * Time.deltaTime);
+            runtime.target.position,
+            data.chaseSpeed * Time.deltaTime);
 
-        // 根据敌人类型判断切换
-        if (parameter.enemyType == EnemyType.Ranged)
+        // 根据敌人实际类型判断是否进入接近状态
+        if (data is RangedEnemyData rangedData)
         {
-            float distance = Vector2.Distance(manager.transform.position, parameter.target.position);
-            if (distance <= manager.RangedAttackRange)
+            float distance = Vector2.Distance(manager.transform.position, runtime.target.position);
+            if (distance <= rangedData.attackRange)
             {
                 manager.ChangeState(StateType.Approach);
             }
         }
-        else // 近战
+        else if (data is MeleeEnemyData meleeData)
         {
-            if (Physics2D.OverlapCircle(manager.GetAttackWorldPos(), manager.MeleeAttackRange, manager.TargetLayer))
+            // 近战攻击范围检测（使用 controller 中的攻击点计算方法）
+            if (Physics2D.OverlapCircle(controller.GetAttackWorldPos(), meleeData.attackRange, meleeData.targetLayer))
             {
                 manager.ChangeState(StateType.Approach);
             }
         }
+        // 如果有自爆等其他类型，可以继续添加
     }
 
     public override void OnExit() { }

@@ -143,10 +143,10 @@ public class PlayerFSM : MonoBehaviour
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, parameter.meleeRange, LayerMask.GetMask("Enemy"));
         foreach (var enemy in hitEnemies)
         {
-            FSM enemyFSM = enemy.GetComponent<FSM>();
-            if (enemyFSM != null)
+            EnemyController enemyController = enemy.GetComponent<EnemyController>();
+            if (enemyController != null)
             {
-                enemyFSM.Wound(finalDamage);
+                enemyController.Wound(finalDamage);
             }
         }
 

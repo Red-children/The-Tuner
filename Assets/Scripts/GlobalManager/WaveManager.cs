@@ -73,11 +73,11 @@ public class WaveManager : MonoBehaviour
             Vector2 spawnPos = currentRoom.GetRandomValidPoint();
             GameObject enemyPrefab = wave.enemyPrefabs[Random.Range(0, wave.enemyPrefabs.Length)];
             GameObject enemyObj = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-            FSM enemyFSM = enemyObj.GetComponent<TriggerForward>().fsm;
-            if (enemyFSM != null)
+            EnemyController enemyController = enemyObj.GetComponent<TriggerForward>().controller;
+            if (enemyController != null)
             {
-                enemyFSM.parameter.data.ownerRoom = currentRoom;   // 设置所属房间
-                currentRoom.RegisterEnemy(enemyFSM);
+                enemyController.ownerRoom = currentRoom;   // 设置所属房间
+                currentRoom.RegisterEnemy(enemyController);
             }
             yield return new WaitForSeconds(wave.spawnInterval);
         }
