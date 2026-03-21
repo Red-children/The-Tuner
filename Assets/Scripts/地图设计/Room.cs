@@ -3,39 +3,81 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
-   
     [Header("房间配置")]
-    public Collider2D roomTrigger;      // 入口触发器（用于检测玩家进入）
-    public Collider2D walkableArea;     // 可行走区域（用于敌人生成点检测）
-                                        // ... 其他字段 ...
-    public WaveManager waveManager;          // 本房间的波次管理器
-    public AudioClip bgmClip;                // 本房间的背景音乐（可选）
-    public Door[] doors;                     // 房间的门（数组，支持多个门）
+    public Collider2D roomTrigger;          // 入口触发器（用于检测玩家进入）
+    public WaveManager waveManager;
+    public Door[] doors;
+    public LayerMask obstacleMask;
 
-    public List<EnemyController> enemiesInRoom = new List<EnemyController>();
-    private bool isCleared = false;          // 是否已通关
-    [Header("我脑子有病")]
-    public LayerMask obstacleMask;           // 障碍物层（墙壁、装饰等）
+    private Bounds cachedBounds;             // 缓存房间范围（用于敌人生成）
+    private bool isActive = false;           // 房间是否已被激活
+    private bool isCleared = false;
+    private List<EnemyController> enemiesInRoom = new List<EnemyController>();
 
+   
 
     private void Awake()
     {
-        if (roomTrigger == null)
-            roomTrigger = GetComponent<Collider2D>();
-        if (waveManager == null)
-            waveManager = GetComponent<WaveManager>();
-        if (walkableArea == null) walkableArea = GetComponent<Collider2D>();
+        if (roomTrigger == null) roomTrigger = GetComponent<Collider2D>();
+        if (waveManager == null) waveManager = GetComponent<WaveManager>();
 
+        // 缓存房间范围（触发器禁用后仍可使用）
+        cachedBounds = roomTrigger.bounds;
     }
 
-    // 由波次管理器调用，注册敌人
-    public void RegisterEnemy(EnemyController enemy)
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!enemiesInRoom.Contains(enemy))
-            enemiesInRoom.Add(enemy);
+        if (!other.CompareTag("Player")) return;
+        if (isActive) return;  // 已经激活过，忽略重复触发
+
+        ActivateRoom(other.transform);
     }
 
-    // 敌人死亡时调用，注销
+    private void ActivateRoom(Transform player)
+    {
+        if(isCleared) return;
+
+        if(isActive) return;
+
+        isActive = true;
+
+        // 关门
+        foreach (var door in doors) door?.Close();
+
+        // 激活所有现有敌人（如果有预先放置的敌人）
+        foreach (var enemy in enemiesInRoom)
+            enemy.runtime.target = player;
+
+        // 启动波次
+        waveManager?.StartWave(this);
+
+        // 可选：禁用触发器，避免再次进入（也可保留，因为有 isActive 保护）
+        // roomTrigger.enabled = false;
+    }
+
+    public Vector2 GetRandomValidPoint(float safeRadius = 0.5f)
+    {
+        // 使用缓存的房间范围
+        for (int i = 0; i < 100; i++)
+        {
+            float x = Random.Range(cachedBounds.min.x, cachedBounds.max.x);
+            float y = Random.Range(cachedBounds.min.y, cachedBounds.max.y);
+            Vector2 point = new Vector2(x, y);
+
+            // 检查点是否在触发器原始范围内（使用 cachedBounds 不够精确，但够用）
+            // 如果房间形状不规则，建议保留 roomTrigger 的 OverlapPoint 但 roomTrigger 可能被禁用
+            // 这里用缓存的边界框快速判断，对于矩形房间足够。
+            // 如果需要精确判断，可以在 Awake 时克隆一个隐藏的碰撞器专门用于检测。
+
+            Collider2D[] hits = Physics2D.OverlapCircleAll(point, safeRadius, obstacleMask);
+            if (hits.Length == 0)
+                return point;
+        }
+        return cachedBounds.center;
+    }
+
+    // 敌人注册/注销方法保持不变...
+    public void RegisterEnemy(EnemyController enemy) => enemiesInRoom.Add(enemy);
     public void UnregisterEnemy(EnemyController enemy)
     {
         enemiesInRoom.Remove(enemy);
@@ -48,82 +90,8 @@ public class Room : MonoBehaviour
 
     private void OnRoomCleared()
     {
-        // 打开所有门
-        foreach (var door in doors)
-        {
-            if (door != null)
-                door.Open();
-        }
+        foreach (var door in doors) door?.Open();
+        isActive = false;  // 房间重置，允许后续再次进入（如果需要）
         Debug.Log("房间已清空，门已打开");
-        // 可触发宝箱生成、播放音效等
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            // 关闭所有门
-            foreach (var door in doors)
-            {
-                if (door != null)
-                    door.Close();
-            }
-
-            // 激活所有敌人
-            foreach (var enemy in enemiesInRoom)
-            {
-                if (enemy != null)
-                    enemy.runtime.target = other.transform;
-            }
-
-            // 启动波次（如果还没启动）
-            if (waveManager != null && !waveManager.isWaveActive)
-                waveManager.StartWave(this);
-
-            // 禁用入口触发器，防止重复触发
-            roomTrigger.enabled = false;
-               
-        }
-    }
-
-    //用碰撞检测来判断玩家是否进入房间
-    private void OnTriggerExit2D(Collider2D other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            foreach (var enemy in enemiesInRoom)
-            {
-                if (enemy != null)
-                    enemy.runtime.target = null;
-            }
-        }
-    }
-
-    public Vector2 GetRandomValidPoint(float safeRadius = 0.5f)
-    {
-        if (walkableArea == null) return transform.position;
-
-        Bounds bounds = walkableArea.bounds;
-        int maxAttempts = 100;
-
-        for (int i = 0; i < maxAttempts; i++)
-        {
-            float x = Random.Range(bounds.min.x, bounds.max.x);
-            float y = Random.Range(bounds.min.y, bounds.max.y);
-            Vector2 point = new Vector2(x, y);
-
-            if (!walkableArea.OverlapPoint(point)) continue;
-
-            // 检查周围 safeRadius 半径内是否有障碍物
-            Collider2D[] hits = Physics2D.OverlapCircleAll(point, safeRadius, obstacleMask);
-            if (hits.Length > 0) continue;
-
-            return point;
-        }
-
-        
-        // 如果没有预设点，返回房间中心（但建议确保中心安全）
-        Debug.LogWarning("未找到安全生成点，返回房间中心，请检查房间障碍物或增加预设点");
-        return bounds.center;
     }
 }
