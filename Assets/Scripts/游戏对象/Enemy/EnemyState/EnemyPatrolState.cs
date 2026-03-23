@@ -131,7 +131,7 @@ public class EnemyPatrolState : EnemyStateBase
     {
         if (controller.patrolCenter == null)
         {
-            Debug.LogWarning("巡逻中心点未设置！");
+           // Debug.LogWarning("巡逻中心点未设置！");
             return;
         }
 

@@ -14,7 +14,12 @@ public class Room : MonoBehaviour
     private bool isCleared = false;
     private List<EnemyController> enemiesInRoom = new List<EnemyController>();
 
-   
+    public void Init(RoomType roomType)
+    {
+        
+    }
+
+
 
     private void Awake()
     {
@@ -94,4 +99,7 @@ public class Room : MonoBehaviour
         isActive = false;  // 房间重置，允许后续再次进入（如果需要）
         Debug.Log("房间已清空，门已打开");
     }
+
+
+
 }
