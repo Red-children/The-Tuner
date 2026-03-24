@@ -51,19 +51,23 @@ public class RoomManager : MonoBehaviour
         GenerateDungeon();
     }
 
+    #region 生成地牢
     public void GenerateDungeon()
     {
         ClearDungeon();
         StartCoroutine(GenerateCoroutine());
     }
+    #endregion
 
+    #region 清除地牢
     private void ClearDungeon()
     {
         foreach (var room in spawnedRooms)
             Destroy(room);
         spawnedRooms.Clear();
     }
-   
+    #endregion
+
     private IEnumerator GenerateCoroutine()
     {
         // 1. 生成起点房间
@@ -76,7 +80,7 @@ public class RoomManager : MonoBehaviour
         GameObject startInstance = Instantiate(startRoom, dungeonRoot.position, Quaternion.identity, dungeonRoot);
         spawnedRooms.Add(startInstance);
 
-        // 获取起点房间的门口列表（世界坐标下的 Transform）
+        // 获取起点房间的门口列表（世界坐标下的 Transform） 通过实例化的对象获得门口信息而不是直接拿预制体
         List<Transform> availableDoors = GetDoorTransforms(startInstance);
         Debug.Log($"起点房间可用门口数: {availableDoors.Count}");
         yield return null;
@@ -87,6 +91,7 @@ public class RoomManager : MonoBehaviour
             // 随机选一个门口
             Transform currentDoor = availableDoors[Random.Range(0, availableDoors.Count)];
             availableDoors.Remove(currentDoor);
+            //得到当前选中的门口的方向
             Vector2 currentDir = currentDoor.up;
 
             // 根据方向计算偏移
@@ -105,6 +110,7 @@ public class RoomManager : MonoBehaviour
 
             // 计算新房间的旋转
             Quaternion newRot = Quaternion.identity;
+            //当前选择的门方向朝上，那么匹配的门的方向就应该向下
             if (currentDir == Vector2.up) newRot = Quaternion.Euler(0, 0, 180); // 上门口朝上，新房间旋转180度使其下门口朝下
             else if (currentDir == Vector2.down) newRot = Quaternion.identity;
             else if (currentDir == Vector2.left) newRot = Quaternion.Euler(0, 0, 90);
