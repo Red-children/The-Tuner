@@ -10,7 +10,7 @@ public class TriggerForward : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log($"[TriggerForward] 玩家进入，当前帧: {Time.frameCount}, fsm是否为空: {controller == null}");
+           
             controller?.OnPlayerEnter(other.transform);
 
         }

@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+    
+
     [Header("房间配置")]
     public Collider2D roomTrigger;          // 入口触发器（用于检测玩家进入）
     public WaveManager waveManager;
@@ -11,8 +13,30 @@ public class Room : MonoBehaviour
 
     private Bounds cachedBounds;             // 缓存房间范围（用于敌人生成）
     private bool isActive = false;           // 房间是否已被激活
-    private bool isCleared = false;
+   
     private List<EnemyController> enemiesInRoom = new List<EnemyController>();
+
+    private int totalEnemies = 0;    // 总需击杀敌人数
+    private int killedCount = 0;     // 已击杀数
+    private bool isCleared = false;
+
+    public void SetTotalEnemies(int total)
+    {
+        totalEnemies = total;
+        killedCount = 0;
+    }
+
+    public void UnregisterEnemy(EnemyController enemy)
+    {
+        enemiesInRoom.Remove(enemy);
+        killedCount++;
+        if (killedCount >= totalEnemies && !isCleared)
+        {
+            isCleared = true;
+            OnRoomCleared();
+        }
+    }
+
 
     public void Init(RoomType roomType)
     {
@@ -60,6 +84,8 @@ public class Room : MonoBehaviour
         // roomTrigger.enabled = false;
     }
 
+    #region 得到房间内的随机点
+    //得到房间内随机点用于敌人生成
     public Vector2 GetRandomValidPoint(float safeRadius = 0.5f)
     {
         // 使用缓存的房间范围
@@ -80,26 +106,19 @@ public class Room : MonoBehaviour
         }
         return cachedBounds.center;
     }
+    #endregion
 
     // 敌人注册/注销方法保持不变...
     public void RegisterEnemy(EnemyController enemy) => enemiesInRoom.Add(enemy);
-    public void UnregisterEnemy(EnemyController enemy)
-    {
-        enemiesInRoom.Remove(enemy);
-        if (enemiesInRoom.Count == 0 && !isCleared)
-        {
-            isCleared = true;
-            OnRoomCleared();
-        }
-    }
 
+    #region 清空房间后开门
     private void OnRoomCleared()
     {
         foreach (var door in doors) door?.Open();
         isActive = false;  // 房间重置，允许后续再次进入（如果需要）
         Debug.Log("房间已清空，门已打开");
     }
-
+    #endregion
 
 
 }

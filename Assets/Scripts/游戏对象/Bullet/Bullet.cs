@@ -80,9 +80,10 @@ public class Bullet : MonoBehaviour
             hit.collider.GetComponent<PlayerIObject>()?.Wound((int)damage);
         }
         // 子弹击中墙壁
-        else if (hit.collider.CompareTag("Wall"))
+        else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
             // 墙壁无特殊逻辑，直接销毁
+            DestroyMyself();
         }
         else
         {

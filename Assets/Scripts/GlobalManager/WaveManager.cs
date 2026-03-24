@@ -21,6 +21,9 @@ public class WaveManager : MonoBehaviour
     private int enemiesRemaining = 0;
     public bool isWaveActive = false;
 
+
+
+
     private Room currentRoom;
 
     private void Update()
@@ -42,16 +45,27 @@ public class WaveManager : MonoBehaviour
         EventBus.Instance.Unsubscribe<EnemyDiedStruct>(DecreasedEnemyNumber);
     }
 
+    #region 开始波次方法
     // 由房间调用，开始第一波
     public void StartWave(Room room)
     {
         currentRoom = room;
         currentWaveIndex = 0;
+
+        //把需要的击杀数传入 用来防止跨波次时房门被打开
+        int total = 0;
+        foreach (var wave in waves)
+            total += wave.enemyCount;
+        currentRoom.SetTotalEnemies(total);
+
         StartNextWave();
     }
+    #endregion
 
+    #region 开始下一波
     private void StartNextWave()
     {
+
         if (currentWaveIndex >= waves.Length)
         {
             // 所有波次完成，停止活动
@@ -65,6 +79,7 @@ public class WaveManager : MonoBehaviour
         isWaveActive = true;
         StartCoroutine(SpawnEnemies(wave));
     }
+    #endregion
 
     private IEnumerator SpawnEnemies(WaveConfig wave)
     {

@@ -59,9 +59,29 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 12
       objectReference: {fileID: 0}
+    - target: {fileID: 4390094308202575827, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
+      propertyPath: m_FlipY
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4390094308202575827, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
+      propertyPath: m_Color.b
+      value: 0.13317904
+      objectReference: {fileID: 0}
+    - target: {fileID: 4390094308202575827, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
+      propertyPath: m_Color.g
+      value: 0.13317904
+      objectReference: {fileID: 0}
+    - target: {fileID: 4390094308202575827, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
+      propertyPath: m_Color.r
+      value: 0.8113208
+      objectReference: {fileID: 0}
     - target: {fileID: 9201490911544044913, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
       propertyPath: owner
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9201490911544044913, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
+      propertyPath: moveSpeed
+      value: 10
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}

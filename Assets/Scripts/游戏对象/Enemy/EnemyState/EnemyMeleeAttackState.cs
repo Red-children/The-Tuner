@@ -59,10 +59,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
                 Debug.Log($"近战攻击造成伤害 {damage}");
             }
         }
-        else
-        {
-            Debug.Log("目标已不在攻击范围内，无法造成伤害");
-        }
+        
 
         // 等待动画结束（假设动画总长0.8秒，减去已等待的0.3秒，再等0.5秒）
         yield return new WaitForSeconds(0.5f);
