@@ -459,6 +459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27658bb92e1d2f9489cbf0707ebbddb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  direction: 1
 --- !u!1 &2668029432953479510
 GameObject:
   m_ObjectHideFlags: 0
@@ -694,6 +695,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27658bb92e1d2f9489cbf0707ebbddb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  direction: 2
 --- !u!1 &2668029433976935997
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,6 +708,7 @@ GameObject:
   - component: {fileID: 2668029433976935984}
   - component: {fileID: 2668029433976935987}
   - component: {fileID: 2668029433976935986}
+  - component: {fileID: 2114101249796795972}
   m_Layer: 0
   m_Name: Room
   m_TagString: Untagged
@@ -803,6 +806,22 @@ MonoBehaviour:
     - {fileID: 9171717364712834073, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
     spawnInterval: 0
   isWaveActive: 0
+--- !u!114 &2114101249796795972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2668029433976935997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 183068d830632504285d75e85a176222, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasUpDoor: 1
+  hasDownDoor: 1
+  hasLeftDoor: 1
+  hasRightDoor: 0
 --- !u!1 &5466191580117907233
 GameObject:
   m_ObjectHideFlags: 0
@@ -1040,3 +1059,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27658bb92e1d2f9489cbf0707ebbddb9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  direction: 0

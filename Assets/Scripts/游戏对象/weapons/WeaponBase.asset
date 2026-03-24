@@ -43,6 +43,6 @@ MonoBehaviour:
     maxAmmo: 35
     attackType: 0
     multiBulletCount: 0
-    bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
+    bulletPrefab: {fileID: 5622687992341628680, guid: 23f9546b54110754cb84e6db33da844d, type: 3}
     reloadTime: 1.56
     shakeIntensity: 0.01

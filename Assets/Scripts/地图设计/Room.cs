@@ -3,7 +3,9 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
+   
     
+
 
     [Header("房间配置")]
     public Collider2D roomTrigger;          // 入口触发器（用于检测玩家进入）
@@ -119,6 +121,23 @@ public class Room : MonoBehaviour
         Debug.Log("房间已清空，门已打开");
     }
     #endregion
+
+    // 根据方向获取对应的门
+    public Door GetDoor(Door.Direction dir)
+    {
+        foreach (var door in doors)
+        {
+            if (door.direction == dir)
+                return door;
+        }
+        return null;
+    }
+
+    // 获取所有可用的门（用于地图生成，可根据需要筛选）
+    public List<Door> GetAvailableDoors()
+    {
+        return new List<Door>(doors);
+    }
 
 
 }

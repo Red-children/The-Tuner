@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#region 房间类型枚举
 public enum RoomType
 {
     Start,      // 起点房间
@@ -12,6 +13,7 @@ public enum RoomType
     Boss,       // Boss房
     End         // 终点（通关）
 }
+#endregion
 
 public enum Direction
 {
@@ -46,6 +48,7 @@ public static class DirectionExtensions
             default: return dir;
         }
     }
+
 }
 
 [System.Serializable]
@@ -70,22 +73,26 @@ public class RoomManager : MonoBehaviour
     public int targetRoomCount = 10;          // 总房间数（含起点）
     public Transform dungeonRoot;              // 生成房间的父物体
 
+    #region 房间节点
     // 内部数据结构
-    private class RoomNode
+    public class RoomNode
     {
         public GameObject prefab;
         public Vector2Int gridPos;
         public GameObject instance;
-        public bool[] doorsUsed = new bool[4]; // 0:上,1:下,2:左,3:右
+        public bool[] doors;          // 实际存在的门方向
+        public bool[] doorsUsed = new bool[4]; // 已使用的门
         public RoomType type;
 
-        public RoomNode(GameObject prefab, Vector2Int pos, RoomType type)
+        public RoomNode(GameObject prefab, Vector2Int pos, RoomType type, bool[] doors)
         {
             this.prefab = prefab;
             this.gridPos = pos;
             this.type = type;
+            this.doors = doors;
         }
     }
+    #endregion
 
     private List<RoomNode> nodes = new List<RoomNode>();
     private Dictionary<Vector2Int, RoomNode> gridMap = new Dictionary<Vector2Int, RoomNode>();
@@ -101,12 +108,15 @@ public class RoomManager : MonoBehaviour
         GenerateDungeon();
     }
 
+    #region 开始生成地牢
     public void GenerateDungeon()
     {
         ClearDungeon();
         StartCoroutine(GenerateCoroutine());
     }
+    #endregion
 
+    #region 清除地牢
     private void ClearDungeon()
     {
         foreach (var node in nodes)
@@ -116,6 +126,9 @@ public class RoomManager : MonoBehaviour
         nodes.Clear();
         gridMap.Clear();
     }
+    #endregion
+
+    #region 随机获得房间预设体
 
     // 随机获取某个类型的房间预制体
     private GameObject GetRandomPrefab(RoomType type)
@@ -124,7 +137,10 @@ public class RoomManager : MonoBehaviour
         if (entry == null || entry.prefabs.Count == 0) return null;
         return entry.prefabs[Random.Range(0, entry.prefabs.Count)];
     }
+    #endregion
 
+
+    #region 随机选择房间类型
     // 根据当前节点和深度选择房间类型（可扩展难度曲线）
     private RoomType ChooseRoomType(int depth = 0)
     {
@@ -133,61 +149,61 @@ public class RoomManager : MonoBehaviour
         if (rand < 0.8f) return RoomType.Normal;
         else return RoomType.Elite;
     }
+    #endregion
 
+    #region 生成房间图
     // 生成房间拓扑图
     private List<RoomNode> GenerateGraph()
     {
         List<RoomNode> graph = new List<RoomNode>();
-
         // 起点房间
         GameObject startPrefab = GetRandomPrefab(RoomType.Start);
-        if (startPrefab == null)
-        {
-            Debug.LogError("没有起点房间预制体！");
-            return graph;
-        }
-        RoomNode startNode = new RoomNode(startPrefab, Vector2Int.zero, RoomType.Start);
+        RoomData startData = startPrefab.GetComponent<RoomData>();
+        if (startData == null) Debug.LogError("起点缺少 RoomData");
+        bool[] startDoors = startData.GetDoorDirections();
+        RoomNode startNode = new RoomNode(startPrefab, Vector2Int.zero, RoomType.Start, startDoors);
         graph.Add(startNode);
         gridMap[Vector2Int.zero] = startNode;
 
-        // 使用随机生长算法添加房间
         while (graph.Count < targetRoomCount)
         {
-            // 随机选择一个已存在的节点
+            // 随机选择一个现有节点
             RoomNode current = graph[Random.Range(0, graph.Count)];
-            // 收集当前节点所有未使用的门口方向
+            // 收集当前节点实际有门且未使用的方向
             List<Direction> freeDirs = new List<Direction>();
             for (int i = 0; i < 4; i++)
             {
-                if (!current.doorsUsed[i]) freeDirs.Add((Direction)i);
+                if (current.doors[i] && !current.doorsUsed[i])
+                    freeDirs.Add((Direction)i);
             }
-            if (freeDirs.Count == 0) continue; // 当前节点无空闲门口，换一个
+            if (freeDirs.Count == 0) continue;
 
             Direction dir = freeDirs[Random.Range(0, freeDirs.Count)];
             Vector2Int newPos = current.gridPos + dir.ToVector2Int();
 
-            // 检查新位置是否已被占用
             if (gridMap.ContainsKey(newPos)) continue;
 
-            // 选择新房间类型
+            // 选择新房间时，必须确保新房间有对应的门（方向相反）
+            Direction opposite = dir.Opposite();
             RoomType type = ChooseRoomType();
-            GameObject prefab = GetRandomPrefab(type);
+            GameObject prefab = GetRandomPrefabWithDoor(type, opposite);
             if (prefab == null) continue;
 
-            // 创建新节点
-            RoomNode newNode = new RoomNode(prefab, newPos, type);
-            // 标记新节点的对应门口为已使用（方向与当前方向相反）
-            Direction opposite = dir.Opposite();
+            RoomData newData = prefab.GetComponent<RoomData>();
+            bool[] newDoors = newData.GetDoorDirections();
+
+            RoomNode newNode = new RoomNode(prefab, newPos, type, newDoors);
+            // 标记新节点的对应门为已使用
             newNode.doorsUsed[(int)opposite] = true;
-            // 标记当前节点的门口为已使用
+            // 标记当前节点的门为已使用
             current.doorsUsed[(int)dir] = true;
 
             graph.Add(newNode);
             gridMap[newPos] = newNode;
         }
-
         return graph;
     }
+    #endregion
 
     // 实例化房间
     private IEnumerator GenerateCoroutine()
@@ -198,6 +214,7 @@ public class RoomManager : MonoBehaviour
 
         // 2. 计算世界坐标并实例化房间
         Vector2 origin = dungeonRoot.position; // 起点房间中心
+
         float offsetX = roomWidth;
         float offsetY = roomHeight;
 
@@ -208,6 +225,7 @@ public class RoomManager : MonoBehaviour
                 origin.y + node.gridPos.y * offsetY,
                 0
             );
+
 
             GameObject roomObj = Instantiate(node.prefab, worldPos, Quaternion.identity, dungeonRoot);
             node.instance = roomObj;
@@ -235,5 +253,20 @@ public class RoomManager : MonoBehaviour
             // 这里建议在生成图时就决定Boss房，或者在生成后调整类型并替换预制体。
             // 暂时留空，按需实现。
         }
+    }
+
+    private GameObject GetRandomPrefabWithDoor(RoomType type, Direction neededDoor)
+    {
+        var entry = roomPrefabs.Find(e => e.type == type);
+        if (entry == null) return null;
+        List<GameObject> candidates = new List<GameObject>();
+        foreach (var prefab in entry.prefabs)
+        {
+            RoomData data = prefab.GetComponent<RoomData>();
+            if (data != null && data.GetDoorDirections()[(int)neededDoor])
+                candidates.Add(prefab);
+        }
+        if (candidates.Count == 0) return null;
+        return candidates[Random.Range(0, candidates.Count)];
     }
 }

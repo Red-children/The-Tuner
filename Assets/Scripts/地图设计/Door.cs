@@ -7,6 +7,12 @@ public class Door : MonoBehaviour
 {
     private Collider2D doorCollider;
     private Animator animator;
+    public enum Direction { Up, Down, Left, Right }
+
+    [Header("门的方向")]
+    public Direction direction;   // 在 Inspector 中手动配置
+
+
 
     private void Awake()
     {
