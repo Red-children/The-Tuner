@@ -38,14 +38,6 @@ public class PlayerIdleState : IState
             return;
         }
 
-
-
-
-        // 如果在等待期间发现玩家，立即切换到追逐状态
-        if (parameter.target != null)
-        {
-           //manager.ChangeState(StateType.Chase);
-        }
     }
 
     public void OnExit()
@@ -116,7 +108,7 @@ public class PlayerWalkState : IState
     }
 }
 
-public class PlayerShootState
+public class PlayerShootState:IState
 {
     private PlayerFSM manager;
     private PlayerParameter parameter;
@@ -131,7 +123,46 @@ public class PlayerShootState
 
     public void OnStart()
     {
-        Debug.Log("进入Idle状态");
-        
+        Debug.Log("进入开火状态");
+        //播放动画
+    }
+
+    public void OnUpdate()
+    {
+        //监测动画播放进度
+    }
+
+    public void OnExit()
+    {
+       
+    }
+}
+
+public class PlayerMeleeState : IState
+{
+    private PlayerFSM manager;
+    private PlayerParameter parameter;
+    // 等待计时器
+
+    public PlayerMeleeState(PlayerFSM manager)
+    {
+        this.manager = manager;
+        this.parameter = manager.parameter;
+    }
+
+    public void OnStart()
+    {
+        Debug.Log("玩家进入近战状态");
+        //播放动画
+    }
+
+    public void OnUpdate()
+    {
+        //监测动画播放进度
+    }
+
+    public void OnExit()
+    {
+
     }
 }

@@ -10,8 +10,8 @@ public enum E_PlayerState
     Idle,
     Walk,
     Run,
-    Jump,
-    Attack,
+    Shoot,
+    Melee,
     Hurt,
     Die
 }
@@ -67,6 +67,9 @@ public class PlayerFSM : MonoBehaviour
 
         states.Add(E_PlayerState.Idle, new PlayerIdleState(this));
         states.Add(E_PlayerState.Walk, new PlayerWalkState(this));
+        states.Add(E_PlayerState.Shoot, new PlayerShootState(this));
+
+
 
         ChangeState(E_PlayerState.Idle); // 直接使用枚举切换
     }
@@ -85,18 +88,24 @@ public class PlayerFSM : MonoBehaviour
     {
         currentState?.OnUpdate();
 
+        #region 开火检测
         // 开火检测（全局）
         if (Input.GetMouseButton(0) && parameter.currentWeapon != null)
         {
             parameter.currentWeapon.Shoot();
+            ChangeState(E_PlayerState.Shoot);
         }
+        #endregion
 
+        #region 近战攻击
         // 近战攻击
         if (Input.GetKeyDown(KeyCode.V) && Time.time > parameter.lastMeleeTime + parameter.meleeCooldown)
         {
             MeleeAttack();
         }
+        #endregion
 
+        #region 武器切换
         // 武器切换（数字键）
         if (Input.GetKeyDown(KeyCode.Alpha1))
             parameter.currentWeapon?.SwitchWeapon(WeaponType.Pistol);
@@ -125,6 +134,8 @@ public class PlayerFSM : MonoBehaviour
             WeaponType newType = weaponList[newIndex].weaponType;
             parameter.currentWeapon.SwitchWeapon(newType);
         }
+        #endregion
+
     }
 
     public void ChangeState(E_PlayerState newState)
@@ -134,6 +145,7 @@ public class PlayerFSM : MonoBehaviour
         currentState.OnStart();
     }
 
+    #region 近战攻击
     private void MeleeAttack()
     {
         parameter.lastMeleeTime = Time.time;
@@ -159,4 +171,6 @@ public class PlayerFSM : MonoBehaviour
         parameter.rhythmMultiplier = (float)data.multiplier;
         parameter.isDashOnWindow = data.isInWindow;
     }
+    #endregion
+
 }

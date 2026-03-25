@@ -227,7 +227,7 @@ public class RoomManager : MonoBehaviour
             );
 
 
-            GameObject roomObj = Instantiate(node.prefab, worldPos, Quaternion.identity, dungeonRoot);
+            GameObject roomObj = Instantiate(node.prefab, worldPos, node.prefab.transform.rotation, dungeonRoot);
             node.instance = roomObj;
 
             // 初始化房间（配置波次等）

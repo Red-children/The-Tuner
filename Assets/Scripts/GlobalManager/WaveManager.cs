@@ -4,6 +4,10 @@ using TMPro.EditorUtilities;
 using UnityEngine;
 
 
+public struct AllWavesCompletedEvent
+{
+    public List<BuffData> buffOptions;
+}
 
 public class WaveManager : MonoBehaviour
 {
@@ -25,6 +29,13 @@ public class WaveManager : MonoBehaviour
 
 
     private Room currentRoom;
+
+    public struct WaveRestEvent
+    {
+        public float restDuration;          // 休息时长（可选）
+        public List<BuffData> buffOptions;  // 可选的Buff列表
+    }
+
 
     private void Update()
     {
@@ -101,14 +112,20 @@ public class WaveManager : MonoBehaviour
     private void EndWave()
     {
         currentWaveIndex++;
-        // 立即开始下一波（如果有），否则停止
         if (currentWaveIndex < waves.Length)
         {
+            // 还有下一波，直接开始下一波（不需要休息和奖励）
             StartNextWave();
         }
         else
         {
+            // 所有波次完成，停止活动
             isWaveActive = false;
+            Debug.Log("所有波次完成");
+
+            // 生成随机Buff选项并发布事件
+            List<BuffData> options = GenerateRandomBuffs(3);
+            EventBus.Instance.Trigger(new AllWavesCompletedEvent { buffOptions = options });
         }
     }
 
@@ -116,4 +133,16 @@ public class WaveManager : MonoBehaviour
     {
         enemiesRemaining--;
     }
+
+    private List<BuffData> GenerateRandomBuffs(int count)
+    {
+        if (BuffPool.Instance == null)
+        {
+            Debug.LogError("BuffPool 未找到！");
+            return new List<BuffData>();
+        }
+        return BuffPool.Instance.GetRandomBuffs(count);
+    }
+
+
 }

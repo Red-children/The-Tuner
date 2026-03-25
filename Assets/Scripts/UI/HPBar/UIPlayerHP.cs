@@ -45,6 +45,7 @@ public class UIPlayerHP : MonoBehaviour
         HPText.SetDisplayText(_lastHP + " / " + _maxHP);
     }
     #endregion
+
     #region 生命周期
     private void Awake()
     {

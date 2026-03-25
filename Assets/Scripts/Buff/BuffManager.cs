@@ -74,18 +74,23 @@ public class BuffManager : MonoBehaviour
                 player.currentWeapon.stats.fireRate *= (1 + buff.data.value * buff.currentStacks);
                 Debug.Log($"[Buff] 攻速增加 {buff.data.value * buff.currentStacks}，当前攻击力：{player.atk}");
                 break;
-            //case BuffType.SpecialEffect:
-            //    // 生成特效或挂载逻辑脚本
-            //    if (buff.data.effectPrefab != null)
-            //    {
-            //        GameObject effect = Instantiate(buff.data.effectPrefab, player.transform);
-            //        // 让特效脚本自己处理逻辑，它可以通过EventBus订阅事件
-            //    }
-            //    break;
+            case BuffType.IncreaseMaxHealth:
+                player.maxHp += (int)buff.data.value * buff.currentStacks;
+                player.nowHp += (int)buff.data.value * buff.currentStacks; ;
+                EventBus.Instance.Trigger<PlayerHealthChangedEventStruct>(new PlayerHealthChangedEventStruct { currentHealth= player.nowHp, maxHealth = player.maxHp } );
+                Debug.Log($"[Buff] 最大生命值增加 {buff.data.value * buff.currentStacks}，当前最大生命值：{player.maxHp}");
+                break ;
+                //case BuffType.SpecialEffect:
+                //    // 生成特效或挂载逻辑脚本
+                //    if (buff.data.effectPrefab != null)
+                //    {
+                //        GameObject effect = Instantiate(buff.data.effectPrefab, player.transform);
+                //        // 让特效脚本自己处理逻辑，它可以通过EventBus订阅事件
+                //    }
+                //    break;
         }
     }
     #endregion
-
 
     private void RemoveBuffEffect(BuffInstance buff)
     {
@@ -101,6 +106,7 @@ public class BuffManager : MonoBehaviour
             //    // 销毁挂载的特效或脚本
             //    // 可以通过事件通知特效脚本自我销毁
                 //break;
+            
         }
     }
 

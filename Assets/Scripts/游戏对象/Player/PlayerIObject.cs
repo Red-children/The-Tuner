@@ -30,6 +30,11 @@ public struct CameraShakeEvent
 
 public class PlayerIObject : BaseObject
 {
+    private bool isStunned = false;   // 受击硬直
+    private bool isDead = false;      // 死亡标志
+
+    public  Animator animator;
+
     [Header("闪避设置")]
     public float dashDistance = 3f;          // 最大闪避距离
     public float dashDuration = 0.3f;        // 闪避持续时间
@@ -80,12 +85,12 @@ public class PlayerIObject : BaseObject
 
     public void Start()
     {
+        animator = GetComponent<Animator>();
         //开始发布一次事件 让UI能正确显示初始血量
         EventBus.Instance.Trigger<PlayerHealthChangedEventStruct>(new PlayerHealthChangedEventStruct
         {
             currentHealth = nowHp,
             maxHealth = maxHp
-
         }); 
 
         #region 初始化
@@ -126,7 +131,7 @@ public class PlayerIObject : BaseObject
     // 重写 Wound 方法  传入伤害数值
     public override void Wound(int damage)
     {
-
+        if (isInvincible || isStunned || isDead || nowHp <= 0) return;
         if (isInvincible || nowHp <= 0) { if (isInvincible) Debug.Log("玩家无敌，伤害被忽略"); return; }  // 无敌或已死亡则不处理
 
         // 扣血
@@ -137,7 +142,6 @@ public class PlayerIObject : BaseObject
         {
             currentHealth = nowHp,
             maxHealth = maxHp
-
         });
 
         // 触发震屏事件，强度可以简单设为 damage / 10f（根据你的数值调整）
@@ -151,6 +155,7 @@ public class PlayerIObject : BaseObject
             nowHp = 0;
             Died();  // 调用自己的死亡方法（可以是重写的 Died）
         }
+        StartCoroutine(StunCoroutine());
     }
     #endregion  
 
@@ -179,15 +184,17 @@ public class PlayerIObject : BaseObject
     #region 重写死亡方法 发布玩家死亡事件
 
 
-    // 重写死亡方法（可选）
     public override void Died()
     {
-       
-        Debug.Log("玩家死亡");
-        // 发布玩家死亡事件（供UI、音效等监听）
+        if (isDead) return;
+        isDead = true;
+        isStunned = false; // 避免受击状态干扰
+                           // 播放死亡动画
+        animator?.SetTrigger("Dead");
+        // 禁用玩家控制（通过标志已实现）
+        // 触发死亡事件（已有）
         EventBus.Instance.Trigger(new PlayerDiedEvent { player = this });
-        // 播放死亡动画、销毁等（可暂不销毁，而是显示 GameOver 界面）
-        base.Died();  // 会销毁对象，如果不想立即销毁，可以注释 base.Died()
+        // 可选：延迟销毁或显示游戏结束UI
     }
     #endregion
 
@@ -230,7 +237,8 @@ public class PlayerIObject : BaseObject
 
     public void Update()
     {
-        
+        if (isDead) return;                  // 死亡后什么都不做
+        if (isStunned) return;               // 硬直中，禁止所有操作
 
 
         #region 移动逻辑
@@ -427,6 +435,19 @@ public class PlayerIObject : BaseObject
         isDashing = false;
         isInvincible = false;
     }
+
+    private IEnumerator StunCoroutine()
+    {
+        isStunned = true;
+        // 播放受击动画（假设有 Animator）
+        //animator?.SetTrigger("Hurt");
+
+        // 无敌协程已经存在，可以复用或单独处理
+        // 这里仅处理硬直时间
+        yield return new WaitForSeconds(0.2f); // 硬直时间
+        isStunned = false;
+    }
+    
 
 }
 
