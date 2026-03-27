@@ -33,7 +33,7 @@ public class WeaponInfo : MonoBehaviour
     public WeaponStats stats;           //当前武器状态数据    
     private int currentAmmo;            
     private float lastFireTime;
-    private bool isReloading;
+    public bool isReloading;
 
     [Header("武器所有者")]
     public WeaponOwner owner; // 在 Inspector 中设置，玩家武器设为 Player，敌人武器设为 Enemy
@@ -44,6 +44,12 @@ public class WeaponInfo : MonoBehaviour
 
     private void OnEnable()
     {
+        // 如果弹药为空且当前没有在换弹，则自动开始换弹
+        if (currentAmmo <= 0 && !isReloading)
+        {
+            StartCoroutine(Reload());
+        }
+
         EventBus.Instance.Subscribe<PlayerAtkChange>(OnPlayerAtkChange);
         EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
     }
@@ -52,6 +58,8 @@ public class WeaponInfo : MonoBehaviour
     {
         EventBus.Instance.Unsubscribe<PlayerAtkChange > (OnPlayerAtkChange);
         EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
+        StopAllCoroutines();
+        isReloading = false;
     }
 
     void Start()

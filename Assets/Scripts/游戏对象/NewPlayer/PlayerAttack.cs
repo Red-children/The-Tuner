@@ -7,7 +7,7 @@ public class PlayerAttack : MonoBehaviour
     [Header("近战攻击设置")]
     public float meleeRange = 1.5f;
     public int meleeDamage = 20;
-    public float meleeCooldown = 0.5f;
+    public float meleeCoolDown = 0.5f;
     private float lastMeleeTime = -999f;
 
     private void Awake()
@@ -23,10 +23,11 @@ public class PlayerAttack : MonoBehaviour
             var weapon = playerWeapon.GetCurrentWeapon();
             if (weapon != null)
                 weapon.Shoot();
+            EventBus.Instance.Trigger(new CameraShakeEvent());
         }
 
         // 近战攻击
-        if (Input.GetKeyDown(KeyCode.V) && Time.time > lastMeleeTime + meleeCooldown)
+        if (Input.GetKeyDown(KeyCode.V) && Time.time > lastMeleeTime + meleeCoolDown)
         {
             MeleeAttack();
         }

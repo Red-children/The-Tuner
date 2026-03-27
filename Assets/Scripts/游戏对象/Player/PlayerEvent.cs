@@ -31,3 +31,8 @@ public struct PlayerAtkChange
     public int atk;
     
 }
+public struct PlayerHurtEvent
+{
+    public float damage;        // 原始伤害值（可用于计算护盾消耗等）
+    public bool isBlocked;      // 是否被护盾/无敌等完全抵挡（不扣血）
+}

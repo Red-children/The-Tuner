@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class BuffPool : MonoBehaviour
 {
+
     public static BuffPool Instance;
     public List<BuffData> allBuffs;
 

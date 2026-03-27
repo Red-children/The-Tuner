@@ -292,16 +292,6 @@ public class PlayerIObject : BaseObject
         // 计算向量（从角色指向鼠标）
         Vector2 directionMouse = mouseWorldPos - transform.position;
 
-        //// 如果鼠标和角色重合，不旋转
-        //if (directionMouse.magnitude > 0.01f)
-        //{
-        //    // 计算方向与X轴的夹角（弧度），转为角度
-        //    float angle = Mathf.Atan2(directionMouse.y, directionMouse.x) * Mathf.Rad2Deg;
-        //    //转向
-        //    transform.rotation = Quaternion.Euler(0, 0, angle);
-        //}
-
-        // 在鼠标追踪逻辑后添加：
         if (directionMouse.x > 0)
             spriteRenderer.flipX = false; // 朝右
         else if (directionMouse.x < 0)

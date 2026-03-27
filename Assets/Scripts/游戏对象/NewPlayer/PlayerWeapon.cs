@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 public class PlayerWeapon : MonoBehaviour
 {
     [Header("武器列表（可选，从子物体自动获取）")]
@@ -35,6 +36,8 @@ public class PlayerWeapon : MonoBehaviour
             }
         }
 
+
+        Vector2 directionMouse =  Camera.main.ScreenToWorldPoint(Input.mousePosition) - currentWeapon.transform.position;
         // 滚轮切换
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0 && weapons.Length > 0)
@@ -43,6 +46,15 @@ public class PlayerWeapon : MonoBehaviour
             int newIndex = (currentIndex + delta + weapons.Length) % weapons.Length;
             SwitchToWeapon(newIndex);
         }
+
+        // 武器指向鼠标
+        if (currentWeapon != null)
+        {
+            Vector2 weaponDir = directionMouse; // 方向与玩家到鼠标一致
+            float weaponAngle = Mathf.Atan2(weaponDir.y, weaponDir.x) * Mathf.Rad2Deg;
+            currentWeapon.transform.rotation = Quaternion.Euler(0, 0, weaponAngle);
+        }
+
     }
 
     private void SwitchToWeapon(int index)
@@ -64,6 +76,7 @@ public class PlayerWeapon : MonoBehaviour
         });
     }
 
+    //对外接口
     public WeaponInfo GetCurrentWeapon()
     {
         return currentWeapon;

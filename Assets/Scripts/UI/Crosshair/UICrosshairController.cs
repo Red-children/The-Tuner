@@ -55,7 +55,7 @@ public class UICrosshairController : MonoBehaviour
     //得到传递来的数据 现在通过我的RhythmManager传递数据
     private void OnRhythmData(RhythmData data)
     {
-        _isCritical = data.rank == RhythmRank.Perfect || data.rank == RhythmRank.Great;
+        _isCritical = data.rank == RhythmRank.Perfect || data.rank == RhythmRank.Great ||data.rank== RhythmRank.Great;
         _animator?.SetCriticalState(_isCritical);
     }
 }
