@@ -17,6 +17,7 @@ public struct PlayerHealthChangedEventStruct
     public float maxHealth;         //  血量最大值  
     public float healthPercent => currentHealth / maxHealth;
 }
+
 //  TODO:
 public struct ChangeAmmoCapEvent
 {

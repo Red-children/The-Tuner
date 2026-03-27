@@ -54,15 +54,5 @@ public class UIPlayerHP : MonoBehaviour
         //  订阅血量变化事件
         EventBus.Instance.Subscribe<PlayerHealthChangedEventStruct>(OnPlayerHPChange);
     }
-
-
-
-    //void Start()
-    //{
-    //    // Init();
-    //    Init();
-    //    //  订阅血量变化事件
-    //    EventBus.Instance.Subscribe<PlayerHealthChangedEventStruct>(OnPlayerHPChange);
-    //}
 #endregion
 }

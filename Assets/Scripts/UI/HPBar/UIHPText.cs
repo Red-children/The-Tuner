@@ -23,7 +23,7 @@ public class UIHPText : MonoBehaviour
         text.text = "Test";
     }
 #region 生命周期
-    void Start()
+    void Awake()
     {
         Init();
     }

@@ -1,12 +1,8 @@
-using DG.Tweening.Core.Easing;
+
 using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
-using Unity.Jobs;
-using Unity.PlasticSCM.Editor.WebApi;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Timeline;
+using UnityEngine.SceneManagement;
 
 public struct PlayerHitEvent
 {
@@ -186,15 +182,18 @@ public class PlayerIObject : BaseObject
 
     public override void Died()
     {
-        if (isDead) return;
-        isDead = true;
-        isStunned = false; // 避免受击状态干扰
-                           // 播放死亡动画
-        animator?.SetTrigger("Dead");
-        // 禁用玩家控制（通过标志已实现）
-        // 触发死亡事件（已有）
-        EventBus.Instance.Trigger(new PlayerDiedEvent { player = this });
-        // 可选：延迟销毁或显示游戏结束UI
+        // 原有的死亡逻辑（播放特效、触发事件等）...
+        Debug.Log("玩家死亡");
+
+        // 新增：启动协程，2秒后重载场景
+        StartCoroutine(RestartAfterDelay(2f));
+    }
+
+    private System.Collections.IEnumerator RestartAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        // 重载当前场景（注意场景名要和你演示用的场景一致）
+        SceneManager.LoadScene(0);
     }
     #endregion
 

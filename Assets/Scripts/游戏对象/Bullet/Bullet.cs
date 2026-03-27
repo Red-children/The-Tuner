@@ -77,7 +77,7 @@ public class Bullet : MonoBehaviour
         // 敌人子弹击中玩家
         else if (gameObject.layer == LayerMask.NameToLayer("EnemyBullet") && hit.collider.CompareTag("Player"))
         {
-            hit.collider.GetComponent<PlayerIObject>()?.Wound((int)damage);
+            hit.collider.GetComponent<PlayerHealth>()?.TakeDamage((int)damage);
         }
         // 子弹击中墙壁
         else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
