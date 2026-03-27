@@ -3100,7 +3100,7 @@ MonoBehaviour:
   m_Priority: 10
   m_StandbyUpdate: 2
   m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 819580726}
+  m_Follow: {fileID: 1946609861}
   m_Lens:
     FieldOfView: 60
     OrthographicSize: 8.79
@@ -3127,7 +3127,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 285717139}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 105.1, y: 0, z: -10}
+  m_LocalPosition: {x: 125.29, y: -7.13, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3829,7 +3829,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 105.1, y: 0, z: -10}
+  m_LocalPosition: {x: 125.29, y: -7.13, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4510,7 +4510,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!50 &819580723
 Rigidbody2D:
   serializedVersion: 4
@@ -4707,7 +4707,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a84b5a9e88332149a68be8ba0f8e62a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 819580727}
 --- !u!114 &819580731
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18179,13 +18178,16 @@ GameObject:
   - component: {fileID: 1946609866}
   - component: {fileID: 1946609870}
   - component: {fileID: 1946609869}
+  - component: {fileID: 1946609871}
+  - component: {fileID: 1946609873}
+  - component: {fileID: 1946609872}
   m_Layer: 7
   m_Name: Player (1)
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1946609861
 Transform:
   m_ObjectHideFlags: 0
@@ -18194,7 +18196,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1946609860}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 20.19, y: -7.13, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -18373,6 +18375,82 @@ MonoBehaviour:
   - {fileID: 721461870}
   - {fileID: 1169486113}
   currentWeapon: {fileID: 0}
+--- !u!114 &1946609871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946609860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f312f562cbb9f0449cca7d3917b53b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dashDistance: 3
+  dashDuration: 0.3
+  isDashing: 0
+  dashCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2.6544929
+      outSlope: 2.6544929
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.36106178
+      value: 0.95843595
+      inSlope: 0.1708282
+      outSlope: 0.1708282
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.3455015
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.06505175
+      outSlope: 0.06505175
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  maxDashEnergy: 2
+  currentDashEnergy: 2
+  dashEnergyRegenRate: 1
+  isDashOnWindow: 0
+--- !u!114 &1946609872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946609860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93cd721bcf5042c4c86c04d5d7f97a55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1946609873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1946609860}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a84b5a9e88332149a68be8ba0f8e62a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &1980486530 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 4042525349505244866, guid: 5666742a4b0a3cd479d25a3ca8b1f446, type: 3}

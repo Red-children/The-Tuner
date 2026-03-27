@@ -72,4 +72,12 @@ public class PlayerStats : MonoBehaviour
         }
         return false;
     }
+
+    public void ModifyMaxHealth(int delta) 
+    {
+        maxHealth += delta;
+        currentHealth += delta;
+        EventBus.Instance.Trigger(new PlayerHealthChangedEventStruct { currentHealth = this.currentHealth, maxHealth = this.maxHealth });
+    }
+
 }
