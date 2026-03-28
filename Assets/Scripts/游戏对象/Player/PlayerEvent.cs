@@ -22,14 +22,15 @@ public struct PlayerFireEvent
 
 public struct PlayerDiedEvent
 {
-    public PlayerIObject player;
 }
 
 
 public struct PlayerAtkChange 
 {
-    public int atk;
-    
+    public float oldAttack;
+    public float newAttack;
+    public float delta;
+        
 }
 public struct PlayerHurtEvent
 {

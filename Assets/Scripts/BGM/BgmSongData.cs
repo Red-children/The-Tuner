@@ -16,7 +16,7 @@ public class BgmSongData : MonoBehaviour
     [Range(1, 20)] public int sampleIntervalMs = 10;
 
     [Tooltip("第一拍位置（秒）")]
-    public double firstOffset = 1.0f;
+    public double firstOffset = 0;
     
 
     // 对外提供只读访问（保护数据不被外部修改）

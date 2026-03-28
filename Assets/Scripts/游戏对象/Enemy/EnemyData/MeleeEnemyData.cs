@@ -9,4 +9,5 @@ public class MeleeEnemyData : EnemyData
     public int attackDamage = 10;
     public Vector2 attackOffset = new Vector2(1f, 0f);
     public Transform attackPoint;
+    public float Atk = 10;
 }

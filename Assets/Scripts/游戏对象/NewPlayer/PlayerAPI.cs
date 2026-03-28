@@ -7,7 +7,6 @@ public class PlayerAPI : MonoBehaviour
     public PlayerAttack attack;
     public PlayerDash dash;
     public PlayerWeapon weapon;
-    public PlayerAnimation animation;
 
     private void Awake()
     {
@@ -16,7 +15,7 @@ public class PlayerAPI : MonoBehaviour
         if (attack == null) attack = GetComponent<PlayerAttack>();
         if (dash == null) dash = GetComponent<PlayerDash>();
         if (weapon == null) weapon = GetComponent<PlayerWeapon>();
-        if (animation == null) animation = GetComponent<PlayerAnimation>();
+       
     }
 
     public void TakeDamage(int damage)

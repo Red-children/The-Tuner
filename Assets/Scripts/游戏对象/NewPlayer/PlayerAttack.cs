@@ -1,8 +1,10 @@
+using Unity.VisualScripting.Antlr3.Runtime.Misc;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
     private PlayerWeapon playerWeapon;
+    private PlayerStats stats;
 
     [Header("近战攻击设置")]
     public float meleeRange = 1.5f;
@@ -12,6 +14,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void Awake()
     {
+        stats = GetComponent<PlayerStats>();
         playerWeapon = GetComponent<PlayerWeapon>();
     }
 
@@ -22,7 +25,7 @@ public class PlayerAttack : MonoBehaviour
         {
             var weapon = playerWeapon.GetCurrentWeapon();
             if (weapon != null)
-                weapon.Shoot();
+                weapon.Shoot(stats.TotalAttack,RhythmManager.Instance.GetCurrentMultiplier());
             EventBus.Instance.Trigger(new CameraShakeEvent());
         }
 
@@ -60,7 +63,7 @@ public class PlayerAttack : MonoBehaviour
     {
         // 假设从 PlayerStats 获取
         PlayerStats stats = GetComponent<PlayerStats>();
-        return stats != null ? stats.Attack : 0;
+        return stats != null ? stats.TotalAttack : 0;
     }
 
     private float GetRhythmMultiplier()

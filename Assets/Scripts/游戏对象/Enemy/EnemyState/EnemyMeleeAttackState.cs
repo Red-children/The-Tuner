@@ -51,11 +51,11 @@ public class EnemyMeleeAttackState : EnemyStateBase
         // 造成伤害
         if (IsTargetInRange())
         {
-            PlayerIObject player = attackTarget.GetComponent<PlayerIObject>();
+            PlayerAPI player = attackTarget.GetComponent<PlayerAPI>();
             if (player != null)
             {
                 int damage = (data as MeleeEnemyData).attackDamage;
-                player.Wound(damage);
+                player.TakeDamage(damage);
                 Debug.Log($"近战攻击造成伤害 {damage}");
             }
         }

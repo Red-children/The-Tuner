@@ -17,6 +17,7 @@ public enum WeaponAttackType
 public struct PlayerFiredEvent { }
 
 
+#region 数据体
 [System.Serializable]
 public class WeaponStats
 {
@@ -34,8 +35,11 @@ public class WeaponStats
     public float shakeIntensity = 0.01f;
 
 }
+#endregion
 
 [CreateAssetMenu(fileName = "WeaponBase", menuName = "Weapon/WeaponBase")]
+
+//数据库文件
 public class WeaponBase : ScriptableObject
 {
     public List<WeaponStats> weaponList;

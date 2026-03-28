@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
@@ -48,7 +49,10 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         isDead = true;
+
+        EventBus.Instance.Trigger(new PlayerHealthChangedEventStruct { currentHealth = stats.CurrentHealth, maxHealth = stats.MaxHealth });
         // 发布死亡事件，让 PlayerController 或其他模块响应
+
         EventBus.Instance.Trigger(new PlayerDiedEvent());
         // 可以播放死亡动画、禁用输入等（由监听者处理）
     }

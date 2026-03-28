@@ -72,7 +72,6 @@ public class PlayerWeapon : MonoBehaviour
         EventBus.Instance.Trigger(new WeaponChangedEvent
         {
             newWeapon = currentWeapon,
-            weaponId = currentWeapon.ID   // ¼ÙÉè WeaponInfo ÓÐ ID ×Ö¶Î
         });
     }
 

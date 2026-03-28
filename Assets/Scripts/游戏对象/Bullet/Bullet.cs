@@ -105,6 +105,11 @@ public class Bullet : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public void SetDamage(float damage) 
+    {
+        this.damage = Mathf.Max(0,damage);
+    }
+
     
 
 }

@@ -18,12 +18,13 @@ public class UIWeaponInfoText : MonoBehaviour
         }
     }
 
-#region 对外接口
+    #region 对外接口
     public void SetDisplayText(string buf)
     {
         text.text = buf;
     }
     #endregion
+
     #region 生命周期
     void Start()
     {
