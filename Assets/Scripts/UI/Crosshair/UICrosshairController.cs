@@ -37,14 +37,10 @@ public class UICrosshairController : MonoBehaviour
     private void Update()
     {
         transform.position = Input.mousePosition; // 准星跟随鼠标
-        TestTemp(); // 仅测试用
+        
     }
 
-    private void TestTemp()
-    {
-        if (Input.GetMouseButtonDown(0))
-            OnEnemyHit(new EnemyHitEvent());
-    }
+
 
     private void OnEnemyHit(EnemyHitEvent evt)
     {
