@@ -4100,7 +4100,9 @@ GameObject:
   - component: {fileID: 685908690}
   - component: {fileID: 685908693}
   - component: {fileID: 685908692}
-  - component: {fileID: 685908691}
+  - component: {fileID: 685908696}
+  - component: {fileID: 685908695}
+  - component: {fileID: 685908694}
   m_Layer: 5
   m_Name: UIPlayerHP
   m_TagString: Untagged
@@ -4131,20 +4133,6 @@ RectTransform:
   m_AnchoredPosition: {x: 250, y: -30}
   m_SizeDelta: {x: 500, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &685908691
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 685908689}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 45101062aa54c5240901b4626885b6dc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  healthPercent: {fileID: 1678146874}
-  HPText: {fileID: 1225203491}
 --- !u!114 &685908692
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4183,6 +4171,45 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 685908689}
   m_CullTransparentMesh: 1
+--- !u!114 &685908694
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685908689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef1e52c88524980489489ab8c098cf1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  smoothTime: 0.2
+--- !u!114 &685908695
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685908689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc5d1fb13f90be64db1d86e4da8650a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &685908696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 685908689}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74241245d10564c478717b261be3cc48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  binder: {fileID: 685908695}
+  animationPlayer: {fileID: 685908694}
 --- !u!1 &721461868
 GameObject:
   m_ObjectHideFlags: 0
@@ -6245,7 +6272,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1189989688
 RectTransform:
   m_ObjectHideFlags: 0
@@ -6266,8 +6293,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 240, y: -26}
-  m_SizeDelta: {x: 500, y: -431.99997}
+  m_AnchoredPosition: {x: 250, y: 119}
+  m_SizeDelta: {x: 500, y: -711.4775}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1189989689
 MonoBehaviour:
@@ -6389,7 +6416,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1225203489}
   - component: {fileID: 1225203492}
-  - component: {fileID: 1225203491}
   - component: {fileID: 1225203490}
   m_Layer: 5
   m_Name: HPText
@@ -6507,19 +6533,6 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
---- !u!114 &1225203491
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1225203488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfc532735c6b1e04ea4aafd50dcc7b32, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  text: {fileID: 1225203490}
 --- !u!222 &1225203492
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6603,7 +6616,7 @@ GameObject:
   - component: {fileID: 1312001154}
   - component: {fileID: 1312001153}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: UI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7330,7 +7343,6 @@ GameObject:
   - component: {fileID: 1678146873}
   - component: {fileID: 1678146876}
   - component: {fileID: 1678146875}
-  - component: {fileID: 1678146874}
   m_Layer: 5
   m_Name: HPForeground
   m_TagString: Untagged
@@ -7358,22 +7370,6 @@ RectTransform:
   m_AnchoredPosition: {x: 248, y: 0}
   m_SizeDelta: {x: 500, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1678146874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1678146872}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 506020d5ab6a908449408c8819b6c699, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  image: {fileID: 1678146875}
-  smoothTime: 0.2
-  _targetHealth: 1
-  _currentDisplayHealth: 0
 --- !u!114 &1678146875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18489,7 +18485,7 @@ MonoBehaviour:
   m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &2086582723

@@ -8,25 +8,33 @@ public class UIManager
     private Dictionary<string, string> pathDict;
     private Dictionary<string, GameObject> prefabDict;
     private Dictionary<string, UIBasePanel> panelDict;
+    private Transform _uiRoot;
     //  单例
     public static UIManager Instance
     {
         get
         {
-            if (Instance == null)
+            if (instance == null)
             {
                 instance = new UIManager();
             }
             return instance;
         }
     }
-
-
+    // 🔥 找到 Canvas 作为 UI 父物体
+    private void InitUIRoot()
+    {
+        Canvas canvas = GameObject.FindObjectOfType<Canvas>();
+        if (canvas != null)
+            _uiRoot = canvas.transform;
+        else
+            Debug.LogError("场景中没有 Canvas! UI无法显示!");
+    }
     private void InitDicts()
     {
         pathDict = new Dictionary<string, string>()
         {
-            {UIConst.UIName, ""}
+            {UIConst.MainMenu, "PanelMainMenu"}
         };
         prefabDict = new Dictionary<string, GameObject>();
         panelDict = new Dictionary<string, UIBasePanel>();
@@ -34,11 +42,12 @@ public class UIManager
     private UIManager()
     {
         InitDicts();
+        InitUIRoot();
     }
 
     public class UIConst
     {
-        public const string UIName = "";
+        public const string MainMenu = "UIPanelMainmenu";
     }
 
 
@@ -70,7 +79,7 @@ public class UIManager
         }
         
         //  正式打开界面
-        GameObject panelObject = GameObject.Instantiate(panelPrefab);
+        GameObject panelObject = GameObject.Instantiate(panelPrefab, _uiRoot, false);
         panel = panelObject.GetComponent<UIBasePanel>();
         panelDict.Add(name, panel);
         return panel;
