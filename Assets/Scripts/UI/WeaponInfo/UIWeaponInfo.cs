@@ -21,7 +21,7 @@ public class UIWeaponInfo : MonoBehaviour
 
         if (currentWeapon != null)
         {
-            text.SetDisplayText("Ammo  "  +"/"+  currentWeapon.CurrentAmmo.ToString());
+            text.SetDisplayText("Ammo: "+ currentWeapon.CurrentAmmo.ToString());
 
         }
         else

@@ -5,16 +5,16 @@ using UnityEngine.UI;
 public class CrosshairSpriteLoader : MonoBehaviour
 {
     [Header("准星组件（自动查找）")]
-    public Image _crosshairSmall; // 小圆准星
-    public Image _crosshairBig;   // 大同心圆
+    [SerializeField] private Image _crosshairSmall; // 小圆准星
+    [SerializeField] private Image _crosshairBig;   // 大同心圆
 
     // 图片路径常量（Resources目录下，无需后缀）
     private const string SmallCirclePath = "PicUI/CircleSmall";
     private const string BigCirclePath = "PicUI/CircleBig";
 
     // 对外提供组件引用（给动画脚本用）
-    public Image CrosshairSmall => _crosshairSmall;
-    public Image CrosshairBig => _crosshairBig;
+    [SerializeField] private Image CrosshairSmall => _crosshairSmall;
+    [SerializeField] private Image CrosshairBig => _crosshairBig;
 
     // 初始化准星图片（由主控脚本调用）
     public void InitCrosshairSprites()

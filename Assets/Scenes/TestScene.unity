@@ -3558,6 +3558,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1312001156}
     m_Modifications:
+    - target: {fileID: 1980486531, guid: 5666742a4b0a3cd479d25a3ca8b1f446, type: 3}
+      propertyPath: _spriteLoader
+      value: 
+      objectReference: {fileID: 1980486532}
     - target: {fileID: 4042525349505244866, guid: 5666742a4b0a3cd479d25a3ca8b1f446, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3645,6 +3649,10 @@ PrefabInstance:
     - target: {fileID: 4042525349505244867, guid: 5666742a4b0a3cd479d25a3ca8b1f446, type: 3}
       propertyPath: m_Name
       value: UICrosshair
+      objectReference: {fileID: 0}
+    - target: {fileID: 4042525349807402653, guid: 5666742a4b0a3cd479d25a3ca8b1f446, type: 3}
+      propertyPath: m_Color.a
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4042525349807402654, guid: 5666742a4b0a3cd479d25a3ca8b1f446, type: 3}
       propertyPath: m_SizeDelta.x
@@ -4617,68 +4625,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baa066ca88383764493a4a0dccce7db2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  atk: 10
-  maxHp: 100
-  nowHp: 100
-  moveSpeed: 10
-  DiedEff: {fileID: 0}
-  isStunned: 0
-  isDead: 0
-  animator: {fileID: 0}
-  dashDistance: 3
-  dashDuration: 0.3
-  isDashing: 0
-  dashCurve:
-    m_Curve:
-    - time: 0
-      value: 0
-      inSlope: 2.739204
-      outSlope: 2.739204
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.33333334
-    - time: 0.3539831
-      value: 0.9696319
-      inSlope: 0.35443613
-      outSlope: 0.35443613
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.3602088
-    - time: 1
-      value: 1
-      inSlope: 0.047008198
-      outSlope: 0.047008198
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  maxDashEnergy: 2
-  currentDashEnergy: 2
-  dashEnergyRegenRate: 0.2
-  isDashOnWindow: 0
-  meleeRange: 1.5
-  enemyLayer:
-    m_Bits: 64
-  meleeBaseDamage: 20
-  meleeCooldown: 0.5
-  lastMeleeTime: -999
-  rhythmMultiplier: 1
-  currentWeapon: {fileID: 388984419}
-  weaponInfos: []
-  <isInvincible>k__BackingField: 0
-  invincibleTimer: 0
-  playerCamera: {fileID: 519420031}
-  wallLayer:
-    m_Bits: 0
-  offsetFactor: 0.3
-  cameraSmoothness: 5
-  cameraZ: -10
-  spriteRenderer: {fileID: 819580725}
 --- !u!81 &819580728
 AudioListener:
   m_ObjectHideFlags: 0
@@ -4918,8 +4864,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -100, y: 25}
-  m_SizeDelta: {x: 200, y: -50}
+  m_AnchoredPosition: {x: -150.00003, y: 25}
+  m_SizeDelta: {x: 300, y: -50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &961116941
 MonoBehaviour:
@@ -6242,8 +6188,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 250, y: 116}
-  m_SizeDelta: {x: 500, y: -431.99997}
+  m_AnchoredPosition: {x: 250, y: 337.5}
+  m_SizeDelta: {x: 500, y: -875}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1189989689
 MonoBehaviour:
@@ -6260,6 +6206,7 @@ MonoBehaviour:
   bar: {fileID: 2086582721}
   text: {fileID: 1029483716}
   coolDownTime: 1
+  _currentRank: 0
 --- !u!114 &1189989690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18452,6 +18399,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 4042525349505244866, guid: 5666742a4b0a3cd479d25a3ca8b1f446, type: 3}
   m_PrefabInstance: {fileID: 400951002}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1980486532 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1980486532, guid: 5666742a4b0a3cd479d25a3ca8b1f446, type: 3}
+  m_PrefabInstance: {fileID: 400951002}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 006d53623c60b214d98a803ea8838581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1983967055
 GameObject:
   m_ObjectHideFlags: 0

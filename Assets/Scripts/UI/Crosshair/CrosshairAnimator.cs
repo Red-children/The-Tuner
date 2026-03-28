@@ -7,12 +7,11 @@ public class CrosshairAnimator : MonoBehaviour
     public Animator _animSmall;          // 小准星 Animator
 
     [Header("大准星动画控制")]
-    public float maxScale = 1.2f;
-    public float minScale = 0.8f;
-    public AnimationCurve scaleCurve;    // 可选，自定义缩放曲线
+    [SerializeField] private float maxScale = 1.2f;
+    [SerializeField] private float minScale = 0.8f;
+    [SerializeField] private AnimationCurve scaleCurve;    // 可选，自定义缩放曲线
 
     private Image _crosshairBig;          // 大准星 Image
-    private bool _isCritical = false;
 
     private void Start()
     {
@@ -24,18 +23,13 @@ public class CrosshairAnimator : MonoBehaviour
         CrosshairBigScaleAnimation();
     }
 
-    public void SetCriticalState(bool isCritical)
-    {
-        _isCritical = isCritical;
-    }
-
     #region 精准命中
-    public void PlayHitAnimation(bool isCritical, double currentTime)
+    public void PlayHitAnimation(RhythmRank rank)
     {
-        if (isCritical && _animSmall != null)
+        if (_animSmall == null) return;
+        if (rank != RhythmRank.Miss)
         {
             _animSmall.Play("PreciseHit", 0, 0f);
-            Debug.Log($"精准命中动画，时间 {currentTime:F1}");
         }
     }
     #endregion
@@ -69,7 +63,5 @@ public class CrosshairAnimator : MonoBehaviour
             _crosshairBig.rectTransform.localScale = Vector3.one * scale;
         }
     }
-
     #endregion
-
 }

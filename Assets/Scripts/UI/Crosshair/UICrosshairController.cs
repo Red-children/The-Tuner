@@ -3,11 +3,10 @@ using UnityEngine;
 public class UICrosshairController : MonoBehaviour
 {
     [Header("子组件")]
-    public CrosshairSpriteLoader _spriteLoader; //图片加载器
-    public CrosshairAnimator _animator;         //动画控制子脚本
+    [SerializeField] private CrosshairSpriteLoader _spriteLoader; //图片加载器
+    [SerializeField] private CrosshairAnimator _animator;         //动画控制子脚本
 
-    public double _dspStartTime;                //记录开始时间
-    private bool _isCritical = false;           // 当前是否为精准窗口（Perfect/Great），用于命中动画
+    [SerializeField] private double _dspStartTime;                //记录开始时间
 
     private void Awake()
     {
@@ -24,39 +23,22 @@ public class UICrosshairController : MonoBehaviour
 
     private void OnEnable()
     {
-        EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);  //订阅节奏变化事件得到对应的数据
         EventBus.Instance.Subscribe<EnemyHitEvent>(OnEnemyHit);
     }
 
     private void OnDisable()
     {
-        EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
         EventBus.Instance.Unsubscribe<EnemyHitEvent>(OnEnemyHit);
     }
 
     private void Update()
     {
         transform.position = Input.mousePosition; // 准星跟随鼠标
-        
     }
 
     private void OnEnemyHit(EnemyHitEvent evt)
     {
-        Debug.Log("[UICrosshairController] 收到 EnemyHitEvent");
-      
-
-        double currentTime = AudioSettings.dspTime - _dspStartTime;
-        
-        _animator?.PlayHitAnimation(_isCritical, currentTime);
-    }
-
-    //得到传递来的数据 现在通过我的RhythmManager传递数据
-    private void OnRhythmData(RhythmData data)
-    {
-        
-       
-        _isCritical = data.rank == RhythmRank.Perfect || data.rank == RhythmRank.Great ||data.rank== RhythmRank.Great;
-        Debug.Log($"[UICrosshairController] 节奏数据 rank={data.rank}, isCritical={_isCritical}");
-        _animator?.SetCriticalState(_isCritical);
+        RhythmRank rank = RhythmManager.Instance.GetRank(AudioSettings.dspTime).rank;
+        _animator?.PlayHitAnimation(rank);
     }
 }
