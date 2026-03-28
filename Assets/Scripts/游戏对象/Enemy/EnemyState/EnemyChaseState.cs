@@ -8,7 +8,7 @@ public class EnemyChaseState : EnemyStateBase
 
     public override void OnStart()
     {
-        Debug.Log("½øÈëChase×´Ì¬");
+        
     }
 
     public override void OnUpdate()

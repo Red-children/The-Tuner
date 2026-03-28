@@ -64,6 +64,7 @@ public class UIComboInfo : MonoBehaviour
 #region 回调函数
     void OnEnemyHit(EnemyHitEvent evt)
     {
+        Debug.Log(_currentRank);
         Debug.Log($"UIComboInfo Received EnemyHitEvent\n_isTriggered = {_isTriggered}");
         if (_isTriggered)
         {   
@@ -89,6 +90,7 @@ public class UIComboInfo : MonoBehaviour
     {
         _isTriggered = true;
         this.StartTimer(nameof(ResetTrigger), 0.2f);
+       
     }
     void OnRhythmData(RhythmData evt)
     {

@@ -11,7 +11,7 @@ public class EnemyRangedApproachState : EnemyStateBase
 
     public override void OnStart()
     {
-        Debug.Log("进入远程接近状态");
+       
         if (runtime.target != null)
             currentDirection = (runtime.target.position - manager.transform.position).normalized;
     }

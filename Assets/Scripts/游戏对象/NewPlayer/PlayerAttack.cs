@@ -23,15 +23,19 @@ public class PlayerAttack : MonoBehaviour
         // Éä»÷£¨Ô¶³Ì£©
         if (Input.GetMouseButton(0))
         {
+
             var weapon = playerWeapon.GetCurrentWeapon();
             if (weapon != null)
                 weapon.Shoot(stats.TotalAttack,RhythmManager.Instance.GetCurrentMultiplier());
+            EventBus.Instance.Trigger(new PlayerAtkEvent());
             EventBus.Instance.Trigger(new CameraShakeEvent());
         }
 
         // ½üÕ½¹¥»÷
         if (Input.GetKeyDown(KeyCode.V) && Time.time > lastMeleeTime + meleeCoolDown)
         {
+            EventBus.Instance.Trigger(new PlayerAtkEvent());
+            EventBus.Instance.Trigger(new CameraShakeEvent());
             MeleeAttack();
         }
     }

@@ -8,7 +8,7 @@ public class EnemyRangedAttackState : EnemyStateBase
 
     public override void OnStart()
     {
-        Debug.Log("½øÈëÔ¶³Ì¹¥»÷×´Ì¬");
+       
         controller.animator.SetTrigger("Attack");
     }
 
