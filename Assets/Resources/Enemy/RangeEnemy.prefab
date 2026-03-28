@@ -224,28 +224,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e51d445ced32704f955fc6b1f7ecdc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 0
-  switchCooldown: 0.5
-  weaponName: 
-  obtainMethod: 
-  weaponSprite: {fileID: 10901, guid: 0000000000000000f000000000000000, type: 3}
   weaponBase: {fileID: 11400000, guid: 3235009560117754c9f8659524fcb898, type: 2}
   weaponType: 2
-  firePos: {fileID: 725547109508326868}
-  stats:
-    id: 0
-    weaponType: 0
-    weaponName: 
-    damage: 10
-    fireRate: 0.5
-    maxAmmo: 10
-    attackType: 0
-    multiBulletCount: 5
-    bulletPrefab: {fileID: 0}
-    reloadTime: 0
-    shakeIntensity: 0.01
+  firePoint: {fileID: 725547109508326868}
   owner: 1
-  ownerDamage: 0
 --- !u!1001 &725547111217512795
 PrefabInstance:
   m_ObjectHideFlags: 0

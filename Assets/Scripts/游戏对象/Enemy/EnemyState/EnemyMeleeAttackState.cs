@@ -10,7 +10,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
 
     public override void OnStart()
     {
-        Debug.Log("进入近战攻击状态");
+      
         attackTarget = runtime.target; // 记录当前目标
         if (attackTarget == null)
         {
@@ -51,12 +51,12 @@ public class EnemyMeleeAttackState : EnemyStateBase
         // 造成伤害
         if (IsTargetInRange())
         {
-            PlayerIObject player = attackTarget.GetComponent<PlayerIObject>();
+            PlayerAPI player = attackTarget.GetComponent<PlayerAPI>();
             if (player != null)
             {
                 int damage = (data as MeleeEnemyData).attackDamage;
-                player.Wound(damage);
-                Debug.Log($"近战攻击造成伤害 {damage}");
+                player.TakeDamage(damage);
+                
             }
         }
         

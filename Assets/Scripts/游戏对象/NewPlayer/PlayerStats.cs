@@ -8,7 +8,10 @@ public class PlayerStats : MonoBehaviour
     [Header("基础属性")]
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int currentHealth;
-    [SerializeField] private int attack = 10;
+    [SerializeField] private int baseAttack = 10;
+
+    private float _attackBonus;
+
     [SerializeField] private float moveSpeed = 5f;
 
     [Header("谐律能量")]
@@ -17,7 +20,8 @@ public class PlayerStats : MonoBehaviour
     // 公开的只读属性
     public int MaxHealth => maxHealth;
     public int CurrentHealth => currentHealth;
-    public int Attack => attack;
+    //对外的总攻击力 由永久提升的攻击力以及临时额外攻击力组成
+    public float TotalAttack => baseAttack + _attackBonus;
     public float MoveSpeed => moveSpeed;
     public float HarmonyEnergy => harmonyEnergy;
 
@@ -28,6 +32,42 @@ public class PlayerStats : MonoBehaviour
     }
 
     // ---------- 修改方法（发布事件） ----------
+
+    public void AddAttackBonus(float bonus)
+    {
+        _attackBonus += bonus;
+        EventBus.Instance.Trigger(new PlayerAtkChange
+        {
+            oldAttack = TotalAttack - bonus,
+            newAttack = TotalAttack,
+            delta = bonus
+        });
+    }
+    
+
+    public void RemoveAttackBonus(float bonus)
+    {
+        _attackBonus -= bonus;
+        EventBus.Instance.Trigger(new PlayerAtkChange
+        {
+            oldAttack = TotalAttack + bonus,
+            newAttack = TotalAttack,
+            delta = -bonus
+        });
+    }
+    public void ModifyAttack(int delta)
+    {
+        baseAttack += delta;
+        // 同样触发事件
+        EventBus.Instance.Trigger(new PlayerAtkChange
+        {
+            oldAttack = TotalAttack - delta,
+            newAttack = TotalAttack,
+            delta = delta
+        });
+    }
+
+
     public void ModifyHealth(int delta)
     {
         int oldHealth = currentHealth;
@@ -38,12 +78,6 @@ public class PlayerStats : MonoBehaviour
             if (currentHealth <= 0)
                 EventBus.Instance.Trigger(new PlayerDiedEvent());
         }
-    }
-
-    public void ModifyAttack(int delta)
-    {
-        attack += delta;
-        EventBus.Instance.Trigger(new PlayerStatChangedEvent("Attack", attack));
     }
 
     public void ModifyMoveSpeed(float delta)
@@ -72,4 +106,12 @@ public class PlayerStats : MonoBehaviour
         }
         return false;
     }
+
+    public void ModifyMaxHealth(int delta) 
+    {
+        maxHealth += delta;
+        currentHealth += delta;
+        EventBus.Instance.Trigger(new PlayerHealthChangedEventStruct { currentHealth = this.currentHealth, maxHealth = this.maxHealth });
+    }
+
 }

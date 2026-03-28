@@ -37,25 +37,26 @@ public class UICrosshairController : MonoBehaviour
     private void Update()
     {
         transform.position = Input.mousePosition; // 准星跟随鼠标
-        TestTemp(); // 仅测试用
-    }
-
-    private void TestTemp()
-    {
-        if (Input.GetMouseButtonDown(0))
-            OnEnemyHit(new EnemyHitEvent());
+        
     }
 
     private void OnEnemyHit(EnemyHitEvent evt)
     {
+        Debug.Log("[UICrosshairController] 收到 EnemyHitEvent");
+      
+
         double currentTime = AudioSettings.dspTime - _dspStartTime;
+        
         _animator?.PlayHitAnimation(_isCritical, currentTime);
     }
 
     //得到传递来的数据 现在通过我的RhythmManager传递数据
     private void OnRhythmData(RhythmData data)
     {
+        
+       
         _isCritical = data.rank == RhythmRank.Perfect || data.rank == RhythmRank.Great ||data.rank== RhythmRank.Great;
+        Debug.Log($"[UICrosshairController] 节奏数据 rank={data.rank}, isCritical={_isCritical}");
         _animator?.SetCriticalState(_isCritical);
     }
 }

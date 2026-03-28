@@ -222,6 +222,11 @@ public class RhythmManager : MonoBehaviour
         }
         return result;
     }
+    public float GetCurrentMultiplier()
+    {
+        return GetRank(AudioSettings.dspTime).multiplier;
+    }
+
 
     public double GetNextBeatTime() => nextBeatTime;
 }

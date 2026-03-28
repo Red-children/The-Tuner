@@ -1,4 +1,6 @@
-// 事件结构体（放在单独的文件或这里）
+
+using UnityEngine;
+
 public struct PlayerHealthChangedEvent
 {
     public int currentHealth;
@@ -17,5 +19,14 @@ public struct HarmonyChangedEvent
 {
     public float harmony;
     public HarmonyChangedEvent(float h) { harmony = h; }
+}
+public struct CameraShakeEvent
+{
+    public float intensity;   // 震屏强度
+}
+public struct PlayerMeleeEvent
+{
+    public float damage;          // 造成的伤害
+    public Vector3 hitPoint;      // 攻击命中点（可选，供特效参考）
 }
 

@@ -38,7 +38,7 @@ public class PlayerDash : MonoBehaviour
         // 2. 决定闪避方向
         Vector2 dashDir;
 
-        dashDir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - this.transform.position;
+        dashDir = (Camera.main.ScreenToWorldPoint(Input.mousePosition) - this.transform.position).normalized;
 
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
@@ -49,13 +49,14 @@ public class PlayerDash : MonoBehaviour
             // 有移动输入：使用WASD方向（归一化）
             dashDir = new Vector2(moveX, moveY).normalized;
         }
+      
         // 3. 计算闪避目标点（考虑墙壁）
         Vector3 targetPos = transform.position + (Vector3)dashDir * dashDistance;
 
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDir, dashDistance, LayerMask.NameToLayer("Wall") );
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDir, dashDistance, LayerMask.GetMask("Wall") );
         if (hit.collider != null)
         {
-            Vector2 adjustedPoint = hit.point - dashDir * 0.2f;
+            Vector2 adjustedPoint = hit.point - dashDir * 0.5f;
             targetPos = new Vector3(adjustedPoint.x, adjustedPoint.y, transform.position.z);
         }
 

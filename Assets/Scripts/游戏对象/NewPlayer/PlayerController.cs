@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour
     // 可选的动画模块，不需禁用
     public PlayerAnimation animation;
 
-    private bool isDead = false;
+    public bool isDead = false;
 
     private void Awake()
     {

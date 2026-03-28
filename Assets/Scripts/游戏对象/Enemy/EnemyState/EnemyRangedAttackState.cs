@@ -8,7 +8,7 @@ public class EnemyRangedAttackState : EnemyStateBase
 
     public override void OnStart()
     {
-        Debug.Log("进入远程攻击状态");
+       
         controller.animator.SetTrigger("Attack");
     }
 
@@ -30,7 +30,7 @@ public class EnemyRangedAttackState : EnemyStateBase
         // 在有效范围内，使用武器射击
         if (controller.weapon != null)
         {
-            controller.weapon.Shoot();
+            controller.weapon.Shoot(((controller.data) as RangedEnemyData).Atk,1);
         }
     }
 

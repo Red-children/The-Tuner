@@ -1,444 +1,444 @@
 
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
+//using System.Collections;
+//using System.Collections.Generic;
+//using UnityEngine;
+//using UnityEngine.SceneManagement;
 
-public struct PlayerHitEvent
-{
-    public bool isCritical;   // æ˜¯å¦ç²¾å‡†å‘½ä¸­
-    public float damage;       // ä¼¤å®³å€¼ï¼ˆå¯é€‰ï¼‰
-}
+//public struct PlayerHitEvent
+//{
+//    public bool isCritical;   // ÊÇ·ñ¾«×¼ÃüÖĞ
+//    public float damage;       // ÉËº¦Öµ£¨¿ÉÑ¡£©
+//}
 
-public struct PlayerMeleeEvent
-{
-    public float damage;
-    public Vector2 hitPoint;
-}
+//public struct PlayerMeleeEvent
+//{
+//    public float damage;
+//    public Vector2 hitPoint;
+//}
 
-public struct CameraShakeEvent
-{
-    public float intensity;   // éœ‡å±å¼ºåº¦ï¼Œå¯ä»¥æ ¹æ®ä¼¤å®³å€¼å†³å®š
-}
-
-
+//public struct CameraShakeEvent
+//{
+//    public float intensity;   // ÕğÆÁÇ¿¶È£¬¿ÉÒÔ¸ù¾İÉËº¦Öµ¾ö¶¨
+//}
 
 
-public class PlayerIObject : BaseObject
-{
-    private bool isStunned = false;   // å—å‡»ç¡¬ç›´
-    private bool isDead = false;      // æ­»äº¡æ ‡å¿—
 
-    public  Animator animator;
 
-    [Header("é—ªé¿è®¾ç½®")]
-    public float dashDistance = 3f;          // æœ€å¤§é—ªé¿è·ç¦»
-    public float dashDuration = 0.3f;        // é—ªé¿æŒç»­æ—¶é—´
+//public class PlayerIObject : BaseObject
+//{
+//    private bool isStunned = false;   // ÊÜ»÷Ó²Ö±
+//    private bool isDead = false;      // ËÀÍö±êÖ¾
+
+//    public  Animator animator;
+
+//    [Header("ÉÁ±ÜÉèÖÃ")]
+//    public float dashDistance = 3f;          // ×î´óÉÁ±Ü¾àÀë
+//    public float dashDuration = 0.3f;        // ÉÁ±Ü³ÖĞøÊ±¼ä
     
-    public bool isDashing = false;             // æ˜¯å¦æ­£åœ¨é—ªé¿
-    public AnimationCurve dashCurve;              // é—ªé¿ä½ç§»æ›²çº¿ï¼ˆå¯é€‰ï¼Œç”¨äºæ§åˆ¶é—ªé¿çš„åŠ é€Ÿ/å‡é€Ÿæ•ˆæœï¼‰
+//    public bool isDashing = false;             // ÊÇ·ñÕıÔÚÉÁ±Ü
+//    public AnimationCurve dashCurve;              // ÉÁ±ÜÎ»ÒÆÇúÏß£¨¿ÉÑ¡£¬ÓÃÓÚ¿ØÖÆÉÁ±ÜµÄ¼ÓËÙ/¼õËÙĞ§¹û£©
     
-    public float maxDashEnergy = 2;          // é—ªé¿æ¡ä¸Šé™
-    public float currentDashEnergy = 2;   // å½“å‰é—ªé¿æ¡
-    public float dashEnergyRegenRate = 1f;    // é—ªé¿æ¡æ¢å¤é€Ÿç‡ï¼ˆæ¯ç§’æ¢å¤å¤šå°‘ï¼‰
-    public bool isDashOnWindow = false;             // æ˜¯å¦åœ¨èŠ‚å¥çª—å£å†…å¯ä»¥é—ªé¿
+//    public float maxDashEnergy = 2;          // ÉÁ±ÜÌõÉÏÏŞ
+//    public float currentDashEnergy = 2;   // µ±Ç°ÉÁ±ÜÌõ
+//    public float dashEnergyRegenRate = 1f;    // ÉÁ±ÜÌõ»Ö¸´ËÙÂÊ£¨Ã¿Ãë»Ö¸´¶àÉÙ£©
+//    public bool isDashOnWindow = false;             // ÊÇ·ñÔÚ½Ú×à´°¿ÚÄÚ¿ÉÒÔÉÁ±Ü
 
-    [Header("è¿‘æˆ˜æ”»å‡»è®¾ç½®")]
-    public float meleeRange = 1.5f;          // è¿‘æˆ˜èŒƒå›´
-    public LayerMask enemyLayer;              // æ•Œäººå±‚çº§
-    public float meleeBaseDamage = 20f;       // åŸºç¡€ä¼¤å®³
-    public float meleeCooldown = 0.5f;        // è¿‘æˆ˜å†·å´
-    private float lastMeleeTime = -999f;
-    private float rhythmMultiplier = 1f; // é»˜è®¤å€ç‡1
+//    [Header("½üÕ½¹¥»÷ÉèÖÃ")]
+//    public float meleeRange = 1.5f;          // ½üÕ½·¶Î§
+//    public LayerMask enemyLayer;              // µĞÈË²ã¼¶
+//    public float meleeBaseDamage = 20f;       // »ù´¡ÉËº¦
+//    public float meleeCooldown = 0.5f;        // ½üÕ½ÀäÈ´
+//    private float lastMeleeTime = -999f;
+//    private float rhythmMultiplier = 1f; // Ä¬ÈÏ±¶ÂÊ1
     
 
 
-    [Header("Weapon")]
-    public WeaponInfo currentWeapon;   // å½“å‰ä½¿ç”¨çš„æ­¦å™¨
+//    [Header("Weapon")]
+//    public WeaponInfo currentWeapon;   // µ±Ç°Ê¹ÓÃµÄÎäÆ÷
     
-    public List<WeaponStats> weaponInfos;   // æ­¦å™¨æ•°æ®åˆ—è¡¨ï¼ˆä» WeaponBase è·å–ï¼‰
+//    public List<WeaponStats> weaponInfos;   // ÎäÆ÷Êı¾İÁĞ±í£¨´Ó WeaponBase »ñÈ¡£©
 
-    public bool isInvincible { get; private set; }  // æ˜¯å¦æ— æ•Œ
+//    public bool isInvincible { get; private set; }  // ÊÇ·ñÎŞµĞ
 
-    private float invincibleTimer;   //æ— æ•Œè®¡æ—¶å™¨
+//    private float invincibleTimer;   //ÎŞµĞ¼ÆÊ±Æ÷
 
 
-    //ä¸»æ‘„åƒæœº è´Ÿè´£è¿½è¸ªç©å®¶ä½ç½®
-    public Camera playerCamera;
-    //å¢™çš„å±‚çº§
-    LayerMask wallLayer;
+//    //Ö÷ÉãÏñ»ú ¸ºÔğ×·×ÙÍæ¼ÒÎ»ÖÃ
+//    public Camera playerCamera;
+//    //Ç½µÄ²ã¼¶
+//    LayerMask wallLayer;
 
-    //æ‘„åƒå¤´å–ç‚¹çš„ä½ç½®
-    public float offsetFactor = 0.3f;
+//    //ÉãÏñÍ·È¡µãµÄÎ»ÖÃ
+//    public float offsetFactor = 0.3f;
 
-    //ç›¸æœºç§»åŠ¨çš„å¹³æ»‘åº¦
-    public float cameraSmoothness = 5f;
-    //ç›¸æœºçš„zè½´ä½ç½®ï¼Œç¡®ä¿ç›¸æœºåœ¨ç©å®¶å‰é¢
-    public float cameraZ = -10f;
+//    //Ïà»úÒÆ¶¯µÄÆ½»¬¶È
+//    public float cameraSmoothness = 5f;
+//    //Ïà»úµÄzÖáÎ»ÖÃ£¬È·±£Ïà»úÔÚÍæ¼ÒÇ°Ãæ
+//    public float cameraZ = -10f;
 
-    //ç©å®¶çš„SpriteRendererç»„ä»¶ ç”¨äºç¿»è½¬è§’è‰²
-    public SpriteRenderer spriteRenderer;
+//    //Íæ¼ÒµÄSpriteRenderer×é¼ş ÓÃÓÚ·­×ª½ÇÉ«
+//    public SpriteRenderer spriteRenderer;
 
-    public void Start()
-    {
-        animator = GetComponent<Animator>();
-        //å¼€å§‹å‘å¸ƒä¸€æ¬¡äº‹ä»¶ è®©UIèƒ½æ­£ç¡®æ˜¾ç¤ºåˆå§‹è¡€é‡
-        EventBus.Instance.Trigger<PlayerHealthChangedEventStruct>(new PlayerHealthChangedEventStruct
-        {
-            currentHealth = nowHp,
-            maxHealth = maxHp
-        }); 
+//    public void Start()
+//    {
+//        animator = GetComponent<Animator>();
+//        //¿ªÊ¼·¢²¼Ò»´ÎÊÂ¼ş ÈÃUIÄÜÕıÈ·ÏÔÊ¾³õÊ¼ÑªÁ¿
+//        EventBus.Instance.Trigger<PlayerHealthChangedEventStruct>(new PlayerHealthChangedEventStruct
+//        {
+//            currentHealth = nowHp,
+//            maxHealth = maxHp
+//        }); 
 
-        #region åˆå§‹åŒ–
-        //å¾—åˆ°å¢™çš„å±‚çº§ ç”¨æ¥ä¼˜åŒ–ç©å®¶ç¢°æ’
-        wallLayer = LayerMask.GetMask("Wall");
-        //è°ƒæ•´å½“å‰ç›¸æœºçš„æ™¯æ·±
-        cameraZ = playerCamera.transform.position.z;
-        //ä¼ é€’ç©å®¶æ”»å‡»åŠ›åˆ°å½“å‰æ­¦å™¨
-        EventBus.Instance.Trigger(new PlayerAtkChange { atk = this.atk });
-        // ä»å½“å‰æ­¦å™¨ç»‘å®šçš„ WeaponBase ä¸­è·å–æ•°æ®åˆ—è¡¨
-        weaponInfos = currentWeapon.weaponBase.weaponList;
-        // åˆå§‹åŒ–æ­¦å™¨æ•°æ®
-        currentWeapon.InitializeWeapon(currentWeapon.weaponType);
-        #endregion
-
-    }
-
-    private void OnEnable()
-    {
+//        #region ³õÊ¼»¯
+//        //µÃµ½Ç½µÄ²ã¼¶ ÓÃÀ´ÓÅ»¯Íæ¼ÒÅö×²
+//        wallLayer = LayerMask.GetMask("Wall");
+//        //µ÷Õûµ±Ç°Ïà»úµÄ¾°Éî
+//        cameraZ = playerCamera.transform.position.z;
+//        //´«µİÍæ¼Ò¹¥»÷Á¦µ½µ±Ç°ÎäÆ÷
         
-        EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
-    }
-    private void OnDisable()
-    {
-        EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
-    }
-    private void OnRhythmData(RhythmData data)
-    {
-        rhythmMultiplier = (float)data.multiplier;
-        isDashOnWindow = data.isInWindow; // æ ¹æ®èŠ‚å¥çª—å£çŠ¶æ€æ›´æ–°é—ªé¿å¯ç”¨æ€§
-    }
+//        // ´Óµ±Ç°ÎäÆ÷°ó¶¨µÄ WeaponBase ÖĞ»ñÈ¡Êı¾İÁĞ±í
+//        weaponInfos = currentWeapon.weaponBase.weaponList;
+//        // ³õÊ¼»¯ÎäÆ÷Êı¾İ
+//        currentWeapon.InitializeWeapon(currentWeapon.weaponType);
+//        #endregion
+
+//    }
+
+//    private void OnEnable()
+//    {
+        
+//        EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
+//    }
+//    private void OnDisable()
+//    {
+//        EventBus.Instance.Unsubscribe<RhythmData>(OnRhythmData);
+//    }
+//    private void OnRhythmData(RhythmData data)
+//    {
+//        rhythmMultiplier = (float)data.multiplier;
+//        isDashOnWindow = data.isInWindow; // ¸ù¾İ½Ú×à´°¿Ú×´Ì¬¸üĞÂÉÁ±Ü¿ÉÓÃĞÔ
+//    }
 
     
 
-    #region é‡å†™å—ä¼¤æ–¹æ³•
+//    #region ÖØĞ´ÊÜÉË·½·¨
 
 
-    // é‡å†™ Wound æ–¹æ³•  ä¼ å…¥ä¼¤å®³æ•°å€¼
-    public override void Wound(int damage)
-    {
-        if (isInvincible || isStunned || isDead || nowHp <= 0) return;
-        if (isInvincible || nowHp <= 0) { if (isInvincible) Debug.Log("ç©å®¶æ— æ•Œï¼Œä¼¤å®³è¢«å¿½ç•¥"); return; }  // æ— æ•Œæˆ–å·²æ­»äº¡åˆ™ä¸å¤„ç†
+//    // ÖØĞ´ Wound ·½·¨  ´«ÈëÉËº¦ÊıÖµ
+//    public override void Wound(int damage)
+//    {
+//        if (isInvincible || isStunned || isDead || nowHp <= 0) return;
+//        if (isInvincible || nowHp <= 0) { if (isInvincible) Debug.Log("Íæ¼ÒÎŞµĞ£¬ÉËº¦±»ºöÂÔ"); return; }  // ÎŞµĞ»òÒÑËÀÍöÔò²»´¦Àí
 
-        // æ‰£è¡€
-        nowHp -= Mathf.Max(damage, 0);
-        Debug.Log($"ç©å®¶å—ä¼¤ï¼Œå½“å‰è¡€é‡: {nowHp}");
+//        // ¿ÛÑª
+//        nowHp -= Mathf.Max(damage, 0);
+//        Debug.Log($"Íæ¼ÒÊÜÉË£¬µ±Ç°ÑªÁ¿: {nowHp}");
 
-        EventBus.Instance.Trigger<PlayerHealthChangedEventStruct>(new PlayerHealthChangedEventStruct
-        {
-            currentHealth = nowHp,
-            maxHealth = maxHp
-        });
+//        EventBus.Instance.Trigger<PlayerHealthChangedEventStruct>(new PlayerHealthChangedEventStruct
+//        {
+//            currentHealth = nowHp,
+//            maxHealth = maxHp
+//        });
 
-        // è§¦å‘éœ‡å±äº‹ä»¶ï¼Œå¼ºåº¦å¯ä»¥ç®€å•è®¾ä¸º damage / 10fï¼ˆæ ¹æ®ä½ çš„æ•°å€¼è°ƒæ•´ï¼‰
-        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = damage / 100f });
+//        // ´¥·¢ÕğÆÁÊÂ¼ş£¬Ç¿¶È¿ÉÒÔ¼òµ¥ÉèÎª damage / 10f£¨¸ù¾İÄãµÄÊıÖµµ÷Õû£©
+//        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = damage / 100f });
 
-        // å¼€å¯æ— æ•Œå¸§
-        StartCoroutine(InvincibilityCoroutine(1f)); // æ— æ•Œ1ç§’
+//        // ¿ªÆôÎŞµĞÖ¡
+//        StartCoroutine(InvincibilityCoroutine(1f)); // ÎŞµĞ1Ãë
 
-        if (nowHp <= 0)
-        {
-            nowHp = 0;
-            Died();  // è°ƒç”¨è‡ªå·±çš„æ­»äº¡æ–¹æ³•ï¼ˆå¯ä»¥æ˜¯é‡å†™çš„ Diedï¼‰
-        }
-        StartCoroutine(StunCoroutine());
-    }
-    #endregion  
+//        if (nowHp <= 0)
+//        {
+//            nowHp = 0;
+//            Died();  // µ÷ÓÃ×Ô¼ºµÄËÀÍö·½·¨£¨¿ÉÒÔÊÇÖØĞ´µÄ Died£©
+//        }
+//        StartCoroutine(StunCoroutine());
+//    }
+//    #endregion  
 
-    #region æ— æ•Œå¸§çš„åç¨‹å‡½æ•°
-
-
-    // æ— æ•Œåç¨‹ ä¼ å…¥æŒç»­æ—¶é—´
-    private IEnumerator InvincibilityCoroutine(float duration)
-    {
-        // å¼€å§‹æ— æ•Œ
-        isInvincible = true;
-
-        //æ—¶é—´è®¡æ•°å™¨
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            // æ¯0.1ç§’é—ªçƒä¸€æ¬¡ï¼ˆç¤ºä¾‹ï¼‰
-            // è¿™é‡Œå¯ä»¥è®¾ç½® SpriteRenderer çš„é€æ˜åº¦æˆ–é¢œè‰²
-            yield return new WaitForSeconds(0.1f);
-            elapsed += 0.1f;
-        }
-        isInvincible = false;
-    }
-    #endregion
-
-    #region é‡å†™æ­»äº¡æ–¹æ³• å‘å¸ƒç©å®¶æ­»äº¡äº‹ä»¶
+//    #region ÎŞµĞÖ¡µÄĞ­³Ìº¯Êı
 
 
-    public override void Died()
-    {
-        // åŸæœ‰çš„æ­»äº¡é€»è¾‘ï¼ˆæ’­æ”¾ç‰¹æ•ˆã€è§¦å‘äº‹ä»¶ç­‰ï¼‰...
-        Debug.Log("ç©å®¶æ­»äº¡");
+//    // ÎŞµĞĞ­³Ì ´«Èë³ÖĞøÊ±¼ä
+//    private IEnumerator InvincibilityCoroutine(float duration)
+//    {
+//        // ¿ªÊ¼ÎŞµĞ
+//        isInvincible = true;
 
-        // æ–°å¢ï¼šå¯åŠ¨åç¨‹ï¼Œ2ç§’åé‡è½½åœºæ™¯
-        StartCoroutine(RestartAfterDelay(2f));
-    }
+//        //Ê±¼ä¼ÆÊıÆ÷
+//        float elapsed = 0f;
+//        while (elapsed < duration)
+//        {
+//            // Ã¿0.1ÃëÉÁË¸Ò»´Î£¨Ê¾Àı£©
+//            // ÕâÀï¿ÉÒÔÉèÖÃ SpriteRenderer µÄÍ¸Ã÷¶È»òÑÕÉ«
+//            yield return new WaitForSeconds(0.1f);
+//            elapsed += 0.1f;
+//        }
+//        isInvincible = false;
+//    }
+//    #endregion
 
-    private System.Collections.IEnumerator RestartAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        // é‡è½½å½“å‰åœºæ™¯ï¼ˆæ³¨æ„åœºæ™¯åè¦å’Œä½ æ¼”ç¤ºç”¨çš„åœºæ™¯ä¸€è‡´ï¼‰
-        SceneManager.LoadScene(0);
-    }
-    #endregion
+//    #region ÖØĞ´ËÀÍö·½·¨ ·¢²¼Íæ¼ÒËÀÍöÊÂ¼ş
 
-    #region ç©å®¶è¡€é‡å˜åŒ–äº‹ä»¶
-    public void PlayerHpChange(PlayerHealthChangedEventStruct playerHealthChangedEventStruct)
-    {
-       playerHealthChangedEventStruct.currentHealth = nowHp;
-       playerHealthChangedEventStruct.maxHealth = maxHp;
-    }
-    #endregion
+
+//    public override void Died()
+//    {
+//        // Ô­ÓĞµÄËÀÍöÂß¼­£¨²¥·ÅÌØĞ§¡¢´¥·¢ÊÂ¼şµÈ£©...
+//        Debug.Log("Íæ¼ÒËÀÍö");
+
+//        // ĞÂÔö£ºÆô¶¯Ğ­³Ì£¬2ÃëºóÖØÔØ³¡¾°
+//        StartCoroutine(RestartAfterDelay(2f));
+//    }
+
+//    private System.Collections.IEnumerator RestartAfterDelay(float delay)
+//    {
+//        yield return new WaitForSeconds(delay);
+//        // ÖØÔØµ±Ç°³¡¾°£¨×¢Òâ³¡¾°ÃûÒªºÍÄãÑİÊ¾ÓÃµÄ³¡¾°Ò»ÖÂ£©
+//        SceneManager.LoadScene(0);
+//    }
+//    #endregion
+
+//    #region Íæ¼ÒÑªÁ¿±ä»¯ÊÂ¼ş
+//    public void PlayerHpChange(PlayerHealthChangedEventStruct playerHealthChangedEventStruct)
+//    {
+//       playerHealthChangedEventStruct.currentHealth = nowHp;
+//       playerHealthChangedEventStruct.maxHealth = maxHp;
+//    }
+//    #endregion
 
    
 
-    #region è¿‘æˆ˜æ”»å‡»æ–¹æ³• è®¡ç®—ä¼¤å®³å¹¶æ£€æµ‹æ•Œäºº
-    private void MeleeAttack()
-    {
-        lastMeleeTime = Time.time;
+//    #region ½üÕ½¹¥»÷·½·¨ ¼ÆËãÉËº¦²¢¼ì²âµĞÈË
+//    private void MeleeAttack()
+//    {
+//        lastMeleeTime = Time.time;
 
-        // è®¡ç®—æœ€ç»ˆä¼¤å®³
-        float finalDamage = (atk + meleeBaseDamage) * rhythmMultiplier;
+//        // ¼ÆËã×îÖÕÉËº¦
+//        float finalDamage = (atk + meleeBaseDamage) * rhythmMultiplier;
 
-        // æ£€æµ‹æ•Œäºº
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, meleeRange, enemyLayer);
-        foreach (var enemy in hitEnemies)
-        {
-            EnemyController enemyController = enemy.GetComponent<EnemyController>();
-            if (enemyController != null)
-            {
-                enemyController.Wound(finalDamage);
-            }
-        }
+//        // ¼ì²âµĞÈË
+//        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(transform.position, meleeRange, enemyLayer);
+//        foreach (var enemy in hitEnemies)
+//        {
+//            EnemyController enemyController = enemy.GetComponent<EnemyController>();
+//            if (enemyController != null)
+//            {
+//                enemyController.Wound(finalDamage);
+//            }
+//        }
 
-        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = finalDamage * 0.1f }); // ç¤ºä¾‹å¼ºåº¦
+//        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = finalDamage * 0.1f }); // Ê¾ÀıÇ¿¶È
 
-        // è§¦å‘è¿‘æˆ˜äº‹ä»¶ï¼ˆä¾›éŸ³æ•ˆç­‰ä½¿ç”¨ï¼‰
-        EventBus.Instance.Trigger(new PlayerMeleeEvent { damage = finalDamage, hitPoint = transform.position });
+//        // ´¥·¢½üÕ½ÊÂ¼ş£¨¹©ÒôĞ§µÈÊ¹ÓÃ£©
+//        EventBus.Instance.Trigger(new PlayerMeleeEvent { damage = finalDamage, hitPoint = transform.position });
 
-    }
-    #endregion
+//    }
+//    #endregion
 
-    public void Update()
-    {
-        if (isDead) return;                  // æ­»äº¡åä»€ä¹ˆéƒ½ä¸åš
-        if (isStunned) return;               // ç¡¬ç›´ä¸­ï¼Œç¦æ­¢æ‰€æœ‰æ“ä½œ
-
-
-        #region ç§»åŠ¨é€»è¾‘
-        float moveX = Input.GetAxis("Horizontal");
-        float moveY = Input.GetAxis("Vertical");
-
-        Vector2 direction = new Vector2(moveX, moveY).normalized;
-        float rayLengthX = 0.9f; // ç•¥å¤§äºç©å®¶åŠå¾„
-        float rayLengthY = 0.9f;
-        wallLayer = LayerMask.GetMask("Wall");
-
-        // åˆ†åˆ«æ£€æµ‹Xå’ŒYæ–¹å‘ï¼Œé¿å…å¯¹è§’çº¿åŒæ—¶è¢«é”
-        if (moveX != 0)
-        {
-            RaycastHit2D hitX = Physics2D.Raycast(transform.position, Vector2.right * Mathf.Sign(moveX), rayLengthX, wallLayer);
-            if (hitX.collider != null) moveX = 0;
-        }
-        if (moveY != 0)
-        {
-            RaycastHit2D hitY = Physics2D.Raycast(transform.position, Vector2.up * Mathf.Sign(moveY), rayLengthY, wallLayer);
-            if (hitY.collider != null) moveY = 0;
-        }
-
-        // åº”ç”¨ç§»åŠ¨
-        transform.Translate(new Vector3(moveX, moveY, 0) * moveSpeed * Time.deltaTime, Space.World);
+//    public void Update()
+//    {
+//        if (isDead) return;                  // ËÀÍöºóÊ²Ã´¶¼²»×ö
+//        if (isStunned) return;               // Ó²Ö±ÖĞ£¬½ûÖ¹ËùÓĞ²Ù×÷
 
 
-        #endregion
+//        #region ÒÆ¶¯Âß¼­
+//        float moveX = Input.GetAxis("Horizontal");
+//        float moveY = Input.GetAxis("Vertical");
 
-        #region å¼€ç«æ£€æµ‹
+//        Vector2 direction = new Vector2(moveX, moveY).normalized;
+//        float rayLengthX = 0.9f; // ÂÔ´óÓÚÍæ¼Ò°ë¾¶
+//        float rayLengthY = 0.9f;
+//        wallLayer = LayerMask.GetMask("Wall");
 
-        //å¼€ç«ç‚¹ç©ºç½®æ£€æµ‹
+//        // ·Ö±ğ¼ì²âXºÍY·½Ïò£¬±ÜÃâ¶Ô½ÇÏßÍ¬Ê±±»Ëø
+//        if (moveX != 0)
+//        {
+//            RaycastHit2D hitX = Physics2D.Raycast(transform.position, Vector2.right * Mathf.Sign(moveX), rayLengthX, wallLayer);
+//            if (hitX.collider != null) moveX = 0;
+//        }
+//        if (moveY != 0)
+//        {
+//            RaycastHit2D hitY = Physics2D.Raycast(transform.position, Vector2.up * Mathf.Sign(moveY), rayLengthY, wallLayer);
+//            if (hitY.collider != null) moveY = 0;
+//        }
 
-
-        if (Input.GetMouseButton(0))
-            currentWeapon.Shoot();
-        // åˆ‡æ¢æ­¦å™¨ï¼ˆæ•°å­—é”®ï¼‰
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            currentWeapon.SwitchWeapon(WeaponType.Pistol);
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-            currentWeapon.SwitchWeapon(WeaponType.Shotgun);
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-            currentWeapon.SwitchWeapon(WeaponType.Rifle);
-        #endregion
-
-        #region é¼ æ ‡è¿½è¸ªé€»è¾‘
-        // è·å–é¼ æ ‡åœ¨ä¸–ç•Œç©ºé—´ä¸­çš„ä½ç½®ï¼ˆæ³¨æ„ï¼šScreenToWorldPoint éœ€è¦æ­£ç¡®çš„Zå€¼ï¼‰
-        Vector3 mouseScreenPos = Input.mousePosition;
-        mouseScreenPos.z = Camera.main.WorldToScreenPoint(transform.position).z; // ä½¿ç”¨è§’è‰²çš„å±å¹•æ·±åº¦
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
-
-        // è®¡ç®—å‘é‡ï¼ˆä»è§’è‰²æŒ‡å‘é¼ æ ‡ï¼‰
-        Vector2 directionMouse = mouseWorldPos - transform.position;
-
-        if (directionMouse.x > 0)
-            spriteRenderer.flipX = false; // æœå³
-        else if (directionMouse.x < 0)
-            spriteRenderer.flipX = true;  // æœå·¦       
-                            // æ³¨æ„ï¼šè¿™é‡Œä»…æ ¹æ®Xè½´æ–¹å‘å†³å®šç¿»è½¬ï¼Œå¦‚æœé¼ æ ‡åœ¨æ­£ä¸Šæ–¹ï¼Œä¼šä¿æŒä¸Šæ¬¡æœå‘ï¼Œä½†é€šå¸¸å¤Ÿç”¨ã€‚
-                                          // æ›´ç²¾ç»†çš„å¯ä»¥ç»“åˆæ–¹å‘è§’åº¦ï¼Œä½†å…ˆè¿™æ ·ã€‚
-        #endregion
-
-        #region è¿‘æˆ˜æ”»å‡»æ£€æµ‹
-        if (Input.GetKeyDown(KeyCode.V) && Time.time > lastMeleeTime + meleeCooldown)
-        {
-            MeleeAttack();
-        }
-        #endregion
+//        // Ó¦ÓÃÒÆ¶¯
+//        transform.Translate(new Vector3(moveX, moveY, 0) * moveSpeed * Time.deltaTime, Space.World);
 
 
-        // æ­¦å™¨æŒ‡å‘é¼ æ ‡
-        if (currentWeapon != null)
-        {
-            Vector2 weaponDir = directionMouse; // æ–¹å‘ä¸ç©å®¶åˆ°é¼ æ ‡ä¸€è‡´
-            float weaponAngle = Mathf.Atan2(weaponDir.y, weaponDir.x) * Mathf.Rad2Deg;
-            currentWeapon.transform.rotation = Quaternion.Euler(0, 0, weaponAngle);
-        }
+//        #endregion
+
+//        #region ¿ª»ğ¼ì²â
+
+//        //¿ª»ğµã¿ÕÖÃ¼ì²â
 
 
-        #region æ­¦å™¨åˆ‡æ¢
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            currentWeapon.SwitchWeapon(WeaponType.Pistol);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            currentWeapon.SwitchWeapon(WeaponType.Shotgun);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            currentWeapon.SwitchWeapon(WeaponType.Rifle);
-        }
+//        if (Input.GetMouseButton(0))
+//            currentWeapon.Shoot();
+//        // ÇĞ»»ÎäÆ÷£¨Êı×Ö¼ü£©
+//        if (Input.GetKeyDown(KeyCode.Alpha1))
+//            currentWeapon.SwitchWeapon(WeaponType.Pistol);
+//        else if (Input.GetKeyDown(KeyCode.Alpha2))
+//            currentWeapon.SwitchWeapon(WeaponType.Shotgun);
+//        else if (Input.GetKeyDown(KeyCode.Alpha3))
+//            currentWeapon.SwitchWeapon(WeaponType.Rifle);
+//        #endregion
 
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll != 0)
-        {
-            var weaponList = currentWeapon.weaponBase.weaponList;
-            int count = weaponList.Count;
-            if (count == 0) return; // å®‰å…¨é˜²æŠ¤
+//        #region Êó±ê×·×ÙÂß¼­
+//        // »ñÈ¡Êó±êÔÚÊÀ½ç¿Õ¼äÖĞµÄÎ»ÖÃ£¨×¢Òâ£ºScreenToWorldPoint ĞèÒªÕıÈ·µÄZÖµ£©
+//        Vector3 mouseScreenPos = Input.mousePosition;
+//        mouseScreenPos.z = Camera.main.WorldToScreenPoint(transform.position).z; // Ê¹ÓÃ½ÇÉ«µÄÆÁÄ»Éî¶È
+//        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(mouseScreenPos);
 
-            // é€šè¿‡å½“å‰æ­¦å™¨çš„ç±»å‹æŸ¥æ‰¾åœ¨åˆ—è¡¨ä¸­çš„ç´¢å¼•
-            int currentIndex = weaponList.FindIndex(w => w.weaponType == currentWeapon.weaponType);
-            if (currentIndex == -1)
-            {
-                Debug.LogWarning("å½“å‰æ­¦å™¨ç±»å‹ä¸åœ¨æ­¦å™¨åˆ—è¡¨ä¸­ï¼Œé»˜è®¤åˆ‡æ¢åˆ°ç¬¬ä¸€ä¸ª");
-                currentIndex = 0;
-            }
+//        // ¼ÆËãÏòÁ¿£¨´Ó½ÇÉ«Ö¸ÏòÊó±ê£©
+//        Vector2 directionMouse = mouseWorldPos - transform.position;
 
-            int delta = scroll > 0 ? 1 : -1;
-            // (currentIndex + delta + count) % count ä¿è¯ç»“æœåœ¨ [0, count-1] ä¹‹é—´
-            int newIndex = (currentIndex + delta + count) % count;
+//        if (directionMouse.x > 0)
+//            spriteRenderer.flipX = false; // ³¯ÓÒ
+//        else if (directionMouse.x < 0)
+//            spriteRenderer.flipX = true;  // ³¯×ó       
+//                            // ×¢Òâ£ºÕâÀï½ö¸ù¾İXÖá·½Ïò¾ö¶¨·­×ª£¬Èç¹ûÊó±êÔÚÕıÉÏ·½£¬»á±£³ÖÉÏ´Î³¯Ïò£¬µ«Í¨³£¹»ÓÃ¡£
+//                                          // ¸ü¾«Ï¸µÄ¿ÉÒÔ½áºÏ·½Ïò½Ç¶È£¬µ«ÏÈÕâÑù¡£
+//        #endregion
 
-            WeaponType newType = weaponList[newIndex].weaponType;
-            currentWeapon.SwitchWeapon(newType);
-        }
-        #endregion
-
-        #region  èŠ‚å¥é—ªé¿
-        if (currentDashEnergy < maxDashEnergy)
-        {
-            currentDashEnergy += dashEnergyRegenRate * Time.deltaTime;
-            if (currentDashEnergy > maxDashEnergy)
-                currentDashEnergy = maxDashEnergy;
-        }
-
-        // 2. å†³å®šé—ªé¿æ–¹å‘
-        Vector2 dashDir;
-        if (Mathf.Abs(moveX) > 0.1f || Mathf.Abs(moveY) > 0.1f)
-        {
-            // æœ‰ç§»åŠ¨è¾“å…¥ï¼šä½¿ç”¨WASDæ–¹å‘ï¼ˆå½’ä¸€åŒ–ï¼‰
-            dashDir = new Vector2(moveX, moveY).normalized;
-        }
-        else
-        {
-            // æ— ç§»åŠ¨è¾“å…¥ï¼šä½¿ç”¨é¼ æ ‡æ–¹å‘
-            dashDir = directionMouse.normalized; // directionMouse å·²åœ¨å‰é¢è®¡ç®—
-        }
-        // 3. è®¡ç®—é—ªé¿ç›®æ ‡ç‚¹ï¼ˆè€ƒè™‘å¢™å£ï¼‰
-        Vector3 targetPos = transform.position + (Vector3)dashDir * dashDistance;
-
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDir, dashDistance, wallLayer);
-        if (hit.collider != null)
-        {
-            Vector2 adjustedPoint = hit.point - dashDir * 0.2f;
-            targetPos = new Vector3(adjustedPoint.x, adjustedPoint.y, transform.position.z);
-        }
-
-        // 4. è§¦å‘é—ªé¿
-        if (Input.GetMouseButtonDown(1) && (currentDashEnergy > 1 || isDashOnWindow))
-        {
-            if (!isDashOnWindow)
-            {
-                currentDashEnergy -= 1;
-            }
-            StartCoroutine(DashCoroutine(transform.position, targetPos, dashDuration));
-        }
-        #endregion
+//        #region ½üÕ½¹¥»÷¼ì²â
+//        if (Input.GetKeyDown(KeyCode.V) && Time.time > lastMeleeTime + meleeCooldown)
+//        {
+//            MeleeAttack();
+//        }
+//        #endregion
 
 
-    }
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, meleeRange);
-    }
+//        // ÎäÆ÷Ö¸ÏòÊó±ê
+//        if (currentWeapon != null)
+//        {
+//            Vector2 weaponDir = directionMouse; // ·½ÏòÓëÍæ¼Òµ½Êó±êÒ»ÖÂ
+//            float weaponAngle = Mathf.Atan2(weaponDir.y, weaponDir.x) * Mathf.Rad2Deg;
+//            currentWeapon.transform.rotation = Quaternion.Euler(0, 0, weaponAngle);
+//        }
 
-    private IEnumerator DashCoroutine(Vector3 start, Vector3 target, float duration)
-    {
-        isDashing = true;
-        isInvincible = true;
+
+//        #region ÎäÆ÷ÇĞ»»
+//        if (Input.GetKeyDown(KeyCode.Alpha1))
+//        {
+//            currentWeapon.SwitchWeapon(WeaponType.Pistol);
+//        }
+//        else if (Input.GetKeyDown(KeyCode.Alpha2))
+//        {
+//            currentWeapon.SwitchWeapon(WeaponType.Shotgun);
+//        }
+//        else if (Input.GetKeyDown(KeyCode.Alpha3))
+//        {
+//            currentWeapon.SwitchWeapon(WeaponType.Rifle);
+//        }
+
+//        float scroll = Input.GetAxis("Mouse ScrollWheel");
+//        if (scroll != 0)
+//        {
+//            var weaponList = currentWeapon.weaponBase.weaponList;
+//            int count = weaponList.Count;
+//            if (count == 0) return; // °²È«·À»¤
+
+//            // Í¨¹ıµ±Ç°ÎäÆ÷µÄÀàĞÍ²éÕÒÔÚÁĞ±íÖĞµÄË÷Òı
+//            int currentIndex = weaponList.FindIndex(w => w.weaponType == currentWeapon.weaponType);
+//            if (currentIndex == -1)
+//            {
+//                Debug.LogWarning("µ±Ç°ÎäÆ÷ÀàĞÍ²»ÔÚÎäÆ÷ÁĞ±íÖĞ£¬Ä¬ÈÏÇĞ»»µ½µÚÒ»¸ö");
+//                currentIndex = 0;
+//            }
+
+//            int delta = scroll > 0 ? 1 : -1;
+//            // (currentIndex + delta + count) % count ±£Ö¤½á¹ûÔÚ [0, count-1] Ö®¼ä
+//            int newIndex = (currentIndex + delta + count) % count;
+
+//            WeaponType newType = weaponList[newIndex].weaponType;
+//            currentWeapon.SwitchWeapon(newType);
+//        }
+//        #endregion
+
+//        #region  ½Ú×àÉÁ±Ü
+//        if (currentDashEnergy < maxDashEnergy)
+//        {
+//            currentDashEnergy += dashEnergyRegenRate * Time.deltaTime;
+//            if (currentDashEnergy > maxDashEnergy)
+//                currentDashEnergy = maxDashEnergy;
+//        }
+
+//        // 2. ¾ö¶¨ÉÁ±Ü·½Ïò
+//        Vector2 dashDir;
+//        if (Mathf.Abs(moveX) > 0.1f || Mathf.Abs(moveY) > 0.1f)
+//        {
+//            // ÓĞÒÆ¶¯ÊäÈë£ºÊ¹ÓÃWASD·½Ïò£¨¹éÒ»»¯£©
+//            dashDir = new Vector2(moveX, moveY).normalized;
+//        }
+//        else
+//        {
+//            // ÎŞÒÆ¶¯ÊäÈë£ºÊ¹ÓÃÊó±ê·½Ïò
+//            dashDir = directionMouse.normalized; // directionMouse ÒÑÔÚÇ°Ãæ¼ÆËã
+//        }
+//        // 3. ¼ÆËãÉÁ±ÜÄ¿±êµã£¨¿¼ÂÇÇ½±Ú£©
+//        Vector3 targetPos = transform.position + (Vector3)dashDir * dashDistance;
+
+//        RaycastHit2D hit = Physics2D.Raycast(transform.position, dashDir, dashDistance, wallLayer);
+//        if (hit.collider != null)
+//        {
+//            Vector2 adjustedPoint = hit.point - dashDir * 0.2f;
+//            targetPos = new Vector3(adjustedPoint.x, adjustedPoint.y, transform.position.z);
+//        }
+
+//        // 4. ´¥·¢ÉÁ±Ü
+//        if (Input.GetMouseButtonDown(1) && (currentDashEnergy > 1 || isDashOnWindow))
+//        {
+//            if (!isDashOnWindow)
+//            {
+//                currentDashEnergy -= 1;
+//            }
+//            StartCoroutine(DashCoroutine(transform.position, targetPos, dashDuration));
+//        }
+//        #endregion
+
+
+//    }
+//    private void OnDrawGizmosSelected()
+//    {
+//        Gizmos.color = Color.red;
+//        Gizmos.DrawWireSphere(transform.position, meleeRange);
+//    }
+
+//    private IEnumerator DashCoroutine(Vector3 start, Vector3 target, float duration)
+//    {
+//        isDashing = true;
+//        isInvincible = true;
 
          
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            float t = elapsed / duration;
-            float curveT = dashCurve.Evaluate(t);
-            transform.position = Vector3.Lerp(start, target, curveT);
-            elapsed += Time.deltaTime;
-            yield return null;
-        }
-        transform.position = target; // ç¡®ä¿æœ€ç»ˆä½ç½®å‡†ç¡®
+//        float elapsed = 0f;
+//        while (elapsed < duration)
+//        {
+//            float t = elapsed / duration;
+//            float curveT = dashCurve.Evaluate(t);
+//            transform.position = Vector3.Lerp(start, target, curveT);
+//            elapsed += Time.deltaTime;
+//            yield return null;
+//        }
+//        transform.position = target; // È·±£×îÖÕÎ»ÖÃ×¼È·
 
-        isDashing = false;
-        isInvincible = false;
-    }
+//        isDashing = false;
+//        isInvincible = false;
+//    }
 
-    private IEnumerator StunCoroutine()
-    {
-        isStunned = true;
-        // æ’­æ”¾å—å‡»åŠ¨ç”»ï¼ˆå‡è®¾æœ‰ Animatorï¼‰
-        //animator?.SetTrigger("Hurt");
+//    private IEnumerator StunCoroutine()
+//    {
+//        isStunned = true;
+//        // ²¥·ÅÊÜ»÷¶¯»­£¨¼ÙÉèÓĞ Animator£©
+//        //animator?.SetTrigger("Hurt");
 
-        // æ— æ•Œåç¨‹å·²ç»å­˜åœ¨ï¼Œå¯ä»¥å¤ç”¨æˆ–å•ç‹¬å¤„ç†
-        // è¿™é‡Œä»…å¤„ç†ç¡¬ç›´æ—¶é—´
-        yield return new WaitForSeconds(0.2f); // ç¡¬ç›´æ—¶é—´
-        isStunned = false;
-    }
+//        // ÎŞµĞĞ­³ÌÒÑ¾­´æÔÚ£¬¿ÉÒÔ¸´ÓÃ»òµ¥¶À´¦Àí
+//        // ÕâÀï½ö´¦ÀíÓ²Ö±Ê±¼ä
+//        yield return new WaitForSeconds(0.2f); // Ó²Ö±Ê±¼ä
+//        isStunned = false;
+//    }
     
 
-}
+//}
 
 
 

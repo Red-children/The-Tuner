@@ -17,6 +17,9 @@ public class EnemyWoundState : EnemyStateBase
 
     public override void OnStart()
     {
+        Debug.Log("[EnemyWoundState] 即将触发 EnemyHitEvent");
+        EventBus.Instance.Trigger(new EnemyHitEvent { count = 1 });
+        Debug.Log("[EnemyWoundState] 已触发 EnemyHitEvent");
         data.health -= finallyDamage; // 直接在这里扣血，确保状态切换时已经计算好最终伤害
         Debug.Log("进入Wound状态");
         runtime.getHit = false;
