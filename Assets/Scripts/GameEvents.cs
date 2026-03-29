@@ -12,9 +12,11 @@ public struct TimerOnlineEvent
 {
     //  TODO:
     public int count;
-    public EnemyHitEvent(int count)
+    public RhythmRank rank;
+    public EnemyHitEvent(int count, RhythmRank rank)
     {
         this.count = count;
+        this.rank = rank;
     }
 }
 public struct PlayerAtkEvent
