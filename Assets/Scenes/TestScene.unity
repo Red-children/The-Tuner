@@ -3272,6 +3272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bpm: 120
   previewLead: 0.38
+  inputDelayCompensation: 0.12
   rankConfigs:
   - rank: 0
     window: 0.055
@@ -4195,6 +4196,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4195507284768500585, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: 30f36fe8ee10e744db764aa43bc22572, type: 3}
+    - target: {fileID: 4195507284768500586, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
+      propertyPath: BPM
+      value: 117
+      objectReference: {fileID: 0}
+    - target: {fileID: 4195507284768500586, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
+      propertyPath: bgmClip
+      value: 
+      objectReference: {fileID: 8300000, guid: dc56c351b592b4e4c95b2e810aaa2b8f, type: 3}
     - target: {fileID: 4195507284768500586, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
       propertyPath: firstOffset
       value: 0.25
@@ -16913,6 +16926,7 @@ MonoBehaviour:
   meleeRange: 1.5
   meleeDamage: 20
   meleeCoolDown: 0.5
+  shootCoolDown: 0.1
 --- !u!114 &1946609870
 MonoBehaviour:
   m_ObjectHideFlags: 0
