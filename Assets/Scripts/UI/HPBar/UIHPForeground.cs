@@ -1,4 +1,5 @@
-
+using Unity.VisualScripting;
+using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.UI;
 public class UIHPForeground : MonoBehaviour
@@ -64,12 +65,10 @@ public class UIHPForeground : MonoBehaviour
         HPChangeAnimation();
     }
 #endregion
-
 #region 对外接口
     public void SetTargetPercent(float percent)
     {
         _targetHealth = Mathf.Clamp01(percent);
     }
 #endregion
-
 }

@@ -23,12 +23,11 @@ public class UIHPText : MonoBehaviour
         text.text = "Test";
     }
 #region 生命周期
-    void Awake()
+    void Start()
     {
         Init();
     }
 #endregion
-
 #region 对外接口
     public void SetDisplayText(string buf)
     {

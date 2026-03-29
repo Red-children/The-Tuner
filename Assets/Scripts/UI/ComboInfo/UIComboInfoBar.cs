@@ -11,8 +11,6 @@ public class UIComboInfoBar : MonoBehaviour
     //  动画运动内部变量
     private float _currentTime = 0;
     private bool _isRunning = true;
-
-    #region 初始化
     void Init()
     {
         if (image == null)
@@ -26,8 +24,6 @@ public class UIComboInfoBar : MonoBehaviour
         }
         _currentTime = duration;
     }
-    #endregion
-
     void CoolDownAnimation()
     {
         if (_isRunning)
@@ -52,7 +48,6 @@ public class UIComboInfoBar : MonoBehaviour
         CoolDownAnimation();
     }
 #endregion
-
 #region 对外接口
     public void StartOrResetCoolDown()
     {

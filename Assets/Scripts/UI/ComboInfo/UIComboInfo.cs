@@ -15,7 +15,7 @@ public class UIComboInfo : MonoBehaviour
     private bool _isTriggered = false;  //  To known if Player Atk
 
 
-    public RhythmRank _currentRank;    //  Rank of now
+    private RhythmRank _currentRank;    //  Rank of now
     void Init()
     {
         if (bar == null)
@@ -49,14 +49,12 @@ public class UIComboInfo : MonoBehaviour
         text.SetDisplayText(_comboCount.ToString());
         bar.StopCoolDown();
     }
-
     //  PreciseHit
     void AddCounter(int num)
     {
         _comboCount += num;
         text.SetDisplayText(_comboCount.ToString());
     }
-
     void ResetTrigger()
     {
         _isTriggered = false;
@@ -64,6 +62,7 @@ public class UIComboInfo : MonoBehaviour
 #region 回调函数
     void OnEnemyHit(EnemyHitEvent evt)
     {
+        Debug.Log($"UIComboInfo Received EnemyHitEvent\n_isTriggered = {_isTriggered}");
         if (_isTriggered)
         {   
             ResetTrigger(); //  重置扳机标记
@@ -81,20 +80,19 @@ public class UIComboInfo : MonoBehaviour
 
             this.ResetTimer(nameof(ResetCounter), 1f);
             text.TextAnimation(_currentRank);
+
         }
     }
     void OnPlayerAtk(PlayerAtkEvent evt)
     {
         _isTriggered = true;
-        this.StartTimer(nameof(ResetTrigger), 1f);
-       
+        this.StartTimer(nameof(ResetTrigger), 0.2f);
     }
     void OnRhythmData(RhythmData evt)
     {
         _currentRank = evt.rank;
     }
 #endregion
-
 #region 生命周期
     void Start()
     {

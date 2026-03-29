@@ -10,7 +10,15 @@ public class UIPlayerHP : MonoBehaviour
     [Header("剩余生命值条")]
     public UIHPForeground healthPercent;
     public UIHPText HPText;
-    
+
+#region Test
+    void TestInit()
+    {
+        Init();
+        _maxHP = 100f;
+        _lastHP = 100f;
+    }
+#endregion
     void Init()
     {
         if (healthPercent == null)
@@ -30,13 +38,11 @@ public class UIPlayerHP : MonoBehaviour
     void OnPlayerHPChange(PlayerHealthChangedEventStruct evt)
     {
         Debug.Log("TestHP:Receive HPChangeEvent\n");
-        Debug.Log(evt.maxHealth);
         //  初始化
-        if (Mathf.Abs(_maxHP - evt.maxHealth) > 1e-6)
+        if (_maxHP - evt.maxHealth > 1e-6)
         {
             _maxHP = evt.maxHealth;
-        }
-        Debug.Log("当前最大血量"+ _maxHP);
+        } 
         //  更新其他信息
         _lastHP = evt.currentHealth;
         //  通知播放血条变动动画
@@ -44,13 +50,12 @@ public class UIPlayerHP : MonoBehaviour
         //  通知文字更新
         HPText.SetDisplayText(_lastHP + " / " + _maxHP);
     }
-    #endregion
-
-    #region 生命周期
-    private void Awake()
+#endregion
+#region 生命周期
+    void Start()
     {
         // Init();
-        Init();
+        TestInit();
         //  订阅血量变化事件
         EventBus.Instance.Subscribe<PlayerHealthChangedEventStruct>(OnPlayerHPChange);
     }
