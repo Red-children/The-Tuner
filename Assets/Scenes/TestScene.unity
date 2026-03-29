@@ -3272,6 +3272,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bpm: 120
   previewLead: 0.38
+  inputDelayCompensation: 0.18
   rankConfigs:
   - rank: 0
     window: 0.055
@@ -16913,6 +16914,7 @@ MonoBehaviour:
   meleeRange: 1.5
   meleeDamage: 20
   meleeCoolDown: 0.5
+  shootCoolDown: 0.1
 --- !u!114 &1946609870
 MonoBehaviour:
   m_ObjectHideFlags: 0

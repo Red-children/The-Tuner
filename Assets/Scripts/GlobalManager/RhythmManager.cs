@@ -210,8 +210,9 @@ public class RhythmManager : MonoBehaviour
         public bool isInWindow;
     }
 
-    public RankResult GetRank(double dspTime)
+    public RankResult GetRank()
     {
+        double dspTime = AudioSettings.dspTime;
         // 应用输入延迟补偿
         double compensatedTime = dspTime + inputDelayCompensation;
         double timeToNext = nextBeatTime - compensatedTime;
@@ -232,7 +233,7 @@ public class RhythmManager : MonoBehaviour
     }
     public float GetCurrentMultiplier()
     {
-        return GetRank(AudioSettings.dspTime).multiplier;
+        return GetRank().multiplier;
     }
 
     // 获取带输入延迟补偿的下一个节拍时间

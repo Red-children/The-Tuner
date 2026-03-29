@@ -38,7 +38,7 @@ public class UICrosshairController : MonoBehaviour
 
     private void OnEnemyHit(EnemyHitEvent evt)
     {
-        RhythmRank rank = RhythmManager.Instance.GetRank(AudioSettings.dspTime).rank;
+        RhythmRank rank = RhythmManager.Instance.GetRank().rank;
         _animator?.PlayHitAnimation(rank);
     }
 }

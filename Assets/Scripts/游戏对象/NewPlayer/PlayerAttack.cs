@@ -35,7 +35,7 @@ public class PlayerAttack : MonoBehaviour
                     float rhythmMultiplier = 1f;
                     if (RhythmManager.Instance != null)
                     {
-                        rhythmMultiplier = RhythmManager.Instance.GetRank(currentTime).multiplier;
+                        rhythmMultiplier = RhythmManager.Instance.GetRank().multiplier;
                     }
                     weapon.Shoot(stats.TotalAttack, rhythmMultiplier);
                     Debug.Log("[PlayerAttack] 开枪成功，武器：" + weapon.name + "，倍率：" + rhythmMultiplier);
@@ -101,7 +101,7 @@ public class PlayerAttack : MonoBehaviour
         // 从 RhythmManager 实时获取
         if (RhythmManager.Instance != null)
         {
-            var rank = RhythmManager.Instance.GetRank(AudioSettings.dspTime);
+            var rank = RhythmManager.Instance.GetRank();
             return rank.multiplier;
         }
         return 1f;
