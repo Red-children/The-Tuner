@@ -81,7 +81,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 20
+  m_Radius: 4
 --- !u!114 &9171717364712834078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -94,7 +94,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f757bd52fb7ea438ceeef6be8fb3cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  controller: {fileID: 1096953047}
+  fsm: {fileID: 9171717363495848227}
 --- !u!1001 &5077660779033086229
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -103,13 +103,13 @@ PrefabInstance:
     m_TransformParent: {fileID: 9171717364242664087}
     m_Modifications:
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
-      propertyPath: parameter.data
-      value: 
-      objectReference: {fileID: 11400000, guid: 1767f6fa625e7684f882590c021bcebc, type: 2}
+      propertyPath: parameter.health
+      value: 1e+11
+      objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
-      propertyPath: parameter.ChaseArea
-      value: 
-      objectReference: {fileID: 9171717364712834072}
+      propertyPath: parameter.idleTime
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: parameter.chaseArea
       value: 
@@ -118,6 +118,10 @@ PrefabInstance:
       propertyPath: parameter.patrolCenter
       value: 
       objectReference: {fileID: 9171717364242664087}
+    - target: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
+      propertyPath: parameter.damageTextPrefab
+      value: 
+      objectReference: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -166,22 +170,46 @@ PrefabInstance:
       propertyPath: m_Name
       value: Enemy
       objectReference: {fileID: 0}
-    - target: {fileID: 4125022150300041421, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
-      propertyPath: m_Layer
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 4125022150844686642, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
-      propertyPath: m_Layer
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
+--- !u!114 &9171717363495848227 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4125022150300041270, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
+  m_PrefabInstance: {fileID: 5077660779033086229}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9171717363495848408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d4190926dcf0764d80fe5029d867655, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9171717363495848408 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4125022150300041421, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
   m_PrefabInstance: {fileID: 5077660779033086229}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1096953047
+--- !u!95 &9171717363495848224
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9171717363495848408}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 43bdacb3a48152f428784ad61e598dc1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &9171717363495848225
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -190,29 +218,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 9171717363495848408}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d059f8f29b352bb4b98e26deea668732, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 1767f6fa625e7684f882590c021bcebc, type: 2}
-  ownerRoom: {fileID: 0}
-  spriteRenderer: {fileID: 0}
-  animator: {fileID: 0}
-  weapon: {fileID: 0}
-  chaseArea: {fileID: 9171717364712834072}
-  patrolCenter: {fileID: 0}
-  patrolPoints: []
-  runtime: {fileID: 0}
-  fsm: {fileID: 0}
---- !u!114 &1096953053
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9171717363495848408}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87b1f32dfd1993e478b001601be50f60, type: 3}
+  m_Script: {fileID: 11500000, guid: 3b91f27ed76305343a493697eb632d91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &9171717363495848412 stripped

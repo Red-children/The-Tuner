@@ -4,6 +4,10 @@ using UnityEngine;
 [System.Serializable]
 public class BgmSongData : MonoBehaviour
 {
+    [Header("【歌曲核心配置】")]
+    [Tooltip("伤害倍率（精准/普通）")]
+    public float[] multiplierArray = { 0.99f, 0.01f };
+    
     [Tooltip("歌曲BPM(每分钟节拍数)")]
     public double BPM = 120;
 
@@ -16,8 +20,10 @@ public class BgmSongData : MonoBehaviour
     [Range(1, 20)] public int sampleIntervalMs = 10;
 
     [Tooltip("第一拍位置（秒）")]
-    public double firstOffset = 0;
-    
+    public double firstOffset = 1.0f;
+    [Tooltip("精准判定区间（秒）")]
+    public double windowPeriod = 0.1f;
+
 
     // 对外提供只读访问（保护数据不被外部修改）
     public AudioSource BgmAudioSource => bgmAudioSource;

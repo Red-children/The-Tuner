@@ -8,15 +8,15 @@ public struct TimerOnlineEvent
     public float time; // 事件发生时间
 }
 
-    public struct EnemyHitEvent
-{
+public struct EnemyHitEvent
+    {
     //  TODO:
     public int count;
     public EnemyHitEvent(int count)
     {
         this.count = count;
     }
-}
+    }
 public struct PlayerAtkEvent
 {
     //  TODO:

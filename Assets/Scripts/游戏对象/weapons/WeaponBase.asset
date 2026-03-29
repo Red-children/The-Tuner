@@ -13,10 +13,9 @@ MonoBehaviour:
   m_Name: WeaponBase
   m_EditorClassIdentifier: 
   weaponList:
-  - id: 0
-    weaponType: 0
+  - weaponType: 0
     weaponName: 1
-    damage: 100
+    damage: 20
     fireRate: 0.1
     maxAmmo: 15
     attackType: 0
@@ -24,8 +23,7 @@ MonoBehaviour:
     bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
     reloadTime: 0
     shakeIntensity: 0.01
-  - id: 0
-    weaponType: 1
+  - weaponType: 1
     weaponName: 2
     damage: 10
     fireRate: 2
@@ -35,14 +33,13 @@ MonoBehaviour:
     bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
     reloadTime: 2.99
     shakeIntensity: 0.1
-  - id: 0
-    weaponType: 2
+  - weaponType: 2
     weaponName: 3
     damage: 25
     fireRate: 1
     maxAmmo: 35
     attackType: 0
     multiBulletCount: 0
-    bulletPrefab: {fileID: 5622687992341628680, guid: 23f9546b54110754cb84e6db33da844d, type: 3}
+    bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
     reloadTime: 1.56
     shakeIntensity: 0.01

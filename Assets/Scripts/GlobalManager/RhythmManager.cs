@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.TerrainTools;
 using UnityEngine;
 using UnityEngineInternal;
 
@@ -222,11 +223,6 @@ public class RhythmManager : MonoBehaviour
         }
         return result;
     }
-    public float GetCurrentMultiplier()
-    {
-        return GetRank(AudioSettings.dspTime).multiplier;
-    }
-
 
     public double GetNextBeatTime() => nextBeatTime;
 }

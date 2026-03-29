@@ -9,7 +9,6 @@ TagManager:
   - Enemy
   - Bullet
   - Wall
-  - Doorway
   layers:
   - Default
   - TransparentFX
@@ -22,8 +21,8 @@ TagManager:
   - Wall
   - 
   - DamageNumber
-  - PlayerBullet
-  - EnemyBullet
+  - 
+  - 
   - 
   - 
   - 

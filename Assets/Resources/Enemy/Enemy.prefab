@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4125022150300041419}
   - component: {fileID: 4125022150300041418}
   - component: {fileID: 4125022150300041270}
-  - component: {fileID: 9171717363495848224}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Enemy
@@ -28,7 +27,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4125022150300041421}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -139,51 +138,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parameter:
-    enemyType: 0
+    DeadEff: {fileID: 0}
+    chaseArea: {fileID: 0}
+    patrolCenter: {fileID: 0}
+    patrolRadius: 5
     health: 100
+    moveSpeed: 2
+    chaseSpeed: 4
+    idleTime: 0
+    animator: {fileID: 0}
+    target: {fileID: 0}
+    getHit: 0
     targetLayer:
       serializedVersion: 2
       m_Bits: 128
-    ownerRoom: {fileID: 0}
-    moveSpeed: 2
-    chaseSpeed: 4
-    idleTime: 1
-    patrolCenter: {fileID: 0}
-    patrolPoints: []
-    patrolRadius: 5
     attackPoint: {fileID: 4125022150844686643}
     attackRange: 0.85
     attackDamage: 10
-    attackOffset: {x: 1, y: 0}
-    rangedWeapon: {fileID: 0}
-    damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
-    DeadEff: {fileID: 0}
-    spriteRenderer: {fileID: 0}
-    animator: {fileID: 0}
-    chaseArea: {fileID: 0}
-    target: {fileID: 0}
-    getHit: 0
---- !u!95 &9171717363495848224
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4125022150300041421}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 43bdacb3a48152f428784ad61e598dc1, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4125022150844686642
 GameObject:
   m_ObjectHideFlags: 0

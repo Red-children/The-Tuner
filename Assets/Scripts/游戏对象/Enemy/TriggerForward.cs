@@ -5,29 +5,26 @@ using UnityEngine;
 public class TriggerForward : MonoBehaviour
 {
    
-    public EnemyController controller; // ÔÚ Inspector ÖĞÍÏÈë×Ó¶ÔÏóµÄ FSM
-    private void OnTriggerEnter2D(Collider2D other)
-    {
+        public FSM fsm; // åœ¨ Inspector ä¸­æ‹–å…¥å­å¯¹è±¡çš„ FSM
+
+
+       
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
         if (other.CompareTag("Player"))
         {
-           
-            controller?.OnPlayerEnter(other.transform);
-
+            Debug.Log($"[TriggerForward] ç©å®¶è¿›å…¥ï¼Œå½“å‰å¸§: {Time.frameCount}, fsmæ˜¯å¦ä¸ºç©º: {fsm == null}");
+            fsm?.OnPlayerEnter(other.transform);
         }
     }
+
         private void OnTriggerExit2D(Collider2D other)
         {
             if (other.CompareTag("Player"))
             {
-                controller?.OnPlayerExit(other.transform);
+                fsm?.OnPlayerExit(other.transform);
             }
         }
-    private void Update()
-    {
-        if (controller == null) 
-        {
-            Destroy(gameObject);
-        }
-    }
-
+   
 }
