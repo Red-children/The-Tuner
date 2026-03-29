@@ -45,6 +45,7 @@ public class RhythmManager : MonoBehaviour
 
     public int bpm = 120;
     public double previewLead = 0.38; // 可在Inspector调整
+    public float inputDelayCompensation = 0.05f; // 输入延迟补偿时间（秒）
 
     private double beatInterval;
     private double nextBeatTime;
@@ -57,10 +58,17 @@ public class RhythmManager : MonoBehaviour
     public struct RankConfig
     {
         public RhythmRank rank;
-        public float window;
+        public float window; // 判定窗口时间（秒）
         public float multiplier;
     }
-    public RankConfig[] rankConfigs;
+    [Header("判定窗口配置")]
+    [Tooltip("默认判定窗口：Perfect=±50ms, Great=±100ms, Good=±150ms")]
+    public RankConfig[] rankConfigs = new RankConfig[]
+    {
+        new RankConfig { rank = RhythmRank.Perfect, window = 0.05f, multiplier = 1.5f },
+        new RankConfig { rank = RhythmRank.Great, window = 0.1f, multiplier = 1.2f },
+        new RankConfig { rank = RhythmRank.Good, window = 0.15f, multiplier = 1.0f }
+    };
 
     private void Awake()
     {
@@ -110,7 +118,6 @@ public class RhythmManager : MonoBehaviour
         {
             lastRank = currentRank;
             EventBus.Instance.Trigger(new RhythmData(inAnyWindow, currentRank, currentMultiplier));
-            Debug.Log($"[RhythmManager] Rank: {currentRank}, Multiplier: {currentMultiplier}");
         }
 
         // 如果时间已过拍点，推进到下一拍（协程可能已经做了，但这里作为备份）
@@ -131,7 +138,6 @@ public class RhythmManager : MonoBehaviour
         isRunning = true;
         lastRank = RhythmRank.Miss;
         ScheduleNextPreview(); // 启动预告调度
-        Debug.Log($"[RhythmManager] 已启动，下一拍时间 {nextBeatTime:F8}");
     }
     public void StopRhythm()
     {
@@ -206,7 +212,9 @@ public class RhythmManager : MonoBehaviour
 
     public RankResult GetRank(double dspTime)
     {
-        double timeToNext = nextBeatTime - dspTime;
+        // 应用输入延迟补偿
+        double compensatedTime = dspTime + inputDelayCompensation;
+        double timeToNext = nextBeatTime - compensatedTime;
         double absTimeToNext = Mathf.Abs((float)timeToNext);
 
         RankResult result = new RankResult { rank = RhythmRank.Miss, multiplier = 0.2f, isInWindow = false };
@@ -227,6 +235,11 @@ public class RhythmManager : MonoBehaviour
         return GetRank(AudioSettings.dspTime).multiplier;
     }
 
+    // 获取带输入延迟补偿的下一个节拍时间
+    public double GetNextBeatTimeWithCompensation()
+    {
+        return nextBeatTime - inputDelayCompensation;
+    }
 
     public double GetNextBeatTime() => nextBeatTime;
 }
