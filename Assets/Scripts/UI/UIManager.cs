@@ -82,6 +82,7 @@ public class UIManager
         GameObject panelObject = GameObject.Instantiate(panelPrefab, _uiRoot, false);
         panel = panelObject.GetComponent<UIBasePanel>();
         panelDict.Add(name, panel);
+        panel.OpenPanel(UIConst.MainMenu);
         return panel;
     }
 
