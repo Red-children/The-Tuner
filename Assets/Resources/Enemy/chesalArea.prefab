@@ -193,10 +193,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d059f8f29b352bb4b98e26deea668732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 1767f6fa625e7684f882590c021bcebc, type: 2}
+  stats: {fileID: 11400000, guid: 1767f6fa625e7684f882590c021bcebc, type: 2}
   ownerRoom: {fileID: 0}
   spriteRenderer: {fileID: 0}
-  animator: {fileID: 0}
+  data: {fileID: 11400000, guid: 1767f6fa625e7684f882590c021bcebc, type: 2}
   weapon: {fileID: 0}
   chaseArea: {fileID: 9171717364712834072}
   patrolCenter: {fileID: 0}

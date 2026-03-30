@@ -37,7 +37,8 @@ public class Bullet : MonoBehaviour
     {
         float moveDistance = Time.deltaTime * moveSpeed;
         int steps = Mathf.CeilToInt(moveDistance / STEP_DISTANCE);
-        float step = moveDistance / steps; // 实际每步移动距离
+        float step = moveDistance / steps;
+        // 实际每步移动距离
 
         for (int i = 0; i < steps; i++)
         {
@@ -72,7 +73,11 @@ public class Bullet : MonoBehaviour
         // 玩家子弹击中敌人
         if (gameObject.layer == LayerMask.NameToLayer("PlayerBullet") && hit.collider.CompareTag("Enemy"))
         {
-            hit.collider.GetComponent<EnemyController>()?.Wound(damage);
+            if (hit.collider.GetComponent<EnemyBase>() != null)
+            {
+                hit.collider.GetComponent<EnemyBase> ()?.Wound(damage);
+            }
+            
         }
         // 敌人子弹击中玩家
         else if (gameObject.layer == LayerMask.NameToLayer("EnemyBullet") && hit.collider.CompareTag("Player"))

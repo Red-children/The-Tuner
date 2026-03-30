@@ -2,6 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public  struct EnemyDiedStruct 
+{
+
+}
+
 
 public struct AllWavesCompletedEvent
 {
@@ -98,12 +103,15 @@ public class WaveManager : MonoBehaviour
             Vector2 spawnPos = currentRoom.GetRandomValidPoint();
             GameObject enemyPrefab = wave.enemyPrefabs[Random.Range(0, wave.enemyPrefabs.Length)];
             GameObject enemyObj = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
-            EnemyController enemyController = enemyObj.GetComponent<TriggerForward>().controller;
-            if (enemyController != null)
+
+            // 尝试获取EnemyBase组件
+            EnemyBase enemyBase = enemyObj.GetComponent<EnemyBase>();
+            if (enemyBase != null)
             {
-                enemyController.ownerRoom = currentRoom;   // 设置所属房间
-                currentRoom.RegisterEnemy(enemyController);
+                enemyBase.ownerRoom = currentRoom;   // 设置所属房间
+                currentRoom.RegisterEnemy(enemyBase);
             }
+
             yield return new WaitForSeconds(wave.spawnInterval);
         }
     }

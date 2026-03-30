@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 016a7c2fac1d6724d94bd0e6ec8a99c2, type: 3}
-  m_Name: MeleeEnemyData
+  m_Script: {fileID: 11500000, guid: c9c56a4a9aaae5147963e146c72aac4e, type: 3}
+  m_Name: RunToneFlyingInsectData
   m_EditorClassIdentifier: 
-  health: -736
+  health: 20
   moveSpeed: 5
   chaseSpeed: 7
   idleTime: 2
@@ -22,8 +22,13 @@ MonoBehaviour:
   damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
   deadEff: {fileID: 0}
   patrolRadius: 5
-  attackRange: 2
+  detectionRange: 10
+  rhythmMoveMultiplier: 1.2
+  minMoveSpeed: 1.5
+  maxMoveSpeed: 3
   attackDamage: 10
-  attackOffset: {x: 1, y: 0}
-  attackPoint: {fileID: 0}
-  Atk: 10
+  idleMovementSpeed: 0.1
+  idleCircleRadius: 1
+  baseColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
+  glitchColor: {r: 1, g: 0.2, b: 0.2, a: 1}
+  glitchIntensity: 0.3
