@@ -3275,13 +3275,13 @@ MonoBehaviour:
   inputDelayCompensation: 0.18
   rankConfigs:
   - rank: 0
-    window: 0.055
+    window: 0.08
     multiplier: 2
   - rank: 1
-    window: 0.1
+    window: 0.15
     multiplier: 1.5
   - rank: 2
-    window: 0.15
+    window: 0.2
     multiplier: 1
 --- !u!4 &306610706
 Transform:
