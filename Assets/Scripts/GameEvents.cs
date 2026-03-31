@@ -12,14 +12,29 @@ public struct TimerOnlineEvent
 {
     //  TODO:
     public int count;
-    public EnemyHitEvent(int count)
+    public RhythmRank rank;
+    public EnemyHitEvent(int count, RhythmRank rank)
     {
         this.count = count;
+        this.rank = rank;
     }
 }
 public struct PlayerAtkEvent
 {
     //  TODO:
+}
+
+public struct RhythmInputDebugEvent
+{
+    public double inputDspTime;
+    public double judgedDspTime;
+    public double referenceBeatTime;
+    public double offsetSeconds;
+    public double offsetMilliseconds;
+    public RhythmRank rank;
+    public float multiplier;
+    public bool isInWindow;
+    public string source;
 }
 
 public struct AttackMultiplierChangedEvent

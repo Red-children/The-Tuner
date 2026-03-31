@@ -13,9 +13,6 @@ public class UIComboInfo : MonoBehaviour
     public float coolDownTime = 1f;     //  After coolDownTime seconds, _comboCount <= 0;
     private int _comboCount = 0;        //  Count except Miss
     private bool _isTriggered = false;  //  To known if Player Atk
-
-
-    public RhythmRank _currentRank;    //  Rank of now
     void Init()
     {
         if (bar == null)
@@ -40,7 +37,6 @@ public class UIComboInfo : MonoBehaviour
         // bar.StopCoolDown();
         EventBus.Instance.Subscribe<EnemyHitEvent>(OnEnemyHit);
         EventBus.Instance.Subscribe<PlayerAtkEvent>(OnPlayerAtk);
-        EventBus.Instance.Subscribe<RhythmData>(OnRhythmData);
     }
     //  Miss(只给延迟重置用)
     void ResetCounter()
@@ -67,7 +63,7 @@ public class UIComboInfo : MonoBehaviour
         if (_isTriggered)
         {   
             ResetTrigger(); //  重置扳机标记
-            if (_currentRank == RhythmRank.Miss)
+            if (evt.rank == RhythmRank.Miss)
                 ResetCounter();
             else AddCounter(evt.count);
 
@@ -80,7 +76,7 @@ public class UIComboInfo : MonoBehaviour
                 
 
             this.ResetTimer(nameof(ResetCounter), 1f);
-            text.TextAnimation(_currentRank);
+            text.TextAnimation(evt.rank);
         }
     }
     void OnPlayerAtk(PlayerAtkEvent evt)
@@ -88,10 +84,6 @@ public class UIComboInfo : MonoBehaviour
         _isTriggered = true;
         this.StartTimer(nameof(ResetTrigger), 1f);
        
-    }
-    void OnRhythmData(RhythmData evt)
-    {
-        _currentRank = evt.rank;
     }
 #endregion
 
