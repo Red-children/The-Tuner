@@ -2,16 +2,16 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    private PlayerWeapon playerWeapon;
-    private PlayerStats stats;
-
-    [Header("��ս��������")]
+    [Header("Melee Attack")]
     public float meleeRange = 1.5f;
     public int meleeDamage = 20;
     public float meleeCoolDown = 0.5f;
+    public float shootCoolDown = 0.1f;
+
+    private PlayerWeapon playerWeapon;
+    private PlayerStats stats;
     private double lastMeleeTime = -999f;
     private double lastShootTime = -999f;
-    public float shootCoolDown = 0.1f; // 射击冷却时间
 
     private void Awake()
     {
@@ -21,89 +21,116 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
-        // 射击检测 - 使用GetMouseButtonDown捕捉点击瞬间
         if (Input.GetMouseButtonDown(0))
         {
-            double currentTime = AudioSettings.dspTime;
-            if (currentTime > lastShootTime + shootCoolDown)
-            {
-                lastShootTime = currentTime;
-                var weapon = playerWeapon.GetCurrentWeapon();
-                if (weapon != null)
-                {
-                    // 确保RhythmManager存在
-                    float rhythmMultiplier = 1f;
-                    if (RhythmManager.Instance != null)
-                    {
-                        rhythmMultiplier = RhythmManager.Instance.GetRank().multiplier;
-                    }
-                    weapon.Shoot(stats.TotalAttack, rhythmMultiplier);
-                    Debug.Log("[PlayerAttack] 开枪成功，武器：" + weapon.name + "，倍率：" + rhythmMultiplier);
-                }
-                else
-                {
-                    Debug.LogWarning("[PlayerAttack] 没有找到武器");
-                }
-                EventBus.Instance.Trigger(new PlayerAtkEvent());
-                EventBus.Instance.Trigger(new CameraShakeEvent());
-            }
-            else
-            {
-                Debug.Log("[PlayerAttack] 射击冷却中");
-            }
+            TryShoot();
         }
 
-        // 近战攻击
         if (Input.GetKeyDown(KeyCode.V))
         {
-            double currentTime = AudioSettings.dspTime;
-            if (currentTime > lastMeleeTime + meleeCoolDown)
-            {
-                EventBus.Instance.Trigger(new PlayerAtkEvent());
-                EventBus.Instance.Trigger(new CameraShakeEvent());
-                MeleeAttack();
-            }
+            TryMelee();
         }
     }
 
-    private void MeleeAttack()
+    private void TryShoot()
     {
-        lastMeleeTime = AudioSettings.dspTime;
+        double currentTime = AudioSettings.dspTime;
+        if (currentTime <= lastShootTime + shootCoolDown)
+        {
+            Debug.Log("[PlayerAttack] Shoot is cooling down");
+            return;
+        }
 
-        // 获取节奏倍率
-        float multiplier = GetRhythmMultiplier();
+        lastShootTime = currentTime;
+        var rhythmResult = SampleRhythm(currentTime, "Shoot");
+        var weapon = playerWeapon != null ? playerWeapon.GetCurrentWeapon() : null;
 
-        float finalDamage = (GetPlayerAttack() + meleeDamage) * multiplier;
+        if (weapon != null)
+        {
+            weapon.Shoot(GetPlayerAttack(), rhythmResult.multiplier);
+            Debug.Log($"[PlayerAttack] Shoot success | Weapon={weapon.name} | Multiplier={rhythmResult.multiplier}");
+        }
+        else
+        {
+            Debug.LogWarning("[PlayerAttack] No weapon found");
+        }
 
-        // 范围攻击
+        EventBus.Instance.Trigger(new PlayerAtkEvent());
+        EventBus.Instance.Trigger(new CameraShakeEvent());
+    }
+
+    private void TryMelee()
+    {
+        double currentTime = AudioSettings.dspTime;
+        if (currentTime <= lastMeleeTime + meleeCoolDown)
+        {
+            return;
+        }
+
+        lastMeleeTime = currentTime;
+        var rhythmResult = SampleRhythm(currentTime, "Melee");
+
+        EventBus.Instance.Trigger(new PlayerAtkEvent());
+        EventBus.Instance.Trigger(new CameraShakeEvent());
+        MeleeAttack(rhythmResult.multiplier);
+    }
+
+    private void MeleeAttack(float rhythmMultiplier)
+    {
+        float finalDamage = (GetPlayerAttack() + meleeDamage) * rhythmMultiplier;
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, meleeRange, LayerMask.GetMask("Enemy"));
+
         foreach (var hit in hits)
         {
             EnemyController enemy = hit.GetComponent<EnemyController>();
             if (enemy != null)
+            {
                 enemy.Wound(finalDamage);
+            }
         }
 
-        // 触发近战事件（用于特效等）
-        EventBus.Instance.Trigger(new PlayerMeleeEvent { damage = finalDamage, hitPoint = transform.position });
+        EventBus.Instance.Trigger(new PlayerMeleeEvent
+        {
+            damage = finalDamage,
+            hitPoint = transform.position
+        });
     }
 
-    // 实时获取玩家攻击力的方法（从 PlayerStats 读取）
     private float GetPlayerAttack()
     {
-        // 从 PlayerStats 获取
-        PlayerStats stats = GetComponent<PlayerStats>();
-        return stats != null ? stats.TotalAttack : 0;
+        return stats != null ? stats.TotalAttack : 0f;
     }
 
-    private float GetRhythmMultiplier()
+    private RhythmManager.RankResult SampleRhythm(double inputDspTime, string source)
     {
-        // 从 RhythmManager 实时获取
-        if (RhythmManager.Instance != null)
+        if (RhythmManager.Instance == null)
         {
-            var rank = RhythmManager.Instance.GetRank();
-            return rank.multiplier;
+            return new RhythmManager.RankResult
+            {
+                rank = RhythmRank.Miss,
+                multiplier = 1f,
+                isInWindow = false,
+                judgedDspTime = inputDspTime,
+                referenceBeatTime = inputDspTime,
+                offsetSeconds = 0,
+                offsetMilliseconds = 0
+            };
         }
-        return 1f;
+
+        var gameplayResult = RhythmManager.Instance.GetRankAtTime(inputDspTime);
+        var debugResult = RhythmManager.Instance.GetDebugRankAtTime(inputDspTime);
+        EventBus.Instance.Trigger(new RhythmInputDebugEvent
+        {
+            inputDspTime = inputDspTime,
+            judgedDspTime = debugResult.judgedDspTime,
+            referenceBeatTime = debugResult.referenceBeatTime,
+            offsetSeconds = debugResult.offsetSeconds,
+            offsetMilliseconds = debugResult.offsetMilliseconds,
+            rank = debugResult.rank,
+            multiplier = gameplayResult.multiplier,
+            isInWindow = debugResult.isInWindow,
+            source = source
+        });
+        return gameplayResult;
     }
 }
