@@ -4,6 +4,7 @@ public class PlayerAttack : MonoBehaviour
 {
     private PlayerWeapon playerWeapon;
     private PlayerStats stats;
+    private WeaponSoundManager weaponSoundManager;
 
     [Header("��ս��������")]
     public float meleeRange = 1.5f;
@@ -17,6 +18,11 @@ public class PlayerAttack : MonoBehaviour
     {
         stats = GetComponent<PlayerStats>();
         playerWeapon = GetComponent<PlayerWeapon>();
+        weaponSoundManager = GetComponent<WeaponSoundManager>();
+        
+        // 如果没有找到，尝试在子物体中查找
+        if (weaponSoundManager == null)
+            weaponSoundManager = GetComponentInChildren<WeaponSoundManager>();
     }
 
     private void Update()
@@ -28,6 +34,13 @@ public class PlayerAttack : MonoBehaviour
             if (currentTime > lastShootTime + shootCoolDown)
             {
                 lastShootTime = currentTime;
+                
+                // 播放snapfingers音效（轮流播放1/2/3）
+                if (weaponSoundManager != null)
+                {
+                    weaponSoundManager.PlaySnapSound();
+                }
+                
                 var weapon = playerWeapon.GetCurrentWeapon();
                 if (weapon != null)
                 {
