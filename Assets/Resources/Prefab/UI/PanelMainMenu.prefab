@@ -859,6 +859,7 @@ GameObject:
   - component: {fileID: 6487058332146483130}
   - component: {fileID: 6675696618067729277}
   - component: {fileID: 3588523768676908426}
+  - component: {fileID: 6382642128461181360}
   m_Layer: 5
   m_Name: PanelMainMenu
   m_TagString: Untagged
@@ -983,12 +984,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playableDirector: {fileID: 6487058332146483130}
-  enterTime: 0
-  exitTime: 1
-  exitAnimDuration: 0.3
+  _enterTime: 0
+  _exitTime: 1
+  _exitAnimDuration: 1
   _btnNewGame: {fileID: 8717030030331234733}
   _btnSettings: {fileID: 5607577929528809625}
   _btnExit: {fileID: 8227572616243484447}
+--- !u!225 &6382642128461181360
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4720928835543215409}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &5451384197556938471
 GameObject:
   m_ObjectHideFlags: 0
@@ -1248,7 +1261,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5595000473014842892}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -1340,7 +1353,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8609829407671469689}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 // 挂载在UI Button上即可
 public class BGMTest : MonoBehaviour
 {
-    private Button _btn;
+    [SerializeField] private Button _btn;
     public double delay = 100;
     void Awake()
     {
@@ -18,7 +18,8 @@ public class BGMTest : MonoBehaviour
     void SendPlayBGMEvent()
     {
         PlayBGMEvent evt = new PlayBGMEvent { time = AudioSettings.dspTime };
-        EventBus.Instance.Trigger(evt); // 改用 EventBus
+        EventBus.Instance.Trigger(evt);
+        Debug.Log("BGMTest Button Triggerred");
     }
 
 }

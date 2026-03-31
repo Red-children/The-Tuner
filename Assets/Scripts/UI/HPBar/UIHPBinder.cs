@@ -20,6 +20,7 @@ public class UIHPBinder : MonoBehaviour
     // 对外接口
     public void SetHPText(string content)
     {
+        if(_hpText == null) return;
         _hpText.text = content;
         _hpText.SetAllDirty();
     }
