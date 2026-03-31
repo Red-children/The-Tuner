@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// 感知模块 - 处理敌人的感知能力
 /// </summary>
-public class PerceptionModule
+public class RunToneFlyingPerceptionModule
 {
     private RunToneFlyingInsect owner;
     private RunToneFlyingInsectDataManager dataManager;
@@ -27,7 +27,7 @@ public class PerceptionModule
     /// 初始化感知模块
     /// </summary>
     /// <param name="owner">拥有者</param>
-    public PerceptionModule(RunToneFlyingInsect owner)
+    public RunToneFlyingPerceptionModule(RunToneFlyingInsect owner)
     {
         this.owner = owner;
         this.dataManager = owner.GetComponent<RunToneFlyingInsectDataManager>();

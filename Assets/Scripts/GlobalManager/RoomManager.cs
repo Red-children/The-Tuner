@@ -230,10 +230,6 @@ public class RoomManager : MonoBehaviour
             GameObject roomObj = Instantiate(node.prefab, worldPos, node.prefab.transform.rotation, dungeonRoot);
             node.instance = roomObj;
 
-            // 初始化房间（配置波次等）
-            Room roomComp = roomObj.GetComponent<Room>();
-            if (roomComp != null) roomComp.Init(node.type);
-
             yield return null; // 分帧实例化，避免卡顿
         }
 

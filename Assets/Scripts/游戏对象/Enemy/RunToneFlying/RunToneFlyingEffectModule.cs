@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// 效果模块 - 处理敌人的视觉和音效效果
 /// </summary>
-public class EffectModule
+public class RunToneFlyingEffectModule
 {
     private RunToneFlyingInsect owner;
     private RunToneFlyingInsectDataManager dataManager;
@@ -12,7 +12,7 @@ public class EffectModule
     /// 初始化效果模块
     /// </summary>
     /// <param name="owner">拥有者</param>
-    public EffectModule(RunToneFlyingInsect owner)
+    public RunToneFlyingEffectModule(RunToneFlyingInsect owner)
     {
         this.owner = owner;
         this.dataManager = owner.GetComponent<RunToneFlyingInsectDataManager>();

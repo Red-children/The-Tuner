@@ -3,7 +3,7 @@ using UnityEngine;
 /// <summary>
 /// 血量控制模块 - 处理敌人的血量和死亡逻辑
 /// </summary>
-public class HealthModule
+public class RunToneFlyingHealthModule
 {
     private RunToneFlyingInsect owner;
     private RunToneFlyingInsectDataManager dataManager;
@@ -27,7 +27,7 @@ public class HealthModule
     /// 初始化血量控制模块
     /// </summary>
     /// <param name="owner">拥有者</param>
-    public HealthModule(RunToneFlyingInsect owner)
+    public RunToneFlyingHealthModule(RunToneFlyingInsect owner)
     {
         this.owner = owner;
         this.dataManager = owner.GetComponent<RunToneFlyingInsectDataManager>();

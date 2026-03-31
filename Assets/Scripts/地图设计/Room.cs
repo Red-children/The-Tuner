@@ -3,23 +3,19 @@ using UnityEngine;
 
 public class Room : MonoBehaviour
 {
-   
-    
-
-
-    [Header("��������")]
-    public Collider2D roomTrigger;          // ��ڴ����������ڼ����ҽ��룩
+    [Header("房间组件")]
+    public Collider2D roomTrigger;          // 房间触发器（用于检测玩家进入）
     public WaveManager waveManager;
     public Door[] doors;
     public LayerMask obstacleMask;
 
-    private Bounds cachedBounds;             // ���淿�䷶Χ�����ڵ������ɣ�
-    private bool isActive = false;           // �����Ƿ��ѱ�����
+    private Bounds cachedBounds;             // 缓存房间范围（用于敌人生成）
+    private bool isActive = false;           // 房间是否已被激活
    
     public List<EnemyBase> enemiesInRoom = new List<EnemyBase>();
 
-    private int totalEnemies = 0;    // �����ɱ������
-    private int killedCount = 0;     // �ѻ�ɱ��
+    private int totalEnemies = 0;    // 总可杀敌数
+    private int killedCount = 0;     // 已击杀数
     private bool isCleared = false;
 
     public void SetTotalEnemies(int total)
@@ -39,27 +35,19 @@ public class Room : MonoBehaviour
         }
     }
 
-
-    public void Init(RoomType roomType)
-    {
-        
-    }
-
-
-
     private void Awake()
     {
         if (roomTrigger == null) roomTrigger = GetComponent<Collider2D>();
         if (waveManager == null) waveManager = GetComponent<WaveManager>();
 
-        // ���淿�䷶Χ�����������ú��Կ�ʹ�ã�
+        // 缓存房间范围，生成敌人时可以使用
         cachedBounds = roomTrigger.bounds;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!other.CompareTag("Player")) return;
-        if (isActive) return;  // �Ѿ�������������ظ�����
+        if (isActive) return;  // 已经激活过，避免重复激活
 
         ActivateRoom(other.transform);
     }
@@ -72,10 +60,10 @@ public class Room : MonoBehaviour
 
         isActive = true;
 
-        // ����
+        // 关门
         foreach (var door in doors) door?.Close();
 
-        // �����������е��ˣ������Ԥ�ȷ��õĵ��ˣ�
+        // 激活房间内所有的敌人（包括预置的敌人）
         foreach (var enemy in enemiesInRoom)
         {
           
@@ -85,29 +73,25 @@ public class Room : MonoBehaviour
             }
         }
 
-        // ��������
+        // 生成敌人
         waveManager?.StartWave(this);
 
-        // ��ѡ�����ô������������ٴν��루Ҳ�ɱ�������Ϊ�� isActive ������
+        // 可选：禁用触发器，防止玩家再次进入（也可以保留为 isActive 标志）
         // roomTrigger.enabled = false;
     }
 
-    #region �õ������ڵ������
-    //�õ���������������ڵ�������
+    #region 生成敌人在有效点
+    //生成敌人在房间内的有效点
     public Vector2 GetRandomValidPoint(float safeRadius = 0.5f)
     {
-        // ʹ�û���ķ��䷶Χ
+        // 使用缓存的房间范围
         for (int i = 0; i < 100; i++)
         {
             float x = Random.Range(cachedBounds.min.x, cachedBounds.max.x);
             float y = Random.Range(cachedBounds.min.y, cachedBounds.max.y);
             Vector2 point = new Vector2(x, y);
 
-            // �����Ƿ��ڴ�����ԭʼ��Χ�ڣ�ʹ�� cachedBounds ������ȷ�������ã�
-            // ���������״�����򣬽��鱣�� roomTrigger �� OverlapPoint �� roomTrigger ���ܱ�����
-            // �����û���ı߽������жϣ����ھ��η����㹻��
-            // �����Ҫ��ȷ�жϣ������� Awake ʱ��¡һ�����ص���ײ��ר�����ڼ�⡣
-
+            // 检查是否在障碍物内
             Collider2D[] hits = Physics2D.OverlapCircleAll(point, safeRadius, obstacleMask);
             if (hits.Length == 0)
                 return point;
@@ -116,34 +100,15 @@ public class Room : MonoBehaviour
     }
     #endregion
 
-    // ����ע��/ע���������ֲ���...
+    // 敌人注册/注销相关方法...
     public void RegisterEnemy(EnemyBase enemy) => enemiesInRoom.Add(enemy);
 
-    #region ��շ������
+    #region 房间清理逻辑
     private void OnRoomCleared()
     {
         foreach (var door in doors) door?.Open();
-        isActive = false;  // �������ã����������ٴν��루�����Ҫ��
-        Debug.Log("��������գ����Ѵ�");
+        isActive = false;  // 重置激活状态，允许玩家再次进入（如果需要）
+        Debug.Log("房间清理完成，打开门");
     }
     #endregion
-
-    // ���ݷ����ȡ��Ӧ����
-    public Door GetDoor(Door.Direction dir)
-    {
-        foreach (var door in doors)
-        {
-            if (door.direction == dir)
-                return door;
-        }
-        return null;
-    }
-
-    // ��ȡ���п��õ��ţ����ڵ�ͼ���ɣ��ɸ�����Ҫɸѡ��
-    public List<Door> GetAvailableDoors()
-    {
-        return new List<Door>(doors);
-    }
-
-
 }

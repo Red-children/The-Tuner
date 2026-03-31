@@ -12,11 +12,11 @@ public class RunToneFlyingInsect : EnemyBase
     private RunToneFlyingInsectDataManager dataManager;
     
     // 模块
-    private PerceptionModule perceptionModule;
-    private MovementModule movementModule;
-    private HealthModule healthModule;
-    private AttackModule attackModule;
-    private EffectModule effectModule;
+    private RunToneFlyingPerceptionModule perceptionModule;
+    private RunToneFlyingMovementModule movementModule;
+    private RunToneFlyingHealthModule healthModule;
+    private RunToneFlyingAttackModule attackModule;
+    private RunToneFlyingEffectModule effectModule;
     
     protected override void UpdateBehavior()
     {
@@ -26,7 +26,7 @@ public class RunToneFlyingInsect : EnemyBase
         attackModule.Update();
     }
     
-    private void Awake()
+    protected override void Awake()
     {
         // 调用基类的Awake方法
         base.Awake();
@@ -39,11 +39,14 @@ public class RunToneFlyingInsect : EnemyBase
         }
         
         // 初始化模块
-        perceptionModule = new PerceptionModule(this);
-        movementModule = new MovementModule(this, perceptionModule);
-        healthModule = new HealthModule(this);
-        attackModule = new AttackModule(this, perceptionModule);
-        effectModule = new EffectModule(this);
+        perceptionModule = new RunToneFlyingPerceptionModule(this);
+        movementModule = new RunToneFlyingMovementModule(this, perceptionModule);
+        healthModule = new RunToneFlyingHealthModule(this);
+        attackModule = new RunToneFlyingAttackModule(this, perceptionModule);
+        effectModule = new RunToneFlyingEffectModule(this);
+        
+        // 设置模块间的引用
+        movementModule.SetAttackModule(attackModule);
     }
     
     // 实现注册到房间方法
@@ -58,8 +61,8 @@ public class RunToneFlyingInsect : EnemyBase
     // 实现死亡方法
     public override void OnKilled()
     {
-        isDead = true;
-        ownerRoom?.UnregisterEnemy(this);
+        isDead = true;      //修改死亡标签
+        ownerRoom?.UnregisterEnemy(this);//从房间里注销敌人 确保清完所有怪物房间门可以正常打开
         
         // 播放死亡特效
         effectModule.PlayDeathEffect();
@@ -70,9 +73,11 @@ public class RunToneFlyingInsect : EnemyBase
         StartCoroutine(DeathCoroutine());
         // 飞虫特有的死亡逻辑
         Debug.Log("RunToneFlyingInsect killed");
+
     }
     
-    // 实现死亡协程
+
+    // 实现死亡协程（事件系统的问题死亡后不能直接摧毁敌人，需要等待UI更新）
     protected override IEnumerator DeathCoroutine()
     {
         // 飞虫特有的死亡动画或效果
@@ -83,21 +88,23 @@ public class RunToneFlyingInsect : EnemyBase
         Destroy(gameObject);
     }
     
+
     // 实现受伤方法
     public override void Wound(float damage)
     {
         if (isDead) return;
         
         isWounded = true;
-        
+
+        // 触发敌人被命中的事件
+        EventBus.Instance.Trigger(new EnemyHitEvent(1, RhythmManager.Instance.GetRank().rank));
+
+
         // 使用血量控制模块处理伤害
         healthModule.TakeDamage(damage);
         
         // 播放受伤特效
         effectModule.PlayWoundEffect();
-        
-        // 触发敌人被命中的事件
-        EventBus.Instance.Trigger(new EnemyHitEvent (1,RhythmManager.Instance.GetRank().rank));
         
         // 飞虫特有的受伤逻辑
         Debug.Log("RunToneFlyingInsect wounded: " + damage);
