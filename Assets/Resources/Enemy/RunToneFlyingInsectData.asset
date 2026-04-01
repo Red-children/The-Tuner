@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9c56a4a9aaae5147963e146c72aac4e, type: 3}
   m_Name: RunToneFlyingInsectData
   m_EditorClassIdentifier: 
-  health: 20
+  health: 1e+9
   moveSpeed: 0.5
   chaseSpeed: 7
   idleTime: 2

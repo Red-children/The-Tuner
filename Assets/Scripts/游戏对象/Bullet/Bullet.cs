@@ -12,15 +12,26 @@ public class Bullet : MonoBehaviour
     [SerializeField] private int maxPenetrationCount = 3;       // 最大穿透次数
     [SerializeField] private int currentPenetrationCount = 0;    // 当前穿透次数
     [SerializeField] private float penetrationDamageReduction = 0.2f; // 穿透伤害衰减
+    [SerializeField] private float penetrationVisualOffset = 0.1f;   // 穿透时的视觉层级偏移
 
     private int layerMask;              // 检测子弹可碰撞的层级
     private const float STEP_DISTANCE = 0.1f; // 每帧移动的最大步长
+    private Collider2D lastHitEnemy;    // 记录最后击中的敌人，避免重复碰撞
+    private SpriteRenderer spriteRenderer; // 子弹的精灵渲染器，用于层级控制
+    private int originalSortingOrder;   // 原始的排序层级
 
     private void Start()
     {
         // 初始化子弹特效，如果未赋值则从 Resources 加载
         if (destroyEffect == null)
             destroyEffect = Resources.Load<GameObject>("Eff");
+
+        // 获取精灵渲染器
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            originalSortingOrder = spriteRenderer.sortingOrder;
+        }
 
         // 根据子弹层级设置碰撞检测的层级掩码
         int bulletLayer = gameObject.layer;
@@ -67,13 +78,16 @@ public class Bullet : MonoBehaviour
     #region 移动和碰撞检测
     private bool MoveStep(float stepDistance)
     {
+        // 创建射线检测参数，忽略最后击中的敌人
         RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, stepDistance, layerMask);
-        if (hit.collider != null)
+        
+        // 如果检测到碰撞且不是最后击中的敌人，处理碰撞
+        if (hit.collider != null && hit.collider != lastHitEnemy)
         {
             return HandleHit(hit);
         }
 
-        // 没有碰撞，正常移动
+        // 没有碰撞或碰撞的是最后击中的敌人，正常移动
         transform.Translate(transform.right * stepDistance, Space.World);
         return false;
     }
@@ -99,6 +113,12 @@ public class Bullet : MonoBehaviour
                 {
                     currentPenetrationCount++;
                     
+                    // 记录最后击中的敌人，避免重复碰撞
+                    lastHitEnemy = hit.collider;
+                    
+                    // 调整视觉层级，让子弹显示在敌人前面
+                    AdjustVisualLayerForPenetration();
+                    
                     // 检查是否达到最大穿透次数
                     if (currentPenetrationCount >= maxPenetrationCount)
                     {
@@ -107,8 +127,7 @@ public class Bullet : MonoBehaviour
                     }
                     else
                     {
-                        // 继续移动，不销毁子弹
-                        transform.Translate(transform.right * 0.1f, Space.World); // 稍微移动避免重复碰撞
+                        // 继续正常移动，通过层级控制实现穿透效果
                         return false;
                     }
                 }
@@ -160,6 +179,39 @@ public class Bullet : MonoBehaviour
         // 伤害衰减公式：每次穿透减少一定百分比伤害
         float damageMultiplier = Mathf.Pow(1f - penetrationDamageReduction, currentPenetrationCount);
         return baseDamage * damageMultiplier;
+    }
+
+    /// <summary>
+    /// 调整视觉层级，实现穿透效果
+    /// </summary>
+    private void AdjustVisualLayerForPenetration()
+    {
+        if (spriteRenderer != null)
+        {
+            // 提高子弹的排序层级，让它显示在敌人前面
+            spriteRenderer.sortingOrder = originalSortingOrder + 10;
+            
+            // 可以添加一些视觉特效，比如半透明效果
+            Color originalColor = spriteRenderer.color;
+            spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.8f);
+            
+            Debug.Log("子弹调整视觉层级，实现穿透效果");
+        }
+    }
+    
+    /// <summary>
+    /// 恢复原始视觉层级
+    /// </summary>
+    private void RestoreVisualLayer()
+    {
+        if (spriteRenderer != null)
+        {
+            // 恢复原始排序层级
+            spriteRenderer.sortingOrder = originalSortingOrder;
+            
+            // 恢复原始颜色
+            spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
+        }
     }
 
     /// <summary>

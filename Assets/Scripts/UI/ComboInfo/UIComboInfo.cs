@@ -89,21 +89,18 @@ public class UIComboInfo : MonoBehaviour
     {
         text.SetDisplayText(comboCount.ToString());
         
-        // 根据连击数改变文本颜色（通过TextMeshProUGUI的color属性）
-        if (text.text != null)
+        // 根据连击数改变文本颜色
+        if (comboCount >= 15)
         {
-            if (comboCount >= 15)
-            {
-                text.text.color = Color.red; // 高连击红色
-            }
-            else if (comboCount >= 10)
-            {
-                text.text.color = Color.yellow; // 中等连击黄色
-            }
-            else
-            {
-                text.text.color = Color.white; // 普通连击白色
-            }
+            text.SetTextColor(Color.red); // 高连击红色
+        }
+        else if (comboCount >= 10)
+        {
+            text.SetTextColor(Color.yellow); // 中等连击黄色
+        }
+        else
+        {
+            text.SetTextColor(Color.white); // 普通连击白色
         }
     }
 

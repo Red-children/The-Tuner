@@ -67,4 +67,5 @@ public class UIComboInfoBar : MonoBehaviour
         _currentTime = duration;
     }
 #endregion
+
 }

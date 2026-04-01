@@ -38,6 +38,15 @@ public class UIComboInfoText : MonoBehaviour
         text.text = buf;
         Debug.Log($"UIComboInfoText Set Display Text {buf}");
     }
+    
+    public void SetTextColor(Color color)
+    {
+        if (text != null)
+        {
+            text.color = color;
+        }
+    }
+    
     public void TextAnimation(RhythmRank rank)
     {
         //  TODO:Miss || Good || Great || Perfect 时字体的动画
