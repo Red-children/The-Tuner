@@ -4,7 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class PlayerDetect : MonoBehaviour
 {
-    private NPCCommunication _npcCommunication;
+    [SerializeField] private NPCCommunication _npcCommunication;
 
     private void Awake()
     {
@@ -15,6 +15,7 @@ public class PlayerDetect : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         // 检测到玩家（请确保玩家Tag为Player）
+        Debug.Log("检测到玩家");
         if (other.CompareTag("Player"))
         {
             _npcCommunication?.OnPlayerEnter();

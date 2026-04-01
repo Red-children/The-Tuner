@@ -16,6 +16,12 @@ public class NPCCommunication : MonoBehaviour
     // 是否正在对话
     private bool _isInDialogue;
 
+    void InitText()
+    {
+        dialogueLines = new string[2];
+        dialogueLines[0] = "TestTestTestTestTestTestTest\nTestTestTestTestTest";
+        dialogueLines[1] = "Test\nTestTest\nTestTestTest\nTest\nTestTestTest\nTestTest";
+    }
     private void Awake()
     {
         // 初始化：提示默认隐藏
@@ -25,6 +31,8 @@ public class NPCCommunication : MonoBehaviour
         // 启用检测区域（由主控控制开关）
         if (detectArea != null)
             detectArea.SetActive(true);
+
+        InitText();
     }
 
     private void Update()
@@ -36,6 +44,7 @@ public class NPCCommunication : MonoBehaviour
         // 玩家在范围内 + 按下F键 → 启动对话
         if (_isPlayerInRange && Input.GetKeyDown(KeyCode.F))
         {
+            Debug.Log("Player Pressed F");
             StartDialogue();
         }
     }
@@ -69,7 +78,7 @@ public class NPCCommunication : MonoBehaviour
         EventBus.Instance.Trigger<DialogueStartEvent>(new DialogueStartEvent());
         //  TODO:
         // 调度UI显示对话
-        // UIDialogueDispatcher.Instance.ShowDialogue(dialogueLines);
+        UIDialogueDispatcher.Instance.ShowDialogue(dialogueLines);
     }
     /// 结束对话（由UI调度器调用）
     public void EndDialogue()
