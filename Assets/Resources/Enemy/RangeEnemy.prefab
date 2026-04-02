@@ -368,10 +368,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d059f8f29b352bb4b98e26deea668732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  data: {fileID: 11400000, guid: 566f1c200dc324b42832e53641317990, type: 2}
+  stats: {fileID: 11400000, guid: 566f1c200dc324b42832e53641317990, type: 2}
   ownerRoom: {fileID: 0}
   spriteRenderer: {fileID: 0}
-  animator: {fileID: 0}
+  data: {fileID: 11400000, guid: 566f1c200dc324b42832e53641317990, type: 2}
   weapon: {fileID: 725547111466931616}
   chaseArea: {fileID: 725547110283411352}
   patrolCenter: {fileID: 725547110778532823}

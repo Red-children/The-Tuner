@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 016a7c2fac1d6724d94bd0e6ec8a99c2, type: 3}
   m_Name: MeleeEnemyData
   m_EditorClassIdentifier: 
-  health: 10000
+  health: -736
   moveSpeed: 5
   chaseSpeed: 7
   idleTime: 2

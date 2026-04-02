@@ -82,7 +82,7 @@ public class PlayerAttack : MonoBehaviour
 
         foreach (var hit in hits)
         {
-            EnemyController enemy = hit.GetComponent<EnemyController>();
+            EnemyBase  enemy = hit.GetComponent<EnemyBase>();
             if (enemy != null)
             {
                 enemy.Wound(finalDamage);
