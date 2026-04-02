@@ -11,12 +11,12 @@ public class TestBattle : MonoBehaviour
     }
     void Update()
     {
-        if(Input.GetMouseButtonDown(1))
+        if(Input.GetKeyDown(KeyCode.O))
         {
             UIManager.Instance.ShowPanel(UIManager.UIConst.Battle);
             UIManager.Instance.ShowPanel(UIManager.UIConst.Crosshair);
         }
-        else if (Input.GetMouseButtonDown(2))
+        else if (Input.GetKeyDown(KeyCode.I))
         {
             UIManager.Instance.HidePanel(UIManager.UIConst.Battle);
         }

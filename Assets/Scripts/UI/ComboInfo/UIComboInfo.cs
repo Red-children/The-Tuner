@@ -11,8 +11,8 @@ public class UIComboInfo : MonoBehaviour
     public UIComboInfoText text;
     [Header("间歇时间")]
     public float coolDownTime = 1f;     //  After coolDownTime seconds, _comboCount <= 0;
-    private int _comboCount = 0;        //  Count except Miss
-    private bool _isTriggered = false;  //  To known if Player Atk
+    // private int _comboCount = 0;        //  Count except Miss
+    // private bool _isTriggered = false;  //  To known if Player Atk
     void Init()
     {
         if (bar == null)
@@ -30,60 +30,49 @@ public class UIComboInfo : MonoBehaviour
             return;
         }
 
-        _comboCount = 0;
-        _isTriggered = false;
         bar.duration = coolDownTime;
 
-        // bar.StopCoolDown();
-        EventBus.Instance.Subscribe<EnemyHitEvent>(OnEnemyHit);
-        EventBus.Instance.Subscribe<PlayerAtkEvent>(OnPlayerAtk);
+        EventBus.Instance.Subscribe<ComboChangedEvent>(OnComboChanged);
+        EventBus.Instance.Subscribe<ComboBreakEvent>(OnComboBreak);
+        
     }
     //  Miss(只给延迟重置用)
     void ResetCounter()
     {
-        _comboCount = 0;
-        text.SetDisplayText(_comboCount.ToString());
+        text.SetDisplayText("0");
         bar.StopCoolDown();
     }
 
     //  PreciseHit
-    void AddCounter(int num)
+    void SetCounter(int num)
     {
-        _comboCount += num;
-        text.SetDisplayText(_comboCount.ToString());
+        text.SetDisplayText(num.ToString());
     }
 
-    void ResetTrigger()
-    {
-        _isTriggered = false;
-    }
 #region 回调函数
-    void OnEnemyHit(EnemyHitEvent evt)
+    void OnComboChanged(ComboChangedEvent evt)
     {
-        if (_isTriggered)
-        {   
-            ResetTrigger(); //  重置扳机标记
-            if (evt.rank == RhythmRank.Miss)
-                ResetCounter();
-            else AddCounter(evt.count);
+        bar.duration = coolDownTime = evt.comboTimeout;
 
-            //  启用冷却提示条
-            if (_comboCount > 0)
-            {
-                Debug.Log("UIComboInfo 启用冷却提示条");
-                bar.StartOrResetCoolDown();
-            }
-                
+        SetCounter(evt.newCombo);
 
-            this.ResetTimer(nameof(ResetCounter), 1f);
+        if (evt.newCombo > 0)
+        {
+            bar.StartOrResetCoolDown();
             text.TextAnimation(evt.rank);
         }
+        else
+        {
+            bar.StopCoolDown();
+        }
+
+        this.ResetTimer(nameof(ResetCounter), 1f);
+        text.TextAnimation(evt.rank);
     }
-    void OnPlayerAtk(PlayerAtkEvent evt)
+    void OnComboBreak(ComboBreakEvent evt)
     {
-        _isTriggered = true;
-        this.StartTimer(nameof(ResetTrigger), 1f);
-       
+        ResetCounter();
+        text.TextAnimation(evt.rank);
     }
 #endregion
 
