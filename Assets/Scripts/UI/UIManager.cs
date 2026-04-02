@@ -21,7 +21,12 @@ public class UIManager
             return instance;
         }
     }
-    // 🔥 找到 Canvas 作为 UI 父物体
+    private UIManager()
+    {
+        InitDicts();
+        InitUIRoot();
+    }
+    //  找到 Canvas 作为 UI 父物体
     private void InitUIRoot()
     {
         Canvas canvas = GameObject.FindObjectOfType<Canvas>();
@@ -34,20 +39,18 @@ public class UIManager
     {
         pathDict = new Dictionary<string, string>()
         {
-            {UIConst.MainMenu, "PanelMainMenu"}
+            {UIConst.MainMenu, "PanelMainMenu"},
+            {UIConst.Battle, "PanelinBattle"},
+            {UIConst.Crosshair, "UICrosshair"}
         };
         prefabDict = new Dictionary<string, GameObject>();
         panelDict = new Dictionary<string, UIBasePanel>();
     }
-    private UIManager()
-    {
-        InitDicts();
-        InitUIRoot();
-    }
-
     public class UIConst
     {
         public const string MainMenu = "UIPanelMainmenu";
+        public const string Battle = "UIPanelinBattle";
+        public const string Crosshair = "UICrosshair";
     }
 
 
@@ -82,6 +85,7 @@ public class UIManager
         GameObject panelObject = GameObject.Instantiate(panelPrefab, _uiRoot, false);
         panel = panelObject.GetComponent<UIBasePanel>();
         panelDict.Add(name, panel);
+        panel.OpenPanel(name);
         return panel;
     }
 
@@ -98,5 +102,41 @@ public class UIManager
         panelDict.Remove(name);
         return true;
     }
+    //  隐藏界面（不销毁，保留在字典中）
+    public bool HidePanel(string name)
+    {
+        if (!panelDict.TryGetValue(name, out UIBasePanel panel))
+        {
+            Debug.LogError($"{name} 界面未打开，无法隐藏");
+            return false;
+        }
 
+        if (panel == null) 
+        {
+            panelDict.Remove(name);
+            return false;
+        }
+
+        panel.HidePanel();
+        return true;
+    }
+
+    //  新增：显示已隐藏的界面
+    public bool ShowPanel(string name)
+    {
+        if (!panelDict.TryGetValue(name, out UIBasePanel panel))
+        {
+            Debug.LogError($"{name} 界面未打开，无法显示");
+            return false;
+        }
+
+        if (panel == null) 
+        {
+            panelDict.Remove(name);
+            return false;
+        }
+
+        panel.ShowPanel();
+        return true;
+    }
 }

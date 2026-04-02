@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class UIComboInfo : MonoBehaviour
 {
-    // 冷却条
+    //  冷却条
     public UIComboInfoBar bar;
-    // 文本
+    //  文本
     public UIComboInfoText text;
-    
-    [Header("连击配置")]
-    public float coolDownTime = 3f;     // 连击超时时间
-    
-    private void Init()
+    [Header("间歇时间")]
+    public float coolDownTime = 1f;     //  After coolDownTime seconds, _comboCount <= 0;
+    private int _comboCount = 0;        //  Count except Miss
+    private bool _isTriggered = false;  //  To known if Player Atk
+    void Init()
     {
         if (bar == null)
         {
@@ -30,116 +30,67 @@ public class UIComboInfo : MonoBehaviour
             return;
         }
 
-        // 设置冷却条持续时间
+        _comboCount = 0;
+        _isTriggered = false;
         bar.duration = coolDownTime;
-        
-        // 注册连击事件
-        EventBus.Instance.Subscribe<ComboChangedEvent>(OnComboChanged);
-        EventBus.Instance.Subscribe<ComboBreakEvent>(OnComboBreak);
-        
-        // 初始状态
-        UpdateComboDisplay(0);
+
+        // bar.StopCoolDown();
+        EventBus.Instance.Subscribe<EnemyHitEvent>(OnEnemyHit);
+        EventBus.Instance.Subscribe<PlayerAtkEvent>(OnPlayerAtk);
+    }
+    //  Miss(只给延迟重置用)
+    void ResetCounter()
+    {
+        _comboCount = 0;
+        text.SetDisplayText(_comboCount.ToString());
         bar.StopCoolDown();
     }
 
-    /// <summary>
-    /// 连击数变化时的处理
-    /// </summary>
-    void OnComboChanged(ComboChangedEvent evt)
+    //  PreciseHit
+    void AddCounter(int num)
     {
-        UpdateComboDisplay(evt.ComboData.CurrentCombo);
-        
-        // 如果有连击数，启动冷却条
-        if (evt.ComboData.CurrentCombo > 0)
-        {
-            Debug.Log("UIComboInfo 启用冷却提示条");
-            bar.StartOrResetCoolDown();
-        }
-        else
-        {
-            bar.StopCoolDown();
-        }
-        
-        // 显示连击效果提示
-        if (evt.ComboData.HasEffects)
-        {
-            ShowComboEffects(evt.ComboData.Effects);
-        }
+        _comboCount += num;
+        text.SetDisplayText(_comboCount.ToString());
     }
 
-    /// <summary>
-    /// 连击中断时的处理
-    /// </summary>
-    void OnComboBreak(ComboBreakEvent evt)
+    void ResetTrigger()
     {
-        Debug.Log($"连击中断，最终连击数: {evt.FinalCombo}");
-        
-        // 可以在这里添加连击中断的特效
-        if (evt.FinalCombo >= 10)
-        {
-            // 高连击中断的特殊效果
-            text.TextAnimation(RhythmRank.Perfect);
-        }
+        _isTriggered = false;
     }
-
-    /// <summary>
-    /// 更新连击显示
-    /// </summary>
-    private void UpdateComboDisplay(int comboCount)
+#region 回调函数
+    void OnEnemyHit(EnemyHitEvent evt)
     {
-        text.SetDisplayText(comboCount.ToString());
-        
-        // 根据连击数改变文本颜色
-        if (comboCount >= 15)
-        {
-            text.SetTextColor(Color.red); // 高连击红色
-        }
-        else if (comboCount >= 10)
-        {
-            text.SetTextColor(Color.yellow); // 中等连击黄色
-        }
-        else
-        {
-            text.SetTextColor(Color.white); // 普通连击白色
-        }
-    }
+        if (_isTriggered)
+        {   
+            ResetTrigger(); //  重置扳机标记
+            if (evt.rank == RhythmRank.Miss)
+                ResetCounter();
+            else AddCounter(evt.count);
 
-    /// <summary>
-    /// 显示连击效果提示
-    /// </summary>
-    private void ShowComboEffects(ComboEffect[] effects)
-    {
-        foreach (var effect in effects)
-        {
-            switch (effect)
+            //  启用冷却提示条
+            if (_comboCount > 0)
             {
-                case ComboEffect.BulletPenetration:
-                    Debug.Log("连击效果: 子弹穿透已激活");
-                    // 可以在这里添加子弹穿透的UI提示
-                    break;
-                    
-                case ComboEffect.Invincibility:
-                    Debug.Log("连击效果: 无敌状态已激活");
-                    // 可以在这里添加无敌状态的UI提示
-                    break;
+                Debug.Log("UIComboInfo 启用冷却提示条");
+                bar.StartOrResetCoolDown();
             }
+                
+
+            this.ResetTimer(nameof(ResetCounter), 1f);
+            text.TextAnimation(evt.rank);
         }
     }
+    void OnPlayerAtk(PlayerAtkEvent evt)
+    {
+        _isTriggered = true;
+        this.StartTimer(nameof(ResetTrigger), 1f);
+       
+    }
+#endregion
 
-    #region 生命周期
+#region 生命周期
     void Start()
     {
         Init();
     }
-    
-    void OnDestroy()
-    {
-        // 取消事件注册
-        if (EventBus.Instance != null)
-        {
-            EventBus.Instance.Unsubscribe<ComboChangedEvent>(OnComboChanged);
-            EventBus.Instance.Unsubscribe<ComboBreakEvent>(OnComboBreak);
-        }
-    }
-    #endregion
+#endregion
 }

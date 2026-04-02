@@ -5,8 +5,9 @@ using UnityEngine;
 //  进入游戏加载主界面
 public class GameEntry : MonoBehaviour
 {
-    void Start()
+    void Update()
     {
-        UIManager.Instance.OpenPanel(UIManager.UIConst.MainMenu);
+        if (Input.GetMouseButtonDown(2))
+            UIManager.Instance.OpenPanel(UIManager.UIConst.MainMenu);
     }
 }

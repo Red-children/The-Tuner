@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Animations;
+using UnityEngine.Playables;
 using UnityEngine.UI;
 
 public class UIPanelMainMenu : UIBasePanel
@@ -22,6 +24,15 @@ public class UIPanelMainMenu : UIBasePanel
             Debug.LogError("UIPanelMainmenu 未找到组件");
             return;
         }
+        //  TODO:绑定Timeline Director
+        if(playableDirector == null)
+        {
+            playableDirector = GetComponent<PlayableDirector>();
+        }
+        if(playableDirector == null)
+        {
+            Debug.LogError("UIPanelMainmenu 未找到组件");
+        }
 
         //  绑定按钮事件
         _btnNewGame.onClick.AddListener(OnNewGameClick);
@@ -31,19 +42,21 @@ public class UIPanelMainMenu : UIBasePanel
 #region 按钮回调函数
     void OnNewGameClick()
     {
-        
+        //TODO:
     }
     void OnSettingsClick()
     {
-        
+        //TODO:
     }
     void OnExitClick()
     {
-        
+        UIManager.Instance.ClosePanel(UIManager.UIConst.MainMenu);
     }
 #endregion
+#region 生命周期
     void Awake()
     {
         Init();
     }
+#endregion
 }

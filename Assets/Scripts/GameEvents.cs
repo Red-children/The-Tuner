@@ -24,6 +24,19 @@ public struct PlayerAtkEvent
     //  TODO:
 }
 
+public struct RhythmInputDebugEvent
+{
+    public double inputDspTime;
+    public double judgedDspTime;
+    public double referenceBeatTime;
+    public double offsetSeconds;
+    public double offsetMilliseconds;
+    public RhythmRank rank;
+    public float multiplier;
+    public bool isInWindow;
+    public string source;
+}
+
 public struct AttackMultiplierChangedEvent
 {
     public float newMultiplier; // 最新倍率
