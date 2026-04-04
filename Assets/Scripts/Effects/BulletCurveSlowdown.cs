@@ -9,11 +9,14 @@ using System.Collections;
 public class BulletCurveSlowdown : MonoBehaviour
 {
     [Header("曲线减速设置")]
-    [SerializeField] private AnimationCurve slowdownCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.2f);
-    [SerializeField] private AnimationCurve recoveryCurve = AnimationCurve.EaseInOut(0, 0.2f, 1, 1f);
+    // 基础减速曲线（默认使用EaseInOut）
+    [SerializeField] public AnimationCurve slowdownCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.2f);
+    // 恢复曲线（默认使用EaseInOut）
+    [SerializeField] public AnimationCurve recoveryCurve = AnimationCurve.EaseInOut(0, 0.2f, 1, 1f);
     
     [Header("多段减速模式")]
     [SerializeField] private bool enableMultiStage = true;
+
     [SerializeField] private SlowdownStage[] slowdownStages = new SlowdownStage[]
     {
         new SlowdownStage(0.1f, 0.3f, "初始快速减速"),
@@ -22,12 +25,14 @@ public class BulletCurveSlowdown : MonoBehaviour
     };
     
     [Header("节奏判定影响")]
+    // 根据节奏判定等级调整曲线参数 
     [SerializeField] private AnimationCurve perfectCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.1f);
     [SerializeField] private AnimationCurve greatCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.2f);
     [SerializeField] private AnimationCurve goodCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.3f);
     [SerializeField] private AnimationCurve missCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.5f);
     
     [Header("视觉曲线效果")]
+    // 视觉效果曲线（尺寸、旋转、透明度等）
     [SerializeField] private AnimationCurve scaleCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.7f);
     [SerializeField] private AnimationCurve rotationCurve = AnimationCurve.EaseInOut(0, 0, 1, 360f);
     [SerializeField] private AnimationCurve alphaCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.8f);
@@ -36,19 +41,19 @@ public class BulletCurveSlowdown : MonoBehaviour
     [SerializeField] private bool useCustomCurveForRank = true;
     [SerializeField] private float curveBlendSpeed = 2f; // 曲线切换速度
     
-    private Bullet _bullet;
-    private float _originalSpeed;
-    private Vector3 _originalScale;
-    private SpriteRenderer _spriteRenderer;
-    private Color _originalColor;
-    
-    private Coroutine _slowdownCoroutine;
-    private AnimationCurve _currentCurve;
-    private RhythmRank _currentRank;
-    
+    private Bullet _bullet;             //子弹组件引用
+    private float _originalSpeed;       //原始速度
+    private Vector3 _originalScale;     //原始尺寸
+    private SpriteRenderer _spriteRenderer; //用于视觉效果的SpriteRenderer
+    private Color _originalColor;           //原始颜色
+
+    private Coroutine _slowdownCoroutine;   //当前减速协程引用
+    private AnimationCurve _currentCurve;   //当前使用的曲线（支持动态切换）
+    private RhythmRank _currentRank;        //当前节奏判定等级
+
     private void Awake()
     {
-        _bullet = GetComponent<Bullet>();
+        _bullet = GetComponent<Bullet>();   // 获取Bullet组件
         if (_bullet == null)
         {
             Debug.LogWarning($"[{name}] 未找到Bullet组件，曲线减速效果将无法工作");
@@ -113,9 +118,9 @@ public class BulletCurveSlowdown : MonoBehaviour
             float progress = timer / duration;
             
             // 应用曲线减速
-            float speedMultiplier = curve.Evaluate(progress);
-            ApplyCurveEffects(progress, speedMultiplier);
-            
+            float speedMultiplier = curve.Evaluate(progress); //根据对应曲线的进度求函数值
+            ApplyCurveEffects(progress, speedMultiplier);//每帧应用曲线效果
+
             yield return null;
         }
         

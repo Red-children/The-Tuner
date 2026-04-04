@@ -8,16 +8,16 @@ using UnityEngine;
 public class BulletPhysicsSlowdown : MonoBehaviour
 {
     [Header("物理参数设置")]
-    [SerializeField] private float kineticEnergyLoss = 0.7f;  // 动能损失比例 (0-1)
-    [SerializeField] private float materialHardness = 0.5f;   // 目标材质硬度 (0-1)
-    [SerializeField] private float elasticityFactor = 0.3f;   // 弹性系数 (0-1)
+    [SerializeField] public float kineticEnergyLoss = 0.7f;  // 动能损失比例 (0-1)
+    [SerializeField] public float materialHardness = 0.5f;   // 目标材质硬度 (0-1)
+    [SerializeField] public float elasticityFactor = 0.3f;   // 弹性系数 (0-1)
     
     [Header("碰撞角度影响")]
-    [SerializeField] private AnimationCurve angleImpactCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.2f);
-    [SerializeField] private bool enableAngleCalculation = true;
+    [SerializeField] public AnimationCurve angleImpactCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.2f);
+    [SerializeField] public bool enableAngleCalculation = true;
     
     [Header("减速效果")]
-    [SerializeField] private float slowdownDuration = 0.15f; // 减速持续时间
+    [SerializeField] public float slowdownDuration = 0.15f; // 减速持续时间
     [SerializeField] private AnimationCurve slowdownCurve = AnimationCurve.EaseInOut(0, 1, 1, 0.3f);
     
     [Header("视觉反馈")]

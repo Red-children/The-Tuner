@@ -105,6 +105,17 @@ public class ComboManager : MonoBehaviour
     /// </summary>
     public void AddCombo()
     {
+        // 先获取当前节奏判定等级
+        RhythmRank currentRank = RhythmManager.Instance.GetRank().rank;
+        
+        // 如果是Miss判定，立即中断连击
+        if(currentRank == RhythmRank.Miss) 
+        {
+            BreakCombo();
+            return;
+        }
+
+        // 其他判定等级：正常增加连击数
         currentCombo++;             //增加连击计数器
         lastHitTime = Time.time;    //记录当前时间
         isComboActive = true;       //标记连击系统为激活状态
@@ -113,8 +124,7 @@ public class ComboManager : MonoBehaviour
         ComboEffect[] effects = GetCurrentComboEffects();
         var comboData = new ComboData(currentCombo, effects);
         
-      
-        RhythmRank currentRank = RhythmManager.Instance.GetRank().rank;
+        // 触发连击更新事件
         EventBus.Instance.Trigger(new ComboChangedEvent(currentRank, currentCombo, comboTimeout));
         
         // 应用连击效果
@@ -123,7 +133,7 @@ public class ComboManager : MonoBehaviour
         // 重置超时计时器
         ResetComboTimeout();
         
-        Debug.Log($"连击数: {currentCombo}, 效果: {string.Join(", ", effects)}");
+        Debug.Log($"连击数: {currentCombo}, 判定: {currentRank}, 效果: {string.Join(", ", effects)}");
     }
     #endregion
 
@@ -224,7 +234,7 @@ public class ComboManager : MonoBehaviour
         
         // 触发连击更新事件（显示0连击）
         var comboData = new ComboData(0, Array.Empty<ComboEffect>());
-        OnComboUpdate?.Invoke(comboData);
+       
         // EventBus.Instance.Trigger(new ComboChangedEvent(currentRank, finalCombo, comboTimeout));
         
         Debug.Log($"连击中断，最终连击数: {finalCombo}");

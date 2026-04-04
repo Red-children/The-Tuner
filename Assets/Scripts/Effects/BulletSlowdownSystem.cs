@@ -503,13 +503,8 @@ public enum SystemMode
 }
 
 // 数据结构
-[System.Serializable]
-public struct SlowdownConfig
-{
-    public string componentName;
-    public AnimationCurve intensityCurve;
-    public float baseDuration;
-}
+
+
 
 [System.Serializable]
 public struct ComponentEvent
