@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4749613058099531036}
   - component: {fileID: 4749613058099531037}
   - component: {fileID: 8124734916388236142}
+  - component: {fileID: 7054010078253530104}
   m_Layer: 6
   m_Name: RunToneFlying
   m_TagString: Enemy
@@ -163,3 +164,24 @@ MonoBehaviour:
   idleMovementSpeed: 0.01
   damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
   deathEffectPrefab: {fileID: 0}
+--- !u!95 &7054010078253530104
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3542882329778536702}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5b6d26f844437864088183c5fb521e10, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

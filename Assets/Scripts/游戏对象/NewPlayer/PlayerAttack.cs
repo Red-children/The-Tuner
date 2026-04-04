@@ -80,14 +80,34 @@ public class PlayerAttack : MonoBehaviour
         float finalDamage = (GetPlayerAttack() + meleeDamage) * rhythmMultiplier;
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, meleeRange, LayerMask.GetMask("Enemy"));
 
+        bool hitEnemy = false;
+        RhythmRank highestRank = RhythmRank.Miss;
+        
         foreach (var hit in hits)
         {
-            EnemyBase  enemy = hit.GetComponent<EnemyBase>();
+            EnemyBase enemy = hit.GetComponent<EnemyBase>();
             if (enemy != null)
             {
                 enemy.Wound(finalDamage);
+                hitEnemy = true;
+                
+                // 获取当前节奏判定等级
+                var rhythmResult = SampleRhythm(AudioSettings.dspTime, "Melee");
+                highestRank = (RhythmRank)Mathf.Max((int)highestRank, (int)rhythmResult.rank);
+                
+                // 触发敌人卡肉感
+                if (HitStopManager.Instance != null)
+                {
+                    HitStopManager.Instance.TriggerEnemyHitStop(hit.gameObject, rhythmResult.rank, finalDamage);
+                }
             }
         }
+
+        // 修复：不对玩家应用卡肉感，避免影响移动
+        // if (hitEnemy && HitStopManager.Instance != null)
+        // {
+        //     HitStopManager.Instance.TriggerPlayerHitStop(highestRank, finalDamage);
+        // }
 
         EventBus.Instance.Trigger(new PlayerMeleeEvent
         {

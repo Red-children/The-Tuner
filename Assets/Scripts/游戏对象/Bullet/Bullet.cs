@@ -110,6 +110,39 @@ public class Bullet : MonoBehaviour
                 float finalDamage = CalculatePenetrationDamage(damage);
                 enemy.Wound(finalDamage);
                 
+                // 触发敌人卡肉感效果
+                if (HitStopManager.Instance != null)
+                {
+                    // 获取当前节奏判定（如果有的话）
+                    RhythmRank rank = RhythmRank.Good; // 默认良好判定
+                    
+                    // 尝试从节奏管理器获取更精确的判定
+                    if (RhythmManager.Instance != null)
+                    {
+                        var rhythmResult = RhythmManager.Instance.GetRank();
+                        rank = rhythmResult.rank;
+                    }
+                    
+                    HitStopManager.Instance.TriggerEnemyHitStop(hit.collider.gameObject, rank, finalDamage);
+                }
+                
+                // 触发子弹减速效果（新增）
+                BulletHitSlowdown slowdown = GetComponent<BulletHitSlowdown>();
+                if (slowdown == null)
+                {
+                    slowdown = gameObject.AddComponent<BulletHitSlowdown>();
+                }
+                
+                // 获取节奏判定等级用于减速强度
+                RhythmRank slowdownRank = RhythmRank.Good;
+                if (RhythmManager.Instance != null)
+                {
+                    var rhythmResult = RhythmManager.Instance.GetRank();
+                    slowdownRank = rhythmResult.rank;
+                }
+                
+                slowdown.TriggerSlowdownByRank(slowdownRank);
+                
                 // 处理穿透逻辑
                 if (canPenetrate)
                 {

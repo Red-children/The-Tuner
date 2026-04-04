@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -9,6 +10,7 @@ public class PlayerDialogueHandler : MonoBehaviour
     private PlayerController _playerController;
     private PlayerAttack _playerAttack;
     private PlayerDash _playerDash;
+    private PlayerMovement _playerMovement;
 
     private void Awake()
     {
@@ -16,7 +18,8 @@ public class PlayerDialogueHandler : MonoBehaviour
         _playerController = GetComponent<PlayerController>();
         _playerAttack = GetComponent<PlayerAttack>();
         _playerDash = GetComponent<PlayerDash>();
-        
+        _playerMovement = GetComponent<PlayerMovement>();
+
         // 订阅对话事件
         EventBus.Instance.Subscribe<DialogueStartEvent>(OnDialogueStart);
         EventBus.Instance.Subscribe<DialogueEndEvent>(OnDialogueEnd);
@@ -47,6 +50,8 @@ public class PlayerDialogueHandler : MonoBehaviour
         
         if (_playerDash != null)
             _playerDash.enabled = false;
+        if(_playerMovement != null)
+            _playerMovement.enabled = false;
     }
 
     /// <summary>
@@ -64,5 +69,7 @@ public class PlayerDialogueHandler : MonoBehaviour
         
         if (_playerDash != null)
             _playerDash.enabled = true;
+        if (_playerMovement != null)
+            _playerMovement.enabled = true;
     }
 }
