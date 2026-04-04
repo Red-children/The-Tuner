@@ -10,6 +10,7 @@ public struct BuffRemovedEvent
 {
     public BuffInstance buff;
 }
+
 public struct BuffStackChangedEvent
 {
     public BuffInstance buff;

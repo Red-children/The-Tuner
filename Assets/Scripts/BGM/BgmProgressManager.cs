@@ -39,8 +39,8 @@ public class BgmProgressManager : MonoBehaviour
 
         // 记录DSP开始时间（音频硬件同步，无帧延迟）
         DspStartTime = AudioSettings.dspTime;
-        _songData.BgmAudioSource.PlayScheduled(DspStartTime);
-        IsPlaying = true;
+        _songData.BgmAudioSource.PlayScheduled(DspStartTime);//在指定的DSP时间开始播放，确保精准同步
+        IsPlaying = true;//标记正在播放
         Debug.Log($"BgmProgressManager: BGM开始播放,DSP时间={DspStartTime:F8}");
     }
 
@@ -51,7 +51,7 @@ public class BgmProgressManager : MonoBehaviour
 
         IsPlaying = false;
         _songData.BgmAudioSource.Stop();
-        PreciseTime = 0;
+        PreciseTime = 0;//重置进度
         Debug.Log("BgmProgressManager: BGM已停止播放");
     }
 
@@ -77,4 +77,5 @@ public class BgmProgressManager : MonoBehaviour
         return _songData != null && _songData.BgmAudioSource != null 
                && !_songData.BgmAudioSource.isPlaying && IsPlaying;
     }
+
 }

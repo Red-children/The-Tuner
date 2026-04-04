@@ -5,7 +5,7 @@ using UnityEngine;
 public class NPCCommunication : MonoBehaviour
 {
     [Header("检测区域子物体")]
-    public GameObject detectArea;
+    public GameObject detectArea;   // 由子物体负责玩家检测，主控控制启用/禁用
     [Header("交互提示文本")]
     public GameObject interactPrompt;
     [Header("对话内容数组（可编辑）")]
@@ -66,6 +66,7 @@ public class NPCCommunication : MonoBehaviour
             interactPrompt.SetActive(false);
     }
 #endregion
+
 #region 对话逻辑
     /// 开始对话
     private void StartDialogue()

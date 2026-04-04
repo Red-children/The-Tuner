@@ -13,6 +13,7 @@ public enum ComboEffect
 }
 #endregion
 
+public struct PenetrationActivatedEvent { }
 
 
 public class ComboManager : MonoBehaviour

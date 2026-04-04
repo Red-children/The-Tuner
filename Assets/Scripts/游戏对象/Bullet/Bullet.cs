@@ -42,6 +42,7 @@ public class Bullet : MonoBehaviour
             // 检查连击管理器是否启用穿透效果
             if (ComboManager.Instance != null)
             {
+                //直接单例拿引用来得到 现在的连击效果是否包含穿透 如果包含则启用穿透效果
                 canPenetrate = ComboManager.Instance.HasEffect(ComboEffect.BulletPenetration);
                 if (canPenetrate)
                 {
@@ -62,6 +63,7 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
+
         float moveDistance = Time.deltaTime * moveSpeed;
         int steps = Mathf.CeilToInt(moveDistance / STEP_DISTANCE);
         float step = moveDistance / steps;
@@ -111,6 +113,7 @@ public class Bullet : MonoBehaviour
                 // 处理穿透逻辑
                 if (canPenetrate)
                 {
+                    //增加穿透计数器
                     currentPenetrationCount++;
                     
                     // 记录最后击中的敌人，避免重复碰撞

@@ -12,7 +12,7 @@ public class UIDialogueDispatcher : MonoBehaviour
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;
     [Header("归属的NPC")]
-    public NPCCommunication currentNPC;
+    public NPCCommunication currentNPC;     
 
     private void Awake()
     {

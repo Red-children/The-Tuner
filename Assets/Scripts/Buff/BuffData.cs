@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//包含Buff类型枚举和Buff数据类
+
 public enum BuffType 
 {
     IncreaseDamage,     // 增加攻击力
@@ -23,7 +25,7 @@ public enum BuffType
 [Serializable]
 public class BuffData
 {
-    public string buffName;
+    public string buffName;         
     public string description;
     public Sprite icon;
     public float value;               // 数值型Buff的增量（如攻击力+10）

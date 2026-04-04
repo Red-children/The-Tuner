@@ -2,7 +2,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+/// <summary>
+/// 用来在Unity编辑器或开发构建中显示节奏输入调试信息的覆盖层
+/// </summary>
 public static class RhythmInputDebugOverlayBootstrap
 {
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]

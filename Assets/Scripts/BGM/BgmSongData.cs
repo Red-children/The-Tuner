@@ -28,11 +28,11 @@ public class BgmSongData : MonoBehaviour
         // 初始化音频源基础配置
         if (bgmAudioSource != null)
         {
-            bgmAudioSource.loop = false;
-            bgmAudioSource.spatialBlend = 0;
-            bgmAudioSource.playOnAwake = false;
-            bgmAudioSource.clip = bgmClip;
-            bgmAudioSource.volume = 1f;
+            bgmAudioSource.loop = false;        // 循环由主控逻辑控制
+            bgmAudioSource.spatialBlend = 0;    // 2D音频
+            bgmAudioSource.playOnAwake = false; // 不自动播放
+            bgmAudioSource.clip = bgmClip;      // 预设音频剪辑
+            bgmAudioSource.volume = 1f;         // 默认全音量，主控可调整
         }
     }
 }

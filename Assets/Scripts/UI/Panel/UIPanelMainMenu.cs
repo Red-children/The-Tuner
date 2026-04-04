@@ -53,6 +53,7 @@ public class UIPanelMainMenu : UIBasePanel
         UIManager.Instance.ClosePanel(UIManager.UIConst.MainMenu);
     }
 #endregion
+
 #region 生命周期
     void Awake()
     {

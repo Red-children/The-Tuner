@@ -5,30 +5,29 @@ using UnityEngine;
 public class PreciseBGMController : MonoBehaviour
 {
     // 子模块引用（挂载在同一对象上）
-    [SerializeField] private BgmSongData _songData;
-    [SerializeField] private BgmProgressManager _progressManager;
-   
-    private Coroutine 
-        _progressSamplerCoroutine; // 进度采样协程
+    [SerializeField] private BgmSongData _songData;                 // 歌曲信息
+    [SerializeField] private BgmProgressManager _progressManager;   // 进度管理器
+
+    private Coroutine _progressSamplerCoroutine; // 进度采样协程
 
     #region 生命周期
     private void Awake()
     {
         //模块初始化
-        AutoGetSubModules();
+        AutoGetSubModules();        
         // 只初始化进度管理器，倍率和指示器模块禁用
         _progressManager?.Init(_songData);
        
 
-        // 订阅播放事件（使用 EventBus，后文会统一）
-        EventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);
+        // 订阅播放事件
+        EventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);  
     }
 
     private void OnDestroy()
     {
         //停止所有协程 
         StopAllCoroutines();
-        EventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);  // 改为 EventBus
+        EventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);
         //摧毁时停止音乐
         _progressManager?.StopBgmPlay();
         
@@ -68,6 +67,8 @@ public class PreciseBGMController : MonoBehaviour
         {
             double dspStart = _progressManager.DspStartTime; // 记录的音乐开始时间
             double firstOffset = _songData.firstOffset;       // 歌曲第一拍偏移（需在 BgmSongData 中配置）
+
+            RhythmManager.Instance.bpm = (int)_songData.BPM; // 同步 BPM
             //通知实时计算
             RhythmManager.Instance.StartRhythm(dspStart, firstOffset);
 
@@ -76,7 +77,7 @@ public class PreciseBGMController : MonoBehaviour
             // 注意：修改 bpm 后需重新计算 beatInterval，可在 StartRhythm 中处理
         }
 
-        // 启动进度采样协程
+        // 启动进度采样协程 先停止旧的协程，避免重复启动
         if (_progressSamplerCoroutine != null) StopCoroutine(_progressSamplerCoroutine);
         _progressSamplerCoroutine = StartCoroutine(PreciseProgressSampler());
 
@@ -90,13 +91,15 @@ public class PreciseBGMController : MonoBehaviour
         if (_songData == null) yield break;
 
         
-        float interval = _songData.sampleIntervalMs / 1000f;//单位换算，把采样频率换算成ms
-        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(interval);
+        float interval = _songData.sampleIntervalMs / 1000f;//每拍的时间间隔 单位换算，把采样频率换算成ms 
+
+        //不受时间缩放影响的等待对象 绝对的时间
+        WaitForSecondsRealtime wait = new WaitForSecondsRealtime(interval); 
 
         while (_progressManager != null && _progressManager.IsPlaying)
         {
-            //更新歌曲播放进度
-            _progressManager.UpdatePreciseProgress();
+            //更新歌曲播放进度 方法由BgmProgressManager提供，内部会计算当前播放时间和进度百分比，并触发相关事件
+            _progressManager.UpdatePreciseProgress();   
             
 
             if (_progressManager.IsBgmFinished())

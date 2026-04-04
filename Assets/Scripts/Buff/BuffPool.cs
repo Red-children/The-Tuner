@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+// BuffPool 负责管理所有的 BuffData，并提供随机获取 Buff 的功能
+
 public class BuffPool : MonoBehaviour
 {
     public static BuffPool Instance;
