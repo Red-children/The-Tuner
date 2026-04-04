@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour
 {
     private PlayerStats stats;
     private LayerMask wallLayer;
-    private bool isStunned = false; // Ó²Ö±±êÖ¾£¬ºóÐøÓÉÍâ²¿ÉèÖÃ
+    private bool isStunned = false; // Ó²Ö±ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½ï¿½
 
     private void Awake()
     {
@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
         wallLayer = LayerMask.GetMask("Wall");
     }
 
-    // ¹©Íâ²¿µ÷ÓÃµÄÓ²Ö±¿ØÖÆ·½·¨
+    // ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½Ãµï¿½Ó²Ö±ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½
     public void SetStunned(bool stunned)
     {
         isStunned = stunned;
@@ -22,10 +22,23 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        if (isStunned) return; // Ó²Ö±Ê±½ûÖ¹ÒÆ¶¯
+        // è°ƒè¯•ï¼šæ£€æŸ¥è„šæœ¬æ˜¯å¦å¯ç”¨
+        if (!enabled)
+        {
+            Debug.LogWarning($"[{name}] PlayerMovementè„šæœ¬è¢«ç¦ç”¨ï¼");
+            return;
+        }
+        
+        if (isStunned) return; // Ó²Ö±Ê±ï¿½ï¿½Ö¹ï¿½Æ¶ï¿½
 
+        // è°ƒè¯•ï¼šæ£€æŸ¥è¾“å…¥
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
+        
+        if (Mathf.Abs(moveX) > 0.1f || Mathf.Abs(moveY) > 0.1f)
+        {
+            Debug.Log($"[{name}] æ£€æµ‹åˆ°ç§»åŠ¨è¾“å…¥: X={moveX:F2}, Y={moveY:F2}");
+        }
 
         Vector2 direction = new Vector2(moveX, moveY).normalized;
         float rayLengthX = 0.9f;

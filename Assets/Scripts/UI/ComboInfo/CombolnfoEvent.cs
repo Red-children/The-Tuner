@@ -12,25 +12,3 @@ public struct ComboData
     }
 }
 #endregion
-
-#region Á¬»÷ÊÂ¼þ
-public struct ComboChangedEvent
-{
-    public ComboData ComboData { get; private set; }
-
-    public ComboChangedEvent(ComboData comboData)
-    {
-        ComboData = comboData;
-    }
-}
-
-public struct ComboBreakEvent
-{
-    public int FinalCombo { get; private set; }
-
-    public ComboBreakEvent(int finalCombo)
-    {
-        FinalCombo = finalCombo;
-    }
-}
-#endregion

@@ -86,7 +86,7 @@ public class BulletHitSlowdown : MonoBehaviour
     private void ApplySlowdown(float speedMultiplier)
     {
         // 应用速度减速
-        _bullet.moveSpeed = (int) (_originalSpeed * speedMultiplier);
+        _bullet.moveSpeed = (int)(_originalSpeed * speedMultiplier);
         
         // 应用视觉缩放（可选）
         float scaleMultiplier = 1f - (scaleReduction * (1f - speedMultiplier));
@@ -98,7 +98,7 @@ public class BulletHitSlowdown : MonoBehaviour
         _isSlowingDown = false;
         
         // 恢复原始速度
-        _bullet.moveSpeed = (int) _originalSpeed;
+        _bullet.moveSpeed = (int)_originalSpeed;
         
         // 恢复原始尺寸
         transform.localScale = _originalScale;
