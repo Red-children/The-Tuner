@@ -224,7 +224,9 @@ public class ComboManager : MonoBehaviour
         
         // 触发连击更新事件（显示0连击）
         var comboData = new ComboData(0, Array.Empty<ComboEffect>());
-  
+        OnComboUpdate?.Invoke(comboData);
+        // EventBus.Instance.Trigger(new ComboChangedEvent(currentRank, finalCombo, comboTimeout));
+        
         Debug.Log($"连击中断，最终连击数: {finalCombo}");
     }
     

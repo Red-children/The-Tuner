@@ -66,7 +66,7 @@ public class UIComboInfo : MonoBehaviour
             bar.StopCoolDown();
         }
 
-        this.ResetTimer(nameof(ResetCounter), 1f);
+        this.ResetTimer(nameof(ResetCounter), coolDownTime);
         text.TextAnimation(evt.rank);
     }
     void OnComboBreak(ComboBreakEvent evt)
