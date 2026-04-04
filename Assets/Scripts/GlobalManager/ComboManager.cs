@@ -15,6 +15,35 @@ public enum ComboEffect
 
 public struct PenetrationActivatedEvent { }
 
+#region 连击事件
+public struct ComboChangedEvent
+{
+    public RhythmRank rank;
+    public int newCombo;
+    public float comboTimeout;
+    
+    public ComboChangedEvent(RhythmRank rank, int newCombo, float comboTimeout)
+    {
+        this.rank = rank;
+        this.newCombo = newCombo;
+        this.comboTimeout = comboTimeout;
+    }
+}
+
+public struct ComboBreakEvent
+{
+    public RhythmRank rank;
+    public int finalCombo;
+    public float comboTimeout;
+    
+    public ComboBreakEvent(RhythmRank rank, int finalCombo, float comboTimeout)
+    {
+        this.rank = rank;
+        this.finalCombo = finalCombo;
+        this.comboTimeout = comboTimeout;
+    }
+}
+#endregion
 
 public class ComboManager : MonoBehaviour
 {
@@ -84,7 +113,10 @@ public class ComboManager : MonoBehaviour
         ComboEffect[] effects = GetCurrentComboEffects();
         var comboData = new ComboData(currentCombo, effects);
         
-        EventBus.Instance.Trigger(new ComboChangedEvent(comboData));
+        // 触发连击更新事件
+        OnComboUpdate?.Invoke(comboData);
+        RhythmRank currentRank = RhythmManager.Instance.GetRank().rank;
+        EventBus.Instance.Trigger(new ComboChangedEvent(currentRank, currentCombo, comboTimeout));
         
         // 应用连击效果
         ApplyComboEffects(comboData);
@@ -182,19 +214,20 @@ public class ComboManager : MonoBehaviour
     /// </summary>
     public void BreakCombo()
     {
-        if (currentCombo == 0) return;  // 如果没有连击则不执行
-
-        int finalCombo = currentCombo;  //记录最终连击数以供事件使用
-        currentCombo = 0;               // 重置连击计数器
-        isComboActive = false;          // 标记连击系统为非激活状态
-
-        //触发连击中断事件，传递最终连击数
-        EventBus.Instance.Trigger(new ComboBreakEvent(finalCombo));
-
+        if (currentCombo == 0) return;
+        
+        int finalCombo = currentCombo;
+        currentCombo = 0;
+        isComboActive = false;
+        RhythmRank currentRank = RhythmManager.Instance.GetRank().rank;
+        // 触发连击中断事件
+        OnComboBreak?.Invoke(new ComboBreakEvent(currentRank, finalCombo, comboTimeout));
+        EventBus.Instance.Trigger(new ComboBreakEvent(currentRank, finalCombo, comboTimeout));
+        
         // 触发连击更新事件（显示0连击）
         var comboData = new ComboData(0, Array.Empty<ComboEffect>());
-    
-        EventBus.Instance.Trigger(new ComboChangedEvent(comboData));
+        OnComboUpdate?.Invoke(comboData);
+        EventBus.Instance.Trigger(new ComboChangedEvent(currentRank, finalCombo, comboTimeout));
         
         Debug.Log($"连击中断，最终连击数: {finalCombo}");
     }
@@ -215,7 +248,9 @@ public class ComboManager : MonoBehaviour
 
         //触发连击更新事件 并传递0连击和空效果
         var comboData = new ComboData(0, Array.Empty<ComboEffect>());
-        EventBus.Instance.Trigger(new ComboChangedEvent(comboData));
+        OnComboUpdate?.Invoke(comboData);
+        RhythmRank currentRank = RhythmManager.Instance.GetRank().rank;
+        EventBus.Instance.Trigger(new ComboChangedEvent(currentRank, 0, comboTimeout));
     }
     
     /// <summary>
