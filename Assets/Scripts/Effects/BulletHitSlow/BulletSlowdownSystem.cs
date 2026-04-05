@@ -5,7 +5,6 @@ using System.Collections.Generic;
 /// <summary>
 /// 子弹减速系统：组件化设计，支持灵活的减速效果组合
 /// 设计理念：模块化架构，每个减速组件独立工作，易于扩展和维护
-/// 机械工程类比：模块化生产线 - 不同工站独立工作，灵活组合
 /// </summary>
 public class BulletSlowdownSystem : MonoBehaviour
 {
@@ -504,7 +503,18 @@ public enum SystemMode
 
 // 数据结构
 
-
+/// <summary>
+/// 减速组件配置：用于配置单个减速组件的参数
+/// </summary>
+[System.Serializable]
+public struct SlowdownConfig
+{
+    public string componentName;
+    public bool isEnabled;
+    public float duration;
+    public float intensity;
+    public RhythmRank triggerRank;
+}
 
 [System.Serializable]
 public struct ComponentEvent

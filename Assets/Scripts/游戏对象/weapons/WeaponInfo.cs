@@ -9,15 +9,15 @@ public enum WeaponOwner
 
 public struct AmmoChangedEvent
 {
-    public int currentAmmo;
-    public int reserveAmmo;   // ���б���ϵͳ��������-1
-    public int weaponId;      // �� WeaponStats.id ��ȡ
+    public int currentAmmo;     //当前子弹     
+    public int reserveAmmo;     //预备子弹（如果有的话，暂时用不到）
+    public int weaponId;        //武器ID，方便UI等模块识别是哪把武器的子弹发生了变化
 }
 
 public class WeaponInfo : MonoBehaviour
 {
-    [Header("��������")]
-    public WeaponBase weaponBase;   // ScriptableObject ����Դ
+    [Header("武器配置")]
+    public WeaponBase weaponBase;   // 静态的SO配置数据，包含武器的属性
     public WeaponType weaponType;   // ��ǰʹ�õ���������
     public Transform firePoint;      // �ӵ������
 
@@ -36,25 +36,18 @@ public class WeaponInfo : MonoBehaviour
     private void Awake()
     {
         if (weaponBase == null)
-        {
-            Debug.LogError($"[WeaponInfo] {gameObject.name} ȱ�� weaponBase ���ã�");
+        {                  
             return;
         }
         weaponStats = weaponBase.GetWeaponStats(weaponType);
         if (weaponStats == null)
         {
-            Debug.LogError($"[WeaponInfo] δ�ҵ��������� {weaponType} ������");
             return;
         }
         currentAmmo = weaponStats.maxAmmo;
     }
 
-    /// <summary>
-    /// ����ӿڣ��ɵ��÷��ṩ�˺��ͽ��౶�ʡ�
-    /// </summary>
-    /// <param name="damage">���ι����Ļ����˺����Ѱ�����ɫ������ + ���������˺���</param>
-    /// <param name="rhythmMultiplier">���౶�ʣ�ͨ������ RhythmManager��</param>
-    public void Shoot(float damage, float rhythmMultiplier)
+    public void Shoot(float damage, float rhythmMultiplier ,RhythmRank rank)
     {
         if (isReloading) return;
         if (weaponStats == null)
@@ -80,14 +73,15 @@ public class WeaponInfo : MonoBehaviour
         }
 
         float finalDamage = (damage+weaponStats.damage)  * rhythmMultiplier;
-        SpawnBullet(finalDamage);
+        EventBus.Instance.Trigger(new CameraShakeEvent { intensity = weaponStats.shakeIntensity });
+        SpawnBullet(finalDamage,rank);
 
         currentAmmo--;
         lastShootTime = currentTime;
         OnShootEffects();
     }
 
-    private void SpawnBullet(float damage)
+    private void SpawnBullet(float damage , RhythmRank rank)
     {
         if (weaponStats == null || weaponStats.bulletPrefab == null)
         {
@@ -101,6 +95,7 @@ public class WeaponInfo : MonoBehaviour
         }
         GameObject bulletObj = Instantiate(weaponStats.bulletPrefab, firePoint.position, firePoint.rotation);
         Bullet bullet = bulletObj.GetComponent<Bullet>();
+        bullet.currentRhythmRank = rank;
         if (bullet != null)
         {
             bullet.SetDamage(damage);

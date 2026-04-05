@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerAttack : MonoBehaviour
 {
@@ -47,7 +48,7 @@ public class PlayerAttack : MonoBehaviour
 
         if (weapon != null)
         {
-            weapon.Shoot(GetPlayerAttack(), rhythmResult.multiplier);
+            weapon.Shoot(GetPlayerAttack(), rhythmResult.multiplier, rhythmResult.rank);
             Debug.Log($"[PlayerAttack] Shoot success | Weapon={weapon.name} | Multiplier={rhythmResult.multiplier}");
         }
         else
@@ -56,7 +57,6 @@ public class PlayerAttack : MonoBehaviour
         }
 
         EventBus.Instance.Trigger(new PlayerAtkEvent());
-        EventBus.Instance.Trigger(new CameraShakeEvent());
     }
 
     private void TryMelee()

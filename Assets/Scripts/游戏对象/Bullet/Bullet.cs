@@ -7,6 +7,7 @@ public class Bullet : MonoBehaviour
     public float damage = 10f;
     public GameObject destroyEffect;   // 子弹销毁特效预制体
 
+
     [Header("穿透效果")]
     [SerializeField] private bool canPenetrate = false;        // 是否可穿透
     [SerializeField] private int maxPenetrationCount = 3;       // 最大穿透次数
@@ -19,6 +20,7 @@ public class Bullet : MonoBehaviour
     private Collider2D lastHitEnemy;    // 记录最后击中的敌人，避免重复碰撞
     private SpriteRenderer spriteRenderer; // 子弹的精灵渲染器，用于层级控制
     private int originalSortingOrder;   // 原始的排序层级
+    public RhythmRank currentRhythmRank; // 当前节奏数据，用于卡肉感效果
 
     private void Start()
     {
@@ -109,7 +111,11 @@ public class Bullet : MonoBehaviour
                 // 计算伤害（考虑穿透衰减）
                 float finalDamage = CalculatePenetrationDamage(damage);
                 enemy.Wound(finalDamage);
-                
+
+                // 触发敌人被命中的事件
+                EventBus.Instance.Trigger(new EnemyHitEvent(1, currentRhythmRank));
+                Debug.Log ($"子弹击中敌人，造成 {finalDamage} 伤害，当前节奏判定：{currentRhythmRank}");
+
                 // 触发敌人卡肉感效果
                 if (HitStopManager.Instance != null)
                 {
@@ -120,6 +126,7 @@ public class Bullet : MonoBehaviour
                     if (RhythmManager.Instance != null)
                     {
                         var rhythmResult = RhythmManager.Instance.GetRank();
+                        currentRhythmRank = rhythmResult.rank; // 存储当前节奏数据，供后续使用
                         rank = rhythmResult.rank;
                     }
                     

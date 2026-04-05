@@ -96,10 +96,6 @@ public class RunToneFlyingInsect : EnemyBase
         
         isWounded = true;
 
-        // 触发敌人被命中的事件
-        EventBus.Instance.Trigger(new EnemyHitEvent(1, RhythmManager.Instance.GetRank().rank));
-
-
         // 使用血量控制模块处理伤害
         healthModule.TakeDamage(damage);
         
