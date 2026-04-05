@@ -103,11 +103,11 @@ public class PlayerAttack : MonoBehaviour
             }
         }
 
-        // 修复：不对玩家应用卡肉感，避免影响移动
-        // if (hitEnemy && HitStopManager.Instance != null)
-        // {
-        //     HitStopManager.Instance.TriggerPlayerHitStop(highestRank, finalDamage);
-        // }
+        // 如果命中敌人，触发玩家卡肉感（轻微反馈）
+        if (hitEnemy && HitStopManager.Instance != null)
+        {
+            HitStopManager.Instance.TriggerPlayerHitStop(highestRank, finalDamage);
+        }
 
         EventBus.Instance.Trigger(new PlayerMeleeEvent
         {

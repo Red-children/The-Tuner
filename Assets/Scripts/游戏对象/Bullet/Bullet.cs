@@ -126,23 +126,6 @@ public class Bullet : MonoBehaviour
                     HitStopManager.Instance.TriggerEnemyHitStop(hit.collider.gameObject, rank, finalDamage);
                 }
                 
-                // 触发子弹减速效果（新增）
-                BulletHitSlowdown slowdown = GetComponent<BulletHitSlowdown>();
-                if (slowdown == null)
-                {
-                    slowdown = gameObject.AddComponent<BulletHitSlowdown>();
-                }
-                
-                // 获取节奏判定等级用于减速强度
-                RhythmRank slowdownRank = RhythmRank.Good;
-                if (RhythmManager.Instance != null)
-                {
-                    var rhythmResult = RhythmManager.Instance.GetRank();
-                    slowdownRank = rhythmResult.rank;
-                }
-                
-                slowdown.TriggerSlowdownByRank(slowdownRank);
-                
                 // 处理穿透逻辑
                 if (canPenetrate)
                 {

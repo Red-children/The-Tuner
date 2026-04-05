@@ -6,7 +6,11 @@ public class PlayerMovement : MonoBehaviour
 {
     private PlayerStats stats;
     private LayerMask wallLayer;
-    private bool isStunned = false; // Ӳֱ��־���������ⲿ����
+    private bool isStunned = false;   //是否被眩晕，眩晕时无法移动
+    
+    // 射线检测长度
+    private float rayLengthX = 0.9f;
+    private float rayLengthY = 0.9f;
 
     private void Awake()
     {
@@ -22,28 +26,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void Update()
     {
-        // 调试：检查脚本是否启用
-        if (!enabled)
-        {
-            Debug.LogWarning($"[{name}] PlayerMovement脚本被禁用！");
-            return;
-        }
-        
         if (isStunned) return; // Ӳֱʱ��ֹ�ƶ�
 
-        // 调试：检查输入
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
-        
-        if (Mathf.Abs(moveX) > 0.1f || Mathf.Abs(moveY) > 0.1f)
-        {
-            Debug.Log($"[{name}] 检测到移动输入: X={moveX:F2}, Y={moveY:F2}");
-        }
-
-        Vector2 direction = new Vector2(moveX, moveY).normalized;
-        float rayLengthX = 0.9f;
-        float rayLengthY = 0.9f;
-
         if (moveX != 0)
         {
             RaycastHit2D hitX = Physics2D.Raycast(transform.position, Vector2.right * Mathf.Sign(moveX), rayLengthX, wallLayer);

@@ -10,16 +10,15 @@ public class BuffSelectionHandler : MonoBehaviour
 
     private void Start()
     {
-        // ͨ����ǩ������������ϵ� BuffManager
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-            buffManager = player.GetComponent<BuffManager>();
-        else
-            Debug.LogError("BuffSelectionHandler: δ�ҵ��������");
+        buffManager = this.GetComponent<BuffManager>();
+        if (buffManager == null)
+        {
+            Debug.LogError("BuffSelectionHandler ʼʹʧ܂û BuffManager");
+        }
     }
-
     private void OnEnable()
     {
+        //订阅波次完成事件，当所有波次完成时触发Buff选择界面
         EventBus.Instance.Subscribe<AllWavesCompletedEvent>(OnAllWavesCompleted);
     }
 
@@ -51,7 +50,6 @@ public class BuffSelectionHandler : MonoBehaviour
         }
 
         // 标记系统进入等待选择状态
-        // 就像商店开门营业，等待顾客选择商品
         isWaitingForSelection = true;
     }
 
@@ -90,9 +88,8 @@ public class BuffSelectionHandler : MonoBehaviour
         if (!isWaitingForSelection) return;
         BuffData selected = currentOptions[index];
         buffManager?.AddBuff(selected);
-        Debug.Log($"ѡ���� {selected.buffName}");
+        Debug.Log($"玩家选择了 {selected.buffName}");
         isWaitingForSelection = false;
-        // �����Ҫ�����Դ���ѡ������¼����ò��μ���
         // EventBus.Instance.Trigger(new BuffSelectionCompletedEvent());
     }
 }

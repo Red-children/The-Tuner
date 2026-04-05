@@ -1,6 +1,10 @@
 using UnityEngine;
 
 // 歌曲进程管理模块（仅处理播放状态和进度计算）
+
+/// <summary>
+/// 全局的BGM进程管理器，负责跟踪当前BGM的播放状态和精准进度,挂载在PreciseBGMManager
+/// </summary>
 public class BgmProgressManager : MonoBehaviour
 {
     // [Header("【进程信息】")]

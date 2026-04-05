@@ -7,18 +7,18 @@ using UnityEngine;
 public class HitStopManager : MonoBehaviour
 {
     [Header("全局设置")]
-    [SerializeField] private bool enableHitStop = true;
-    [SerializeField] private float globalHitStopMultiplier = 1.0f;
-    
+    [SerializeField] private bool enableHitStop = true;             // 全局开关，允许玩家选择是否启用卡肉感
+    [SerializeField] private float globalHitStopMultiplier = 1.0f;  // 全局强度乘数，允许调整所有卡肉感效果的强度（0.5 = 50%强度, 2.0 = 200%强度）
+
     [Header("默认配置")]
-    [SerializeField] private float defaultHitStopDuration = 0.08f;
-    [SerializeField] private float perfectHitStopDuration = 0.12f;
-    [SerializeField] private float greatHitStopDuration = 0.08f;
-    [SerializeField] private float goodHitStopDuration = 0.04f;
-    
-    private static HitStopManager _instance;
-    public static HitStopManager Instance => _instance;
-    
+    [SerializeField] private float defaultHitStopDuration = 0.08f;  // 默认卡肉感持续时间（秒），适用于未指定等级的情况
+    [SerializeField] private float perfectHitStopDuration = 0.12f;  // 完美判定的卡肉感持续时间（秒）
+    [SerializeField] private float greatHitStopDuration = 0.08f;    // 极佳判定的卡肉感持续时间（秒）    
+    [SerializeField] private float goodHitStopDuration = 0.04f;     // 良好判定的卡肉感持续时间（秒）
+
+    private static HitStopManager _instance;        // 单例实例，方便全局访问
+    public static HitStopManager Instance => _instance; // 全局访问点
+
     private void Awake()
     {
         if (_instance != null && _instance != this)
@@ -53,9 +53,9 @@ public class HitStopManager : MonoBehaviour
         }
         
         // 根据判定等级和伤害计算强度
-        float intensity = CalculateHitStopIntensity(rank, damage);
-        float duration = GetHitStopDurationByRank(rank) * globalHitStopMultiplier;
-        
+        float intensity = CalculateHitStopIntensity(rank, damage);                  
+        float duration = GetHitStopDurationByRank(rank) * globalHitStopMultiplier;  
+
         // 触发卡肉感
         hitStop.TriggerHitStop(duration, intensity);
         
@@ -79,11 +79,11 @@ public class HitStopManager : MonoBehaviour
             Debug.Log("为玩家添加了LocalHitStop组件");
         }
         
-        float intensity = CalculateHitStopIntensity(rank, damage);
-        float duration = GetHitStopDurationByRank(rank) * globalHitStopMultiplier;
-        
-        hitStop.TriggerHitStop(duration, intensity);
-        
+        float intensity = CalculateHitStopIntensity(rank, damage);                      //计算强度
+        float duration = GetHitStopDurationByRank(rank) * globalHitStopMultiplier;      //计算持续时间
+
+        hitStop.TriggerHitStop(duration, intensity);    // 触发卡肉感
+
         Debug.Log($"玩家触发卡肉感: {rank}, 强度: {intensity:F2}");
     }
     
@@ -112,7 +112,12 @@ public class HitStopManager : MonoBehaviour
             StartCoroutine(GlobalHitStopCoroutine(duration));
         }
     }
-    
+
+    /// <summary>
+    /// 全局轻微卡肉感协程，避免影响游戏性
+    /// </summary>
+    /// <param name="duration"></param>
+    /// <returns></returns>
     private System.Collections.IEnumerator GlobalHitStopCoroutine(float duration)
     {
         float originalTimeScale = Time.timeScale;

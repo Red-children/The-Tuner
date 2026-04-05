@@ -1,7 +1,10 @@
 using UnityEngine;
 
-// 歌曲信息序列化模块（仅存储配置，无逻辑）
+/// <summary>
+/// 歌曲数据配置类，包含BPM、音频资源和采样设置等信息，同样挂载在PreciseBGMManager上，供主控和进程管理器使用
+/// </summary>
 [System.Serializable]
+
 public class BgmSongData : MonoBehaviour
 {
     [Tooltip("歌曲BPM(每分钟节拍数)")]

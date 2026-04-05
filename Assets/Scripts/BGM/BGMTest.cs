@@ -1,6 +1,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 开始播放按钮 仅作为测试
+/// </summary>
 // 挂载在UI Button上即可
 public class BGMTest : MonoBehaviour
 {

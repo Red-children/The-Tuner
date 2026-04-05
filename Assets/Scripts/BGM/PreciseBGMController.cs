@@ -1,7 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
-// BGM主控模块（整合所有子模块，统一调度）
+/// <summary>
+/// bgm主控模块，负责协调歌曲数据、进度管理和节奏同步，挂载在PreciseBGMManager对象上
+/// </summary>
 public class PreciseBGMController : MonoBehaviour
 {
     // 子模块引用（挂载在同一对象上）
