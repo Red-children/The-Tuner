@@ -55,6 +55,7 @@ public class PlayerStats : MonoBehaviour
             delta = -bonus
         });
     }
+    
     public void ModifyAttack(int delta)
     {
         baseAttack += delta;

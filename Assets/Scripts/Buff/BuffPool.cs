@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class BuffPool : MonoBehaviour
 {
-    public static BuffPool Instance;
+    public static BuffPool Instance;    //单例
     public List<BuffData> allBuffs;   // 直接在 Inspector 中拖入所有 BuffData
 
     private void Awake()
@@ -15,6 +15,7 @@ public class BuffPool : MonoBehaviour
         Instance = this;
     }
 
+    //随机得到buff
     public List<BuffData> GetRandomBuffs(int count)
     {
 
