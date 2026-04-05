@@ -9,6 +9,4 @@ public class AutoClear : MonoBehaviour
     {
         Destroy(gameObject, time);
     }
-
-
 }

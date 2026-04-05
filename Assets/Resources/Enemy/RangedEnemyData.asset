@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df082a0021a2fe947beb52c254d004e3, type: 3}
+  m_Name: RangedEnemyData
+  m_EditorClassIdentifier: 
+  health: -560
+  moveSpeed: 5
+  chaseSpeed: 7
+  idleTime: 2
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
+  deadEff: {fileID: 0}
+  patrolRadius: 5
+  attackRange: 8
+  Atk: 10
