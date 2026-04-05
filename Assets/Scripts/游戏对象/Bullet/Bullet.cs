@@ -119,18 +119,13 @@ public class Bullet : MonoBehaviour
                 // 触发敌人卡肉感效果
                 if (HitStopManager.Instance != null)
                 {
-                    // 获取当前节奏判定（如果有的话）
-                    RhythmRank rank = RhythmRank.Good; // 默认良好判定
-                    
-                    // 尝试从节奏管理器获取更精确的判定
-                    if (RhythmManager.Instance != null)
-                    {
-                        var rhythmResult = RhythmManager.Instance.GetRank();
-                        currentRhythmRank = rhythmResult.rank; // 存储当前节奏数据，供后续使用
-                        rank = rhythmResult.rank;
-                    }
-                    
+                    // 直接使用缓存的节奏Rank，避免时间差问题
+                    RhythmRank rank = currentRhythmRank; // 使用发射时缓存的Rank
+
                     HitStopManager.Instance.TriggerEnemyHitStop(hit.collider.gameObject, rank, finalDamage);
+
+                    // 添加调试信息，确认使用缓存Rank
+                    Debug.Log($"[Bullet] 卡肉感使用缓存Rank: {rank} (发射时判定)");
                 }
                 
                 // 处理穿透逻辑
