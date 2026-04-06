@@ -44,13 +44,6 @@ public class EnemyController : EnemyBase
             fsm.Initialize(runtime, factory, this);
         }
     }
-    
-    private void Start()
-    {
-        // 注册逻辑已移至Room.cs中，由房间主动管理
-        // 房间会在适当时机注册敌人
-    }
-    
     // 实现基类的抽象方法
     protected override void UpdateBehavior()
     {
@@ -173,7 +166,7 @@ public class EnemyController : EnemyBase
         if (runtime != null)
         {
             runtime.target = player;
-            // ��ѡ�����ž�����Ч��
+            // ��ѡ�����ž����
         }
     }
 
@@ -188,7 +181,7 @@ public class EnemyController : EnemyBase
 
     public Vector2 GetAttackWorldPos()
     {
-        // ȷ���ǽ�ս���������ݴ���
+        //  
         if (data is MeleeEnemyData meleeData)
         {
             float dir = spriteRenderer.flipX ? -1f : 1f;
@@ -215,7 +208,7 @@ public class EnemyController : EnemyBase
         Gizmos.color = Color.red;
         if (data is MeleeEnemyData meleeData)
         {
-            // ���ƽ�ս������Χ���Թ�����ΪԲ�ģ�
+            
             Vector2 attackPos = Application.isPlaying ? GetAttackWorldPos() : (Vector2)transform.position + (Vector2)(meleeData.attackOffset * (spriteRenderer ? (spriteRenderer.flipX ? -1 : 1) : 1));
             Gizmos.DrawWireSphere(attackPos, meleeData.attackRange);
             // ��ѡ�����ƹ�����
@@ -224,10 +217,10 @@ public class EnemyController : EnemyBase
         }
         else if (data is RangedEnemyData rangedData)
         {
-            // ����Զ�̹�����Χ��������Ϊ���ģ�
+           
             Gizmos.DrawWireSphere(transform.position, rangedData.attackRange);
         }
-        // �������Ϳɼ�����չ
+        
     }
     
 

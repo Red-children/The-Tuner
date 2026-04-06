@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// 子弹类，处理子弹的移动、碰撞和穿透效果
+/// </summary>
 public class Bullet : MonoBehaviour
 {
     [Header("移动参数")]

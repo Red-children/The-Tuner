@@ -12,7 +12,7 @@ public class EnemyDeadState : EnemyStateBase
 
     public override void OnStart()
     {
-        Debug.Log("µĞÈËËÀÍö");
+        Debug.Log("æ•Œäººè¿›å…¥æ­»äº¡çŠ¶æ€");
         controller.Dead();
     }
 

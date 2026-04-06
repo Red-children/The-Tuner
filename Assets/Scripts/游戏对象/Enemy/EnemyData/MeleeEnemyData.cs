@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 近战敌人数据类，继承自EnemyData，添加了近战敌人特有的属性，如攻击范围、攻击伤害等，方便在编辑器中进行调整和管理。
+/// </summary>
 [CreateAssetMenu(fileName = "MeleeEnemyData", menuName = "Enemy/Melee Data")]
 public class MeleeEnemyData : EnemyData
 {
