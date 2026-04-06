@@ -15,5 +15,4 @@ public abstract class EnemyData : ScriptableObject
         public GameObject deadEff;
         public float patrolRadius = 5f;
         // 移除所有 Transform、SpriteRenderer、Animator 等场景引用
-
 }

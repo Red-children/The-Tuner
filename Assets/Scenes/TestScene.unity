@@ -3804,6 +3804,7 @@ MonoBehaviour:
   currentCombo: 0
   lastHitTime: 0
   isComboActive: 0
+  currentRank: 0
 --- !u!4 &555070280
 Transform:
   m_ObjectHideFlags: 0

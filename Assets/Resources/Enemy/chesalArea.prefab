@@ -193,8 +193,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d059f8f29b352bb4b98e26deea668732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stats: {fileID: 11400000, guid: 1767f6fa625e7684f882590c021bcebc, type: 2}
   ownerRoom: {fileID: 0}
+  target: {fileID: 0}
   spriteRenderer: {fileID: 0}
   data: {fileID: 11400000, guid: 1767f6fa625e7684f882590c021bcebc, type: 2}
   weapon: {fileID: 0}
@@ -203,7 +203,7 @@ MonoBehaviour:
   patrolPoints: []
   runtime: {fileID: 0}
   fsm: {fileID: 0}
---- !u!114 &1096953053
+--- !u!114 &642668026
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -212,9 +212,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 9171717363495848408}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 87b1f32dfd1993e478b001601be50f60, type: 3}
+  m_Script: {fileID: 11500000, guid: 783ab7a423d1e5e4e84b8eca626cb65b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  getHit: 0
+  currentHealth: 0
 --- !u!4 &9171717363495848412 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}

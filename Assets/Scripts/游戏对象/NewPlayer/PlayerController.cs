@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     public PlayerDash dash;
 
     // 可选的动画模块，不需禁用
-    public PlayerAnimation animation;
+    //public PlayerAnimation animation;
 
     public bool isDead = false;
 
@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
         if (movement == null) movement = GetComponent<PlayerMovement>();
         if (attack == null) attack = GetComponent<PlayerAttack>();
         if (dash == null) dash = GetComponent<PlayerDash>();
-        if (animation == null) animation = GetComponent<PlayerAnimation>();
+       // if (animation == null) animation = GetComponent<PlayerAnimation>();
     }
 
     private void OnEnable()

@@ -18,10 +18,10 @@ public class WeaponInfo : MonoBehaviour
 {
     [Header("武器配置")]
     public WeaponBase weaponBase;   // 静态的SO配置数据，包含武器的属性
-    public WeaponType weaponType;   // ��ǰʹ�õ���������
-    public Transform firePoint;      // �ӵ������
+    public WeaponType weaponType;   // 武器的类型，用于从weaponBase中获取对应的WeaponStats
+    public Transform firePoint;     // 发射点，用于生成子弹的位置和方向
 
-    private WeaponStats weaponStats; // �� weaponBase ��ȡ�ľ�̬����
+    private WeaponStats weaponStats; // 当前武器的属性数据，从weaponBase获取
     private int currentAmmo;
     private double lastShootTime;
     private bool isReloading;
@@ -29,7 +29,7 @@ public class WeaponInfo : MonoBehaviour
     public WeaponOwner owner;   // Player �� Enemy
 
 
-    // ���Ⱪ¶��ֻ������
+    // 对外提供只读属性，方便其他系统获取当前子弹数量和武器ID
     public int CurrentAmmo => currentAmmo;
     public int WeaponId => weaponStats?.id ?? -1;
 

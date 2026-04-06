@@ -10,7 +10,7 @@ public class Room : MonoBehaviour
     public LayerMask obstacleMask;
 
     private Bounds cachedBounds;             // 缓存房间范围（用于敌人生成）
-    private bool isActive = false;           // 房间是否已被激活
+    public bool isActive = false;           // 房间是否已被激活
    
     public List<EnemyBase> enemiesInRoom = new List<EnemyBase>();
 
@@ -28,11 +28,10 @@ public class Room : MonoBehaviour
     {
         enemiesInRoom.Remove(enemy);
         killedCount++;
-        if (killedCount >= totalEnemies && !isCleared)
-        {
-            isCleared = true;
-            OnRoomCleared();
-        }
+        
+        // 简化注销逻辑：只更新数据，不进行完成检测
+        // 完成检测由独立的Update方法处理
+        Debug.Log($"房间 {name} 敌人注销: {enemy.name}, 剩余敌人: {enemiesInRoom.Count}");
     }
 
     private void Awake()
@@ -43,6 +42,59 @@ public class Room : MonoBehaviour
         // 缓存房间范围，生成敌人时可以使用
         cachedBounds = roomTrigger.bounds;
     }
+
+    private void Update()
+    {
+        // 独立的房间完成检测逻辑
+        // 避免在敌人注销时检测，确保检测时机正确
+        CheckRoomCompletion();
+    }
+
+    /// <summary>
+    /// 检查房间是否完成（所有敌人都被消灭且所有波次已完成）
+    /// </summary>
+    private void CheckRoomCompletion()
+    {
+        // 如果房间已经清理完成，不再检测
+        if (isCleared) return;
+
+        // 检查条件：
+        // 1. 所有已生成的敌人都被消灭 (enemiesInRoom为空)
+        // 2. 所有波次已完成 (WaveManager不再活跃)
+        if (enemiesInRoom.Count == 0 && waveManager != null && !waveManager.isWaveActive)
+        {
+            isCleared = true;
+            OnRoomCleared();
+            Debug.Log($"房间 {name} 清理完成，打开门");
+        }
+    }
+
+    private void OnEnable()
+    {
+         // 订阅敌人死亡事件
+         EventBus.Instance.Subscribe<EnemyDiedStruct>(OnEnemyDied);
+    }
+
+    private void OnDisable()
+    {
+        // 取消订阅敌人死亡事件
+        EventBus.Instance.Unsubscribe<EnemyDiedStruct>(OnEnemyDied);
+    }
+
+    /// <summary>
+    /// 处理敌人死亡事件
+    /// </summary>
+    private void OnEnemyDied(EnemyDiedStruct evt)
+    {
+        // 检查死亡的敌人是否在这个房间中
+        if (evt.enemy != null && enemiesInRoom.Contains(evt.enemy))
+        {
+            // 从房间中注销这个敌人
+            UnregisterEnemy(evt.enemy);
+            Debug.Log($"房间 {name} 处理了敌人死亡: {evt.enemy.name}");
+        }
+    }
+
 
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -100,8 +152,10 @@ public class Room : MonoBehaviour
     }
     #endregion
 
-    // 敌人注册/注销相关方法...
+    // 敌人注册
     public void RegisterEnemy(EnemyBase enemy) => enemiesInRoom.Add(enemy);
+
+
 
     #region 房间清理逻辑
     private void OnRoomCleared()

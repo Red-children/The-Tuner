@@ -2,10 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public  struct EnemyDiedStruct 
-{
-
-}
 
 
 public struct AllWavesCompletedEvent
@@ -105,10 +101,11 @@ public class WaveManager : MonoBehaviour
             GameObject enemyObj = Instantiate(enemyPrefab, spawnPos, Quaternion.identity);
 
             // 尝试获取EnemyBase组件
-            EnemyBase enemyBase = enemyObj.GetComponent<EnemyBase>();
+            EnemyBase enemyBase = enemyObj.GetComponentInChildren<EnemyBase>();
             if (enemyBase != null)
             {
                 enemyBase.ownerRoom = currentRoom;   // 设置所属房间
+                Debug.Log("进行敌人注册");
                 currentRoom.RegisterEnemy(enemyBase);
             }
 
@@ -129,6 +126,7 @@ public class WaveManager : MonoBehaviour
             // 所有波次完成，停止活动
             isWaveActive = false;
             Debug.Log("所有波次完成");
+            
 
             // 生成随机Buff选项并发布事件
             List<BuffData> options = GenerateRandomBuffs(3);

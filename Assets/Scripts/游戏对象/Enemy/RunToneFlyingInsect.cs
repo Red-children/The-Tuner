@@ -49,15 +49,8 @@ public class RunToneFlyingInsect : EnemyBase
         movementModule.SetAttackModule(attackModule);
     }
     
-    // 实现注册到房间方法
-    public override void RegisterToRoom(Room room)
-    {
-        ownerRoom = room;
-        room.RegisterEnemy(this);
-        // 飞虫特有的注册逻辑
-        Debug.Log("RunToneFlyingInsect registered to room: " + room.name);
-    }
-    
+
+
     // 实现死亡方法
     public override void OnKilled()
     {

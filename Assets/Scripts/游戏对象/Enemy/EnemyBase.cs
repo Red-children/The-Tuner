@@ -18,8 +18,7 @@ public abstract class EnemyBase : MonoBehaviour
     protected bool isDead = false;      
     protected bool isWounded = false;   
     
-    // 注册到房间
-    public abstract void RegisterToRoom(Room room);
+
     
     // 被杀死时调用
     public abstract void OnKilled();

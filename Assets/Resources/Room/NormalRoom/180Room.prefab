@@ -1036,12 +1036,14 @@ MonoBehaviour:
   waves:
   - enemyCount: 5
     enemyPrefabs:
-    - {fileID: 3542882329778536702, guid: 59d8872db87d26643a00b21182aa07f9, type: 3}
+    - {fileID: 9171717364712834073, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
+    - {fileID: 725547110283411354, guid: 50a29d903c69289498ff954133c13a93, type: 3}
     spawnInterval: 1
   - enemyCount: 5
     enemyPrefabs:
-    - {fileID: 3542882329778536702, guid: 59d8872db87d26643a00b21182aa07f9, type: 3}
-    spawnInterval: 0
+    - {fileID: 9171717364712834073, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
+    - {fileID: 725547110283411354, guid: 50a29d903c69289498ff954133c13a93, type: 3}
+    spawnInterval: 1
   isWaveActive: 0
 --- !u!114 &6722299635817063120
 MonoBehaviour:
