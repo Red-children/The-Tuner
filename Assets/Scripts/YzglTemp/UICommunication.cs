@@ -1,96 +1,114 @@
 using UnityEngine;
-using TMPro;
+using UnityEngine.UI;
+using DG.Tweening;
 
 /// <summary>
-/// 对话UI显示脚本：挂载在DialoguePanel上
-/// 处理文本推进、显示逻辑
+/// 对话UI显示脚本：DOTween + UGUI Text 版
 /// </summary>
 public class UICommunication : MonoBehaviour
 {
     [Header("对话文本")]
-    public TextMeshProUGUI dialogueText;
-    [Header("对话推进间隔")]
+    [SerializeField] private Text dialogueText;
+
+    [Header("文字速度")]
     public float textSpeed = 0.05f;
 
     private string[] _currentLines;
     private int _currentLineIndex;
-    private bool _isTyping; // 是否正在打字
+    private bool _isTyping; //  是否正在打字动画
+
+    private Tweener _textTweener;
 
     private void Awake()
     {
-        dialogueText.text = string.Empty;
+        if (dialogueText != null)
+            dialogueText.text = string.Empty;
     }
 
     private void Update()
     {
-        // 鼠标左键推进对话
         if (Input.GetMouseButtonDown(0))
         {
-            if (_isTyping)
-            {
-                // 正在打字 → 直接显示完整句子
-                StopAllCoroutines();
-                dialogueText.text = _currentLines[_currentLineIndex];
-                _isTyping = false;
-            }
-            else
-            {
-                // 显示下一句
-                NextLine();
-            }
+            TryNextDialogue();
         }
     }
 
-    #region 对话控制
-    /// <summary>
-    /// 启动对话
-    /// </summary>
-    public void StartDialogue(string[] lines)
+    private void TryNextDialogue()
     {
-        _currentLines = lines;
-        _currentLineIndex = 0;
-        StartTyping();
-    }
+        if (_currentLines == null || dialogueText == null) return;
 
-    /// <summary>
-    /// 开始打字显示
-    /// </summary>
-    private void StartTyping()
-    {
-        _isTyping = true;
-        StopAllCoroutines();
-        StartCoroutine(TypeLine());
-    }
-
-    /// <summary>
-    /// 打字效果协程
-    /// </summary>
-    private System.Collections.IEnumerator TypeLine()
-    {
-        dialogueText.text = string.Empty;
-        foreach (char c in _currentLines[_currentLineIndex].ToCharArray())
+        if (_isTyping)
         {
-            dialogueText.text += c;
-            yield return new WaitForSeconds(textSpeed);
-        }
-        _isTyping = false;
-    }
-
-    /// <summary>
-    /// 下一句对话
-    /// </summary>
-    private void NextLine()
-    {
-        _currentLineIndex++;
-        if (_currentLineIndex < _currentLines.Length)
-        {
-            StartTyping();
+            ShowFullLine();
         }
         else
         {
-            // 对话结束 → 隐藏UI
-            UIDialogueDispatcher.Instance.HideDialogue();
+            NextLine();
+        }
+    }
+
+    #region 对话核心
+    public void StartDialogue(string[] lines)
+    {
+        if (lines == null || lines.Length == 0)
+        {
+            Debug.LogWarning("对话内容为空");
+            return;
+        }
+
+        KillCurrentTween();
+
+        _currentLines = lines;
+        _currentLineIndex = 0;
+        TypeLine();
+    }
+
+    private void TypeLine()
+    {
+        string currentText = _currentLines[_currentLineIndex];
+        dialogueText.text = string.Empty;
+        _isTyping = true;
+
+        _textTweener = dialogueText.DOText(currentText, currentText.Length * textSpeed)
+            .SetEase(Ease.Linear)
+            .OnComplete(() =>
+            {
+                _isTyping = false;
+            });
+    }
+
+    private void ShowFullLine()
+    {
+        KillCurrentTween();
+        dialogueText.text = _currentLines[_currentLineIndex];
+        _isTyping = false;
+    }
+
+    private void NextLine()
+    {
+        _currentLineIndex++;
+
+        if (_currentLineIndex < _currentLines.Length)
+        {
+            TypeLine();
+        }
+        else
+        {
+            UIPanelDialogue.Instance.HideDialogue();
+        }
+    }
+
+    private void KillCurrentTween()
+    {
+        if (_textTweener != null && _textTweener.IsActive())
+        {
+            _textTweener.Kill();
         }
     }
     #endregion
+
+    private void OnDestroy()
+    {
+        KillCurrentTween();
+    }
 }

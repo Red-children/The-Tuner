@@ -4,10 +4,10 @@ using UnityEngine;
 /// 对话UI调度器：单例，统一管理对话显示/隐藏
 /// 挂载在DialoguePanel上
 /// </summary>
-public class UIDialogueDispatcher : MonoBehaviour
+public class UIPanelDialogue : MonoBehaviour
 {
     // 单例
-    public static UIDialogueDispatcher Instance { get; private set; }
+    public static UIPanelDialogue Instance { get; private set; }
 
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;

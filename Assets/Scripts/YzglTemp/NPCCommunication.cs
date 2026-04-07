@@ -10,6 +10,8 @@ public class NPCCommunication : MonoBehaviour
     public GameObject interactPrompt;
     [Header("对话内容数组（可编辑）")]
     public string[] dialogueLines;
+    [Header("2D UI提示偏移")]
+    public Vector2 promptOffset = new Vector2(0, 1.2f);
 
     // 玩家是否在检测范围内
     private bool _isPlayerInRange;
@@ -44,12 +46,22 @@ public class NPCCommunication : MonoBehaviour
         // 玩家在范围内 + 按下F键 → 启动对话
         if (_isPlayerInRange && Input.GetKeyDown(KeyCode.F))
         {
-            Debug.Log("Player Pressed F");
+            // Debug.Log("Player Pressed F");
             StartDialogue();
         }
     }
 
-#region 玩家检测触发（由子物体碰撞调用）
+    private void LateUpdate()
+    {
+        if (interactPrompt == null) return;
+
+        // 世界坐标转屏幕坐标（2D专用）
+        Vector3 worldPos = transform.position + new Vector3(promptOffset.x, promptOffset.y, 0);
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
+        interactPrompt.transform.position = screenPos;
+    }
+
+    #region 玩家检测触发（由子物体碰撞调用）
     /// 玩家进入检测区域
     public void OnPlayerEnter()
     {
@@ -77,9 +89,8 @@ public class NPCCommunication : MonoBehaviour
             interactPrompt.SetActive(false);
         // 发布【进入对话】事件 → 玩家主控失活移动/攻击
         EventBus.Instance.Trigger<DialogueStartEvent>(new DialogueStartEvent());
-        //  TODO:
         // 调度UI显示对话
-        UIDialogueDispatcher.Instance.ShowDialogue(dialogueLines);
+        UIPanelDialogue.Instance.ShowDialogue(dialogueLines);
     }
     /// 结束对话（由UI调度器调用）
     public void EndDialogue()
