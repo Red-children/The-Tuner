@@ -4,14 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-#region 敌人枚举类型
-public enum EnemyType
-{
-    Melee,   // 近战
-    Ranged   // 远程
-}
-#endregion
-
 #region 定义状态类型枚举
 public enum StateType
 {
@@ -38,25 +30,6 @@ public struct EnemyDiedStruct
     }
 }
 
-
-#region 敌人的参数
-[Serializable]
-public class Parameter
-{
-    [Header("★ 基础信息")]
-    public EnemyType enemyType;          // 用于在 FSM 中做类型判断
-
-    [Header("🎮 数据配置")]
-    public EnemyData data;               // 运行时引用对应的 ScriptableObject
-
-    // 运行时状态（由代码自动管理）
-    public Transform target;
-    public bool getHit;
-
-    [Header("🎮 追击范围")]
-    public Collider2D ChaseArea;
-}
-#endregion
 
 //仅负责状态的切换
 public class FSM : MonoBehaviour

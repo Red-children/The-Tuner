@@ -7,7 +7,9 @@ using UnityEditor;
 #endif
 
 
-
+/// <summary>
+/// 敌人控制器类，继承自EnemyBase，负责管理敌人的行为和状态，包括初始化数据、处理受伤和死亡逻辑、显示伤害飘字等，同时通过状态机（FSM）来控制敌人的不同状态和行为，使得敌人能够根据玩家的行为做出相应的反应，增强了游戏的互动性和挑战性。
+/// </summary>
 public class EnemyController : EnemyBase
 {
 
