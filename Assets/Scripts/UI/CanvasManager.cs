@@ -42,9 +42,14 @@ public class CanvasManager
             _canvasMain.renderMode = RenderMode.ScreenSpaceOverlay;
 
             // 必加组件
-            canvasObj.AddComponent<CanvasScaler>();
+            var scaler = canvasObj.AddComponent<CanvasScaler>();
             canvasObj.AddComponent<GraphicRaycaster>();
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
         }
+        
 
         return _canvasMain;
     }
@@ -67,8 +72,12 @@ public class CanvasManager
             _canvasSystem.renderMode = RenderMode.ScreenSpaceOverlay;
             _canvasSystem.sortingOrder = 100; // 系统UI永远在最上层
 
-            canvasObj.AddComponent<CanvasScaler>();
+            var scaler = canvasObj.AddComponent<CanvasScaler>();
             canvasObj.AddComponent<GraphicRaycaster>();
+
+            scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            scaler.referenceResolution = new Vector2(1920, 1080);
+            scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.Expand;
         }
 
         return _canvasSystem;

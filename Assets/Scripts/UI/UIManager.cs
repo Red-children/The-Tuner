@@ -26,16 +26,6 @@ public class UIManager
     {
         InitDicts();
     }
-    //  找到 Canvas 作为 UI 父物体
-    // private void InitUIRoot()
-    // {
-    //     // Canvas canvas = GameObject.FindObjectOfType<Canvas>();
-    //     Canvas canvas = CanvasManager.Instance.TouchCanvas();
-    //     if (canvas != null)
-    //         _uiRoot = canvas.transform;
-    //     else
-    //         Debug.LogError("场景中没有 Canvas! UI无法显示!");
-    // }
     private void InitDicts()
     {
         pathDict = new Dictionary<string, string>()
@@ -43,7 +33,8 @@ public class UIManager
             {UIConst.MainMenu, "PanelMainMenu"},
             {UIConst.Battle, "PanelinBattle"},
             {UIConst.Crosshair, "UICrosshair"},
-            {UIConst.Dialogue, "PanelDialogue"}
+            {UIConst.Dialogue, "PanelDialogue"},
+            {UIConst.PlayerHurt, "PanelPlayerHurtEffect"},
         };
 
         canvasModeDict = new Dictionary<string, int>
@@ -52,6 +43,7 @@ public class UIManager
             { UIConst.Battle, 0 },     // 战斗 → 主Canvas
             { UIConst.Crosshair, 0 },  // 准星 → 主Canvas
             { UIConst.Dialogue, 1 },   // 对话 → 系统Canvas
+            {UIConst.PlayerHurt, 0},   // 受伤 → 主Canvas
         };
         prefabDict = new Dictionary<string, GameObject>();
         panelDict = new Dictionary<string, UIBasePanel>();
@@ -62,6 +54,7 @@ public class UIManager
         public const string Battle = "UIPanelinBattle";
         public const string Crosshair = "UICrosshair";
         public const string Dialogue = "UIDialogue";
+        public const string PlayerHurt = "PanelPlayerHurtEffect";
     }
 
 
