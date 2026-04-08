@@ -2891,7 +2891,6 @@ GameObject:
   - component: {fileID: 191432780}
   - component: {fileID: 191432783}
   - component: {fileID: 191432782}
-  - component: {fileID: 191432781}
   m_Layer: 0
   m_Name: DownStairs
   m_TagString: Untagged
@@ -2914,18 +2913,6 @@ Transform:
   m_Father: {fileID: 20709084}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &191432781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 191432779}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ff1488763297bbf409daff61883ec4a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!61 &191432782
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3898,6 +3885,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: PreciseBGMManager
       objectReference: {fileID: 0}
+    - target: {fileID: 4195507284768500598, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
+      propertyPath: _songData
+      value: 
+      objectReference: {fileID: 1787992231}
+    - target: {fileID: 4195507284768500598, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
+      propertyPath: _progressManager
+      value: 
+      objectReference: {fileID: 1787992232}
     m_RemovedComponents:
     - {fileID: 4195507284768500596, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
@@ -15721,7 +15716,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1786787883}
-  - component: {fileID: 1786787886}
   - component: {fileID: 1786787885}
   - component: {fileID: 1786787884}
   m_Layer: 0
@@ -15798,16 +15792,26 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2, y: 0.4}
   m_EdgeRadius: 0
---- !u!114 &1786787886
+--- !u!114 &1787992231 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 4195507284768500586, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
+  m_PrefabInstance: {fileID: 915178914}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1786787882}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e57042962688524d908ab8c3f9b7835, type: 3}
+  m_Script: {fileID: 11500000, guid: 484fe6001d2bf82489f2beef46b0d49a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1787992232 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4195507284768500587, guid: 4458d2a87770c204d89cf9f46291017a, type: 3}
+  m_PrefabInstance: {fileID: 915178914}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45d6563c9a86a5a43a452a467bb89929, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1806522837
