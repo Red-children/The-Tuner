@@ -4,10 +4,10 @@ using UnityEngine;
 public class NPCNameUI : MonoBehaviour
 {
     [Header("绑定设置")]
-    public Canvas targetCanvas;
     public Vector2 nameOffset = new Vector2(0, 1f);
     public int fontSize = 28;
     public Color nameColor = Color.white;
+    private Canvas _targetCanvas;
 
     private TextMeshProUGUI _nameText;
     private Transform _npcTransform;
@@ -15,8 +15,9 @@ public class NPCNameUI : MonoBehaviour
 
     public void Init(Transform npcTrans, string npcName)
     {
+        _targetCanvas = CanvasManager.Instance.TouchCanvas(1);
         _npcTransform = npcTrans;
-        _uiCamera = targetCanvas.worldCamera ?? Camera.main;
+        _uiCamera = _targetCanvas.worldCamera ?? Camera.main;
         CreateNameText(npcName);
     }
     private bool IsInScreen()
@@ -26,10 +27,10 @@ public class NPCNameUI : MonoBehaviour
     }
     private void CreateNameText(string npcName)
     {
-        if (targetCanvas == null) return;
+        if (_targetCanvas == null) return;
 
         GameObject nameObj = new GameObject($"NPC_Name_{npcName}");
-        nameObj.transform.SetParent(targetCanvas.transform, false);
+        nameObj.transform.SetParent(_targetCanvas.transform, false);
 
         _nameText = nameObj.AddComponent<TextMeshProUGUI>();
         _nameText.text = npcName;

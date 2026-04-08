@@ -18,11 +18,16 @@ public class UICommunication : MonoBehaviour
     private bool _isTyping; //  是否正在打字动画
 
     private Tweener _textTweener;
-
+    // 获取自己父物体的面板脚本
+    [SerializeField] private UIPanelDialogue dialoguePanel;
+#region 生命周期
     private void Awake()
     {
         if (dialogueText != null)
             dialogueText.text = string.Empty;
+        
+        // 自动获取自己归属的对话面板（非单例）
+        dialoguePanel = GetComponent<UIPanelDialogue>();
     }
 
     private void Update()
@@ -32,7 +37,11 @@ public class UICommunication : MonoBehaviour
             TryNextDialogue();
         }
     }
-
+    private void OnDestroy()
+    {
+        KillCurrentTween();
+    }
+#endregion
     private void TryNextDialogue()
     {
         if (_currentLines == null || dialogueText == null) return;
@@ -94,10 +103,14 @@ public class UICommunication : MonoBehaviour
         }
         else
         {
-            UIPanelDialogue.Instance.HideDialogue();
+            if (dialoguePanel != null)
+            Invoke(nameof(CloseDialogueSafe), 0.01f);
         }
     }
-
+    private void CloseDialogueSafe()
+    {
+        dialoguePanel.HideDialogue();
+    }
     private void KillCurrentTween()
     {
         if (_textTweener != null && _textTweener.IsActive())
@@ -106,9 +119,4 @@ public class UICommunication : MonoBehaviour
         }
     }
     #endregion
-
-    private void OnDestroy()
-    {
-        KillCurrentTween();
-    }
 }
