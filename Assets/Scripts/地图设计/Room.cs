@@ -16,7 +16,7 @@ public class Room : MonoBehaviour
 
     private int totalEnemies = 0;    // 总可杀敌数
     private int killedCount = 0;     // 已击杀数
-    private bool isCleared = false;
+    public bool isCleared = false;
 
     public void SetTotalEnemies(int total)
     {
@@ -102,6 +102,7 @@ public class Room : MonoBehaviour
         if (isActive) return;  // 已经激活过，避免重复激活
 
         ActivateRoom(other.transform);
+        Debug.Log($"玩家进入房间 {name}，激活房间");
     }
 
     private void ActivateRoom(Transform player)

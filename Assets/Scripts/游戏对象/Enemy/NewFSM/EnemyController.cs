@@ -151,18 +151,7 @@ public class EnemyController : EnemyBase
     }
 
     // ��ײ��⣨�ӵ����У�
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Bullet"))
-        {
-            Bullet bullet = other.GetComponent<Bullet>();
-            if (bullet != null)
-            {
-                bullet.DestroyMyself();
-                Wound(bullet.damage);
-            }
-        }
-    }
+  
     public void OnPlayerEnter(Transform player)
     {
         if (runtime != null)

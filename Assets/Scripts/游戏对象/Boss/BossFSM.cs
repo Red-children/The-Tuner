@@ -23,5 +23,24 @@ public class BossFSM : MonoBehaviour
     {
         Runtime = runtime;
         Controller = controller;  // 保存控制器引用
+        states.Add(StateType.Idle, new BossIdleState(Controller));  // 传入控制器引用
+        states.Add(StateType.Attack, new BossAttackState(Controller));    
+        //继续加入想要的状态
+        ChangeState(StateType.Idle);  // 初始为Idle状态
     }
+
+ 
+    public void ChangeState(StateType newState)
+    {
+        if (currentState != null)
+        {
+            currentState.OnExit();
+        }
+        currentState = states[newState];
+        currentState.OnStart();
+    }
+    
+   void Update() { currentState?.OnUpdate(); }
+    
+
 }
