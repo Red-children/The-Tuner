@@ -3,22 +3,22 @@ using System.Collections.Generic;
 
 public class PlayerWeapon : MonoBehaviour
 {
-    [Header("�����б�����ѡ�����������Զ���ȡ��")]
-    public WeaponInfo[] weapons;          // ���ֶ���ק�������� ���Ŀǰ���е������б�����������û��Զ������������ϵ� WeaponInfo ���
-    public WeaponInfo currentWeapon;      // ��ǰ����
+    [Header("武器信息 ")]
+    public WeaponInfo[] weapons;       //玩家持有的武器列表，初始可以在编辑器里设置，也可以通过捡起武器动态添加
+    public WeaponInfo currentWeapon;      //当前武器
 
     private int currentIndex = 0;
 
     private void Start()
     {
-        // ���û���ֶ�ָ�������б������Զ������������ϵ����� WeaponInfo
+        //读取初始武器信息，如果编辑器里没有设置，则尝试从子物体获取
         if (weapons == null || weapons.Length == 0)
             weapons = GetComponentsInChildren<WeaponInfo>();
 
         if (weapons.Length > 0)
         {
             currentWeapon = weapons[0];
-            // ��ʼ����������Ҫ����������������Ƚ��ã���������
+            // 切换到初始武器，确保只有当前武器激活
             foreach (var w in weapons) w.gameObject.SetActive(false);
             currentWeapon.gameObject.SetActive(true);
         }
@@ -67,7 +67,7 @@ public class PlayerWeapon : MonoBehaviour
         if (index == currentIndex) return;
         if (index < 0 || index >= weapons.Length) return;
 
-        //
+        
         currentWeapon.gameObject.SetActive(false);
         currentWeapon = weapons[index];
         currentWeapon.gameObject.SetActive(true);
@@ -95,49 +95,72 @@ public class PlayerWeapon : MonoBehaviour
     /// <param name="weaponBase"></param>
     /// <param name="type"></param>
     /// <returns></returns>
-    public bool PickupWeapon(WeaponInfo newWeaponInfo)
+  public bool PickupWeapon(WeaponInfo newWeaponInfo)
 {
     if (newWeaponInfo == null) return false;
-    GameObject newWeaponObj = newWeaponInfo.gameObject;
 
-    // 检查是否已有同类型武器
+    GameObject newWeaponObj = newWeaponInfo.gameObject;
+    Debug.Log($"[Pickup] Start: {newWeaponObj.name}");
+
+    // 1. 先转移所有权，但暂不设置父级（避免在替换时丢失）
+    // 等确定替换/添加后再设置父级
+
+    // 2. 检查是否已有同类型武器
     for (int i = 0; i < weapons.Length; i++)
     {
         if (weapons[i] != null && weapons[i].weaponType == newWeaponInfo.weaponType)
         {
-            // 替换：销毁当前手持的旧武器 GameObject
-            if (weapons[i] != null)
-                Destroy(weapons[i].gameObject);
-            print($"替换武器：{weapons[i].name} -> {newWeaponInfo.name}");
-            // 将新武器挂载到玩家武器容器下
+            Debug.Log($"[Pickup] Replacing at index {i}");
+
+            // 保存旧武器GameObject
+            GameObject oldWeaponObj = weapons[i].gameObject;
+
+            // 将新武器设为玩家子物体
             newWeaponObj.transform.SetParent(transform);
             newWeaponObj.transform.localPosition = Vector3.zero;
             newWeaponObj.transform.localRotation = Quaternion.identity;
+            newWeaponObj.SetActive(true);
+
+            // 替换数组元素
             weapons[i] = newWeaponInfo;
+
+            // 销毁旧武器（确保不是当前武器？）
+            if (oldWeaponObj != null)
+            {
+                // 如果旧武器是当前武器，需要先切换到新武器再销毁
+                if (currentWeapon != null && currentWeapon.gameObject == oldWeaponObj)
+                {
+                    currentWeapon = newWeaponInfo;
+                }
+                Destroy(oldWeaponObj);
+                Debug.Log($"[Pickup] Destroyed old weapon: {oldWeaponObj.name}");
+            }
+
             SwitchToWeapon(i);
             return true;
         }
     }
 
-    print($"新增武器：{newWeaponInfo.name}");
-    // 未拥有同类型，添加到数组
+    // 3. 新增武器
+    Debug.Log("[Pickup] Adding new weapon");
+
     newWeaponObj.transform.SetParent(transform);
-    print(newWeaponObj.transform.parent.name +"是新武器的爸爸");
     newWeaponObj.transform.localPosition = Vector3.zero;
     newWeaponObj.transform.localRotation = Quaternion.identity;
     newWeaponObj.SetActive(false); // 先隐藏，切换时激活
 
-    // 扩展数组（注意原数组可能有空位，先过滤掉 null）
+    // 过滤掉空引用，构建新数组
     var list = new List<WeaponInfo>();
     foreach (var w in weapons)
         if (w != null) list.Add(w);
     list.Add(newWeaponInfo);
     weapons = list.ToArray();
 
-    SwitchToWeapon(weapons.Length - 1);
+    int newIndex = weapons.Length - 1;
+    SwitchToWeapon(newIndex);
+    Debug.Log($"[Pickup] Added at index {newIndex}, total weapons: {weapons.Length}");
     return true;
 }
-
 }
 
 
