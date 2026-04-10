@@ -4,11 +4,9 @@ using UnityEngine;
 /// 对话UI调度器：单例，统一管理对话显示/隐藏
 /// 挂载在DialoguePanel上
 /// </summary>
-public class UIDialogueDispatcher : MonoBehaviour
+public class UIPanelDialogue : UIBasePanel
 {
     // 单例
-    public static UIDialogueDispatcher Instance { get; private set; }
-
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;
     [Header("归属的NPC")]
@@ -16,16 +14,16 @@ public class UIDialogueDispatcher : MonoBehaviour
 
     private void Awake()
     {
-        // 单例初始化
-        if (Instance != null && Instance != this)
-            Destroy(gameObject);
-        else
-            Instance = this;
-
         // 初始化隐藏面板
         gameObject.SetActive(false);
     }
-
+    /// <summary>
+    /// 绑定发起对话的NPC
+    /// </summary>
+    public void BindNPC(NPCCommunication npc)
+    {
+        currentNPC = npc;
+    }
     /// <summary>
     /// 显示对话UI
     /// </summary>
@@ -43,5 +41,6 @@ public class UIDialogueDispatcher : MonoBehaviour
         gameObject.SetActive(false);
         // 通知NPC结束对话
         currentNPC?.EndDialogue();
+        DialogueManager.Instance.EndDialogue();
     }
 }

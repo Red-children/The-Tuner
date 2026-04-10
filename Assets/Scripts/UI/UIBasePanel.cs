@@ -162,12 +162,5 @@ public class UIBasePanel : MonoBehaviour
     }
 #endregion
 #region 生命周期
-    private void OnDisable()
-    {
-        if (_shouldBeVisible && !_isRemoved && gameObject.activeSelf == false)
-        {
-            gameObject.SetActive(true);
-        }
-    }
 #endregion
 }

@@ -8,6 +8,7 @@ public class UIManager
     private Dictionary<string, string> pathDict;
     private Dictionary<string, GameObject> prefabDict;
     private Dictionary<string, UIBasePanel> panelDict;
+    private Dictionary<string, int> canvasModeDict;
     private Transform _uiRoot;
     //  单例
     public static UIManager Instance
@@ -24,16 +25,6 @@ public class UIManager
     private UIManager()
     {
         InitDicts();
-        InitUIRoot();
-    }
-    //  找到 Canvas 作为 UI 父物体
-    private void InitUIRoot()
-    {
-        Canvas canvas = GameObject.FindObjectOfType<Canvas>();
-        if (canvas != null)
-            _uiRoot = canvas.transform;
-        else
-            Debug.LogError("场景中没有 Canvas! UI无法显示!");
     }
     private void InitDicts()
     {
@@ -41,7 +32,18 @@ public class UIManager
         {
             {UIConst.MainMenu, "PanelMainMenu"},
             {UIConst.Battle, "PanelinBattle"},
-            {UIConst.Crosshair, "UICrosshair"}
+            {UIConst.Crosshair, "UICrosshair"},
+            {UIConst.Dialogue, "PanelDialogue"},
+            {UIConst.PlayerHurt, "PanelPlayerHurtEffect"},
+        };
+
+        canvasModeDict = new Dictionary<string, int>
+        {
+            { UIConst.MainMenu, 1 },   // 菜单 → 系统Canvas
+            { UIConst.Battle, 0 },     // 战斗 → 主Canvas
+            { UIConst.Crosshair, 0 },  // 准星 → 主Canvas
+            { UIConst.Dialogue, 1 },   // 对话 → 系统Canvas
+            {UIConst.PlayerHurt, 0},   // 受伤 → 主Canvas
         };
         prefabDict = new Dictionary<string, GameObject>();
         panelDict = new Dictionary<string, UIBasePanel>();
@@ -51,6 +53,8 @@ public class UIManager
         public const string MainMenu = "UIPanelMainmenu";
         public const string Battle = "UIPanelinBattle";
         public const string Crosshair = "UICrosshair";
+        public const string Dialogue = "UIDialogue";
+        public const string PlayerHurt = "PanelPlayerHurtEffect";
     }
 
 
@@ -80,9 +84,14 @@ public class UIManager
             panelPrefab = Resources.Load<GameObject>(realPath);
             prefabDict.Add(name, panelPrefab);
         }
+
+        //  获取Canvas
+        int canvasMode = canvasModeDict[name];
+        Canvas targetCanvas = CanvasManager.Instance.TouchCanvas(canvasMode);
+        Transform parent = targetCanvas.transform;
         
         //  正式打开界面
-        GameObject panelObject = GameObject.Instantiate(panelPrefab, _uiRoot, false);
+        GameObject panelObject = GameObject.Instantiate(panelPrefab, parent, false);
         panel = panelObject.GetComponent<UIBasePanel>();
         panelDict.Add(name, panel);
         panel.OpenPanel(name);
