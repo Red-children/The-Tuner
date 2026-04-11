@@ -21,7 +21,7 @@ public class UIBasePanel : MonoBehaviour
     [SerializeField] private float _exitAnimDuration = 1f;
 #region 状态标记
     // 动画排队标记
-    private bool _isPlayingAnimation = false;
+    protected bool _isPlayingAnimation = false;
     private bool _pendingClose = false;
     private bool _shouldBeVisible = true;
     private bool _pendingHide = false;
@@ -36,8 +36,8 @@ public class UIBasePanel : MonoBehaviour
         _pendingClose = false;
         _pendingHide = false;
 
-        if (playableDirector == null || playableDirector.playableAsset == null)
-            return;
+        // if (playableDirector == null || playableDirector.playableAsset == null)
+        //     return;
 
         PlayEnterAnimation();
     }
