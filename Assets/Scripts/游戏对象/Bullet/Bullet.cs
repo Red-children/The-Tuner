@@ -42,7 +42,7 @@ public class Bullet : MonoBehaviour
         int bulletLayer = gameObject.layer;
         if (bulletLayer == LayerMask.NameToLayer("PlayerBullet"))
         {
-            layerMask = LayerMask.GetMask("Enemy", "Wall");
+            layerMask = LayerMask.GetMask("Enemy", "Wall" );
             
             // 检查连击管理器是否启用穿透效果
             if (ComboManager.Instance != null)

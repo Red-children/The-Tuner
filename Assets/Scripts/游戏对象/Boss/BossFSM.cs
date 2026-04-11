@@ -8,7 +8,8 @@ using UnityEngine;
 /// </summary>
 public class BossFSM : MonoBehaviour
 {
-   public IState currentState;
+    [SerializeReference]
+    public IState currentState;
 
    private Dictionary<StateType, IState> states = new Dictionary<StateType, IState>();
 
@@ -22,14 +23,15 @@ public class BossFSM : MonoBehaviour
     public void Initialize(BossRuntime runtime, BossController controller)
     {
         Runtime = runtime;
-        Controller = controller;  // 保存控制器引用
-        states.Add(StateType.Idle, new BossIdleState(Controller));  // 传入控制器引用
-        states.Add(StateType.Attack, new BossAttackState(Controller));    
-        //继续加入想要的状态
-        ChangeState(StateType.Idle);  // 初始为Idle状态
+        Controller = controller;
+        states = new Dictionary<StateType, IState>(); // 确保初始化
+        states.Add(StateType.Idle, new BossIdleState(Controller));
+        states.Add(StateType.Chase, new BossChaseState(Controller)); // 新增
+        states.Add(StateType.Attack, new BossAttackState(Controller));
+        // states.Add(StateType.Wound, new BossWoundState(Controller)); // 等你实现 Wound 再加
+        ChangeState(StateType.Idle);
     }
 
- 
     public void ChangeState(StateType newState)
     {
         if (currentState != null)

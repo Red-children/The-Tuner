@@ -37,17 +37,19 @@ public class BossController : EnemyBase
     }
 }
 
-  
+
     public override void Wound(float damage)
     {
-        if(isDead) return; // 已经死亡，避免重复调用
+        if (isDead) return;
+        runtime.getHit = true;  // 关键：让 Chase 能检测到受伤
         runtime.currentHealth -= damage;
-        if(runtime.currentHealth <= 0)
+        if (runtime.currentHealth <= 0)
         {
             runtime.currentHealth = 0;
             OnKilled();
         }
         ShowDamageText(transform.position, damage);
+        manager.ChangeState(StateType.Wound); // 切到受伤状态（需先实现 BossWoundState）
     }
 
     public override void OnKilled()

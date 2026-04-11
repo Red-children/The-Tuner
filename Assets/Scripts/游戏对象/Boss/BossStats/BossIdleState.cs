@@ -15,24 +15,16 @@ public class BossIdleState : IState
         this.controller = bossController;
         this.runtime = bossController.runtime; // 获取运行时数据引用
         this.fsm = bossController.manager; // 获取状态机引用
-    }   
-
-    public void OnStart()
-    {
-        if (runtime.target != null)
-    {
-        fsm.ChangeState(StateType.Chase);
-    }
     }
 
-    public void OnExit()
-    {
-        // 退出Idle状态时的逻辑，例如停止待机动画
-        Debug.Log("Boss退出Idle状态");
-    }
-
+    public void OnStart() => Debug.Log("Boss进入Idle状态");
     public void OnUpdate()
     {
-
+        if (runtime.target != null)
+        {
+            fsm.ChangeState(StateType.Chase);
+            Debug.Log("Boss从Idle切换到Chase状态");
+        }
     }
+    public void OnExit() => Debug.Log("Boss退出Idle状态");
 }
