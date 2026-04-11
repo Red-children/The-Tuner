@@ -24,4 +24,9 @@ MonoBehaviour:
   patrolRadius: 5
   specialAttackDamage: 20
   phaseChangeHealthThreshold: 0.5
-  normalAttackRange: 10
+  normalAttackRange: 1
+  maxPosture: 100
+  postureRegenRate: 10
+  postureRegenDelay: 2
+  staggerDuration: 3
+  postureDamageMultiplier: 1
