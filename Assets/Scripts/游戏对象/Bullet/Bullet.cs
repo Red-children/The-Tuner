@@ -105,10 +105,23 @@ public class Bullet : MonoBehaviour
     /// </summary>
     private bool HandleHit(RaycastHit2D hit)
     {
+        DoorActivator activator = hit.collider.GetComponent<DoorActivator>();
+        if (activator != null)
+        {
+            activator.TakeHit(currentRhythmRank);
+            DestroyMyself();
+            return true;
+        }
+
+
         // 玩家子弹击中敌人
         if (gameObject.layer == LayerMask.NameToLayer("PlayerBullet") && hit.collider.CompareTag("Enemy"))
         {
             EnemyBase enemy = hit.collider.GetComponent<EnemyBase>();
+
+
+
+
             if (enemy != null)
             {
                 // 计算伤害（考虑穿透衰减）
