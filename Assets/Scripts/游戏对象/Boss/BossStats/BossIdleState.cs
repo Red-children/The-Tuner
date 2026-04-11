@@ -19,8 +19,10 @@ public class BossIdleState : IState
 
     public void OnStart()
     {
-        // 进入Idle状态时的逻辑，例如播放待机动画
-        Debug.Log("Boss进入Idle状态");
+        if (runtime.target != null)
+    {
+        fsm.ChangeState(StateType.Chase);
+    }
     }
 
     public void OnExit()

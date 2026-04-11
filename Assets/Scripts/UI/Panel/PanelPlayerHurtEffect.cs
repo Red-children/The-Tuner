@@ -6,6 +6,7 @@ public class PanelPlayerHurtEffect : UIBasePanel
 {
     [SerializeField] private Image image;   //  受伤Image
     private Tweener _currentTween;
+
     #region 回调函数 
     private void OnPlayerHurt(PlayerHurtEvent evt)
     {
@@ -19,6 +20,7 @@ public class PanelPlayerHurtEffect : UIBasePanel
              });
     }
     #endregion
+
     #region 生命周期
     private void Awake()
     {

@@ -27,6 +27,16 @@ public class BossController : EnemyBase
         runtime.Init(bossData); // 传入控制器引用
     }
 
+    void Start()
+{
+    if (runtime.target == null)
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+            runtime.target = player.transform;
+    }
+}
+
   
     public override void Wound(float damage)
     {
