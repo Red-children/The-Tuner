@@ -15,12 +15,9 @@ public class TestDialogue : MonoBehaviour
             Debug.Log("打开面板");
             UIManager.Instance.OpenPanel(UIManager.UIConst.Dialogue);
         }
-        else if (Input.GetKeyDown(KeyCode.R))
+        else if (Input.GetKeyDown(KeyCode.D))
         {
-            ring.DORotate(new Vector3(0, 0, 360), 360f, RotateMode.FastBeyond360)
-                .SetLoops(-1)
-                .SetEase(Ease.Linear)
-                .SetUpdate(true);
+            UIManager.Instance.ClosePanel(UIManager.UIConst.Dialogue);
         }
     }
 }
