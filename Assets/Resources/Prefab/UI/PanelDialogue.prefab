@@ -385,10 +385,10 @@ MonoBehaviour:
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 0
+  m_FillMethod: 2
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 1
+  m_FillOrigin: 3
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!1 &6705928887291310425
@@ -461,10 +461,10 @@ MonoBehaviour:
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 0
+  m_FillMethod: 2
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 1
+  m_FillOrigin: 2
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!1 &6705928887738698938
@@ -1218,9 +1218,12 @@ MonoBehaviour:
   playableDirector: {fileID: 0}
   enterTime: 0
   exitTime: 1
-  exitAnimDuration: 1.2
+  exitAnimDuration: 0
   uiCommunication: {fileID: 0}
   currentNPC: {fileID: 0}
+  fadeDuration: 0.4
+  rotateDuration: 0.5
+  scaleDuration: 0.5
   background:
   - {fileID: 6705928888164323808}
   - {fileID: 6705928888027946360}

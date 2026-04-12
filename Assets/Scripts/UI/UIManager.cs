@@ -108,7 +108,9 @@ public class UIManager
         }
 
         panel.ClosePanel();
-        panelDict.Remove(name);
+        panel.OnCloseComplete += () => {
+            panelDict.Remove(name);
+        };
         return true;
     }
     //  隐藏界面（不销毁，保留在字典中）

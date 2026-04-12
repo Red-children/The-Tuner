@@ -12,9 +12,9 @@ public class UIPanelDialogue : UIBasePanel
     [Header("动画组件")]
     [Header("动画参数")]
     // 动画配置（可复用，改数字就行）
-    [SerializeField] private float fadeDuration = 0.8f;
-    [SerializeField] private float rotateDuration = 1f;
-    [SerializeField] private float scaleDuration = 1f;
+    [SerializeField] private float fadeDuration = 0.4f;
+    [SerializeField] private float rotateDuration = 0.5f;
+    [SerializeField] private float scaleDuration = 0.5f;
     [Header("底层图片")]
     [SerializeField] private Image[] background;
     [Header("底层环")]
@@ -32,86 +32,102 @@ public class UIPanelDialogue : UIBasePanel
     [SerializeField] private Image haloMask;
     [SerializeField] private Image blackMask;
 
-#region 覆写动画
+#region 覆写动画 —— 全部用 Sequence 队列装载
     protected override void PlayEnterAnimation()
     {
         _isPlayingAnimation = true;
 
-        //  1.底部背景bg淡入
-        EnterBackground();
-        //  2.底部环bgRing顺时针旋转进场
-        EnterBackgroundRing();
-        //  3.中间层环midRing旋转放大进场
-        EnterMidRing();
-        //  4.中间层红色文本框midRedBox进场
-        EnterMidRedBox();
-        //  5.上层黄色文本框foreYellowBox进场
-        EnterForeYellowBox();
-        //  6.装饰层常驻浮动特效
-        IdleHaloMask();
+        Sequence seq = DOTween.Sequence();
+        seq.Join(EnterBackground());
+        seq.Join(EnterBackgroundRing());
+        seq.Join(EnterMidRing());
+        seq.Join(EnterMidRedBox());
+        seq.Join(EnterForeYellowBox());
+        seq.AppendCallback(IdleHaloMask); // 循环动画用Callback
 
-        DOVirtual.DelayedCall(1.2f, () => _isPlayingAnimation = false);
+        seq.OnComplete(() =>
+        {
+            _isPlayingAnimation = false;
+        });
+
+        seq.SetTarget(gameObject);
+    }
+
+    void KillAllLoopingAnimations()
+    {
+        if (bgRing) bgRing.rectTransform.DOKill();
+        if (midRing) midRing.DOKill();
+        if (haloMask) { haloMask.rectTransform.DOKill(); haloMask.DOKill(); }
     }
     protected override void PlayExitAnimation(bool destroyAfter)
     {
         _isPlayingAnimation = true;
-
-        // 先停所有循环动画
         KillAllLoopingAnimations();
 
-        ExitBlackMask();
-        ExitHaloMask();
-        ExitForeYellowBox();
-        ExitMidRedBox();
-        ExitMidRing();
-        ExitBackgroundRing();
-        ExitBackground();
+        Sequence seq = DOTween.Sequence();
+        seq.Join(ExitBlackMask());
+        seq.Join(ExitHaloMask());
+        seq.Join(ExitForeYellowBox());
+        seq.Join(ExitMidRedBox());
+        seq.Join(ExitMidRing());
+        seq.Join(ExitBackgroundRing());
+        seq.Join(ExitBackground());
 
-        // 动画结束后关闭面板
-        DOVirtual.DelayedCall(exitAnimDuration, () =>
+        seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
+            OnCloseComplete?.Invoke();
 
-            // 直接销毁游戏对象 → 立刻消失
             Destroy(gameObject);
         });
+
+        seq.SetTarget(gameObject);
     }
 #endregion
+
 #region 生命周期
     private void Awake()
     {
+        //  Override Settings
         exitAnimDuration = 1.2f;
     }
 #endregion
 
-#region 过场动画
-    void EnterBackground()
+#region 过场动画 —— 全部返回 Tween
+    Tween EnterBackground()
     {
-        FadeIn(background, 0.8f);
+        return FadeIn(background, fadeDuration);
     }
-    void EnterBackgroundRing()
-    {
-        if (bgRing == null) return;
 
-        FadeIn(bgRing, 0.8f);
-        RotateToZero(bgRing.rectTransform, 5f, 1f, IdleBackgroundRing);
-    }
-    void EnterMidRing()
+    Tween EnterBackgroundRing()
     {
-        if (midRing == null) return;
+        Sequence seq = DOTween.Sequence();
+        seq.Join(FadeIn(bgRing, fadeDuration));
+        seq.Join(RotateToZero(bgRing.rectTransform, 5f, rotateDuration));
+        seq.OnComplete(IdleBackgroundRing);
+        return seq;
+    }
 
-        ScaleIn(midRing, 1f);
-        RotateToZero(midRing, 5f, 1f, IdleMidRing);
-    }
-    void EnterMidRedBox()
+    Tween EnterMidRing()
     {
-        FadeInRotateIn(imagesMidRedBox, 0.6f, 10f);
+        Sequence seq = DOTween.Sequence();
+        seq.Join(ScaleIn(midRing, scaleDuration));
+        seq.Join(RotateToZero(midRing, 5f, rotateDuration));
+        seq.OnComplete(IdleMidRing);
+        return seq;
     }
-    void EnterForeYellowBox()
+
+    Tween EnterMidRedBox()
     {
-        //  TODO:这两个动画不应该同时
-        FadeInRotateIn(imagesForeYellowBox, 0.8f, 10f);
-        ResetAndFillFadeIn(halosForeYellowBox, 0.2f);
+        return FadeInRotateIn(imagesMidRedBox, (float)0.75 * fadeDuration, 5f);
+    }
+
+    Tween EnterForeYellowBox()
+    {
+        Sequence seq = DOTween.Sequence();
+        seq.Append(FadeInRotateIn(imagesForeYellowBox, fadeDuration, 5f));
+        seq.Append(ResetAndFillFadeIn(halosForeYellowBox, (float)0.25 * fadeDuration));
+        return seq;
     }
 #endregion
 
@@ -150,124 +166,53 @@ public class UIPanelDialogue : UIBasePanel
                 .SetEase(Ease.InOutSine);
     }
 #endregion
-#region 退场动画
-    void ExitBackground()
+
+#region 退场动画 —— 全部返回 Tween
+    Tween ExitBackground()
     {
-        FadeOut(background, 0.8f);
+        return FadeOut(background, fadeDuration);
     }
 
-    void ExitBackgroundRing()
+    Tween ExitBackgroundRing()
     {
-        if (bgRing == null) return;
-
-        FadeOut(bgRing, 0.8f);
-        RotateFromZero(bgRing.rectTransform, 5f, 1f);
+        Sequence seq = DOTween.Sequence();
+        seq.Join(FadeOut(bgRing, fadeDuration));
+        seq.Join(RotateFromZero(bgRing.rectTransform, 5f, rotateDuration));
+        return seq;
     }
 
-    void ExitMidRing()
+    Tween ExitMidRing()
     {
-        if (midRing == null) return;
-        ScaleOut(midRing, 1f);
-        RotateFromZero(midRing, 5f, 1f);
+        Sequence seq = DOTween.Sequence();
+        seq.Join(ScaleOut(midRing, scaleDuration));
+        seq.Join(RotateFromZero(midRing, 5f, rotateDuration));
+        return seq;
     }
 
-    void ExitMidRedBox()
+    Tween ExitMidRedBox()
     {
-        FadeOutRotateOut(imagesMidRedBox, 0.6f, 10f);
+        return FadeOutRotateOut(imagesMidRedBox, (float)0.75 * fadeDuration, 5f);
     }
 
-    void ExitForeYellowBox()
+    Tween ExitForeYellowBox()
     {
-        FadeOutRotateOut(imagesForeYellowBox, 0.8f, 10f);
-        FadeOutFillOut(halosForeYellowBox, 0.2f);
+        Sequence seq = DOTween.Sequence();
+        seq.Append(FadeOutFillOut(halosForeYellowBox, (float)0.25 * fadeDuration));
+        seq.Append(FadeOutRotateOut(imagesForeYellowBox, (float)0.75 * fadeDuration, 5f));
+        return seq;
     }
 
-    void ExitHaloMask()
+    Tween ExitHaloMask()
     {
-        FadeOut(haloMask, 0.8f);
+        return FadeOut(haloMask, fadeDuration);
     }
-    void ExitBlackMask()
+
+    Tween ExitBlackMask()
     {
-        FadeOut(blackMask, 0.4f);
+        return FadeOut(blackMask, (float)0.5 * fadeDuration);
     }
 #endregion
 
-#region 通用复用方法（只写一次）
-    void FadeIn(Image img, float t) 
-    { 
-        if (img) 
-            img.DOFade(1, t)
-               .From(0)
-               .SetEase(Ease.OutQuad); 
-    }
-    void FadeOut(Image img, float t) 
-    { 
-        if (img) 
-            img.DOFade(0, t)
-               .SetEase(Ease.OutQuad); 
-    }
-
-    void FadeIn(Image[] imgs, float t) 
-    { 
-        foreach (var i in imgs) 
-            FadeIn(i, t); 
-    }
-    void FadeOut(Image[] imgs, float t) 
-    { 
-        foreach (var i in imgs) 
-            FadeOut(i, t); 
-    }
-
-    void RotateToZero(Transform t, float from, float dur, TweenCallback onComplete = null)
-    {
-        t.DORotate(Vector3.zero, dur)
-         .From(new Vector3(0, 0, from))
-         .SetEase(Ease.OutQuad)
-         .SetUpdate(true)
-         .onComplete += onComplete;
-    }
-
-    void RotateFromZero(Transform t, float to, float dur)
-    {
-        t.DORotate(new Vector3(0, 0, to), dur)
-        .SetEase(Ease.OutQuad)
-        .SetUpdate(true);
-    }
-
-    void ScaleIn(Transform t, float dur) => t.DOScale(1, dur).From(0).SetEase(Ease.OutQuad);
-    void ScaleOut(Transform t, float dur) => t.DOScale(0, dur).SetEase(Ease.OutQuad);
-
-    void FadeInRotateIn(Image[] imgs, float fadeT, float rot) { foreach (var i in imgs) { FadeIn(i, fadeT); RotateToZero(i.rectTransform, rot, 0.8f); } }
-    void FadeOutRotateOut(Image[] imgs, float fadeT, float rot) { foreach (var i in imgs) { FadeOut(i, fadeT); RotateFromZero(i.rectTransform, rot, 0.8f); } }
-
-    void ResetAndFillFadeIn(Image[] imgs, float t)
-    {
-        foreach (var i in imgs) { 
-            if (i) { 
-                i.fillAmount = 0; 
-                i.DOFillAmount(1, t).From(0); 
-                FadeIn(i, t); 
-            } 
-        }
-    }
-
-    void FadeOutFillOut(Image[] imgs, float t)
-    {
-        foreach (var i in imgs) { 
-            if (i) { 
-                i.DOFillAmount(0, t); 
-                FadeOut(i, t); 
-            } 
-        }
-    }
-
-    void KillAllLoopingAnimations()
-    {
-        if (bgRing) bgRing.rectTransform.DOKill();
-        if (midRing) midRing.DOKill();
-        if (haloMask) { haloMask.rectTransform.DOKill(); haloMask.DOKill(); }
-    }
-#endregion
 #region 业务
     /// 绑定发起对话的NPC
     public void BindNPC(NPCCommunication npc)
