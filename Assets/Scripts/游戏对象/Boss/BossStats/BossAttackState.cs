@@ -2,31 +2,62 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class BossAttackState : IState
 {
-    private BossController controller; // 新增
+    private BossController controller;
     private BossFSM fsm;
-    private BossRuntime runtime; // 新增
+    private BossRuntime runtime;
+    private Coroutine attackCoroutine;
+
     public BossAttackState(BossController bossController)
     {
-        this.controller = bossController;
-        this.runtime = bossController.runtime; // 获取运行时数据引用
-        this.fsm = bossController.manager; // 获取状态机引用
+        controller = bossController;
+        fsm = bossController.manager;
+        runtime = bossController.runtime;
     }
 
     public void OnStart()
     {
-        // 进入Attack状态时的逻辑，例如播放攻击动画
         Debug.Log("Boss进入Attack状态");
+        attackCoroutine = controller.StartCoroutine(AttackRoutine());
+    }
+
+    private IEnumerator AttackRoutine()
+    {
+        // 前摇
+        yield return new WaitForSeconds(0.3f);
+
+        // 伤害判定
+        PerformAttack();
+
+        // 后摇
+        yield return new WaitForSeconds(0.5f);
+
+        // 返回追逐
+        fsm.ChangeState(StateType.Chase);
+    }
+
+    private void PerformAttack()
+    {
+        if (runtime.target == null) return;
+        float distance = Vector2.Distance(controller.transform.position, runtime.target.position);
+        if (distance > runtime.Data.normalAttackRange) return;
+
+        PlayerAPI player = runtime.target.GetComponent<PlayerAPI>();
+        if (player != null)
+        {
+            player.TakeDamage((int)runtime.Data.specialAttackDamage);
+            Debug.Log($"Boss 对玩家造成 {runtime.Data.specialAttackDamage} 点伤害");
+        }
     }
 
     public void OnExit()
     {
-        // 退出Attack状态时的逻辑，例如停止攻击动画
+        if (attackCoroutine != null)
+            controller.StopCoroutine(attackCoroutine);
         Debug.Log("Boss退出Attack状态");
     }
 
-    public void OnUpdate()
-    {
-    }
+    public void OnUpdate() { }
 }

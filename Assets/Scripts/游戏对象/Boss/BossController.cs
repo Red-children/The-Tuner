@@ -41,15 +41,17 @@ public class BossController : EnemyBase
     public override void Wound(float damage)
     {
         if (isDead) return;
-        runtime.getHit = true;  // 关键：让 Chase 能检测到受伤
+        runtime.getHit = true;
         runtime.currentHealth -= damage;
+        ShowDamageText(transform.position, damage);
+
         if (runtime.currentHealth <= 0)
         {
             runtime.currentHealth = 0;
-            OnKilled();
+            manager.ChangeState(StateType.Dead);
+            return;
         }
-        ShowDamageText(transform.position, damage);
-        manager.ChangeState(StateType.Wound); // 切到受伤状态（需先实现 BossWoundState）
+        manager.ChangeState(StateType.Wound);
     }
 
     public override void OnKilled()
@@ -82,7 +84,7 @@ public class BossController : EnemyBase
     }
 
     
-    protected override IEnumerator DeathCoroutine()
+    public override IEnumerator DeathCoroutine()
     {
         // 标记为死亡状态
         isDead = true;

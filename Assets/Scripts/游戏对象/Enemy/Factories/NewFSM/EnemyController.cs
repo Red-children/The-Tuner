@@ -135,7 +135,7 @@ public class EnemyController : EnemyBase
     }
 
     // 死亡协程
-    protected override IEnumerator DeathCoroutine()
+    public override IEnumerator DeathCoroutine()
     {
         // 标记为死亡状态
         isDead = true;

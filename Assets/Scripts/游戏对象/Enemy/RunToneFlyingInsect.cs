@@ -71,7 +71,7 @@ public class RunToneFlyingInsect : EnemyBase
     
 
     // 实现死亡协程（事件系统的问题死亡后不能直接摧毁敌人，需要等待UI更新）
-    protected override IEnumerator DeathCoroutine()
+    public override IEnumerator DeathCoroutine()
     {
         // 飞虫特有的死亡动画或效果
         Debug.Log("RunToneFlyingInsect death coroutine");

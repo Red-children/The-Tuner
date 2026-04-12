@@ -24,11 +24,12 @@ public class BossFSM : MonoBehaviour
     {
         Runtime = runtime;
         Controller = controller;
-        states = new Dictionary<StateType, IState>(); // 确保初始化
+        states = new Dictionary<StateType, IState>();
         states.Add(StateType.Idle, new BossIdleState(Controller));
-        states.Add(StateType.Chase, new BossChaseState(Controller)); // 新增
+        states.Add(StateType.Chase, new BossChaseState(Controller));
         states.Add(StateType.Attack, new BossAttackState(Controller));
-        // states.Add(StateType.Wound, new BossWoundState(Controller)); // 等你实现 Wound 再加
+        states.Add(StateType.Wound, new BossWoundState(Controller));  // 取消注释
+        states.Add(StateType.Dead, new BossDeadState(Controller));    // 新增
         ChangeState(StateType.Idle);
     }
 

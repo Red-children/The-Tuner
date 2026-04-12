@@ -43,6 +43,15 @@ public class Room : MonoBehaviour
         cachedBounds = roomTrigger.bounds;
     }
 
+    private void Start() // 或 Awake
+    {
+        // 初始状态：门关闭，房间未激活
+        foreach (var door in doors)
+            door?.Close();
+        isActive = false;
+        isCleared = false;
+    }
+
     private void Update()
     {
         // 独立的房间完成检测逻辑
@@ -55,12 +64,9 @@ public class Room : MonoBehaviour
     /// </summary>
     private void CheckRoomCompletion()
     {
-        // 如果房间已经清理完成，不再检测
         if (isCleared) return;
+        if (!isActive) return; // 新增：只有房间激活后才检测
 
-        // 检查条件：
-        // 1. 所有已生成的敌人都被消灭 (enemiesInRoom为空)
-        // 2. 所有波次已完成 (WaveManager不再活跃)
         if (enemiesInRoom.Count == 0 && waveManager != null && !waveManager.isWaveActive)
         {
             isCleared = true;

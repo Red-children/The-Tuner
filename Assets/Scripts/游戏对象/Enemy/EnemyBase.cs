@@ -24,7 +24,7 @@ public abstract class EnemyBase : MonoBehaviour
     public abstract void OnKilled();
     
     // 死亡协程
-    protected abstract IEnumerator DeathCoroutine();
+    public abstract IEnumerator DeathCoroutine();
     
     // 受伤
     public abstract void Wound(float damage);
