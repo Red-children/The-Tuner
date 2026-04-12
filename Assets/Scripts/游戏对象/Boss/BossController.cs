@@ -38,21 +38,16 @@ public class BossController : EnemyBase
 }
 
 
-    public override void Wound(float damage)
-    {
-        if (isDead) return;
-        runtime.getHit = true;
-        runtime.currentHealth -= damage;
-        ShowDamageText(transform.position, damage);
+    public override void Wound(float damage, RhythmRank rank)
+{
+    if (runtime.getHit) return;
+    runtime.getHit = true;
+    runtime.currentHealth -= damage;
+    
+    ShowDamageText(transform.position, damage, rank);
+    manager?.ChangeState(StateType.Wound);
+}
 
-        if (runtime.currentHealth <= 0)
-        {
-            runtime.currentHealth = 0;
-            manager.ChangeState(StateType.Dead);
-            return;
-        }
-        manager.ChangeState(StateType.Wound);
-    }
 
     public override void OnKilled()
     {
@@ -74,14 +69,13 @@ public class BossController : EnemyBase
 
 
 
-    public override void ShowDamageText(Vector3 targetPosition, float damage)
-    {
-       // 使用安全的属性访问器
-        if (runtime?.DamageTextPrefab == null) return;
-        GameObject dmgObj = Instantiate(runtime.DamageTextPrefab, targetPosition, Quaternion.identity);
-        DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
-        dmgNumber?.SetDamage(damage);
-    }
+   public override void ShowDamageText(Vector3 targetPosition, float damage, RhythmRank rank)
+{
+    if (runtime?.DamageTextPrefab == null) return;
+    GameObject dmgObj = Instantiate(runtime.DamageTextPrefab, targetPosition, Quaternion.identity);
+    DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
+    dmgNumber?.SetDamage(damage, rank); // 改动点
+}
 
     
     public override IEnumerator DeathCoroutine()

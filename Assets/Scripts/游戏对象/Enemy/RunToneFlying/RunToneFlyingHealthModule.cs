@@ -44,7 +44,7 @@ public class RunToneFlyingHealthModule
         dataManager.ModifyHealth(-damage);
         
         // 显示伤害飘字
-        owner.ShowDamageText(owner.transform.position, damage);
+        owner.ShowDamageText(owner.transform.position, damage * -1, RhythmRank.Good); // 伤害值为负数表示扣血
         
         if (dataManager.CurrentHealth <= 0)
         {

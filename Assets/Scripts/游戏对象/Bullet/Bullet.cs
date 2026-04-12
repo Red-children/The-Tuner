@@ -126,8 +126,7 @@ public class Bullet : MonoBehaviour
             {
                 // 计算伤害（考虑穿透衰减）
                 float finalDamage = CalculatePenetrationDamage(damage);
-                enemy.Wound(finalDamage);
-
+               enemy.Wound(finalDamage, currentRhythmRank);
                 // 触发敌人被命中的事件
                 EventBus.Instance.Trigger(new EnemyHitEvent(1, currentRhythmRank));
                 Debug.Log ($"子弹击中敌人，造成 {finalDamage} 伤害，当前节奏判定：{currentRhythmRank}");

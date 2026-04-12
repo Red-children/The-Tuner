@@ -83,7 +83,7 @@ public class RunToneFlyingInsect : EnemyBase
     
 
     // 实现受伤方法
-    public override void Wound(float damage)
+    public override void Wound(float damage ,RhythmRank rank)
     {
         if (isDead) return;
         
@@ -100,7 +100,7 @@ public class RunToneFlyingInsect : EnemyBase
     }
     
     // 实现显示伤害飘字方法
-    public override void ShowDamageText(Vector3 targetPosition, float damage)
+    public override void ShowDamageText(Vector3 targetPosition, float damage, RhythmRank rank)
     {
         // 使用效果模块显示伤害飘字
         effectModule.ShowDamageText(targetPosition, damage);

@@ -63,19 +63,15 @@ public class EnemyController : EnemyBase
     }
 
     // 受伤处理，包含受伤状态切换
-    public override void Wound(float damage)
-    {
-        if (runtime.getHit) return; // 防止重复受伤
-        runtime.getHit = true;
-        runtime.currentHealth -= damage;
-        
-        // 使用运行时数据副本显示伤害
-        ShowDamageText(this.transform.position, damage);
-
-        // 无论是否致命伤害，都先切换到Wound状态
-        // 这样可以确保EnemyHitEvent事件被触发，连击数正常增长
-        fsm?.ChangeState(StateType.Wound);
-    }
+    public override void Wound(float damage, RhythmRank rank)
+{
+    if (runtime.getHit) return;
+    runtime.getHit = true;
+    runtime.currentHealth -= damage;
+    
+    ShowDamageText(transform.position, damage, rank);
+    fsm?.ChangeState(StateType.Wound);
+}
 
     // 死亡处理
     public void Dead()
@@ -98,15 +94,13 @@ public class EnemyController : EnemyBase
     }
 
     // 显示伤害飘字
-    public override void ShowDamageText(Vector3 TargatPosition, float damage)
-    {
-        // 使用安全的属性访问器
-        if (runtime?.DamageTextPrefab == null) return;
-        GameObject dmgObj = Instantiate(runtime.DamageTextPrefab, TargatPosition, Quaternion.identity);
-        DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
-        dmgNumber?.SetDamage(damage);
-    }
-
+    public override void ShowDamageText(Vector3 targetPosition, float damage, RhythmRank rank)
+{
+    if (runtime?.DamageTextPrefab == null) return;
+    GameObject dmgObj = Instantiate(runtime.DamageTextPrefab, targetPosition, Quaternion.identity);
+    DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
+    dmgNumber?.SetDamage(damage, rank); // 改动点
+}
 
 
     // 被杀死时调用
