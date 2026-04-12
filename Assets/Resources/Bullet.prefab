@@ -115,10 +115,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 79120d9ad0683ab4c97d469f1126c989, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 400
+  moveSpeed: 100
   damage: 10
   destroyEffect: {fileID: 0}
-  canPenetrate: 0
+  canPenetrate: 1
   maxPenetrationCount: 3
   currentPenetrationCount: 0
   penetrationDamageReduction: 0.2

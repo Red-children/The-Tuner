@@ -46,14 +46,16 @@ public class Bullet : MonoBehaviour
             
             // 检查连击管理器是否启用穿透效果
             if (ComboManager.Instance != null)
-            {
-                //直接单例拿引用来得到 现在的连击效果是否包含穿透 如果包含则启用穿透效果
-                canPenetrate = ComboManager.Instance.HasEffect(ComboEffect.BulletPenetration);
-                if (canPenetrate)
-                {
-                    Debug.Log("子弹启用穿透效果");
-                }
-            }
+{
+    canPenetrate = ComboManager.Instance.HasEffect(ComboEffect.BulletPenetration);
+    if (canPenetrate)
+    {
+        Debug.Log("子弹启用穿透效果");
+        // 直接改颜色
+        if (spriteRenderer != null)
+            spriteRenderer.color = new Color(1f, 0.5f, 0.8f); // 粉紫色，你也可以在Inspector里配置
+    }
+}
         }
         else if (bulletLayer == LayerMask.NameToLayer("EnemyBullet"))
         {

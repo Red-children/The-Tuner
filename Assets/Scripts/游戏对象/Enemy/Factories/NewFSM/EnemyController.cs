@@ -27,25 +27,27 @@ public class EnemyController : EnemyBase
     [SerializeField] private EnemyRuntime runtime;
     [SerializeField] private FSM fsm;
 
-    void Awake()
+   void Awake()
+{
+    if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+    if (weapon == null) weapon = GetComponentInChildren<WeaponInfo>();
+
+    if (Application.isPlaying)
     {
-        // 获取组件引用，如果未手动赋值则自动查找
-        if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
-        //if (animator == null) animator = GetComponent<Animator>();
-        if (weapon == null) weapon = GetComponentInChildren<WeaponInfo>();
-
-        // 初始化运行时数据（仅在运行时创建）
-        if (Application.isPlaying)
-        {
+        // 防止重复添加
+        runtime = GetComponent<EnemyRuntime>();
+        if (runtime == null)
             runtime = gameObject.AddComponent<EnemyRuntime>();
-            runtime.Init(data);
+        runtime.Init(data);
 
-            // 初始化 FSM 并注册状态
+        fsm = GetComponent<FSM>();
+        if (fsm == null)
             fsm = gameObject.AddComponent<FSM>();
-            IStateFactory factory = GetStateFactory(); // 根据敌人类型选择工厂
-            fsm.Initialize(runtime, factory, this);
-        }
+        
+        IStateFactory factory = GetStateFactory();
+        fsm.Initialize(runtime, factory, this);
     }
+}
     // 实现基类的抽象方法
     protected override void UpdateBehavior()
     {
@@ -58,6 +60,8 @@ public class EnemyController : EnemyBase
     {
         if (data is MeleeEnemyData) return new MeleeStateFactory();
         if (data is RangedEnemyData) return new RangedStateFactory();
+        if (data is RunToneFlyingInsectData) return new RunToneFlyingStateFactory();
+
         //if (data is ExplosiveEnemyData) return new ExplosiveStateFactory();
         return null;
     }
