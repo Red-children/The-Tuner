@@ -88,11 +88,11 @@ public class PlayerAttack : MonoBehaviour
             EnemyBase enemy = hit.GetComponent<EnemyBase>();
             if (enemy != null)
             {
-                enemy.Wound(finalDamage);
-                hitEnemy = true;
                 
                 // 获取当前节奏判定等级
                 var rhythmResult = SampleRhythm(AudioSettings.dspTime, "Melee");
+                 enemy.Wound(finalDamage,rhythmResult.rank);
+                hitEnemy = true;
                 highestRank = (RhythmRank)Mathf.Max((int)highestRank, (int)rhythmResult.rank);
                 
                 // 触发敌人卡肉感

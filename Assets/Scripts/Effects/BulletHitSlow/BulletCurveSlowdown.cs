@@ -324,8 +324,8 @@ public class BulletCurveSlowdown : MonoBehaviour
         
         while (timer < blendTime)
         {
-            timer += Time.deltaTime;
-            float blendFactor = timer / blendTime;
+            timer += Time.deltaTime; //增加计时器
+            float blendFactor = timer / blendTime;// 逐渐混合曲线参数，实现平滑过渡
             
             // 创建混合曲线（简化实现）
             _currentCurve = CreateBlendedCurve(startCurve, targetCurve, blendFactor);
@@ -333,6 +333,7 @@ public class BulletCurveSlowdown : MonoBehaviour
             yield return null;
         }
         
+        // 最终切换到目标曲线
         _currentCurve = targetCurve;
     }
     
@@ -346,10 +347,13 @@ public class BulletCurveSlowdown : MonoBehaviour
         
         for (int i = 0; i < curveA.length; i++)
         {
-            float time = curveA[i].time;
-            float valueA = curveA.Evaluate(time);
+            float time = curveA[i].time;            //假设两条曲线的关键帧时间相同，实际项目中可能需要更复杂的处理
+
+            float valueA = curveA.Evaluate(time);   //根据时间求函数值
+
             float valueB = curveB.Evaluate(time);
-            float blendedValue = Mathf.Lerp(valueA, valueB, blendFactor);
+
+            float blendedValue = Mathf.Lerp(valueA, valueB, blendFactor);//线性插值计算混合值，实现平滑过渡
             
             blendedKeys[i] = new Keyframe(time, blendedValue);
         }

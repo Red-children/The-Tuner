@@ -71,7 +71,7 @@ public class RunToneFlyingInsect : EnemyBase
     
 
     // 实现死亡协程（事件系统的问题死亡后不能直接摧毁敌人，需要等待UI更新）
-    protected override IEnumerator DeathCoroutine()
+    public override IEnumerator DeathCoroutine()
     {
         // 飞虫特有的死亡动画或效果
         Debug.Log("RunToneFlyingInsect death coroutine");
@@ -83,7 +83,7 @@ public class RunToneFlyingInsect : EnemyBase
     
 
     // 实现受伤方法
-    public override void Wound(float damage)
+    public override void Wound(float damage ,RhythmRank rank)
     {
         if (isDead) return;
         
@@ -100,7 +100,7 @@ public class RunToneFlyingInsect : EnemyBase
     }
     
     // 实现显示伤害飘字方法
-    public override void ShowDamageText(Vector3 targetPosition, float damage)
+    public override void ShowDamageText(Vector3 targetPosition, float damage, RhythmRank rank)
     {
         // 使用效果模块显示伤害飘字
         effectModule.ShowDamageText(targetPosition, damage);

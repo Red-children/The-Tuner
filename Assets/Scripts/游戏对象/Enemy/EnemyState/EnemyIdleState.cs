@@ -16,6 +16,7 @@ public class EnemyIdleState : EnemyStateBase
     public override void OnStart()
     {
         Debug.Log("敌人进入空闲状态");
+        manager.animator.SetTrigger("Idle");
         timer = 0f;
     }
 

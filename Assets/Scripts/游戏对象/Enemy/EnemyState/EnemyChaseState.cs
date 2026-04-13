@@ -12,7 +12,7 @@ public class EnemyChaseState : EnemyStateBase
 
     public override void OnStart()
     {
-
+        manager.animator.SetTrigger("Move");
     }
 
     public override void OnUpdate()
@@ -24,9 +24,7 @@ public class EnemyChaseState : EnemyStateBase
         if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
         // 在追逐状态下，敌人会朝向目标并移动
-        bool flip = runtime.target.position.x < manager.transform.position.x;
-        controller.spriteRenderer.flipX = flip;
-
+        controller.FaceTarget(runtime.target.position);
         // 移动敌人朝向目标
         manager.transform.position = Vector2.MoveTowards(
             manager.transform.position, // 当前敌人位置

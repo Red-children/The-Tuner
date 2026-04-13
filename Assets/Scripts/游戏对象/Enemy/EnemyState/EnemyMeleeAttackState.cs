@@ -13,7 +13,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
 
     public override void OnStart()
     {
-
+        manager.animator.SetTrigger("Attack");
         attackTarget = runtime.target; // 记录当前攻击目标的Transform
         if (attackTarget == null)
         {
@@ -92,7 +92,6 @@ public class EnemyMeleeAttackState : EnemyStateBase
             if (hit.transform == attackTarget) return true;
         return false;
     }
-
     public override void OnExit()
     {
         // 停止攻击协程，确保在状态切换时不会继续执行攻击逻辑，避免出现攻击动画和伤害判定的混乱等问题
