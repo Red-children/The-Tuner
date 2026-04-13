@@ -6,7 +6,6 @@ public class PanelPlayerHurtEffect : UIBasePanel
 {
     [SerializeField] private Image image;   //  受伤Image
     private Tweener _currentTween;
-
     #region 回调函数 
     private void OnPlayerHurt(PlayerHurtEvent evt)
     {
@@ -20,7 +19,6 @@ public class PanelPlayerHurtEffect : UIBasePanel
              });
     }
     #endregion
-
     #region 生命周期
     private void Awake()
     {
@@ -47,9 +45,9 @@ public class PanelPlayerHurtEffect : UIBasePanel
     #endregion
     void EasyTest()
     {
-        //if (Input.GetMouseButtonDown(0))
-        //{
-        //    EventBus.Instance.Trigger<PlayerHurtEvent>(new PlayerHurtEvent());
-        //}
+        if (Input.GetMouseButtonDown(0))
+        {
+            EventBus.Instance.Trigger<PlayerHurtEvent>(new PlayerHurtEvent());
+        }
     }
 }
