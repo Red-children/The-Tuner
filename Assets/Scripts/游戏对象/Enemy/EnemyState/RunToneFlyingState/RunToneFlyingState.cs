@@ -6,7 +6,11 @@ public class RunToneFlyingIdleState : EnemyStateBase
 {
     private float timer;
     public RunToneFlyingIdleState(FSM fsm) : base(fsm) { }
-    public override void OnStart() { timer = 0f; }
+    public override void OnStart() 
+    { 
+        timer = 0f; 
+        //manager.animator.SetTrigger("Idle"); 
+    }
     public override void OnUpdate()
     {
         timer += Time.deltaTime;
@@ -26,6 +30,7 @@ public class RunToneFlyingChaseState : EnemyStateBase
         timer = 0f;
         originalColor = controller.spriteRenderer.color;
         controller.spriteRenderer.color = (data as RunToneFlyingInsectData).warningColor;
+        
     }
     public override void OnUpdate()
     {
@@ -54,6 +59,7 @@ public class RunToneFlyingChargeState : EnemyStateBase
 
     public override void OnStart()
     {
+        manager.animator.SetTrigger("IsAttack");
         insectData = data as RunToneFlyingInsectData;
         if (insectData == null)
         {

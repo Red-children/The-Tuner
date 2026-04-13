@@ -34,6 +34,8 @@ public struct EnemyDiedStruct
 //仅负责状态的切换
 public class FSM : MonoBehaviour
 {
+    public Animator animator;  // 用于播放动画的组件引用
+    [SerializeField] 
     public IState currentState;
     private Dictionary<StateType, IState> states = new Dictionary<StateType, IState>();
 
@@ -46,6 +48,7 @@ public class FSM : MonoBehaviour
     //里氏替换 用工厂的接口确保能装下所有的工厂类型
     public void Initialize(EnemyRuntime runtime, IStateFactory factory, EnemyController controller)
     {
+        animator = GetComponent<Animator>();
         Runtime = runtime;
         Controller = controller;  // 保存控制器引用
 

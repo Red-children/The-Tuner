@@ -12,7 +12,7 @@ using UnityEditor;
 /// </summary>
 public class EnemyController : EnemyBase
 {
-
+    private bool isFacingRight = true; // 默认朝向，根据初始旋转自行调整
 
     [Header("敌人数据")]
     public EnemyData data;
@@ -148,18 +148,18 @@ public class EnemyController : EnemyBase
         Destroy(gameObject);
     }
 
-    // ��ײ��⣨�ӵ����У�
+    // 当玩家进入时调用
   
     public void OnPlayerEnter(Transform player)
     {
         if (runtime != null)
         {
             runtime.target = player;
-            // ��ѡ�����ž����
+            
         }
     }
 
-    // ����˳�׷��Χ������
+    // 玩家离开时调用
     public void OnPlayerExit(Transform player)
     {
         if (runtime != null && runtime.target == player)
@@ -168,18 +168,23 @@ public class EnemyController : EnemyBase
         }
     }
 
-    public Vector2 GetAttackWorldPos()
+    /// <summary>
+    /// 得到攻击点的世界坐标，主要用于近战敌人进行攻击范围的检测和伤害判定，根据敌人数据中的攻击偏移量计算出攻击点的位置，确保敌人能够正确地判断何时可以攻击玩家，同时根据敌人朝向动态调整攻击点的位置，使得攻击范围能够正确地覆盖玩家所在的位置，增强了游戏的互动性和挑战性。
+    /// </summary>
+    /// <returns></returns>
+public Vector2 GetAttackWorldPos()
+{
+    if (data is MeleeEnemyData meleeData)
     {
-        //  
-        if (data is MeleeEnemyData meleeData)
-        {
-            float dir = spriteRenderer.flipX ? -1f : 1f;
-            return (Vector2)transform.position + new Vector2(dir * meleeData.attackOffset.x, meleeData.attackOffset.y);
-        }
-        // ������ǽ�ս���ˣ���������λ�ã����ף�
-        return transform.position;
+        Vector2 forward = isFacingRight ? Vector2.right : Vector2.left;
+        Vector2 attackOffset = forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
+        return (Vector2)transform.position + attackOffset;
     }
-
+    return transform.position;
+}
+    /// <summary>
+    /// 更新武器朝向，主要用于远程敌人根据玩家的位置动态调整    
+    /// <>/summary>    
     public void UpdateWeaponAim()
     {
         if (weapon != null && runtime.target != null)
@@ -190,28 +195,47 @@ public class EnemyController : EnemyBase
         }
     }
 
-    private void OnDrawGizmosSelected()
+    /// <summary>
+    /// 在编辑器中绘制攻击范围，主要用于调试和设计阶段，帮助开发者可视化敌人的攻击范围和攻击点位置，根据敌人数据中的攻击参数绘制出攻击范围的边界，同时根据敌人朝向动态调整攻击点的位置，使得开发者能够更直观地了解敌人的攻击范围和行为逻辑，增强了游戏的设计效率和质量。
+    /// </summary>
+   private void OnDrawGizmosSelected()
+{
+    if (data == null) return;
+    SpriteRenderer sr = spriteRenderer ? spriteRenderer : GetComponent<SpriteRenderer>();
+
+    if (data is MeleeEnemyData meleeData)
     {
-        if (data == null) return;
+        Vector2 forward;
+        if (Application.isPlaying)
+        {
+            forward = isFacingRight ? Vector2.right : Vector2.left;
+        }
+        else
+        {
+            // 编辑器模式：根据当前 Y 轴旋转判断
+            bool faceRight = Mathf.Approximately(transform.eulerAngles.y, 180f);
+            forward = faceRight ? Vector2.right : Vector2.left;
+        }
 
-        Gizmos.color = Color.red;
-        if (data is MeleeEnemyData meleeData)
-        {
-            
-            Vector2 attackPos = Application.isPlaying ? GetAttackWorldPos() : (Vector2)transform.position + (Vector2)(meleeData.attackOffset * (spriteRenderer ? (spriteRenderer.flipX ? -1 : 1) : 1));
-            Gizmos.DrawWireSphere(attackPos, meleeData.attackRange);
-            // ��ѡ�����ƹ�����
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(attackPos, 0.1f);
-        }
-        else if (data is RangedEnemyData rangedData)
-        {
-           
-            Gizmos.DrawWireSphere(transform.position, rangedData.attackRange);
-        }
+        Vector2 attackPos = (Vector2)transform.position + forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
         
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPos, meleeData.attackRange);
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(attackPos, 0.1f);
     }
-    
-
+    else if (data is RangedEnemyData rangedData)
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, rangedData.attackRange);
+    }
+}
+public void FaceTarget(Vector2 targetPosition)
+{
+    isFacingRight = targetPosition.x > transform.position.x;
+    Vector3 rotation = transform.eulerAngles;
+    rotation.y = isFacingRight ? 180 : 0;
+    transform.eulerAngles = rotation;
+}
 
 }
