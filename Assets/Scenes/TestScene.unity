@@ -31483,30 +31483,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.17975
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.15485
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.12
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171717363495848412, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 2.82
-      objectReference: {fileID: 0}
-    - target: {fileID: 9171717363495848413, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: b41272485bbfc2f4592860d4a0fd6fb2, type: 3}
     - target: {fileID: 9171717364712834073, guid: 0e2ef10740593c141ae78ec5e20a5542, type: 3}
       propertyPath: m_Name
       value: MeleeEnemy (1)
@@ -89751,6 +89727,10 @@ PrefabInstance:
     - target: {fileID: 2253183429492023795, guid: eaa3337fcdbec2b498a9f29eb92c4635, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2253183429492023804, guid: eaa3337fcdbec2b498a9f29eb92c4635, type: 3}
+      propertyPath: maxHealth
+      value: 1000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eaa3337fcdbec2b498a9f29eb92c4635, type: 3}
