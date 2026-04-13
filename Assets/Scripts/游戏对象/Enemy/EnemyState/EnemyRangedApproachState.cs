@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using UnityEngine;
+using System;
+
+[Serializable]
+
 /// <summary>
 /// 远程敌人接近状态类，继承自EnemyStateBase，负责处理远程敌人在接近玩家时的行为逻辑，如调整位置以保持在攻击范围内，同时根据与玩家的距离动态调整移动方向，确保敌人能够在合理的范围内接近玩家并准备攻击，同时在状态更新中处理被击中和目标丢失的情况，确保敌人能够根据实际情况做出合理的反应，如切换到受伤状态或巡逻状态等。
 /// </summary>

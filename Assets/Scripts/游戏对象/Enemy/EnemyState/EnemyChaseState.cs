@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,6 +7,7 @@ using UnityEngine;
 /// 敌人追击状态类，负责处理敌人在追逐玩家时的行为逻辑，包括朝向目标、移动以及判断是否进入攻击范围等，根据敌人类型（近战或远程）进行不同的处理。
 /// </summary>
 
+[Serializable]
 public class EnemyChaseState : EnemyStateBase
 {
     public EnemyChaseState(FSM manager) : base(manager) { }
@@ -52,4 +54,5 @@ public class EnemyChaseState : EnemyStateBase
     }
 
     public override void OnExit() { }
+    
 }
