@@ -5,6 +5,8 @@ using UnityEngine;
 /// <summary>
 /// 敌人巡逻状态类，继承自EnemyStateBase，负责处理敌人在巡逻状态下的行为逻辑，包括在预设的巡逻点之间移动、随机生成新的巡逻目标等功能，确保敌人在没有玩家接近时能够进行合理的巡逻行为。
 /// </summary>
+/// 
+[System.Serializable]
 public class EnemyPatrolState : EnemyStateBase
 {
 

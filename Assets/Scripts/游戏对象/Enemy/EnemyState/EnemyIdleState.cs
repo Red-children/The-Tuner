@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
-#region �ȴ�״̬
+[Serializable]
 
 public class EnemyIdleState : EnemyStateBase
 {
@@ -48,4 +49,3 @@ public class EnemyIdleState : EnemyStateBase
         timer = 0f;
     }
 }
-#endregion

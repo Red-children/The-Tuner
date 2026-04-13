@@ -1,10 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 /// <summary>
 /// 近战敌人接近状态
 /// </summary>
+/// 
+[Serializable]
+
 public class EnemyMeleeApproachState : EnemyStateBase
 {
     private Vector2 currentDirection;

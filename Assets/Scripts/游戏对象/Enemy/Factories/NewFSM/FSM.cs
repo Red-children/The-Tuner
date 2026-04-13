@@ -37,6 +37,7 @@ public class FSM : MonoBehaviour
     public Animator animator;  // 用于播放动画的组件引用
     [SerializeField] 
     public IState currentState;
+     [SerializeField] private string currentStateName; // 用于 Inspector 调试
     private Dictionary<StateType, IState> states = new Dictionary<StateType, IState>();
 
     // 依赖注入：外部传入数据
@@ -75,7 +76,11 @@ public class FSM : MonoBehaviour
 
     void Update()
     {
-        currentState?.OnUpdate();
-        Controller?.UpdateWeaponAim();  // 确保武器实时指向目标
+         currentState?.OnUpdate();
+        Controller?.UpdateWeaponAim();
+        
+        // 更新调试显示
+        if (currentState != null)
+            currentStateName = currentState.GetType().Name;
     }
 }
