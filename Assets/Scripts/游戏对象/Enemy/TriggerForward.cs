@@ -5,7 +5,7 @@ using UnityEngine;
 public class TriggerForward : MonoBehaviour
 {
 
-    public EnemyController controller; // ÔÚ Inspector ÖĞÍÏÈë×Ó¶ÔÏóµÄ FSM
+    public EnemyController controller; // æ•Œäººæ§åˆ¶å™¨
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))

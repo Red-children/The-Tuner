@@ -81,7 +81,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 20
+  m_Radius: 17.456917
 --- !u!114 &9171717364712834078
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,7 +190,8 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4125022150300041418, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
 --- !u!1 &9171717363495848408 stripped
 GameObject:
@@ -237,6 +238,32 @@ MonoBehaviour:
   patrolPoints: []
   runtime: {fileID: 0}
   fsm: {fileID: 0}
+--- !u!61 &37152276005792528
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9171717363495848408}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: -0.18149948, y: -0.51227665}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 14.87, y: 14.58}
+    newSize: {x: 3, y: 3}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 11.022703, y: 12.460018}
+  m_EdgeRadius: 0
 --- !u!4 &9171717363495848412 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}

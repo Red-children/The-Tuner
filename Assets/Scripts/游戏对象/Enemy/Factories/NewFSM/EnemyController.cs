@@ -12,42 +12,47 @@ using UnityEditor;
 /// </summary>
 public class EnemyController : EnemyBase
 {
-    private bool isFacingRight = true; // 默认朝向，根据初始旋转自行调整
+    public bool isFacingRight = true; // 默认朝向，根据初始旋转自行调整
+
 
     [Header("敌人数据")]
     public EnemyData data;
 
     [Header("敌人组件")]
-    public WeaponInfo weapon;               
+    public WeaponInfo weapon;
     public Collider2D chaseArea;            // 追逐范围碰撞体
     public Transform patrolCenter;          // 巡逻中心点
     public Transform[] patrolPoints;        // 巡逻点数组
+
+    public Collider2D weaponCollider;        // 武器碰撞体，用于近战攻击的伤害判定
 
     [Header("状态机组件")]
     [SerializeField] private EnemyRuntime runtime;
     [SerializeField] private FSM fsm;
 
-   void Awake()
-{
-    if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
-    if (weapon == null) weapon = GetComponentInChildren<WeaponInfo>();
-
-    if (Application.isPlaying)
+    void Awake()
     {
-        // 防止重复添加
-        runtime = GetComponent<EnemyRuntime>();
-        if (runtime == null)
-            runtime = gameObject.AddComponent<EnemyRuntime>();
-        runtime.Init(data);
+        if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+        if (weapon == null) weapon = GetComponentInChildren<WeaponInfo>();
 
-        fsm = GetComponent<FSM>();
-        if (fsm == null)
-            fsm = gameObject.AddComponent<FSM>();
-        
-        IStateFactory factory = GetStateFactory();
-        fsm.Initialize(runtime, factory, this);
+        // 初始化状态机和运行时数据
+        if (Application.isPlaying)
+        {
+            // 防止重复添加
+            runtime = GetComponent<EnemyRuntime>();
+            if (runtime == null)
+                runtime = gameObject.AddComponent<EnemyRuntime>();
+            runtime.Init(data);//根据敌人数据初始化运行时数据
+
+            fsm = GetComponent<FSM>();
+            if (fsm == null)
+                fsm = gameObject.AddComponent<FSM>();
+
+            // 获取对应敌人类型的状态工厂
+            IStateFactory factory = GetStateFactory();
+            fsm.Initialize(runtime, factory, this);
+        }
     }
-}
     // 实现基类的抽象方法
     protected override void UpdateBehavior()
     {
@@ -68,14 +73,14 @@ public class EnemyController : EnemyBase
 
     // 受伤处理，包含受伤状态切换
     public override void Wound(float damage, RhythmRank rank)
-{
-    if (runtime.getHit) return;
-    runtime.getHit = true;
-    runtime.currentHealth -= damage;
-    
-    ShowDamageText(transform.position, damage, rank);
-    fsm?.ChangeState(StateType.Wound);
-}
+    {
+        if (runtime.getHit) return;
+        runtime.getHit = true;
+        runtime.currentHealth -= damage;
+
+        ShowDamageText(transform.position, damage, rank);
+        fsm?.ChangeState(StateType.Wound);
+    }
 
     // 死亡处理
     public void Dead()
@@ -87,24 +92,24 @@ public class EnemyController : EnemyBase
     private IEnumerator DeadCoroutine()
     {
         runtime.getHit = false;
-        
+
         // 调用基类的OnKilled方法
         OnKilled();
-        
+
         // 等待1秒，确保受伤状态有足够时间处理
         yield return null;
-        
+
         Destroy(gameObject);
     }
 
     // 显示伤害飘字
     public override void ShowDamageText(Vector3 targetPosition, float damage, RhythmRank rank)
-{
-    if (runtime?.DamageTextPrefab == null) return;
-    GameObject dmgObj = Instantiate(runtime.DamageTextPrefab, targetPosition, Quaternion.identity);
-    DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
-    dmgNumber?.SetDamage(damage, rank); // 改动点
-}
+    {
+        if (runtime?.DamageTextPrefab == null) return;
+        GameObject dmgObj = Instantiate(runtime.DamageTextPrefab, targetPosition, Quaternion.identity);
+        DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
+        dmgNumber?.SetDamage(damage, rank); // 改动点
+    }
 
 
     // 被杀死时调用
@@ -112,10 +117,10 @@ public class EnemyController : EnemyBase
     {
         isDead = true;
         Debug.Log($"{gameObject.name} 已被杀死");
-        
+
         // 触发敌人死亡事件（传递敌人信息）
         EventBus.Instance.Trigger(new EnemyDiedStruct(this, transform.position));
-        
+
         // 注销敌人（添加null检查避免异常）
         if (ownerRoom != null)
         {
@@ -137,25 +142,25 @@ public class EnemyController : EnemyBase
     {
         // 标记为死亡状态
         isDead = true;
-        
+
         // 调用OnKilled方法处理死亡逻辑
         OnKilled();
-        
+
         // 等待一帧，确保死亡逻辑执行完成
         yield return null;
-        
+
         // 销毁游戏对象
         Destroy(gameObject);
     }
 
     // 当玩家进入时调用
-  
+
     public void OnPlayerEnter(Transform player)
     {
         if (runtime != null)
         {
             runtime.target = player;
-            
+
         }
     }
 
@@ -172,16 +177,16 @@ public class EnemyController : EnemyBase
     /// 得到攻击点的世界坐标，主要用于近战敌人进行攻击范围的检测和伤害判定，根据敌人数据中的攻击偏移量计算出攻击点的位置，确保敌人能够正确地判断何时可以攻击玩家，同时根据敌人朝向动态调整攻击点的位置，使得攻击范围能够正确地覆盖玩家所在的位置，增强了游戏的互动性和挑战性。
     /// </summary>
     /// <returns></returns>
-public Vector2 GetAttackWorldPos()
-{
-    if (data is MeleeEnemyData meleeData)
+    public Vector2 GetAttackWorldPos()
     {
-        Vector2 forward = isFacingRight ? Vector2.right : Vector2.left;
-        Vector2 attackOffset = forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
-        return (Vector2)transform.position + attackOffset;
+        if (data is MeleeEnemyData meleeData)
+        {
+            Vector2 forward = isFacingRight ? Vector2.right : Vector2.left;
+            Vector2 attackOffset = forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
+            return (Vector2)transform.position + attackOffset;
+        }
+        return transform.position;
     }
-    return transform.position;
-}
     /// <summary>
     /// 更新武器朝向，主要用于远程敌人根据玩家的位置动态调整    
     /// <>/summary>    
@@ -198,44 +203,57 @@ public Vector2 GetAttackWorldPos()
     /// <summary>
     /// 在编辑器中绘制攻击范围，主要用于调试和设计阶段，帮助开发者可视化敌人的攻击范围和攻击点位置，根据敌人数据中的攻击参数绘制出攻击范围的边界，同时根据敌人朝向动态调整攻击点的位置，使得开发者能够更直观地了解敌人的攻击范围和行为逻辑，增强了游戏的设计效率和质量。
     /// </summary>
-   private void OnDrawGizmosSelected()
-{
-    if (data == null) return;
-    SpriteRenderer sr = spriteRenderer ? spriteRenderer : GetComponent<SpriteRenderer>();
-
-    if (data is MeleeEnemyData meleeData)
+    private void OnDrawGizmosSelected()
     {
-        Vector2 forward;
-        if (Application.isPlaying)
-        {
-            forward = isFacingRight ? Vector2.right : Vector2.left;
-        }
-        else
-        {
-            // 编辑器模式：根据当前 Y 轴旋转判断
-            bool faceRight = Mathf.Approximately(transform.eulerAngles.y, 180f);
-            forward = faceRight ? Vector2.right : Vector2.left;
-        }
+        if (data == null) return;
+        SpriteRenderer sr = spriteRenderer ? spriteRenderer : GetComponent<SpriteRenderer>();
 
-        Vector2 attackPos = (Vector2)transform.position + forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
-        
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPos, meleeData.attackRange);
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(attackPos, 0.1f);
+        if (data is MeleeEnemyData meleeData)
+        {
+            Vector2 forward;
+            if (Application.isPlaying)
+            {
+                forward = isFacingRight ? Vector2.right : Vector2.left;
+            }
+            else
+            {
+                // 编辑器模式：根据当前 Y 轴旋转判断
+                bool faceRight = Mathf.Approximately(transform.eulerAngles.y, 180f);
+                forward = faceRight ? Vector2.right : Vector2.left;
+            }
+
+            Vector2 attackPos = (Vector2)transform.position + forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(attackPos, meleeData.attackRange);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(attackPos, 0.1f);
+        }
+        else if (data is RangedEnemyData rangedData)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, rangedData.attackRange);
+        }
     }
-    else if (data is RangedEnemyData rangedData)
+    public void FaceTarget(Vector2 targetPosition)
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, rangedData.attackRange);
+        isFacingRight = targetPosition.x > transform.position.x;
+        Vector3 rotation = transform.eulerAngles;
+        rotation.y = isFacingRight ? 180 : 0;
+        transform.eulerAngles = rotation;
     }
-}
-public void FaceTarget(Vector2 targetPosition)
-{
-    isFacingRight = targetPosition.x > transform.position.x;
-    Vector3 rotation = transform.eulerAngles;
-    rotation.y = isFacingRight ? 180 : 0;
-    transform.eulerAngles = rotation;
-}
+
+    public void OnAttackAnimationEvent()
+    {
+        weaponCollider.enabled = true; // 启用武器碰撞体，开始伤害判定
+    }
+
+    public void OnAttackAnimationEventEnd()
+    {
+        if (weaponCollider != null)
+        {
+            weaponCollider.enabled = false; // 禁用武器碰撞体，结束伤害判定
+        }
+    }
 
 }

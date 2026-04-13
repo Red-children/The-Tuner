@@ -11,6 +11,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
 
     public EnemyMeleeAttackState(FSM manager) : base(manager) { }
 
+
     public override void OnStart()
     {
         manager.animator.SetTrigger("Attack");
@@ -21,9 +22,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
             manager.ChangeState(StateType.Patrol);
             return;
         }
-
-        // 触发攻击动画
-        //controller.animator.SetTrigger("Attack");
+        // 开始攻击协程，确保在状态切换时不会继续执行攻击逻辑，避免出现攻击动画和伤害判定的混乱等问题
         if (attackCoroutine != null) controller.StopCoroutine(attackCoroutine);
         attackCoroutine = controller.StartCoroutine(AttackCoroutine());
     }
@@ -79,19 +78,26 @@ public class EnemyMeleeAttackState : EnemyStateBase
     /// </summary>
     /// <returns></returns>
     private bool IsTargetInRange()
-    {
-        if (attackTarget == null) return false;
-        Vector2 attackWorldPos = controller.GetAttackWorldPos();    //得到攻击点的世界坐标
-        MeleeEnemyData meleeData = data as MeleeEnemyData;          //将敌人数据转换为近战敌人数据，获取攻击范围和目标层级等信息
-        if (meleeData == null) return false;
-        // 使用OverlapCircle检测目标是否在攻击范围内，确保敌人能够正确地判断何时可以攻击玩家
-        Collider2D[] hits = Physics2D.OverlapCircleAll(attackWorldPos, meleeData.attackRange, meleeData.targetLayer);
-        foreach (var hit in hits)
-        // 如果检测到的碰撞体是当前攻击目标，则认为目标在攻击范围内，返回true
-        //  注意这里有个问题多个玩家被一个敌人攻击时会有问题，后续可以改成只攻击一个玩家或者增加优先级机制
-            if (hit.transform == attackTarget) return true;
-        return false;
-    }
+{
+    if (attackTarget == null) return false;                     // 如果攻击目标已经无效，直接返回false
+    Vector2 attackWorldPos = controller.GetAttackWorldPos();    //
+    MeleeEnemyData meleeData = data as MeleeEnemyData;
+    if (meleeData == null) return false;
+
+    Vector2 toTarget = (Vector2)attackTarget.position - attackWorldPos;
+    float distance = toTarget.magnitude;
+
+    // 距离判断
+    if (distance > meleeData.attackRange) return false;
+
+    // 角度判断：目标是否在攻击点前方一定角度内（例如60度锥形）
+    Vector2 forward = controller.isFacingRight ? Vector2.right : Vector2.left;
+    float angle = Vector2.Angle(forward, toTarget.normalized);
+    float maxAngle =  meleeData.attackAngle;
+
+
+    return angle <= maxAngle;
+}
     public override void OnExit()
     {
         // 停止攻击协程，确保在状态切换时不会继续执行攻击逻辑，避免出现攻击动画和伤害判定的混乱等问题
