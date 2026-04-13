@@ -24,13 +24,13 @@ public abstract class EnemyBase : MonoBehaviour
     public abstract void OnKilled();
     
     // 死亡协程
-    protected abstract IEnumerator DeathCoroutine();
+    public abstract IEnumerator DeathCoroutine();
     
     // 受伤
-    public abstract void Wound(float damage);
+   public abstract void Wound(float damage, RhythmRank rank);
     
     // 显示伤害飘字
-    public abstract void ShowDamageText(Vector3 targetPosition, float damage);
+    public abstract void ShowDamageText(Vector3 targetPosition, float damage, RhythmRank rank);
     
     // 抽象方法，子类实现具体行为
     protected abstract void UpdateBehavior();

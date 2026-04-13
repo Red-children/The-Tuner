@@ -1,4 +1,7 @@
 using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossController : EnemyBase
@@ -7,86 +10,91 @@ public class BossController : EnemyBase
 
     public BossFSM manager;
     public BossRuntime runtime;
-    public BossSkill skill;
-    public Animator animator;
 
     public void Awake()
     {
+
+
         manager = GetComponent<BossFSM>();
         runtime = GetComponent<BossRuntime>();
-        skill = GetComponent<BossSkill>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        animator = GetComponent<Animator>();
 
-        if (manager == null) Debug.LogError("BossFSM组件未找到！");
-        if (runtime == null) Debug.LogError("BossRuntime组件未找到！");
-        if (spriteRenderer == null) Debug.LogError("SpriteRenderer组件未找到！");
+        if(manager == null) Debug.LogError("BossFSM组件未找到！");
+        if(runtime == null) Debug.LogError("BossRuntime组件未找到！");
+        if(spriteRenderer == null) Debug.LogError("SpriteRenderer组件未找到！");
 
-        manager.Initialize(runtime, this);
-        runtime.Init(bossData);
+        manager.Initialize(runtime, this); // 传入运行时数据和控制器引用
+        runtime.Init(bossData); // 传入控制器引用
     }
 
     void Start()
+{
+    if (runtime.target == null)
     {
-        if (runtime.target == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-                runtime.target = player.transform;
-        }
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+            runtime.target = player.transform;
     }
+}
 
-    public override void Wound(float damage)
-    {
-        if (isDead) return;
-        runtime.getHit = true;
-        runtime.currentHealth -= damage;
 
-        animator?.SetTrigger("Hurt");
+    public override void Wound(float damage, RhythmRank rank)
+{
+    if (runtime.getHit) return;
+    runtime.getHit = true;
+    runtime.currentHealth -= damage;
+    
+    ShowDamageText(transform.position, damage, rank);
+    manager?.ChangeState(StateType.Wound);
+}
 
-        if (runtime.currentHealth <= 0)
-        {
-            runtime.currentHealth = 0;
-            OnKilled();
-            return;
-        }
-
-        ShowDamageText(transform.position, damage);
-        manager.ChangeState(BossStateType.Wound);
-    }
 
     public override void OnKilled()
     {
-        if (isDead) return;
+        if(isDead) return; // 已经死亡，避免重复调用
         isDead = true;
 
-        animator?.SetTrigger("Death");
-
-        if (ownerRoom != null)
+        if(ownerRoom != null)
+        {
             ownerRoom.UnregisterEnemy(this);
-
+        }
+        else
+        {
+            Debug.LogWarning("BossController: ownerRoom未设置，无法注销敌人！");
+        }
+        // 触发敌人死亡事件（传递敌人信息）
         EventBus.Instance.Trigger(new EnemyDiedStruct(this, transform.position));
-
-        StartCoroutine(DeathCoroutine());
+        
     }
 
-    public override void ShowDamageText(Vector3 targetPosition, float damage)
+
+
+   public override void ShowDamageText(Vector3 targetPosition, float damage, RhythmRank rank)
+{
+    if (runtime?.DamageTextPrefab == null) return;
+    GameObject dmgObj = Instantiate(runtime.DamageTextPrefab, targetPosition, Quaternion.identity);
+    DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
+    dmgNumber?.SetDamage(damage, rank); // 改动点
+}
+
+    
+    public override IEnumerator DeathCoroutine()
     {
-        if (runtime?.DamageTextPrefab == null) return;
-        GameObject dmgObj = Instantiate(runtime.DamageTextPrefab, targetPosition, Quaternion.identity);
-        DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
-        dmgNumber?.SetDamage(damage);
+        // 标记为死亡状态
+        isDead = true;
+        
+        // 调用OnKilled方法处理死亡逻辑
+        OnKilled();
+        
+        
+        yield return null;
+        Destroy(this.gameObject);
     }
 
-    protected override IEnumerator DeathCoroutine()
+    protected override void UpdateBehavior()
     {
-        yield return new WaitForSeconds(1f);
-        Destroy(gameObject);
+        //好像不太需要这个东西
     }
 
-    protected override void UpdateBehavior() { }
 
-    public void PlayIdle() => animator?.Play("Idle");
-    public void PlayAttack() => animator?.Play("Attack");
-    public void PlaySkill() => animator?.Play("Skill");
 }

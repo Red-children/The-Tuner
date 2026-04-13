@@ -10,11 +10,13 @@ GameObject:
   m_Component:
   - component: {fileID: 3542882329778536703}
   - component: {fileID: 3542882329778536672}
-  - component: {fileID: 3542882329778536673}
   - component: {fileID: 4749613058099531036}
   - component: {fileID: 4749613058099531037}
-  - component: {fileID: 8124734916388236142}
   - component: {fileID: 7054010078253530104}
+  - component: {fileID: 1315546774}
+  - component: {fileID: 1315546781}
+  - component: {fileID: 1315546782}
+  - component: {fileID: 1315546783}
   m_Layer: 6
   m_Name: RunToneFlying
   m_TagString: Enemy
@@ -31,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 3542882329778536702}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 16.68, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.17975, y: 0.15485, z: 0.5}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -78,7 +80,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -9095717837082945937, guid: 207ee8102dd4143d288186ef0be518ee, type: 3}
+  m_Sprite: {fileID: 21300000, guid: b41272485bbfc2f4592860d4a0fd6fb2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -89,21 +91,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &3542882329778536673
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3542882329778536702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82ae47201db599a46ad15b3318b5b6d6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ownerRoom: {fileID: 0}
-  target: {fileID: 0}
-  spriteRenderer: {fileID: 3542882329778536672}
 --- !u!50 &4749613058099531036
 Rigidbody2D:
   serializedVersion: 4
@@ -141,29 +128,6 @@ CapsuleCollider2D:
   m_Offset: {x: 0, y: 0}
   m_Size: {x: 1, y: 2}
   m_Direction: 0
---- !u!114 &8124734916388236142
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3542882329778536702}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 251ee5fe0e3a39c4cb326b3dd6730b46, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  insectData: {fileID: 11400000, guid: 0bc5a39a78017a447b81d1b179c8726d, type: 2}
-  maxHealth: 100
-  currentHealth: 100
-  baseAttack: 10
-  moveSpeed: 2
-  detectionRange: 10
-  attackRange: 1
-  attackCooldown: 1
-  idleMovementSpeed: 0.01
-  damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
-  deathEffectPrefab: {fileID: 0}
 --- !u!95 &7054010078253530104
 Animator:
   serializedVersion: 5
@@ -185,3 +149,96 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1315546774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3542882329778536702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9510b8d32398fd1458dd54187349827e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultHitStopDuration: 0.08
+  minTimeScale: 0.1
+  timeScaleCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  targetAnimator: {fileID: 0}
+  affectedComponents: []
+--- !u!114 &1315546781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3542882329778536702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d4190926dcf0764d80fe5029d867655, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+--- !u!114 &1315546782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3542882329778536702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 783ab7a423d1e5e4e84b8eca626cb65b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  getHit: 0
+  currentHealth: 0
+  currentMoveSpeed: 0
+  currentChaseSpeed: 0
+  originalData: {fileID: 0}
+--- !u!114 &1315546783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3542882329778536702}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d059f8f29b352bb4b98e26deea668732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerRoom: {fileID: 0}
+  target: {fileID: 0}
+  spriteRenderer: {fileID: 0}
+  data: {fileID: 11400000, guid: 0bc5a39a78017a447b81d1b179c8726d, type: 2}
+  weapon: {fileID: 0}
+  chaseArea: {fileID: 0}
+  patrolCenter: {fileID: 0}
+  patrolPoints: []
+  runtime: {fileID: 0}
+  fsm: {fileID: 0}

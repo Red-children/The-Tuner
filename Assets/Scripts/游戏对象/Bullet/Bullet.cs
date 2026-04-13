@@ -42,18 +42,20 @@ public class Bullet : MonoBehaviour
         int bulletLayer = gameObject.layer;
         if (bulletLayer == LayerMask.NameToLayer("PlayerBullet"))
         {
-            layerMask = LayerMask.GetMask("Enemy", "Wall");
+            layerMask = LayerMask.GetMask("Enemy", "Wall" );
             
             // 检查连击管理器是否启用穿透效果
             if (ComboManager.Instance != null)
-            {
-                //直接单例拿引用来得到 现在的连击效果是否包含穿透 如果包含则启用穿透效果
-                canPenetrate = ComboManager.Instance.HasEffect(ComboEffect.BulletPenetration);
-                if (canPenetrate)
-                {
-                    Debug.Log("子弹启用穿透效果");
-                }
-            }
+{
+    canPenetrate = ComboManager.Instance.HasEffect(ComboEffect.BulletPenetration);
+    if (canPenetrate)
+    {
+        Debug.Log("子弹启用穿透效果");
+        // 直接改颜色
+        if (spriteRenderer != null)
+            spriteRenderer.color = new Color(1f, 0.5f, 0.8f); // 粉紫色，你也可以在Inspector里配置
+    }
+}
         }
         else if (bulletLayer == LayerMask.NameToLayer("EnemyBullet"))
         {
@@ -105,16 +107,28 @@ public class Bullet : MonoBehaviour
     /// </summary>
     private bool HandleHit(RaycastHit2D hit)
     {
+        DoorActivator activator = hit.collider.GetComponent<DoorActivator>();
+        if (activator != null)
+        {
+            activator.TakeHit(currentRhythmRank);
+            DestroyMyself();
+            return true;
+        }
+
+
         // 玩家子弹击中敌人
         if (gameObject.layer == LayerMask.NameToLayer("PlayerBullet") && hit.collider.CompareTag("Enemy"))
         {
             EnemyBase enemy = hit.collider.GetComponent<EnemyBase>();
+
+
+
+
             if (enemy != null)
             {
                 // 计算伤害（考虑穿透衰减）
                 float finalDamage = CalculatePenetrationDamage(damage);
-                enemy.Wound(finalDamage);
-
+               enemy.Wound(finalDamage, currentRhythmRank);
                 // 触发敌人被命中的事件
                 EventBus.Instance.Trigger(new EnemyHitEvent(1, currentRhythmRank));
                 Debug.Log ($"子弹击中敌人，造成 {finalDamage} 伤害，当前节奏判定：{currentRhythmRank}");

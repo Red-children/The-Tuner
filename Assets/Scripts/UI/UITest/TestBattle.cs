@@ -8,6 +8,7 @@ public class TestBattle : MonoBehaviour
     {
         UIManager.Instance.OpenPanel(UIManager.UIConst.Battle);
         UIManager.Instance.OpenPanel(UIManager.UIConst.Crosshair);
+        UIManager.Instance.OpenPanel(UIManager.UIConst.PlayerHurt);
     }
     void Update()
     {

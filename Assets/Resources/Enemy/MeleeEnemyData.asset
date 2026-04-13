@@ -22,6 +22,7 @@ MonoBehaviour:
   damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
   deadEff: {fileID: 0}
   patrolRadius: 5
+  attackAngle: 60
   attackRange: 2
   attackDamage: 10
   attackOffset: {x: 1, y: 0}

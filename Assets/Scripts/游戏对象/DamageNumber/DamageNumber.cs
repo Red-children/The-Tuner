@@ -9,12 +9,22 @@ using UnityEngine.UI;
 /// </summary>
 public class DamageNumber : MonoBehaviour
 {
-    [Header("动画参数")]
-    public float moveHeight = 1f;  // 伤害数字上升的高度
-    public float duration = 1f;    // 动画持续时间
+   [Header("动画参数")]
+    public float moveHeight = 1f;
+    public float duration = 1f;
 
-    [Header("伤害数字组件")]
-    public TextMeshProUGUI  damageText;  // 伤害数字的文本组件
+    [Header("判定等级颜色配置")]
+    public Color perfectColor = new Color(1f, 0.8f, 0f);      // 金色
+    public Color greatColor = new Color(0.3f, 0.8f, 1f);     // 亮蓝
+    public Color goodColor = Color.white;                    // 白色
+    public Color missColor = new Color(0.5f, 0.5f, 0.5f);    // 灰色
+
+    [Header("字号变化")]
+    public float perfectScale = 1.5f;
+    public float greatScale = 1.2f;
+    public float goodScale = 1.0f;
+
+    public TextMeshProUGUI damageText;
 
     void Awake()
     {
@@ -30,21 +40,43 @@ public class DamageNumber : MonoBehaviour
             Debug.LogError("DamageNumber: 未找到 TextMeshProUGUI 组件");
     }
 
-    #region 设置伤害数字和开始动画
+  
     // 设置伤害数字并开始动画
-    public void SetDamage(float value)
+  public void SetDamage(float value, RhythmRank rank = RhythmRank.Good)
     {
-        Debug.Log($"SetDamage ֵ: {value}");
-        if (damageText != null)
-            damageText.text = value.ToString("0");
-        else
-            Debug.LogError("damageText 缺失，无法显示伤害数字");
+        if (damageText == null) return;
+        damageText.text = value.ToString("0");
+
+        // 根据等级设置颜色和字号
+        switch (rank)
+        {
+            case RhythmRank.Perfect:
+                damageText.color = perfectColor;
+                damageText.fontSize = Mathf.RoundToInt(damageText.fontSize * perfectScale);
+                break;
+            case RhythmRank.Great:
+                damageText.color = greatColor;
+                damageText.fontSize = Mathf.RoundToInt(damageText.fontSize * greatScale);
+                break;
+            case RhythmRank.Good:
+                damageText.color = goodColor;
+                break;
+            default:
+                damageText.color = missColor;
+                break;
+        }
+
+        // 可选：Perfect 时加一个简单的放大动画
+        if (rank == RhythmRank.Perfect)
+        {
+            damageText.transform.localScale = Vector3.one * 1.3f;
+            damageText.transform.DOScale(1f, 0.2f).SetEase(Ease.OutBack);
+        }
 
         StartAnimation();
     }
-    #endregion
 
-    #region 伤害数字动画，包含上升和淡出效果，并在动画结束后销毁对象
+
     private void StartAnimation()
     {
         Debug.Log("伤害数字动画开始");
@@ -69,6 +101,6 @@ public class DamageNumber : MonoBehaviour
             Destroy(gameObject);
         });
     }
-    #endregion
+    
 
 }
