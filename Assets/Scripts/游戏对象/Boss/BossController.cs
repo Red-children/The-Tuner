@@ -42,11 +42,10 @@ public class BossController : EnemyBase
         runtime.getHit = true;
         runtime.currentHealth -= damage;
 
-        // 保留 a.7 的动画触发
         animator?.SetTrigger("Hurt");
 
         ShowDamageText(transform.position, damage, rank);
-        manager?.ChangeState(BossStateType.Wound); // 使用 BossStateType 统一
+        manager?.ChangeState(BossStateType.Wound); 
     }
 
     public override void OnKilled()

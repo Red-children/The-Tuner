@@ -19,4 +19,12 @@ public class BossData : EnemyData
     public float postureRegenDelay = 2f;
     public float staggerDuration = 3f;
     public float postureDamageMultiplier = 1f;
+
+    [Header("污染区域技能")]
+    public GameObject contaminatedZonePrefab;    // 如果不使用动态生成，可留空，但建议用动态生成方式则无需此字段
+    public float zoneDamagePerSecond = 10f;      // 每秒对玩家伤害
+    public float zoneSpawnInterval = 3f;         // 小怪生成间隔（秒）
+    public GameObject minionPrefab;              // 生成的小怪预制体
+    public float zoneMaxHealth = 50f;            // 区域生命值
+    public int maxZoneCount = 3;                 // 同时存在的最大区域数量
 }

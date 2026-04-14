@@ -23,7 +23,7 @@ public class BossFSM : MonoBehaviour
         states.Add(BossStateType.Wound, new BossWoundState(Controller));
         states.Add(BossStateType.Skill, new BossSkillState(Controller));
         states.Add(BossStateType.PhaseChange, new BossPhaseChangeState(Controller));
-        states.Add(BossStateType.Dead, new BossDeadState(Controller)); // 启用 b.1 新增的状态
+        states.Add(BossStateType.Dead, new BossDeadState(Controller)); 
 
         ChangeState(BossStateType.Idle);
     }
