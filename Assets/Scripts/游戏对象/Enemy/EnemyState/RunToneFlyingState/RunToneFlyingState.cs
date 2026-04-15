@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RunToneFlyingIdleState : EnemyStateBase
+public class RunToneFlyingIdleState :  EnemyStateBase 
 {
     private float timer;
     public RunToneFlyingIdleState(FSM fsm) : base(fsm) { }
@@ -46,6 +46,9 @@ public class RunToneFlyingChaseState : EnemyStateBase
 
 // RunToneFlyingChargeState
 
+/// <summary>
+/// 飞行昆虫的冲撞状态，直接向玩家位置飞行一段时间
+/// </summary>
 
 public class RunToneFlyingChargeState : EnemyStateBase
 {
@@ -60,14 +63,18 @@ public class RunToneFlyingChargeState : EnemyStateBase
     public override void OnStart()
     {
         manager.animator.SetTrigger("IsAttack");
+        //转换数据类型
         insectData = data as RunToneFlyingInsectData;
         if (insectData == null)
         {
+            //如果为空 直接返回Idle，避免错误
             manager.ChangeState(StateType.Idle);
             return;
         }
 
+        //取出冲撞数据
         chargeSpeed = insectData.chargeSpeed;
+
         chargeTime = 0f;
 
         // 关键修复：目标为空时的处理
@@ -76,12 +83,12 @@ public class RunToneFlyingChargeState : EnemyStateBase
             // 尝试重新获取玩家
             GameObject player = GameObject.FindGameObjectWithTag("Player");
             if (player != null)
-                controller.target = player.transform;
+                runtime.target = player.transform;
         }
 
-        if (controller.target != null)
+        if (runtime.target != null)
         {
-            chargeDirection = (controller.target.position - manager.transform.position).normalized;
+            chargeDirection = (runtime.target.position - manager.transform.position).normalized;
         }
         else
         {

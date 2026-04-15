@@ -26,7 +26,7 @@ public class EnemyController : EnemyBase
 
     [Header("状态机组件")]
     // 运行时数据
-    [SerializeField] private EnemyRuntime runtime;
+    [SerializeField] public EnemyRuntime runtime; // 运行时数据，包含当前状态、目标等动态信息
     //状态机实例
     [SerializeField] private FSM fsm;
 
@@ -291,4 +291,10 @@ public class EnemyController : EnemyBase
     }
     #endregion
 
+
+    public override void SetTarget(Transform target)
+{
+    if (runtime != null)
+        runtime.target = target;
+}
 }

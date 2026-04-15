@@ -8,8 +8,9 @@ using UnityEngine;
 public abstract class EnemyBase : MonoBehaviour
 {
     [Header("基础属性")]
-    public Room ownerRoom; // 所属房间
-    public Transform target;        
+    public Room ownerRoom; // 所属房间    
+
+    
     
     [Header("组件")]
     public SpriteRenderer spriteRenderer;   //图片
@@ -34,6 +35,9 @@ public abstract class EnemyBase : MonoBehaviour
     
     // 抽象方法，子类实现具体行为
     protected abstract void UpdateBehavior();
+
+    public abstract void SetTarget(Transform target);
+
     
     protected virtual void Awake()
     {
