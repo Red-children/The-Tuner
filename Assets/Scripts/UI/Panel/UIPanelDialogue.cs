@@ -32,7 +32,7 @@ public class UIPanelDialogue : UIBasePanel
     [SerializeField] private Image haloMask;
     [SerializeField] private Image blackMask;
 
-#region 覆写动画 —— 全部用 Sequence 队列装载
+#region 覆写动画
     protected override void PlayEnterAnimation()
     {
         _isPlayingAnimation = true;
@@ -93,7 +93,7 @@ public class UIPanelDialogue : UIBasePanel
     }
 #endregion
 
-#region 过场动画 —— 全部返回 Tween
+#region 过场动画
     Tween EnterBackground()
     {
         return FadeIn(background, fadeDuration);
@@ -167,7 +167,7 @@ public class UIPanelDialogue : UIBasePanel
     }
 #endregion
 
-#region 退场动画 —— 全部返回 Tween
+#region 退场动画
     Tween ExitBackground()
     {
         return FadeOut(background, fadeDuration);

@@ -7,7 +7,6 @@ using UnityEngine.UI;
 //  对话面板测试
 public class TestDialogue : MonoBehaviour
 {
-    public Transform ring;
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.F))
