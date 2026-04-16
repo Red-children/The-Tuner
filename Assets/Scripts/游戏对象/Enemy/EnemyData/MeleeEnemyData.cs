@@ -12,6 +12,12 @@ public class MeleeEnemyData : EnemyData
     public float attackRange = 1.5f;
     public int attackDamage = 10;
     public Vector2 attackOffset = new Vector2(1f, 0f);
-    public Transform attackPoint;
+
     public float Atk = 10;
+
+    
+    [Header("追击配置")]
+    [Tooltip("最大追击距离，超过此距离则放弃追击返回巡逻")]
+    public float maxChaseDistance = 15f;
+
 }

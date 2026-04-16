@@ -27,6 +27,25 @@ public class EnemyChaseState : EnemyStateBase
         // 如果目标丢失，切换回巡逻状态
         if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
+        float maxChase = 0f;
+
+
+        if (data is MeleeEnemyData mData)
+            maxChase = mData.maxChaseDistance;
+        // 如果是其他类型（如跑调飞虫），可以给一个默认值或跳过检查
+        else
+            maxChase = float.MaxValue; // 无限追击
+
+        float distanceToTarget = Vector2.Distance(manager.transform.position, runtime.target.position);
+
+        if (distanceToTarget > maxChase)
+        {
+            runtime.target = null;
+            manager.ChangeState(StateType.Patrol);
+            return;
+        }
+
+
         float beatProgress = (float)RhythmManager.Instance.BeatProgress; // 修复1：double转float
         float speedMultiplier = Mathf.Sin(beatProgress * Mathf.PI);
         float currentChaseSpeed = runtime.currentChaseSpeed * Mathf.Lerp(0.6f, 1.4f, speedMultiplier);
