@@ -30,10 +30,17 @@ public class EnemyController : EnemyBase
     //状态机实例
     [SerializeField] private FSM fsm;
 
+    [Header("攻击预警UI")]
+    [SerializeField] private EnemyWarningUI warningUI; // 在Inspector中拖拽敌人头顶的Canvas
+
     void Awake()
     {
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
         if (weapon == null) weapon = GetComponentInChildren<WeaponInfo>();
+        if (warningUI == null)
+            warningUI = GetComponentInChildren<EnemyWarningUI>(true);
+
+
         print(" 武器碰撞体 " + weaponCollider.name);
         // 初始化武器碰撞体伤害脚本
         if (weaponCollider != null)
@@ -293,8 +300,13 @@ public class EnemyController : EnemyBase
 
 
     public override void SetTarget(Transform target)
-{
-    if (runtime != null)
-        runtime.target = target;
-}
+    {
+        if (runtime != null)
+            runtime.target = target;
+    }
+    public void ShowAttackWarning()
+    {
+        if (warningUI != null)
+            warningUI.PlayWarning();
+    }
 }
