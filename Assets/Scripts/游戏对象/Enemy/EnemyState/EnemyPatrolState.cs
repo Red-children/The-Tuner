@@ -49,13 +49,7 @@ public class EnemyPatrolState : EnemyStateBase
             return;
         }
 
-
-
-        // 根据目标点的位置调整敌人的朝向，确保敌人始终面向移动的方向
-        if (targetPos.x > manager.transform.position.x)
-            controller.spriteRenderer.flipX = false; //目标点在右边，面向右边
-        else if (targetPos.x < manager.transform.position.x)
-            controller.spriteRenderer.flipX = true;  // 目标点在左边，面向左边
+        controller.FaceTarget(targetPos);
 
         //朝向目标点移动
         manager.transform.position = Vector2.MoveTowards(
@@ -81,7 +75,7 @@ public class EnemyPatrolState : EnemyStateBase
         if (controller.patrolPoints.Length == 0) return;
         targetPos = controller.patrolPoints[currentPointIndex].position;
 
-        
+
         if (movingForward)
         {
             // 如果当前巡逻点是最后一个，切换方向，否则继续向前
@@ -98,7 +92,7 @@ public class EnemyPatrolState : EnemyStateBase
                 currentPointIndex--;
         }
     }
-  
+
     public override void OnExit()
     {
         targetPos = Vector2.zero;
@@ -108,33 +102,29 @@ public class EnemyPatrolState : EnemyStateBase
 
     private void GetNewRandomTarget()
     {
-        if (controller.patrolCenter == null)
-        {Debug.LogWarning("没有设置巡逻中心，无法生成随机巡逻目标");
-            return;
+        // 1. 优先使用手动设置的 patrolCenter
+        Vector2 center;
+        if (controller.patrolCenter != null)
+        {
+            center = controller.patrolCenter.position;
+        }
+        // 2. 如果没有手动设置，尝试从父物体获取（假设父物体就是领地锚点）
+        else if (controller.transform.parent != null)
+        {
+            center = controller.transform.parent.position;
+            Debug.Log($"[{controller.name}] 使用父物体位置作为巡逻中心: {center}");
+        }
+        // 3. 最后的容错：使用当前位置，但会发出严重警告（提醒策划配置）
+        else
+        {
+            center = controller.transform.position;
+            Debug.LogError($"[{controller.name}] 既没有 patrolCenter 也没有父物体！巡逻中心回退到自身，会导致漂移！");
         }
 
-        // 得到巡逻中心位置，确保随机目标是在巡逻中心附近生成的，形成合理的巡逻范围
-        Vector2 center = controller.patrolCenter.position;
-
-        // 得到当前敌人朝向，作为生成随机方向的基础，确保随机目标的生成是基于敌人当前的朝向，形成更自然的巡逻行为
-        Vector2 currentDir = manager.transform.right; 
-
-        // 生成一个随机方向，基于当前朝向进行一定范围内的随机偏转，确保敌人能够在巡逻中心附近的不同方向上生成随机目标，形成更丰富的巡逻路径
-        float angleRange = 90f; 
-        // 生成一个随机角度，范围在[-angleRange, angleRange]之间，确保随机目标的生成是在当前朝向的基础上进行一定范围内的随机偏转，形成更自然的巡逻行为
-        float randomAngle = Random.Range(-angleRange, angleRange) * Mathf.Deg2Rad;
-        // 计算随机方向，使用旋转矩阵将当前朝向进行旋转，得到一个新的随机方向，确保随机目标的生成是基于敌人当前的朝向进行一定范围内的随机偏转，形成更自然的巡逻行为
-        Vector2 randomDir = new Vector2(
-            Mathf.Cos(randomAngle) * currentDir.x - Mathf.Sin(randomAngle) * currentDir.y,
-            Mathf.Sin(randomAngle) * currentDir.x + Mathf.Cos(randomAngle) * currentDir.y
-        ).normalized;
-
-        // 生成一个随机距离，范围在[0, data.patrolRadius]之间，确保随机目标的生成是在巡逻中心附近的合理范围内，形成合理的巡逻行为
+        // 生成随机巡逻目标
+        float randomAngle = Random.Range(0f, 360f) * Mathf.Deg2Rad;
+        Vector2 randomDir = new Vector2(Mathf.Cos(randomAngle), Mathf.Sin(randomAngle));
         float radius = Random.Range(0f, data.patrolRadius);
-        Vector2 offset = randomDir * radius;
-
-        // 计算最终的随机目标位置，确保随机目标是在巡逻中心附近的合理位置，形成合理的巡逻行为
-        targetPos = center + offset;
+        targetPos = center + randomDir * radius;
     }
-  
 }
