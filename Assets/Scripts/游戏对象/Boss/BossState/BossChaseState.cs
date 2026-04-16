@@ -33,12 +33,19 @@ public class BossChaseState : IState
             return;
         }
 
-        Vector2 direction = (runtime.target.position - controller.transform.position).normalized;
-        controller.transform.Translate(direction * runtime.currentChaseSpeed * Time.deltaTime);
+        // 移动向目标
+        controller.transform.position = Vector2.MoveTowards(
+            controller.transform.position,
+            runtime.target.position,
+            runtime.currentChaseSpeed * Time.deltaTime
+        );
 
+        // 翻转朝向
+        Vector2 direction = (runtime.target.position - controller.transform.position).normalized;
         if (direction.x != 0)
             controller.spriteRenderer.flipX = direction.x < 0;
 
+        // 距离判断切换状态
         float distance = Vector2.Distance(controller.transform.position, runtime.target.position);
         if (distance <= runtime.Data.normalAttackRange)
         {

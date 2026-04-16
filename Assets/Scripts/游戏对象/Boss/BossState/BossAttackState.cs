@@ -38,6 +38,7 @@ public class BossAttackState : IState
 
         if (controller.skill != null && controller.skill.CanUseSkill())
         {
+            controller.skill.UseRandomSkill();
             fsm.ChangeState(BossStateType.Skill);
             return;
         }

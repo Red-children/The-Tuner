@@ -34,9 +34,10 @@ public class BossSkillState : IState
             skillUsed = true;
         }
 
-        if (skillUsed && Time.time >= controller.skill.lastUseTime + 0.5f)
+        if (skillUsed)
         {
             float distance = Vector3.Distance(controller.transform.position, runtime.target.position);
+
             if (distance <= runtime.Data.normalAttackRange)
                 fsm.ChangeState(BossStateType.Attack);
             else

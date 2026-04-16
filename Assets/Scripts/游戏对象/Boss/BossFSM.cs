@@ -30,6 +30,12 @@ public class BossFSM : MonoBehaviour
 
     public void ChangeState(BossStateType newState)
     {
+        if (!states.ContainsKey(newState))
+        {
+            Debug.LogError("State not found: " + newState);
+            return;
+        }
+
         if (currentState != null)
             currentState.OnExit();
 
