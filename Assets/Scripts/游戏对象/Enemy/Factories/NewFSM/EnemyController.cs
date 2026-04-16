@@ -13,6 +13,7 @@ using UnityEditor;
 public class EnemyController : EnemyBase
 {
     public bool isFacingRight = true; // 默认朝向，根据初始旋转自行调整
+
     [Header("敌人数据")]
     public EnemyData data;
 
@@ -40,7 +41,6 @@ public class EnemyController : EnemyBase
         if (warningUI == null)
             warningUI = GetComponentInChildren<EnemyWarningUI>(true);
 
-
         print(" 武器碰撞体 " + weaponCollider.name);
         // 初始化武器碰撞体伤害脚本
         if (weaponCollider != null)
@@ -55,6 +55,23 @@ public class EnemyController : EnemyBase
             // 初始禁用
             weaponCollider.enabled = false;
         }
+
+        if (weaponCollider == null)
+        {
+            // 优先从武器对象下找
+            if (weapon != null)
+                weaponCollider = weapon.GetComponentInChildren<Collider2D>();
+            // 找不到则通过名称查找
+            if (weaponCollider == null)
+            {
+                Transform weaponTrans = transform.Find("Weapon");
+                if (weaponTrans != null)
+                    weaponCollider = weaponTrans.GetComponent<Collider2D>();
+            }
+            if (weaponCollider == null)
+                Debug.LogError($"[{gameObject.name}] 未找到武器碰撞体！");
+        }
+
 
         // 初始化状态机和运行时数据
         if (Application.isPlaying)
@@ -87,10 +104,19 @@ public class EnemyController : EnemyBase
         if (data is MeleeEnemyData) return new MeleeStateFactory();
         if (data is RangedEnemyData) return new RangedStateFactory();
         if (data is RunToneFlyingInsectData) return new RunToneFlyingStateFactory();
+        if (data is NoiseMonsterData) return new MeleeStateFactory(); // 基础状态仍用近战工厂
 
         //if (data is ExplosiveEnemyData) return new ExplosiveStateFactory();
         return null;
     }
+
+
+    public void SetAttackerPosition(Vector2 pos)
+    {
+        if (runtime != null)
+            runtime.lastAttackerPosition = pos;
+    }
+
 
     /// <summary>
     /// 敌人受伤 切换状态
@@ -99,14 +125,43 @@ public class EnemyController : EnemyBase
     /// <param name="rank"></param>
     public override void Wound(float damage, RhythmRank rank)
     {
+        //测试打断逻辑区域 *******************************
+        if (runtime.isVulnerable && (rank == RhythmRank.Perfect || rank == RhythmRank.Great))
+        {
+            Debug.Log("嘶吼被打断！进入眩晕状态");
+            fsm?.ChangeState(StateType.NoiseStun);
+            return; // 直接进入眩晕，不执行后续扣血（可根据设计调整）
+        }
+        //测试打断逻辑区域 *******************************
+
+
+
         if (runtime.getHit) return;
         runtime.getHit = true;
         runtime.currentHealth -= damage;
+
+
+
+        // 计算击退（使用之前设置的位置）
+        Vector2 knockbackDir = ((Vector2)transform.position - runtime.lastAttackerPosition).normalized;
+        float knockbackDist = GetKnockbackDistance(rank);
+        runtime.knockbackForce = knockbackDir * knockbackDist;
+        runtime.knockbackDistance = knockbackDist;
 
         ShowDamageText(transform.position, damage, rank);
         fsm?.ChangeState(StateType.Wound);
     }
 
+    private float GetKnockbackDistance(RhythmRank rank)
+    {
+        switch (rank)
+        {
+            case RhythmRank.Perfect: return 2.5f;
+            case RhythmRank.Great: return 1.5f;
+            case RhythmRank.Good: return 0.8f;
+            default: return 0f;
+        }
+    }
     // 死亡处理
     public void Dead()
     {
@@ -276,12 +331,15 @@ public class EnemyController : EnemyBase
     #region  动画回调函数
     public void OnAttackAnimationEvent()
     {
-
+        if (weaponCollider == null)
+        {
+            Debug.LogWarning("尝试重新获取武器碰撞体...");
+            weaponCollider = GetComponentInChildren<Collider2D>();
+            if (weaponCollider == null) return;
+            // 补充伤害脚本初始化...
+        }
         weaponCollider.enabled = true;
-
-        var hitScript = weaponCollider.GetComponent<EnemyWeaponHit>();
-        if (hitScript != null)
-            hitScript.ResetHitFlag();
+        weaponCollider.GetComponent<EnemyWeaponHit>()?.ResetHitFlag();
     }
 
     public void OnAttackAnimationEventEnd()

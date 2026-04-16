@@ -37,6 +37,21 @@ public class EnemyChaseState : EnemyStateBase
             maxChase = float.MaxValue; // 无限追击
 
         float distanceToTarget = Vector2.Distance(manager.transform.position, runtime.target.position);
+        //测试技能区域 *************************************************
+        // 在 EnemyChaseState.OnUpdate 中，距离检查之后、攻击范围判断之前
+        if (data is NoiseMonsterData noiseData)
+        {
+            float dist = Vector2.Distance(manager.transform.position, runtime.target.position);
+            if (dist <= noiseData.noiseScreamRange && Time.time >= runtime.lastNoiseScreamTime + noiseData.noiseScreamCooldown)
+            {
+                runtime.lastNoiseScreamTime = Time.time;
+                manager.ChangeState(StateType.NoiseScreamWarning);
+                return;
+            }
+        }
+        //测试技能区域 *************************************************
+
+
 
         if (distanceToTarget > maxChase)
         {
@@ -49,7 +64,7 @@ public class EnemyChaseState : EnemyStateBase
         float beatProgress = (float)RhythmManager.Instance.BeatProgress; // 修复1：double转float
         float speedMultiplier = Mathf.Sin(beatProgress * Mathf.PI);
         float currentChaseSpeed = runtime.currentChaseSpeed * Mathf.Lerp(0.6f, 1.4f, speedMultiplier);
-        Debug.Log($"节奏进度: {beatProgress}, 速度乘数: {speedMultiplier}, 当前追逐速度: {currentChaseSpeed}");
+        //Debug.Log($"节奏进度: {beatProgress}, 速度乘数: {speedMultiplier}, 当前追逐速度: {currentChaseSpeed}");
 
         // 在追逐状态下，敌人会朝向目标并移动
         controller.FaceTarget(runtime.target.position);

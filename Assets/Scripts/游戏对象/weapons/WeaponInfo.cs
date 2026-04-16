@@ -36,7 +36,7 @@ public class WeaponInfo : MonoBehaviour
     private void Awake()
     {
         if (weaponBase == null)
-        {                  
+        {
             return;
         }
         weaponStats = weaponBase.GetWeaponStats(weaponType);
@@ -47,7 +47,7 @@ public class WeaponInfo : MonoBehaviour
         currentAmmo = weaponStats.maxAmmo;
     }
 
-    public void Shoot(float damage, float rhythmMultiplier ,RhythmRank rank)
+    public void Shoot(float damage, float rhythmMultiplier, RhythmRank rank)
     {
         if (isReloading) return;
         if (weaponStats == null)
@@ -72,38 +72,26 @@ public class WeaponInfo : MonoBehaviour
             });
         }
 
-        float finalDamage = (damage+weaponStats.damage)  * rhythmMultiplier;
+        float finalDamage = (damage + weaponStats.damage) * rhythmMultiplier;
         EventBus.Instance.Trigger(new CameraShakeEvent { intensity = weaponStats.shakeIntensity });
-        SpawnBullet(finalDamage,rank);
+        SpawnBullet(finalDamage, rank);
 
         currentAmmo--;
         lastShootTime = currentTime;
         OnShootEffects();
     }
 
-    private void SpawnBullet(float damage , RhythmRank rank)
+    private void SpawnBullet(float damage, RhythmRank rank)
     {
-        if (weaponStats == null || weaponStats.bulletPrefab == null)
-        {
-            Debug.LogError($"[WeaponInfo] {gameObject.name} 子弹预制体未设置");
-            return;
-        }
-        if (firePoint == null)
-        {
-            Debug.LogError($"[WeaponInfo] {gameObject.name} 发射点未设置");
-            return;
-        }
         GameObject bulletObj = Instantiate(weaponStats.bulletPrefab, firePoint.position, firePoint.rotation);
         Bullet bullet = bulletObj.GetComponent<Bullet>();
         bullet.currentRhythmRank = rank;
-        if (bullet != null)
-        {
-            bullet.SetDamage(damage);
-        }
-        else
-        {
-            Debug.LogError($"[WeaponInfo] {gameObject.name} 子弹预制体缺少Bullet组件");
-        }
+        bullet.SetDamage(damage);
+
+        // 缓存玩家位置（子弹发射时的位置）
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+            bullet.SetAttackerPosition(player.transform.position);
     }
 
     private void StartReload()

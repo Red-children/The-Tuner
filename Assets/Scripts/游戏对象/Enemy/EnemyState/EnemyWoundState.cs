@@ -20,6 +20,18 @@ public class EnemyWoundState : EnemyStateBase
         Debug.Log("进入Wound状态");
         runtime.getHit = false;
 
+        // 执行击退
+        if (runtime.knockbackDistance > 0f)
+        {
+            Vector2 dir = runtime.knockbackForce.normalized;
+            float dist = runtime.knockbackDistance;
+            RaycastHit2D hit = Physics2D.Raycast(manager.transform.position, dir, dist, LayerMask.GetMask("Wall"));
+            Vector2 targetPos = hit.collider != null
+                ? hit.point - dir * 0.1f
+                : (Vector2)manager.transform.position + runtime.knockbackForce;
+            manager.transform.position = targetPos;
+        }
+
         timer = 0f;
 
     }

@@ -15,9 +15,23 @@ public class EnemyRuntime : MonoBehaviour
     public float currentMoveSpeed;   // 当前移动速度（运行时状态）
     public float currentChaseSpeed;  // 当前追逐速度（运行时状态）
 
+  
+    public bool isVulnerable;           //是否处于可被攻击状态（如嘶吼前的预警阶段）
+
+    public float lastNoiseScreamTime;   // 上次嘶吼时间（用于冷却计算）
+
+    [Header("受击反馈")]
+
+
+    public Vector2 lastAttackerPosition; // 最近一次攻击者的位置
+
+    public Vector2 knockbackForce;      // 本次受击的击退向量
+    public float knockbackDistance;     // 击退距离（用于调试）
+
+
     [Header("数据访问")]
     [SerializeField] private EnemyData originalData; // 原始SO引用
-    
+
     // 只读数据访问器 - 保持类型兼容性
     public EnemyData Data => originalData;
 
@@ -25,12 +39,14 @@ public class EnemyRuntime : MonoBehaviour
     {
         // 保存原始SO引用
         originalData = enemyData;
-        
+
         // 初始化运行时状态（从SO读取初始值）
         currentHealth = originalData.health;
         currentMoveSpeed = originalData.moveSpeed;
         currentChaseSpeed = originalData.chaseSpeed;
     }
+
+
 
     /// <summary>
     /// 安全的属性访问方法
@@ -39,7 +55,7 @@ public class EnemyRuntime : MonoBehaviour
     public float Health => currentHealth;
     public float MoveSpeed => currentMoveSpeed;
     public float ChaseSpeed => currentChaseSpeed;
-    
+
     // 只读属性 - 直接返回SO数据（这些数据不会被修改）
     public float IdleTime => originalData.idleTime;
     public LayerMask TargetLayer => originalData.targetLayer;
