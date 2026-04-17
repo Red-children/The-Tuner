@@ -22,5 +22,10 @@ MonoBehaviour:
   damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
   deadEff: {fileID: 0}
   patrolRadius: 5
+  visionAngle: 120
+  visionRange: 10
+  visionBlockMask:
+    serializedVersion: 2
+    m_Bits: 384
   attackRange: 8
   Atk: 10

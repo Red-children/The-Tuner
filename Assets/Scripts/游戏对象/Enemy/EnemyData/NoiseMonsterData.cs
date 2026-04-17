@@ -14,9 +14,12 @@ public class NoiseMonsterData : MeleeEnemyData
     public int noiseScreamDamage = 20;           // 嘶吼伤害
 
     public float stunDuration = 3f;          //嘶吼持续时间
-    
+
     public float noiseStunDuration = 3f;         // 被打断后眩晕时间
     public GameObject noiseScreamEffectPrefab;   // 声波特效
+
+
+
 
 
 }

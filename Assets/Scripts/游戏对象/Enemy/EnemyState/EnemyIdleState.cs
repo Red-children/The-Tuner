@@ -37,12 +37,16 @@ public class EnemyIdleState : EnemyStateBase
             manager.ChangeState(StateType.Patrol);
             return;
         }
-        
+
         // 如果在空闲状态下发现目标，立即切换到追逐状态
-        if (runtime.target != null)
+        if (runtime.target != null && runtime.isPursuing)
         {
             manager.ChangeState(StateType.Chase);
+            return;
         }
+
+
+
     }
 
     public override void OnExit()

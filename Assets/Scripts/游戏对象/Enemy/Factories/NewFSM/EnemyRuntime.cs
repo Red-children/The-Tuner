@@ -8,14 +8,20 @@ using UnityEngine;
 /// </summary>
 public class EnemyRuntime : MonoBehaviour
 {
+    [Header("追击与冷却")]
+    public bool isPursuing;                 // 是否处于主动追击状态
+    
+    public float ignoreTargetUntilTime;     // 在此时间之前忽略目标（用于放弃追击后的冷却）
     [Header("运行时状态")]
+
+
     public Transform target;          // 当前目标
     public bool getHit;               // 是否受击
     public float currentHealth;       // 当前血量（运行时状态）
     public float currentMoveSpeed;   // 当前移动速度（运行时状态）
     public float currentChaseSpeed;  // 当前追逐速度（运行时状态）
 
-  
+
     public bool isVulnerable;           //是否处于可被攻击状态（如嘶吼前的预警阶段）
 
     public float lastNoiseScreamTime;   // 上次嘶吼时间（用于冷却计算）

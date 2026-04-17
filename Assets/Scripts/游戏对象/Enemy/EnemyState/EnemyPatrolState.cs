@@ -43,7 +43,7 @@ public class EnemyPatrolState : EnemyStateBase
             return;
         }
 
-        if (runtime.target != null)
+        if (runtime.target != null&&runtime.isPursuing)
         {
             manager.ChangeState(StateType.Chase);
             return;
@@ -51,20 +51,35 @@ public class EnemyPatrolState : EnemyStateBase
 
         controller.FaceTarget(targetPos);
 
+        if (runtime.target != null && !runtime.isPursuing)
+        {
+            // 冷却结束且目标仍在，重新激活追击
+            if (Time.time >= runtime.ignoreTargetUntilTime)
+            {
+                runtime.isPursuing = true;
+                manager.ChangeState(StateType.Chase);
+                return;
+            }
+        }
+
+
+
         //朝向目标点移动
         manager.transform.position = Vector2.MoveTowards(
             manager.transform.position,
             targetPos,
             data.moveSpeed * Time.deltaTime);
 
-        // 
+
         if (Vector2.Distance(manager.transform.position, targetPos) < minDistance)
         {
-            if (controller.patrolPoints.Length > 0)
-                SetNextTarget();
-            else
-                GetNewRandomTarget();
+            Debug.Log("到达巡逻点进行待机逻辑");
+            // 到达巡逻点，切换到 Idle 状态发呆
+            manager.ChangeState(StateType.Idle);
+            return;
         }
+
+
     }
 
     /// <summary>

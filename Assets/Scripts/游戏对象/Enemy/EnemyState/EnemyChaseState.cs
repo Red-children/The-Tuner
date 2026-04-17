@@ -38,6 +38,25 @@ public class EnemyChaseState : EnemyStateBase
 
         float distanceToTarget = Vector2.Distance(manager.transform.position, runtime.target.position);
         //测试技能区域 *************************************************
+
+        //先让敌人转向
+        controller.FaceTarget(runtime.target.position);
+
+        //测试视线锥效果的区域 ****************************
+        // 在移动之前加入视觉确认
+        // 视野检查
+        if (!controller.CanSeePlayer())
+        {
+            Debug.Log("视线锥检测失败，不允许进入追击状态");
+            runtime.isPursuing = false;
+            runtime.ignoreTargetUntilTime = Time.time + 3f;
+            manager.ChangeState(StateType.Patrol);
+            return;
+        }
+        //测试视线锥效果的区域 ****************************
+
+
+
         // 在 EnemyChaseState.OnUpdate 中，距离检查之后、攻击范围判断之前
         if (data is NoiseMonsterData noiseData)
         {
@@ -53,12 +72,12 @@ public class EnemyChaseState : EnemyStateBase
 
 
 
-        if (distanceToTarget > maxChase)
-        {
-            runtime.target = null;
-            manager.ChangeState(StateType.Patrol);
-            return;
-        }
+        //if (distanceToTarget > maxChase)
+        //{
+        //    runtime.target = null;
+        //   manager.ChangeState(StateType.Patrol);
+        //    return;
+        //}
 
 
         float beatProgress = (float)RhythmManager.Instance.BeatProgress; // 修复1：double转float
@@ -66,8 +85,7 @@ public class EnemyChaseState : EnemyStateBase
         float currentChaseSpeed = runtime.currentChaseSpeed * Mathf.Lerp(0.6f, 1.4f, speedMultiplier);
         //Debug.Log($"节奏进度: {beatProgress}, 速度乘数: {speedMultiplier}, 当前追逐速度: {currentChaseSpeed}");
 
-        // 在追逐状态下，敌人会朝向目标并移动
-        controller.FaceTarget(runtime.target.position);
+
         // 移动敌人朝向目标
 
         manager.transform.position = Vector2.MoveTowards(

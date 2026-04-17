@@ -17,4 +17,10 @@ public abstract class EnemyData : ScriptableObject
         public GameObject deadEff;
         public float patrolRadius = 5f;
 
+        [Header("视野设置")]
+        public float visionAngle = 120f;      // 视野锥角度
+        public float visionRange = 10f;       // 视野距离（可复用 maxChaseDistance）
+        public LayerMask visionBlockMask;     // 遮挡视野的层（通常是 Wall）
+
+
 }

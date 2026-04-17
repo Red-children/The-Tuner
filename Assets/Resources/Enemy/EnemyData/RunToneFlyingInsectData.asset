@@ -22,13 +22,18 @@ MonoBehaviour:
   damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
   deadEff: {fileID: 0}
   patrolRadius: 5
+  visionAngle: 120
+  visionRange: 10
+  visionBlockMask:
+    serializedVersion: 2
+    m_Bits: 384
   detectionRange: 10
-  rhythmMoveMultiplier: 1.2
-  minMoveSpeed: 1.5
-  maxMoveSpeed: 3
   attackDamage: 10
-  idleMovementSpeed: 0.1
-  idleCircleRadius: 1
+  chargeSpeed: 8
+  chargeCooldown: 2
+  warningDuration: 0.5
+  stunDuration: 2
+  warningColor: {r: 1, g: 0, b: 0, a: 1}
   baseColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   glitchColor: {r: 1, g: 0.2, b: 0.2, a: 1}
   glitchIntensity: 0.3
