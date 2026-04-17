@@ -128,6 +128,7 @@ public class EnemyController : EnemyBase
         //测试打断逻辑区域 *******************************
         if (runtime.isVulnerable && (rank == RhythmRank.Perfect || rank == RhythmRank.Great))
         {
+            ShowDamageText(transform.position, damage, rank);
             Debug.Log("嘶吼被打断！进入眩晕状态");
             fsm?.ChangeState(StateType.NoiseStun);
             return; // 直接进入眩晕，不执行后续扣血（可根据设计调整）
