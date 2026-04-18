@@ -172,11 +172,13 @@ public class UIBasePanel : MonoBehaviour
 
     protected Tween MoveIn(Transform t, Vector3 from, float moveT)
     {
-        // Sequence seq = DOTween.Sequence();
         return t.DOLocalMove(t.localPosition, moveT, true).From(from + t.localPosition).SetEase(Ease.InQuad);
-        // return seq;
     }
 
+    protected Tween MoveOut(Transform t, Vector3 to, float moveT)
+    {
+        return t.DOLocalMove(to + t.localPosition, moveT, true).SetEase(Ease.OutQuad);
+    }
     protected Tween FadeIn(Image img, float t)
     {
         if (img == null) return null;
@@ -262,6 +264,15 @@ public class UIBasePanel : MonoBehaviour
             seq.Join(FadeOut(i, fadeT));
             seq.Join(RotateFromZero(i.rectTransform, rot, rotateT));
         }
+        return seq;
+    }
+
+    protected Tween FadeOutRotateOut(Image img, float fadeT, float rot, float rotateT)
+    {
+        Sequence seq = DOTween.Sequence();
+            if (img == null) return null;
+            seq.Join(FadeOut(img, fadeT));
+            seq.Join(RotateFromZero(img.rectTransform, rot, rotateT));
         return seq;
     }
 

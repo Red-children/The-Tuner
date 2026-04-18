@@ -15,6 +15,7 @@ public class UIPanelDialogue : UIBasePanel
     [SerializeField] private float fadeDuration = 0.4f;
     [SerializeField] private float rotateDuration = 0.5f;
     [SerializeField] private float scaleDuration = 0.5f;
+    private Sequence _seq;
     [Header("底层图片")]
     [SerializeField] private Image[] background;
     [Header("底层环")]
@@ -37,24 +38,26 @@ public class UIPanelDialogue : UIBasePanel
     {
         _isPlayingAnimation = true;
 
-        Sequence seq = DOTween.Sequence();
-        seq.Join(EnterBackground());
-        seq.Join(EnterBackgroundRing());
-        seq.Join(EnterMidRing());
-        seq.Join(EnterMidRedBox());
-        seq.Join(EnterForeYellowBox());
-        seq.AppendCallback(IdleHaloMask); // 循环动画用Callback
+        _seq.Join(EnterBackground());
+        _seq.Join(EnterBackgroundRing());
+        _seq.Join(EnterMidRing());
+        _seq.Join(EnterMidRedBox());
+        _seq.Join(EnterForeYellowBox());
+        _seq.AppendCallback(IdleHaloMask); // 循环动画用Callback
 
-        seq.OnComplete(() =>
+        _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
         });
 
-        seq.SetTarget(gameObject);
+        _seq.SetTarget(gameObject);
     }
 
     void KillAllLoopingAnimations()
     {
+        if(_seq == null) return;
+        _seq.Kill();
+
         if (bgRing) bgRing.rectTransform.DOKill();
         if (midRing) midRing.DOKill();
         if (haloMask) { haloMask.rectTransform.DOKill(); haloMask.DOKill(); }
@@ -64,24 +67,24 @@ public class UIPanelDialogue : UIBasePanel
         _isPlayingAnimation = true;
         KillAllLoopingAnimations();
 
-        Sequence seq = DOTween.Sequence();
-        seq.Join(ExitBlackMask());
-        seq.Join(ExitHaloMask());
-        seq.Join(ExitForeYellowBox());
-        seq.Join(ExitMidRedBox());
-        seq.Join(ExitMidRing());
-        seq.Join(ExitBackgroundRing());
-        seq.Join(ExitBackground());
+        _seq = DOTween.Sequence();
+        _seq.Join(ExitBlackMask());
+        _seq.Join(ExitHaloMask());
+        _seq.Join(ExitForeYellowBox());
+        _seq.Join(ExitMidRedBox());
+        _seq.Join(ExitMidRing());
+        _seq.Join(ExitBackgroundRing());
+        _seq.Join(ExitBackground());
 
-        seq.OnComplete(() =>
+        _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
             OnCloseComplete?.Invoke();
-
-            Destroy(gameObject);
+            if(destroyAfter)
+                Destroy(gameObject);
         });
 
-        seq.SetTarget(gameObject);
+        _seq.SetTarget(gameObject);
     }
 #endregion
 
@@ -90,6 +93,7 @@ public class UIPanelDialogue : UIBasePanel
     {
         //  Override Settings
         exitAnimDuration = 1.2f;
+        _seq =DOTween.Sequence();
     }
 #endregion
 

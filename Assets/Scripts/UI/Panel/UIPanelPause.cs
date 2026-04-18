@@ -44,6 +44,7 @@ public class UIPanelPause : UIBasePanel
         _seq.Join(EnterBackgound());
         _seq.Join(EnterMidCircle());
         _seq.Join(EnterMidDiamond());
+        _seq.Join(EnterButtons());
         _seq.AppendCallback(IdleDocStar);
         _seq.AppendCallback(IdleMidCircle);
         _seq.OnComplete(() =>
@@ -53,22 +54,39 @@ public class UIPanelPause : UIBasePanel
 
         _seq.SetTarget(gameObject);
     }
+
+    void KillAllLoopingAnimations()
+    {
+        if (_seq == null) return;
+
+        _seq.Kill();
+
+        if (docStar) docStar.DOKill();
+        if (midCircleInnerDot) midCircleInnerDot.rectTransform.DOKill();
+        if (midCircleInnerMain) midCircleInnerMain.rectTransform.DOKill();
+        if (midCircleOuterHalo) midCircleOuterHalo.DOKill();
+        if (midCirlcleOuter) midCirlcleOuter.DOKill();
+    }
+
     protected override void PlayExitAnimation(bool destroyAfter)
     {
         _isPlayingAnimation = true;
-        // KillAllLoopingAnimations();
+        KillAllLoopingAnimations();
 
-        Sequence seq = DOTween.Sequence();
-
-        seq.OnComplete(() =>
+        _seq = DOTween.Sequence();
+        _seq.Join(ExitButtons());
+        _seq.Join(ExitMidDiamond());
+        _seq.Join(ExitMidCircle());
+        _seq.Join(ExitBackground());
+        _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
             OnCloseComplete?.Invoke();
-
-            Destroy(gameObject);
+            if (destroyAfter)
+                Destroy(gameObject);
         });
 
-        seq.SetTarget(gameObject);
+        _seq.SetTarget(gameObject);
     }
 #endregion
 
@@ -105,6 +123,24 @@ public class UIPanelPause : UIBasePanel
         seq.Join(MoveIn(midBottomDiamond.rectTransform, new Vector3(0, -200, 0), 0.4f));
         return seq;
     }
+
+    Tween EnterButtons()
+    {
+        if (buttonCountinue == null) return null;
+        if (buttonReset == null) return null;
+        if (buttonReturn == null) return null;
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Join(FadeIn(buttonCountinue.image, 1f));
+        seq.Join(ScaleIn(buttonCountinue.transform, 1f));
+        seq.Join(FadeIn(buttonReset.image, 1f));
+        seq.Join(ScaleIn(buttonReset.transform, 1f));
+        seq.Join(FadeIn(buttonReturn.image, 1f));
+        seq.Join(ScaleIn(buttonReturn.transform, 1f));
+        return seq;
+    }
+
 #endregion
 
 #region 驻场动画
@@ -135,17 +171,74 @@ public class UIPanelPause : UIBasePanel
     }
 #endregion
 
+#region 退场动画
+
+    Tween ExitBackground()
+    {
+        if (background == null) return null;
+        return FadeOut(background, 0.5f);
+    }
+
+    Tween ExitMidCircle()
+    {
+        if (midCircleInnerDot == null) return null ;
+        if (midCircleInnerMain == null) return null;
+        if (midCircleOuterHalo == null) return null;
+        if (midCirlcleOuter == null) return null;
+
+        Sequence seq = DOTween.Sequence();;
+        seq.Join(FadeOut(midCircleInnerMain, 1f));
+        seq.Join(ScaleOut(midCircleInnerMain.rectTransform, 0.2f));
+        seq.Join(FadeOutRotateOut(midCircleInnerDot, 1f, 360f, 1f));
+        seq.Join(ScaleOut(midCircleInnerDot.rectTransform, 0.2f));
+        seq.Join(FadeOut(midCircleOuterHalo, 1f));
+        seq.Join(FadeOut(midCirlcleOuter, 1f));
+        return seq;
+    }
+
+    Tween ExitButtons()
+    {
+        if (buttonCountinue == null) return null;
+        if (buttonReset == null) return null;
+        if (buttonReturn == null) return null;
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Join(FadeOut(buttonCountinue.image, 1f));
+        seq.Join(ScaleOut(buttonCountinue.transform, 1f));
+        seq.Join(FadeOut(buttonReset.image, 1f));
+        seq.Join(ScaleOut(buttonReset.transform, 1f));
+        seq.Join(FadeOut(buttonReturn.image, 1f));
+        seq.Join(ScaleOut(buttonReturn.transform, 1f));
+        return seq;
+    }
+
+    Tween ExitMidDiamond()
+    {
+        if (midTopDiamond == null) return null;
+        if (midBottomDiamond == null) return null;
+
+        Sequence seq = DOTween.Sequence();
+        seq.Join(MoveOut(midTopDiamond.rectTransform, new Vector3(0, 200, 0), 0.4f));
+        seq.Join(MoveOut(midBottomDiamond.rectTransform, new Vector3(0, -200, 0), 0.4f));
+        return seq;
+    }
+
+#endregion
+
 #region 按钮回调
     /* Inspictor窗体绑定 */
     public void OnButtonSelected(Button button)
     {
         if (button == null) return;
+        if (_isPlayingAnimation) return;
         button.transform.DOKill();
         button.transform.DOScale(1.1f, 0.1f).SetEase(Ease.OutSine);
     }
     public void OnButtonDeselected(Button button)
     {
         if (button == null) return;
+        if (_isPlayingAnimation) return;
         button.transform.DOKill();
         button.transform.DOScale(1f, 0.1f).SetEase(Ease.InSine);
     }
