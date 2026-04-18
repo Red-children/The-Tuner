@@ -13,7 +13,7 @@ public class UIPanelPause : UIBasePanel
     [SerializeField] private float rotateDuration = 1f;
     [SerializeField] private float fadeDuration = 1f;
     [SerializeField] private float scaleDuration = 1f;
-    private Sequence _seq = DOTween.Sequence();
+    private Sequence _seq;
 
     [Header("动画组件")]
     [Header("背景底色")]
@@ -163,4 +163,12 @@ public class UIPanelPause : UIBasePanel
         //  TODO:
     }
     #endregion
+
+#region 生命周期
+    void Awake()
+    {
+        _seq = DOTween.Sequence();
+    }
+
+#endregion
 }
