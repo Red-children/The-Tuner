@@ -31,6 +31,7 @@ public class UIPanelPause : UIBasePanel
     [SerializeField] private Image docStar;
     [SerializeField] private Image[] docCubes;
     [SerializeField] private Image[] docNotes;
+    [SerializeField] private Image docRibbon;
     [Header("按钮")]
     [SerializeField] private Button buttonCountinue;
     [SerializeField] private Button buttonReturn;
@@ -44,6 +45,7 @@ public class UIPanelPause : UIBasePanel
         _seq.Join(EnterBackgound());
         _seq.Join(EnterMidCircle());
         _seq.Join(EnterMidDiamond());
+        _seq.Join(EnterDoc());
         _seq.Join(EnterButtons());
         _seq.AppendCallback(IdleDocStar);
         _seq.AppendCallback(IdleMidCircle);
@@ -75,6 +77,7 @@ public class UIPanelPause : UIBasePanel
 
         _seq = DOTween.Sequence();
         _seq.Join(ExitButtons());
+        _seq.Join(ExitDoc());
         _seq.Join(ExitMidDiamond());
         _seq.Join(ExitMidCircle());
         _seq.Join(ExitBackground());
@@ -110,7 +113,9 @@ public class UIPanelPause : UIBasePanel
         seq.Join(FadeInRotateIn(midCircleInnerDot, 1f, 360f, 1f));
         seq.Join(ScaleIn(midCircleInnerDot.rectTransform, 0.2f));
         seq.Join(FadeIn(midCircleOuterHalo, 1f));
+        seq.Join(ScaleIn(midCircleOuterHalo.transform, 0.2f));
         seq.Join(FadeIn(midCirlcleOuter, 1f));
+        seq.Join(ScaleIn(midCirlcleOuter.transform, 1f));
         return seq;
     }
 
@@ -121,6 +126,32 @@ public class UIPanelPause : UIBasePanel
         Sequence seq = DOTween.Sequence();
         seq.Join(MoveIn(midTopDiamond.rectTransform, new Vector3(0, 200, 0), 0.4f));
         seq.Join(MoveIn(midBottomDiamond.rectTransform, new Vector3(0, -200, 0), 0.4f));
+        return seq;
+    }
+
+    Tween EnterDoc()
+    {
+        if (docCubes == null) return null;
+        if (docNotes == null) return null;
+        if (docRibbon ==null) return null;
+        if (docStar == null) return null;
+
+        Sequence seq = DOTween.Sequence();
+        foreach(var c in docCubes)
+        {
+            seq.Join(FadeIn(c, 1f));
+            seq.Join(ResetAndFillFadeIn(c, 1f));
+        }
+        foreach(var n in docNotes)
+        {
+            seq.Join(FadeIn(n, 1f));
+            seq.Join(ResetAndFillFadeIn(n, 1f));
+        }
+        seq.Join(FadeIn(docRibbon, 1f));
+        seq.Join(ResetAndFillFadeIn(docRibbon, 1f));
+
+        seq.Join(FadeIn(docStar, 1f));
+        seq.Join(ResetAndFillFadeIn(docStar, 1f));
         return seq;
     }
 
@@ -189,10 +220,41 @@ public class UIPanelPause : UIBasePanel
         Sequence seq = DOTween.Sequence();;
         seq.Join(FadeOut(midCircleInnerMain, 1f));
         seq.Join(ScaleOut(midCircleInnerMain.rectTransform, 0.2f));
+
         seq.Join(FadeOutRotateOut(midCircleInnerDot, 1f, 360f, 1f));
         seq.Join(ScaleOut(midCircleInnerDot.rectTransform, 0.2f));
+
         seq.Join(FadeOut(midCircleOuterHalo, 1f));
+        seq.Join(ScaleOut(midCircleOuterHalo.rectTransform, 0.2f));
+
         seq.Join(FadeOut(midCirlcleOuter, 1f));
+        seq.Join(ScaleOut(midCirlcleOuter.rectTransform, 0.2f));
+        return seq;
+    }
+
+    Tween ExitDoc()
+    {
+        if (docCubes == null) return null;
+        if (docNotes == null) return null;
+        if (docRibbon ==null) return null;
+        if (docStar == null) return null;
+
+        Sequence seq = DOTween.Sequence();
+        foreach(var c in docCubes)
+        {
+            seq.Join(FadeOut(c, 1f));
+            seq.Join(FadeOutFillOut(c, 1f));
+        }
+        foreach(var n in docNotes)
+        {
+            seq.Join(FadeOut(n, 1f));
+            seq.Join(FadeOutFillOut(n, 1f));
+        }
+        seq.Join(FadeOut(docRibbon, 1f));
+        seq.Join(FadeOutFillOut(docRibbon, 1f));
+
+        seq.Join(FadeOut(docStar, 1f));
+        seq.Join(FadeOutFillOut(docStar, 1f));
         return seq;
     }
 

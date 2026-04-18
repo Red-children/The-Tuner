@@ -959,10 +959,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -3407166111961153187, guid: 3ad9f2b9834976d439922f13b76382ed, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 2
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -1035,13 +1035,13 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 8557341585907559700, guid: 3ad9f2b9834976d439922f13b76382ed, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 0
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4786531088965926609
@@ -1187,6 +1187,9 @@ MonoBehaviour:
   enterTime: 0
   exitTime: 1
   exitAnimDuration: 1
+  rotateDuration: 1
+  fadeDuration: 1
+  scaleDuration: 1
   background: {fileID: 4786531088965926615}
   midCircleInnerMain: {fileID: 4786531088541472668}
   midCircleInnerDot: {fileID: 4786531087996510414}
@@ -1195,8 +1198,13 @@ MonoBehaviour:
   midTopDiamond: {fileID: 4786531089519574978}
   midBottomDiamond: {fileID: 4786531089247523009}
   docStar: {fileID: 4786531088960024240}
-  docCubes: []
-  docNotes: []
+  docCubes:
+  - {fileID: 4786531089195892664}
+  docNotes:
+  - {fileID: 4786531089361320239}
+  - {fileID: 4786531089688495597}
+  - {fileID: 4786531088957413854}
+  docRibbon: {fileID: 4786531089250850114}
   buttonCountinue: {fileID: 4786531088049818734}
   buttonReturn: {fileID: 4786531089196782945}
   buttonReset: {fileID: 4786531088920892673}
@@ -1305,10 +1313,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -7838427709820464994, guid: 3ad9f2b9834976d439922f13b76382ed, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 1
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
@@ -1593,9 +1601,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 257.5, y: 189.5}
+  m_AnchoredPosition: {x: 18.057182, y: 66.542885}
   m_SizeDelta: {x: 1975.0002, y: 1975.0002}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0.3787629, y: 0.43774316}
 --- !u!222 &4786531089250850115
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1625,7 +1633,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 21300000, guid: 46e688fb7e0574345b1e3a0a3539e9fe, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1777,13 +1785,13 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: 3591220628206652101, guid: 3ad9f2b9834976d439922f13b76382ed, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 1
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!1 &4786531089475219738
@@ -2238,12 +2246,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Sprite: {fileID: -7015201415056561189, guid: 3ad9f2b9834976d439922f13b76382ed, type: 3}
-  m_Type: 0
+  m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
-  m_FillMethod: 4
+  m_FillMethod: 2
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 1
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1

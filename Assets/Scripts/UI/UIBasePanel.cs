@@ -289,6 +289,17 @@ public class UIBasePanel : MonoBehaviour
         return seq;
     }
 
+    protected Tween ResetAndFillFadeIn(Image img, float t)
+    {
+        Sequence seq = DOTween.Sequence();
+
+            if (img == null) return null;
+            img.fillAmount = 0;
+            seq.Join(img.DOFillAmount(1, t).From(0));
+            seq.Join(FadeIn(img, t));
+        return seq;
+    }
+
     protected Tween FadeOutFillOut(Image[] imgs, float t)
     {
         Sequence seq = DOTween.Sequence();
@@ -298,6 +309,14 @@ public class UIBasePanel : MonoBehaviour
             seq.Join(i.DOFillAmount(0, t));
             seq.Join(FadeOut(i, t));
         }
+        return seq;
+    }
+    protected Tween FadeOutFillOut(Image img, float t)
+    {
+        Sequence seq = DOTween.Sequence();
+            if (img == null) return null;
+            seq.Join(img.DOFillAmount(0, t));
+            seq.Join(FadeOut(img, t));
         return seq;
     }
 #endregion
