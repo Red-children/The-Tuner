@@ -119,13 +119,13 @@ public class UIPanelDialogue : UIBasePanel
 
     Tween EnterMidRedBox()
     {
-        return FadeInRotateIn(imagesMidRedBox, (float)0.75 * fadeDuration, 5f);
+        return FadeInRotateIn(imagesMidRedBox, (float)0.75 * fadeDuration, 5f, rotateDuration);
     }
 
     Tween EnterForeYellowBox()
     {
         Sequence seq = DOTween.Sequence();
-        seq.Append(FadeInRotateIn(imagesForeYellowBox, fadeDuration, 5f));
+        seq.Append(FadeInRotateIn(imagesForeYellowBox, fadeDuration, 5f, rotateDuration));
         seq.Append(ResetAndFillFadeIn(halosForeYellowBox, (float)0.25 * fadeDuration));
         return seq;
     }
@@ -191,14 +191,14 @@ public class UIPanelDialogue : UIBasePanel
 
     Tween ExitMidRedBox()
     {
-        return FadeOutRotateOut(imagesMidRedBox, (float)0.75 * fadeDuration, 5f);
+        return FadeOutRotateOut(imagesMidRedBox, (float)0.75 * fadeDuration, 5f, rotateDuration);
     }
 
     Tween ExitForeYellowBox()
     {
         Sequence seq = DOTween.Sequence();
         seq.Append(FadeOutFillOut(halosForeYellowBox, (float)0.25 * fadeDuration));
-        seq.Append(FadeOutRotateOut(imagesForeYellowBox, (float)0.75 * fadeDuration, 5f));
+        seq.Append(FadeOutRotateOut(imagesForeYellowBox, (float)0.75 * fadeDuration, 5f, rotateDuration));
         return seq;
     }
 

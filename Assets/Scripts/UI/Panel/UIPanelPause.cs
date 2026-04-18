@@ -9,6 +9,12 @@ using Button = UnityEngine.UI.Button;
 using Image = UnityEngine.UI.Image;
 public class UIPanelPause : UIBasePanel
 {
+    [Header("动画参数")]
+    [SerializeField] private float rotateDuration = 1f;
+    [SerializeField] private float fadeDuration = 1f;
+    [SerializeField] private float scaleDuration = 1f;
+    private Sequence _seq = DOTween.Sequence();
+
     [Header("动画组件")]
     [Header("背景底色")]
     [SerializeField] private Image background;
@@ -35,16 +41,17 @@ public class UIPanelPause : UIBasePanel
     {
         _isPlayingAnimation = true;
 
-        Sequence seq = DOTween.Sequence();
-        seq.Append(EnterBackgound());
-        seq.AppendCallback(IdleDocStar);
-        seq.AppendCallback(IdleMidCircle);
-        seq.OnComplete(() =>
+        _seq.Join(EnterBackgound());
+        _seq.Join(EnterMidCircle());
+        _seq.Join(EnterMidDiamond());
+        _seq.AppendCallback(IdleDocStar);
+        _seq.AppendCallback(IdleMidCircle);
+        _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
         });
 
-        seq.SetTarget(gameObject);
+        _seq.SetTarget(gameObject);
     }
     protected override void PlayExitAnimation(bool destroyAfter)
     {
@@ -70,6 +77,33 @@ public class UIPanelPause : UIBasePanel
     {
         if (background == null) return null;
         return FadeIn(background, 0.5f);
+    }
+
+    Tween EnterMidCircle()
+    {
+        if (midCircleInnerDot == null) return null ;
+        if (midCircleInnerMain == null) return null;
+        if (midCircleOuterHalo == null) return null;
+        if (midCirlcleOuter == null) return null;
+
+        Sequence seq = DOTween.Sequence();;
+        seq.Join(FadeIn(midCircleInnerMain, 1f));
+        seq.Join(ScaleIn(midCircleInnerMain.rectTransform, 0.2f));
+        seq.Join(FadeInRotateIn(midCircleInnerDot, 1f, 360f, 1f));
+        seq.Join(ScaleIn(midCircleInnerDot.rectTransform, 0.2f));
+        seq.Join(FadeIn(midCircleOuterHalo, 1f));
+        seq.Join(FadeIn(midCirlcleOuter, 1f));
+        return seq;
+    }
+
+    Tween EnterMidDiamond()
+    {
+        if (midTopDiamond == null) return null;
+        if (midBottomDiamond == null) return null;
+        Sequence seq = DOTween.Sequence();
+        seq.Join(MoveIn(midTopDiamond.rectTransform, new Vector3(0, 200, 0), 0.4f));
+        seq.Join(MoveIn(midBottomDiamond.rectTransform, new Vector3(0, -200, 0), 0.4f));
+        return seq;
     }
 #endregion
 

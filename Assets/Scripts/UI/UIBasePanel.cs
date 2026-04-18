@@ -169,6 +169,14 @@ public class UIBasePanel : MonoBehaviour
 #region 生命周期
 #endregion
 #region 通用复用方法
+
+    protected Tween MoveIn(Transform t, Vector3 from, float moveT)
+    {
+        // Sequence seq = DOTween.Sequence();
+        return t.DOLocalMove(t.localPosition, moveT, true).From(from + t.localPosition).SetEase(Ease.InQuad);
+        // return seq;
+    }
+
     protected Tween FadeIn(Image img, float t)
     {
         if (img == null) return null;
@@ -224,26 +232,35 @@ public class UIBasePanel : MonoBehaviour
         return t.DOScale(0, dur).SetEase(Ease.OutQuad);
     }
 
-    protected Tween FadeInRotateIn(Image[] imgs, float fadeT, float rot)
+    protected Tween FadeInRotateIn(Image[] imgs, float fadeT, float rot, float rotateT)
     {
         Sequence seq = DOTween.Sequence();
         foreach (var i in imgs)
         {
             if (i == null) continue;
             seq.Join(FadeIn(i, fadeT));
-            seq.Join(RotateToZero(i.rectTransform, rot, 0.8f));
+            seq.Join(RotateToZero(i.rectTransform, rot, rotateT));
         }
         return seq;
     }
 
-    protected Tween FadeOutRotateOut(Image[] imgs, float fadeT, float rot)
+    protected Tween FadeInRotateIn(Image img, float fadeT, float rot, float rotateT)
+    {
+        Sequence seq = DOTween.Sequence();
+            if (img == null) return null;
+            seq.Join(FadeIn(img, fadeT));
+            seq.Join(RotateToZero(img.rectTransform, rot, rotateT));
+        return seq;
+    }
+
+    protected Tween FadeOutRotateOut(Image[] imgs, float fadeT, float rot, float rotateT)
     {
         Sequence seq = DOTween.Sequence();
         foreach (var i in imgs)
         {
             if (i == null) continue;
             seq.Join(FadeOut(i, fadeT));
-            seq.Join(RotateFromZero(i.rectTransform, rot, 0.8f));
+            seq.Join(RotateFromZero(i.rectTransform, rot, rotateT));
         }
         return seq;
     }
