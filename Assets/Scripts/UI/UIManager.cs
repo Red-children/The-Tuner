@@ -35,6 +35,7 @@ public class UIManager
             {UIConst.Crosshair, "UICrosshair"},
             {UIConst.Dialogue, "PanelDialogue"},
             {UIConst.PlayerHurt, "PanelPlayerHurtEffect"},
+            {UIConst.Pause, "PanelPause"},
         };
 
         canvasModeDict = new Dictionary<string, int>
@@ -43,7 +44,8 @@ public class UIManager
             { UIConst.Battle, 0 },     // 战斗 → 主Canvas
             { UIConst.Crosshair, 0 },  // 准星 → 主Canvas
             { UIConst.Dialogue, 1 },   // 对话 → 系统Canvas
-            {UIConst.PlayerHurt, 0},   // 受伤 → 主Canvas
+            { UIConst.PlayerHurt, 0},  // 受伤 → 主Canvas
+            { UIConst.Pause, 1},       // 暂停 → 系统Canvas
         };
         prefabDict = new Dictionary<string, GameObject>();
         panelDict = new Dictionary<string, UIBasePanel>();
@@ -54,7 +56,8 @@ public class UIManager
         public const string Battle = "UIPanelinBattle";
         public const string Crosshair = "UICrosshair";
         public const string Dialogue = "UIDialogue";
-        public const string PlayerHurt = "PanelPlayerHurtEffect";
+        public const string PlayerHurt = "UIPanelPlayerHurtEffect";
+        public const string Pause = "UIPanelPause";
     }
 
 

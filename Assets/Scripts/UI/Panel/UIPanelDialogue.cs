@@ -7,7 +7,7 @@ public class UIPanelDialogue : UIBasePanel
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;
     [Header("归属的NPC")]
-    public NPCCommunication currentNPC;     
+    public NPCCommunication currentNPC;
     //  面板动画
     [Header("动画组件")]
     [Header("动画参数")]
@@ -15,6 +15,7 @@ public class UIPanelDialogue : UIBasePanel
     [SerializeField] private float fadeDuration = 0.4f;
     [SerializeField] private float rotateDuration = 0.5f;
     [SerializeField] private float scaleDuration = 0.5f;
+    private Sequence _seq;
     [Header("底层图片")]
     [SerializeField] private Image[] background;
     [Header("底层环")]
@@ -32,29 +33,31 @@ public class UIPanelDialogue : UIBasePanel
     [SerializeField] private Image haloMask;
     [SerializeField] private Image blackMask;
 
-#region 覆写动画 —— 全部用 Sequence 队列装载
+#region 覆写动画
     protected override void PlayEnterAnimation()
     {
         _isPlayingAnimation = true;
 
-        Sequence seq = DOTween.Sequence();
-        seq.Join(EnterBackground());
-        seq.Join(EnterBackgroundRing());
-        seq.Join(EnterMidRing());
-        seq.Join(EnterMidRedBox());
-        seq.Join(EnterForeYellowBox());
-        seq.AppendCallback(IdleHaloMask); // 循环动画用Callback
+        _seq.Join(EnterBackground());
+        _seq.Join(EnterBackgroundRing());
+        _seq.Join(EnterMidRing());
+        _seq.Join(EnterMidRedBox());
+        _seq.Join(EnterForeYellowBox());
+        _seq.AppendCallback(IdleHaloMask); // 循环动画用Callback
 
-        seq.OnComplete(() =>
+        _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
         });
 
-        seq.SetTarget(gameObject);
+        _seq.SetTarget(gameObject);
     }
 
     void KillAllLoopingAnimations()
     {
+        if(_seq == null) return;
+        _seq.Kill();
+
         if (bgRing) bgRing.rectTransform.DOKill();
         if (midRing) midRing.DOKill();
         if (haloMask) { haloMask.rectTransform.DOKill(); haloMask.DOKill(); }
@@ -64,24 +67,24 @@ public class UIPanelDialogue : UIBasePanel
         _isPlayingAnimation = true;
         KillAllLoopingAnimations();
 
-        Sequence seq = DOTween.Sequence();
-        seq.Join(ExitBlackMask());
-        seq.Join(ExitHaloMask());
-        seq.Join(ExitForeYellowBox());
-        seq.Join(ExitMidRedBox());
-        seq.Join(ExitMidRing());
-        seq.Join(ExitBackgroundRing());
-        seq.Join(ExitBackground());
+        _seq = DOTween.Sequence();
+        _seq.Join(ExitBlackMask());
+        _seq.Join(ExitHaloMask());
+        _seq.Join(ExitForeYellowBox());
+        _seq.Join(ExitMidRedBox());
+        _seq.Join(ExitMidRing());
+        _seq.Join(ExitBackgroundRing());
+        _seq.Join(ExitBackground());
 
-        seq.OnComplete(() =>
+        _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
             OnCloseComplete?.Invoke();
-
-            Destroy(gameObject);
+            if(destroyAfter)
+                Destroy(gameObject);
         });
 
-        seq.SetTarget(gameObject);
+        _seq.SetTarget(gameObject);
     }
 #endregion
 
@@ -90,10 +93,12 @@ public class UIPanelDialogue : UIBasePanel
     {
         //  Override Settings
         exitAnimDuration = 1.2f;
+        _seq =DOTween.Sequence();
+        // texts = new Text[2];
     }
 #endregion
 
-#region 过场动画 —— 全部返回 Tween
+#region 过场动画
     Tween EnterBackground()
     {
         return FadeIn(background, fadeDuration);
@@ -119,13 +124,13 @@ public class UIPanelDialogue : UIBasePanel
 
     Tween EnterMidRedBox()
     {
-        return FadeInRotateIn(imagesMidRedBox, (float)0.75 * fadeDuration, 5f);
+        return FadeInRotateIn(imagesMidRedBox, (float)0.75 * fadeDuration, 5f, rotateDuration);
     }
 
     Tween EnterForeYellowBox()
     {
         Sequence seq = DOTween.Sequence();
-        seq.Append(FadeInRotateIn(imagesForeYellowBox, fadeDuration, 5f));
+        seq.Append(FadeInRotateIn(imagesForeYellowBox, fadeDuration, 5f, rotateDuration));
         seq.Append(ResetAndFillFadeIn(halosForeYellowBox, (float)0.25 * fadeDuration));
         return seq;
     }
@@ -167,7 +172,7 @@ public class UIPanelDialogue : UIBasePanel
     }
 #endregion
 
-#region 退场动画 —— 全部返回 Tween
+#region 退场动画
     Tween ExitBackground()
     {
         return FadeOut(background, fadeDuration);
@@ -191,14 +196,14 @@ public class UIPanelDialogue : UIBasePanel
 
     Tween ExitMidRedBox()
     {
-        return FadeOutRotateOut(imagesMidRedBox, (float)0.75 * fadeDuration, 5f);
+        return FadeOutRotateOut(imagesMidRedBox, (float)0.75 * fadeDuration, 5f, rotateDuration);
     }
 
     Tween ExitForeYellowBox()
     {
         Sequence seq = DOTween.Sequence();
         seq.Append(FadeOutFillOut(halosForeYellowBox, (float)0.25 * fadeDuration));
-        seq.Append(FadeOutRotateOut(imagesForeYellowBox, (float)0.75 * fadeDuration, 5f));
+        seq.Append(FadeOutRotateOut(imagesForeYellowBox, (float)0.75 * fadeDuration, 5f, rotateDuration));
         return seq;
     }
 
