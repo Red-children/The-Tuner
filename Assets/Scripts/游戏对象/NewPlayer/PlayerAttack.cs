@@ -82,19 +82,21 @@ public class PlayerAttack : MonoBehaviour
 
         bool hitEnemy = false;
         RhythmRank highestRank = RhythmRank.Miss;
-        
+
         foreach (var hit in hits)
         {
             EnemyBase enemy = hit.GetComponent<EnemyBase>();
             if (enemy != null)
             {
-                
+                if (enemy is EnemyController ec)
+                    ec.SetAttackerPosition(transform.position);
+
                 // 获取当前节奏判定等级
                 var rhythmResult = SampleRhythm(AudioSettings.dspTime, "Melee");
-                 enemy.Wound(finalDamage,rhythmResult.rank);
+                enemy.Wound(finalDamage, rhythmResult.rank);
                 hitEnemy = true;
                 highestRank = (RhythmRank)Mathf.Max((int)highestRank, (int)rhythmResult.rank);
-                
+
                 // 触发敌人卡肉感
                 if (HitStopManager.Instance != null)
                 {

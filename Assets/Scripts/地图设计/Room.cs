@@ -128,7 +128,7 @@ public class Room : MonoBehaviour
           
             if (enemy != null )
             {
-                enemy.target = player;
+                enemy.SetTarget(player);
             }
         }
 

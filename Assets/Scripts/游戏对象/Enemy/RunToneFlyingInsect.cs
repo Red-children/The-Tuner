@@ -108,4 +108,9 @@ public class RunToneFlyingInsect : EnemyBase
         // 飞虫特有的伤害飘字效果
         Debug.Log("RunToneFlyingInsect show damage text: " + damage);
     }
+
+    public override void SetTarget(Transform target)
+    {
+        throw new System.NotImplementedException();
+    }
 }

@@ -7,7 +7,7 @@ public class UIPanelDialogue : UIBasePanel
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;
     [Header("归属的NPC")]
-    public NPCCommunication currentNPC;     
+    public NPCCommunication currentNPC;
     //  面板动画
     [Header("动画组件")]
     [Header("动画参数")]
@@ -94,6 +94,7 @@ public class UIPanelDialogue : UIBasePanel
         //  Override Settings
         exitAnimDuration = 1.2f;
         _seq =DOTween.Sequence();
+        // texts = new Text[2];
     }
 #endregion
 

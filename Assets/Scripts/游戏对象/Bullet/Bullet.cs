@@ -10,6 +10,8 @@ public class Bullet : MonoBehaviour
     public float damage = 10f;
     public GameObject destroyEffect;   // 子弹销毁特效预制体
 
+    private Vector2 attackerPosition;
+
 
     [Header("穿透效果")]
     [SerializeField] private bool canPenetrate = false;        // 是否可穿透
@@ -42,20 +44,20 @@ public class Bullet : MonoBehaviour
         int bulletLayer = gameObject.layer;
         if (bulletLayer == LayerMask.NameToLayer("PlayerBullet"))
         {
-            layerMask = LayerMask.GetMask("Enemy", "Wall" );
-            
+            layerMask = LayerMask.GetMask("Enemy", "Wall");
+
             // 检查连击管理器是否启用穿透效果
             if (ComboManager.Instance != null)
-{
-    canPenetrate = ComboManager.Instance.HasEffect(ComboEffect.BulletPenetration);
-    if (canPenetrate)
-    {
-        Debug.Log("子弹启用穿透效果");
-        // 直接改颜色
-        if (spriteRenderer != null)
-            spriteRenderer.color = new Color(1f, 0.5f, 0.8f); // 粉紫色，你也可以在Inspector里配置
-    }
-}
+            {
+                canPenetrate = ComboManager.Instance.HasEffect(ComboEffect.BulletPenetration);
+                if (canPenetrate)
+                {
+                    Debug.Log("子弹启用穿透效果");
+                    // 直接改颜色
+                    if (spriteRenderer != null)
+                        spriteRenderer.color = new Color(1f, 0.5f, 0.8f); // 粉紫色，你也可以在Inspector里配置
+                }
+            }
         }
         else if (bulletLayer == LayerMask.NameToLayer("EnemyBullet"))
         {
@@ -74,7 +76,7 @@ public class Bullet : MonoBehaviour
         float moveDistance = Time.deltaTime * moveSpeed;
         int steps = Mathf.CeilToInt(moveDistance / STEP_DISTANCE);
         float step = moveDistance / steps;
-        
+
         // 分步移动，每步检测碰撞
         for (int i = 0; i < steps; i++)
         {
@@ -89,7 +91,7 @@ public class Bullet : MonoBehaviour
     {
         // 创建射线检测参数，忽略最后击中的敌人
         RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, stepDistance, layerMask);
-        
+
         // 如果检测到碰撞且不是最后击中的敌人，处理碰撞
         if (hit.collider != null && hit.collider != lastHitEnemy)
         {
@@ -126,12 +128,15 @@ public class Bullet : MonoBehaviour
 
             if (enemy != null)
             {
-                // 计算伤害（考虑穿透衰减）
+
+                if (enemy is EnemyController ec)
+                    ec.SetAttackerPosition(attackerPosition);   // 使用缓存的位置
+
                 float finalDamage = CalculatePenetrationDamage(damage);
-               enemy.Wound(finalDamage, currentRhythmRank);
+                enemy.Wound(finalDamage, currentRhythmRank);
                 // 触发敌人被命中的事件
                 EventBus.Instance.Trigger(new EnemyHitEvent(1, currentRhythmRank));
-                Debug.Log ($"子弹击中敌人，造成 {finalDamage} 伤害，当前节奏判定：{currentRhythmRank}");
+                Debug.Log($"子弹击中敌人，造成 {finalDamage} 伤害，当前节奏判定：{currentRhythmRank}");
 
                 // 触发敌人卡肉感效果
                 if (HitStopManager.Instance != null)
@@ -144,19 +149,19 @@ public class Bullet : MonoBehaviour
                     // 添加调试信息，确认使用缓存Rank
                     Debug.Log($"[Bullet] 卡肉感使用缓存Rank: {rank} (发射时判定)");
                 }
-                
+
                 // 处理穿透逻辑
                 if (canPenetrate)
                 {
                     //增加穿透计数器
                     currentPenetrationCount++;
-                    
+
                     // 记录最后击中的敌人，避免重复碰撞
                     lastHitEnemy = hit.collider;
-                    
+
                     // 调整视觉层级，让子弹显示在敌人前面
                     AdjustVisualLayerForPenetration();
-                    
+
                     // 检查是否达到最大穿透次数
                     if (currentPenetrationCount >= maxPenetrationCount)
                     {
@@ -213,7 +218,7 @@ public class Bullet : MonoBehaviour
         {
             return baseDamage;
         }
-        
+
         // 伤害衰减公式：每次穿透减少一定百分比伤害
         float damageMultiplier = Mathf.Pow(1f - penetrationDamageReduction, currentPenetrationCount);
         return baseDamage * damageMultiplier;
@@ -228,15 +233,15 @@ public class Bullet : MonoBehaviour
         {
             // 提高子弹的排序层级，让它显示在敌人前面
             spriteRenderer.sortingOrder = originalSortingOrder + 10;
-            
+
             // 可以添加一些视觉特效，比如半透明效果
             Color originalColor = spriteRenderer.color;
             spriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0.8f);
-            
+
             Debug.Log("子弹调整视觉层级，实现穿透效果");
         }
     }
-    
+
     /// <summary>
     /// 恢复原始视觉层级
     /// </summary>
@@ -246,7 +251,7 @@ public class Bullet : MonoBehaviour
         {
             // 恢复原始排序层级
             spriteRenderer.sortingOrder = originalSortingOrder;
-            
+
             // 恢复原始颜色
             spriteRenderer.color = new Color(spriteRenderer.color.r, spriteRenderer.color.g, spriteRenderer.color.b, 1f);
         }
@@ -265,7 +270,7 @@ public class Bullet : MonoBehaviour
     /// <summary>
     /// 设置子弹伤害
     /// </summary>
-    public void SetDamage(float damage) 
+    public void SetDamage(float damage)
     {
         this.damage = Mathf.Max(0, damage);
     }
@@ -288,5 +293,9 @@ public class Bullet : MonoBehaviour
     {
         canPenetrate = false;
         currentPenetrationCount = 0;
+    }
+    public void SetAttackerPosition(Vector2 pos)
+    {
+        attackerPosition = pos;
     }
 }

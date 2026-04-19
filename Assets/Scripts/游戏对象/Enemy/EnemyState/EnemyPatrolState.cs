@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// 敌人巡逻状态类，继承自EnemyStateBase，负责处理敌人在巡逻状态下的行为逻辑，包括在预设的巡逻点之间移动、随机生成新的巡逻目标等功能，确保敌人在没有玩家接近时能够进行合理的巡逻行为。
@@ -43,34 +44,48 @@ public class EnemyPatrolState : EnemyStateBase
             return;
         }
 
-        if (runtime.target != null)
+        if (runtime.target != null && runtime.isPursuing)
         {
             manager.ChangeState(StateType.Chase);
             return;
         }
 
+        controller.FaceTarget(targetPos);
 
-
-        // 根据目标点的位置调整敌人的朝向，确保敌人始终面向移动的方向
-        if (targetPos.x > manager.transform.position.x)
-            controller.spriteRenderer.flipX = false; //目标点在右边，面向右边
-        else if (targetPos.x < manager.transform.position.x)
-            controller.spriteRenderer.flipX = true;  // 目标点在左边，面向左边
-
-        //朝向目标点移动
-        manager.transform.position = Vector2.MoveTowards(
-            manager.transform.position,
-            targetPos,
-            data.moveSpeed * Time.deltaTime);
-
-        // 
-        if (Vector2.Distance(manager.transform.position, targetPos) < minDistance)
+        if (runtime.target != null && !runtime.isPursuing)
         {
-            if (controller.patrolPoints.Length > 0)
-                SetNextTarget();
-            else
-                GetNewRandomTarget();
+            // 冷却结束且目标仍在，重新激活追击
+            if (Time.time >= runtime.ignoreTargetUntilTime)
+            {
+                runtime.isPursuing = true;
+                manager.ChangeState(StateType.Chase);
+                return;
+            }
         }
+
+
+
+        controller.FaceTarget(targetPos);
+        //读取引用网格
+        NavMeshAgent agent = controller.agent;
+
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.SetDestination(targetPos);
+            agent.speed = data.moveSpeed;
+        }
+
+        // 检查是否到达（使用agent.remainingDistance）
+        if (agent != null && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
+        {
+            Debug.Log("到达巡逻点，进入待机");
+            manager.ChangeState(StateType.Idle);
+            return;
+        }
+
+
+
+
     }
 
     /// <summary>
@@ -81,7 +96,7 @@ public class EnemyPatrolState : EnemyStateBase
         if (controller.patrolPoints.Length == 0) return;
         targetPos = controller.patrolPoints[currentPointIndex].position;
 
-        
+
         if (movingForward)
         {
             // 如果当前巡逻点是最后一个，切换方向，否则继续向前
@@ -98,7 +113,7 @@ public class EnemyPatrolState : EnemyStateBase
                 currentPointIndex--;
         }
     }
-  
+
     public override void OnExit()
     {
         targetPos = Vector2.zero;
@@ -108,33 +123,44 @@ public class EnemyPatrolState : EnemyStateBase
 
     private void GetNewRandomTarget()
     {
-        if (controller.patrolCenter == null)
-        {Debug.LogWarning("没有设置巡逻中心，无法生成随机巡逻目标");
-            return;
+        // === 原来的中心点计算逻辑（保持不变） ===
+        Vector2 center;
+        if (controller.patrolCenter != null)
+        {
+            center = controller.patrolCenter.position;
+        }
+        else if (controller.transform.parent != null)
+        {
+            center = controller.transform.parent.position;
+            Debug.Log($"[{controller.name}] 使用父物体位置作为巡逻中心: {center}");
+        }
+        else
+        {
+            center = controller.transform.position;
+            Debug.LogError($"[{controller.name}] 既没有 patrolCenter 也没有父物体！巡逻中心回退到自身，会导致漂移！");
         }
 
-        // 得到巡逻中心位置，确保随机目标是在巡逻中心附近生成的，形成合理的巡逻范围
-        Vector2 center = controller.patrolCenter.position;
+        float radius = data.patrolRadius;
 
-        // 得到当前敌人朝向，作为生成随机方向的基础，确保随机目标的生成是基于敌人当前的朝向，形成更自然的巡逻行为
-        Vector2 currentDir = manager.transform.right; 
-
-        // 生成一个随机方向，基于当前朝向进行一定范围内的随机偏转，确保敌人能够在巡逻中心附近的不同方向上生成随机目标，形成更丰富的巡逻路径
-        float angleRange = 90f; 
-        // 生成一个随机角度，范围在[-angleRange, angleRange]之间，确保随机目标的生成是在当前朝向的基础上进行一定范围内的随机偏转，形成更自然的巡逻行为
-        float randomAngle = Random.Range(-angleRange, angleRange) * Mathf.Deg2Rad;
-        // 计算随机方向，使用旋转矩阵将当前朝向进行旋转，得到一个新的随机方向，确保随机目标的生成是基于敌人当前的朝向进行一定范围内的随机偏转，形成更自然的巡逻行为
-        Vector2 randomDir = new Vector2(
-            Mathf.Cos(randomAngle) * currentDir.x - Mathf.Sin(randomAngle) * currentDir.y,
-            Mathf.Sin(randomAngle) * currentDir.x + Mathf.Cos(randomAngle) * currentDir.y
-        ).normalized;
-
-        // 生成一个随机距离，范围在[0, data.patrolRadius]之间，确保随机目标的生成是在巡逻中心附近的合理范围内，形成合理的巡逻行为
-        float radius = Random.Range(0f, data.patrolRadius);
-        Vector2 offset = randomDir * radius;
-
-        // 计算最终的随机目标位置，确保随机目标是在巡逻中心附近的合理位置，形成合理的巡逻行为
-        targetPos = center + offset;
+        // === 新：使用导航网格生成有效点 ===
+        targetPos = GetRandomNavMeshPoint(center, radius);
     }
-  
+
+    /// <summary>
+    /// 在导航网格上生成一个随机有效点
+    /// </summary>
+    public Vector3 GetRandomNavMeshPoint(Vector3 center, float radius)
+    {
+        for (int i = 0; i < 30; i++)
+        {
+            Vector3 randomPos = center + (Vector3)(Random.insideUnitCircle * radius);
+            randomPos.z = 0;
+            if (NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+            {
+                return hit.position;
+            }
+        }
+        return center; // 没找到就返回中心点
+    }
+
 }

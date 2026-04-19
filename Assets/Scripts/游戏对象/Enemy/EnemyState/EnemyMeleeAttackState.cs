@@ -8,6 +8,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
 
     public override void OnStart()
     {
+        controller.ShowAttackWarning();
         manager.animator.SetTrigger("Attack");
         if (runtime.target == null)
         {
