@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 /// <summary>
 /// 敌人追击状态类，负责处理敌人在追逐玩家时的行为逻辑，包括朝向目标、移动以及判断是否进入攻击范围等，根据敌人类型（近战或远程）进行不同的处理。
@@ -36,7 +37,6 @@ public class EnemyChaseState : EnemyStateBase
         else
             maxChase = float.MaxValue; // 无限追击
 
-        float distanceToTarget = Vector2.Distance(manager.transform.position, runtime.target.position);
         //测试技能区域 *************************************************
 
         //先让敌人转向
@@ -80,19 +80,20 @@ public class EnemyChaseState : EnemyStateBase
         //}
 
 
-        float beatProgress = (float)RhythmManager.Instance.BeatProgress; // 修复1：double转float
-        float speedMultiplier = Mathf.Sin(beatProgress * Mathf.PI);
-        float currentChaseSpeed = runtime.currentChaseSpeed * Mathf.Lerp(0.6f, 1.4f, speedMultiplier);
-        //Debug.Log($"节奏进度: {beatProgress}, 速度乘数: {speedMultiplier}, 当前追逐速度: {currentChaseSpeed}");
+        // 先让敌人转向（视觉朝向）
+        controller.FaceTarget(runtime.target.position);
 
+        // 移动：交给NavMeshAgent
+        NavMeshAgent agent = controller.agent;
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.SetDestination(runtime.target.position);
 
-        // 移动敌人朝向目标
-
-        manager.transform.position = Vector2.MoveTowards(
-            manager.transform.position, // 当前敌人位置
-            runtime.target.position,    // 目标位置
-            currentChaseSpeed * Time.deltaTime // 追逐速度乘以时间增量，确保帧率独立的移动
-            );
+            // 可选：根据节奏调整速度（保留你的节奏系统）
+            float beatProgress = (float)RhythmManager.Instance.BeatProgress;
+            float speedMultiplier = Mathf.Sin(beatProgress * Mathf.PI);
+            agent.speed = runtime.currentChaseSpeed * Mathf.Lerp(0.6f, 1.4f, speedMultiplier);
+        }
 
         // 根据敌人类型判断是否进入攻击范围
         if (data is RangedEnemyData rangedData)

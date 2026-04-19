@@ -11,9 +11,8 @@ using System;
 
 public class EnemyMeleeApproachState : EnemyStateBase
 {
+    //当前的方向
     private Vector2 currentDirection;
-    private float directionChangeTimer;
-    private float directionChangeInterval = 0.5f;
     private float maxTurnAnglePerSec = 120f;
 
     public EnemyMeleeApproachState(FSM manager) : base(manager) { }
@@ -25,11 +24,12 @@ public class EnemyMeleeApproachState : EnemyStateBase
          // 初始化朝向，如果有目标则朝向目标，否则保持当前朝向
         if (runtime.target != null)
             currentDirection = (runtime.target.position - manager.transform.position).normalized;
-        directionChangeTimer = directionChangeInterval;
     }
 
     public override void OnUpdate()
     {
+
+        
         if (runtime.getHit) { manager.ChangeState(StateType.Wound); return; }
         if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
 

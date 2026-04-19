@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 #region 敌人受伤方法
 
@@ -19,6 +20,9 @@ public class EnemyWoundState : EnemyStateBase
     {
         Debug.Log("进入Wound状态");
         runtime.getHit = false;
+
+            NavMeshAgent agent = controller.agent;
+    if (agent != null) agent.enabled = false; // 暂时禁用，避免拉扯
 
         // 执行击退
         if (runtime.knockbackDistance > 0f)
@@ -54,7 +58,16 @@ public class EnemyWoundState : EnemyStateBase
         }
     }
 
-    public override void OnExit() { }
+   public override void OnExit()
+{
+    NavMeshAgent agent = controller.agent;
+    if (agent != null)
+    {
+        agent.enabled = true;
+        // 可选：将agent的位置同步到当前位置
+        agent.Warp(manager.transform.position);
+    }
+}
 
 
 

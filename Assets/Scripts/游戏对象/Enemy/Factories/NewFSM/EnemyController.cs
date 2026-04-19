@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,6 +14,9 @@ using UnityEditor;
 /// </summary>
 public class EnemyController : EnemyBase
 {
+    //网格地图
+    public NavMeshAgent agent;
+
     public bool isFacingRight = true; // 默认朝向，根据初始旋转自行调整
 
     [Header("敌人数据")]
@@ -25,7 +30,7 @@ public class EnemyController : EnemyBase
 
     public Collider2D weaponCollider;        // 武器碰撞体，用于近战攻击的伤害判定
 
-    private Vector2 currentForward;
+    private Vector2 currentForward; //目前正确的方向
 
     [Header("状态机组件")]
     // 运行时数据
@@ -92,6 +97,15 @@ public class EnemyController : EnemyBase
             IStateFactory factory = GetStateFactory();
             fsm.Initialize(runtime, factory, this);
         }
+
+
+        agent = GetComponent<NavMeshAgent>();
+        if (agent == null)
+            agent = gameObject.AddComponent<NavMeshAgent>();
+
+        // 关键配置：关闭自动旋转，2D游戏我们自己控制朝向
+        agent.updateRotation = false;
+        agent.updateUpAxis = false; // 防止在XY平面上自动调整Y轴
     }
     // 实现基类的抽象方法
     protected override void UpdateBehavior()
@@ -177,6 +191,8 @@ public class EnemyController : EnemyBase
             default: return 0f;
         }
     }
+
+    #region  敌人死亡逻辑
     // 死亡处理
     public void Dead()
     {
@@ -208,6 +224,8 @@ public class EnemyController : EnemyBase
         DamageNumber dmgNumber = dmgObj.GetComponent<DamageNumber>();
         dmgNumber?.SetDamage(damage, rank); // 改动点
     }
+
+
 
     /// <summary>
     /// 敌人死亡携程，因为需要等待一会让敌人死亡事件被正确的发出
@@ -253,6 +271,8 @@ public class EnemyController : EnemyBase
         //if (runtime?.DeadEff != null)
         //    Instantiate(runtime.DeadEff, transform.position, transform.rotation);
     }
+
+    #endregion
 
     #region  检测玩家进入预警区域的回调函数
 
@@ -398,7 +418,7 @@ public class EnemyController : EnemyBase
     public void FaceTarget(Vector2 targetPosition)
     {
         isFacingRight = targetPosition.x > transform.position.x;
-        currentForward = isFacingRight ? Vector2.right : Vector2.left;
+        currentForward = isFacingRight ? Vector2.right : Vector2.left;//得到目前的前方
         // 保持原有旋转逻辑（为了图像翻转）
         Vector3 rotation = transform.eulerAngles;
         rotation.y = isFacingRight ? 180 : 0;
@@ -456,22 +476,24 @@ public class EnemyController : EnemyBase
     /// <returns></returns>
     public bool CanSeePlayer()
     {
-
-        if (runtime.target == null)  {  Debug.Log("目标检测不通过")  ;return false;}
+        //目标为空不进行
+        if (runtime.target == null) { Debug.Log("目标检测不通过"); return false; }
+        //计算当前的朝向和敌人的位置之间的方向向量
         Vector2 toPlayer = runtime.target.position - transform.position;
-        float distance = toPlayer.magnitude;
-        if (distance > data.visionRange) {  Debug.Log("距离检测不通过")  ;return false;}
+        float distance = toPlayer.magnitude;        //得到向量长度
+        //距离检测
+        if (distance > data.visionRange) { Debug.Log("距离检测不通过"); return false; }
 
         Vector2 forward = currentForward;
-        float angle = Vector2.Angle(forward, toPlayer);
-        float halfAngle = data.visionAngle * 0.5f;
+        float angle = Vector2.Angle(forward, toPlayer);//计算转向角
+        float halfAngle = data.visionAngle * 0.5f;//计算半角
 
         Debug.Log($"[{name}] 视线检测:\n" +
                   $"  前方方向(forward): {forward}\n" +
                   $"  指向玩家方向: {toPlayer.normalized}\n" +
                   $"  夹角: {angle:F2}°, 半角阈值: {halfAngle:F2}°");
 
-        if (angle > halfAngle){  Debug.Log("角度检测不通过")  ;return false;}
+        if (angle > halfAngle) { Debug.Log("角度检测不通过"); return false; }
 
         RaycastHit2D hit = Physics2D.Raycast(transform.position, toPlayer.normalized, distance, data.visionBlockMask);
         return hit.collider == null;
