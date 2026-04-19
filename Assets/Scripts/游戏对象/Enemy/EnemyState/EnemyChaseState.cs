@@ -16,6 +16,7 @@ public class EnemyChaseState : EnemyStateBase
     public override void OnStart()
     {
         manager.animator.SetTrigger("Move");
+        controller.agent.speed = data.chaseSpeed;
     }
 
     public override void OnUpdate()
