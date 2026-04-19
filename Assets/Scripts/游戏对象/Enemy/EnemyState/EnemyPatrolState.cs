@@ -66,14 +66,15 @@ public class EnemyPatrolState : EnemyStateBase
 
 
         controller.FaceTarget(targetPos);
+        //读取引用网格
         NavMeshAgent agent = controller.agent;
+
         if (agent != null && agent.isOnNavMesh)
         {
             agent.SetDestination(targetPos);
             agent.speed = data.moveSpeed;
         }
 
-        // 检查是否到达（使用agent.remainingDistance）
         // 检查是否到达（使用agent.remainingDistance）
         if (agent != null && agent.isOnNavMesh && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
@@ -154,7 +155,7 @@ public class EnemyPatrolState : EnemyStateBase
         {
             Vector3 randomPos = center + (Vector3)(Random.insideUnitCircle * radius);
             randomPos.z = 0;
-            if (UnityEngine.AI.NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, 1.0f, UnityEngine.AI.NavMesh.AllAreas))
+            if (NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, 1.0f, NavMesh.AllAreas))
             {
                 return hit.position;
             }

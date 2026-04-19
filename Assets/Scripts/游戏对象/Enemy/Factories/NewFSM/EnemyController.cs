@@ -14,7 +14,7 @@ using UnityEditor;
 /// </summary>
 public class EnemyController : EnemyBase
 {
-    //网格地图
+    //网格地图导航智能体
     public NavMeshAgent agent;
 
     public bool isFacingRight = true; // 默认朝向，根据初始旋转自行调整
@@ -44,11 +44,13 @@ public class EnemyController : EnemyBase
     void Awake()
     {
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
+
         if (weapon == null) weapon = GetComponentInChildren<WeaponInfo>();
+
         if (warningUI == null)
             warningUI = GetComponentInChildren<EnemyWarningUI>(true);
         currentForward = isFacingRight ? Vector2.right : Vector2.left;
-        print(" 武器碰撞体 " + weaponCollider.name);
+
         // 初始化武器碰撞体伤害脚本
         if (weaponCollider != null)
         {

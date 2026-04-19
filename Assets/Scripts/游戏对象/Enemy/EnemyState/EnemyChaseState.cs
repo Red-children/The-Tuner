@@ -87,6 +87,7 @@ public class EnemyChaseState : EnemyStateBase
         NavMeshAgent agent = controller.agent;
         if (agent != null && agent.isOnNavMesh)
         {
+            //让敌人追击玩家
             agent.SetDestination(runtime.target.position);
 
             // 可选：根据节奏调整速度（保留你的节奏系统）
