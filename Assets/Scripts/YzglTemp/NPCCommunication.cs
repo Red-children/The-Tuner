@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -8,7 +9,8 @@ public class NPCCommunication : MonoBehaviour
     [Header("检测区域子物体")]
     public GameObject detectArea;   // 由子物体负责玩家检测，主控控制启用/禁用
     [Header("对话内容数组（可编辑）")]
-    public string[] dialogueLines;
+    // public string[] dialogueLines;
+    public List<KeyValuePair<int, string>> dicDialogueLines;
     [Header("2D UI提示偏移")]
     public Vector2 promptOffset = new Vector2(0, 1.2f);
     [Header("提示词字体")]
@@ -26,9 +28,12 @@ public class NPCCommunication : MonoBehaviour
     private Canvas _targetCanvas;
     void InitText()
     {
-        dialogueLines = new string[2];
-        dialogueLines[0] = "TestTestTestTestTestTestTest\nTestTestTestTestTest";
-        dialogueLines[1] = "Test\nTestTest\nTestTestTest\nTest\nTestTestTest\nTestTest";
+        // dialogueLines = new string[2];
+        // dialogueLines[0] = "TestTestTestTestTestTestTest\nTestTestTestTestTest";
+        // dialogueLines[1] = "Test\nTestTest\nTestTestTest\nTest\nTestTestTest\nTestTest";
+        dicDialogueLines = new List<KeyValuePair<int, string>>();
+        dicDialogueLines.Add(new KeyValuePair<int, string>(0, "TestTestTestTestTestTestTest\nTestTestTestTestTest"));
+        dicDialogueLines.Add(new KeyValuePair<int, string>(1, "Test\nTestTest\nTestTestTest\nTest\nTestTestTest\nTestTest"));
     }
     private void CreateInteractPrompt()
     {
@@ -79,7 +84,7 @@ public class NPCCommunication : MonoBehaviour
         // 玩家在范围内 + 按下F键 → 启动对话
         if (_isPlayerInRange && Input.GetKeyDown(KeyCode.F))
         {
-            // Debug.Log("Player Pressed F");
+            Debug.Log("Player Pressed F");
             StartDialogue();
         }
     }
@@ -123,7 +128,7 @@ public class NPCCommunication : MonoBehaviour
         // 发布【进入对话】事件 → 玩家主控失活移动/攻击
         EventBus.Instance.Trigger<DialogueStartEvent>(new DialogueStartEvent());
         // 调度UI显示对话
-        DialogueManager.Instance.StartDialogue(this, dialogueLines);
+        DialogueManager.Instance.StartDialogue(this, dicDialogueLines);
     }
     /// 结束对话（由UI调度器调用）
     public void EndDialogue()

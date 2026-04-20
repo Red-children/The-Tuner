@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -21,7 +22,9 @@ public class DialogueManager
     /// <summary>
     /// 外部调用：启动对话
     /// </summary>
-    public void StartDialogue(NPCCommunication npc, string[] lines)
+    // public void StartDialogue(NPCCommunication npc, string[] lines)
+    // public void StartDialogue(NPCCommunication npc, Dictionary<int, string> lines)
+    public void StartDialogue(NPCCommunication npc, List<KeyValuePair<int, string>> lines)
     {
         // 1. 打开对话面板（自动挂到 Canvas_System 或 Canvas_Main）
         _currentDialoguePanel = UIManager.Instance.OpenPanel(UIManager.UIConst.Dialogue) as UIPanelDialogue;

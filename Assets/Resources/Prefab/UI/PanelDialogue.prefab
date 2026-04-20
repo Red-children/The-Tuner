@@ -1377,7 +1377,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e558e207ede07e74c8fecfea28b89520, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueText: {fileID: 1991333452449618097}
+  dialogueTexts:
+  - {fileID: 1991333452449618097}
+  - {fileID: 2160130510640582235}
   textSpeed: 0.05
   dialoguePanel: {fileID: 8674484818919125227}
 --- !u!1 &6705928888707809289

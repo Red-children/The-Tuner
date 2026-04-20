@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using UnityEditor.AppleTV;
+using System;
+using System.Collections.Generic;
 public class UIPanelDialogue : UIBasePanel
 {
     [Header("对话数据")]
@@ -34,7 +35,7 @@ public class UIPanelDialogue : UIBasePanel
     [SerializeField] private Image haloMask;
     [SerializeField] private Image blackMask;
     [SerializeField] private Text[] texts;
-
+    private Action _onPanelReady;
 #region 覆写动画
     protected override void PlayEnterAnimation()
     {
@@ -51,6 +52,7 @@ public class UIPanelDialogue : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
+            _onPanelReady?.Invoke();
         });
 
         _seq.SetTarget(gameObject);
@@ -249,10 +251,12 @@ public class UIPanelDialogue : UIBasePanel
         currentNPC = npc;
     }
     /// 显示对话UI
-    public void ShowDialogue(string[] lines)
+    // public void ShowDialogue(string[] lines)
+    // public void ShowDialogue(Dictionary<int, string> lines)
+    public void ShowDialogue(List<KeyValuePair<int, string>> lines)
     {
         gameObject.SetActive(true);
-        uiCommunication.StartDialogue(lines);
+        _onPanelReady += () => uiCommunication.StartDialogue(lines);
     }
 
     /// 隐藏对话UI（对话结束时调用）
