@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 
 /// <summary>
 /// 对话UI显示脚本：DOTween + UGUI Text 版
@@ -10,12 +11,14 @@ using System.Reflection;
 public class UICommunication : MonoBehaviour
 {
     [Header("对话文本")]
-    [SerializeField] private Text[] dialogueTexts;
+    [SerializeField] private Text[] dialogueTexts;  // 主文本框组件
+    [SerializeField] private Text[] speakerTexts;   // 名字文本框组件
 
     [Header("文字速度")]
     public float textSpeed = 0.05f;
     private List<KeyValuePair<int, string>> _currentLines;
     private int _currentLineIndex;
+    private string[] _speaker;
     private bool _isTyping; //  是否正在打字动画
 
     private Tweener _textTweener;
@@ -30,6 +33,8 @@ public class UICommunication : MonoBehaviour
         }
         // 自动获取自己归属的对话面板（非单例）
         dialoguePanel = GetComponent<UIPanelDialogue>();
+
+        _speaker = new string[2] {null, null};
     }
 
     private void Update()
@@ -60,6 +65,11 @@ public class UICommunication : MonoBehaviour
 
     #region 对话核心
 
+    public void SetSpeakers(string[] speakers)
+    {
+        _speaker = speakers;
+    }
+
     public void StartDialogue(List<KeyValuePair<int, string>> lines)
     {
         if (lines == null || lines.Count == 0)
@@ -78,9 +88,12 @@ public class UICommunication : MonoBehaviour
     private void TypeLine()
     {
         KeyValuePair<int, string> currentText = _currentLines[_currentLineIndex];
+
+        if (_speaker[currentText.Key] != null) 
+            speakerTexts[currentText.Key].text = _speaker[currentText.Key];
+
         dialogueTexts[currentText.Key].text = string.Empty;
         _isTyping = true;
-
         _textTweener = dialogueTexts[currentText.Key].DOText(currentText.Value, currentText.Value.Length * textSpeed)
             .SetEase(Ease.Linear)
             .OnComplete(() =>

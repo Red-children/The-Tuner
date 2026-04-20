@@ -98,10 +98,9 @@ public class UIPanelDialogue : UIBasePanel
 #region 生命周期
     private void Awake()
     {
-        //  Override Settings
         exitAnimDuration = 1.2f;
         _seq =DOTween.Sequence();
-        // texts = new Text[2];
+        // EventBus.Instance.Subscribe<DialogueStartEvent>(OnDialogue);
     }
 #endregion
 
@@ -247,24 +246,28 @@ public class UIPanelDialogue : UIBasePanel
 
 #region 业务
     /// 绑定发起对话的来源
-    public void BindDialogueSource(IDialogueTrigger trigger)
+    private void BindDialogueSource(IDialogueTrigger trigger)
     {
         dialogueTrigger = trigger;
     }
     /// 显示对话UI
-    public void ShowDialogue(List<KeyValuePair<int, string>> lines)
+    private void ShowDialogue(List<KeyValuePair<int, string>> lines)
     {
         gameObject.SetActive(true);
         _onPanelReady += () => uiCommunication.StartDialogue(lines);
     }
+    /// 绑定对话者
+    private void BindSpeaker(string[] speakers)
+    {
+        uiCommunication.SetSpeakers(speakers);
+    }
 
-    // /// 隐藏对话UI（对话结束时调用）
-    // public void HideDialogue()
-    // {
-    //     gameObject.SetActive(false);
-    //     // 通知NPC结束对话
-    //     dialogueTrigger?.EndDialogue();
-    //     DialogueManager.Instance.EndDialogue();
-    // }
+    // public void OnDialogue(DialogueStartEvent evt)
+    public void OnDialogue(IDialogueTrigger trigger)
+    {
+        BindDialogueSource(trigger);
+        ShowDialogue(trigger.GetDialogueLines());
+        BindSpeaker(trigger.GetSpeaker());
+    }
 #endregion
 }
