@@ -22,9 +22,8 @@ public class DialogueManager
     /// <summary>
     /// 外部调用：启动对话
     /// </summary>
-    // public void StartDialogue(NPCCommunication npc, string[] lines)
-    // public void StartDialogue(NPCCommunication npc, Dictionary<int, string> lines)
-    public void StartDialogue(NPCCommunication npc, List<KeyValuePair<int, string>> lines)
+    // public void StartDialogue(NPCCommunication npc, List<KeyValuePair<int, string>> lines)
+    public void StartDialogue(IDialogueTrigger dialogueTrigger)
     {
         // 1. 打开对话面板（自动挂到 Canvas_System 或 Canvas_Main）
         _currentDialoguePanel = UIManager.Instance.OpenPanel(UIManager.UIConst.Dialogue) as UIPanelDialogue;
@@ -36,8 +35,8 @@ public class DialogueManager
         }
 
         // 2. 绑定NPC + 显示内容
-        _currentDialoguePanel.BindNPC(npc);
-        _currentDialoguePanel.ShowDialogue(lines);
+        _currentDialoguePanel.BindDialogueSource(dialogueTrigger);
+        _currentDialoguePanel.ShowDialogue(dialogueTrigger.GetDialogueLines());
     }
 
     /// <summary>

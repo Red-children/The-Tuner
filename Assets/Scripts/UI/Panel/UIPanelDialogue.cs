@@ -9,7 +9,7 @@ public class UIPanelDialogue : UIBasePanel
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;
     [Header("归属的NPC")]
-    public NPCCommunication currentNPC;
+    public IDialogueTrigger dialogueTrigger;
     //  面板动画
     [Header("动画组件")]
     [Header("动画参数")]
@@ -53,6 +53,7 @@ public class UIPanelDialogue : UIBasePanel
         {
             _isPlayingAnimation = false;
             _onPanelReady?.Invoke();
+            _onPanelReady = null;
         });
 
         _seq.SetTarget(gameObject);
@@ -245,27 +246,25 @@ public class UIPanelDialogue : UIBasePanel
 #endregion
 
 #region 业务
-    /// 绑定发起对话的NPC
-    public void BindNPC(NPCCommunication npc)
+    /// 绑定发起对话的来源
+    public void BindDialogueSource(IDialogueTrigger trigger)
     {
-        currentNPC = npc;
+        dialogueTrigger = trigger;
     }
     /// 显示对话UI
-    // public void ShowDialogue(string[] lines)
-    // public void ShowDialogue(Dictionary<int, string> lines)
     public void ShowDialogue(List<KeyValuePair<int, string>> lines)
     {
         gameObject.SetActive(true);
         _onPanelReady += () => uiCommunication.StartDialogue(lines);
     }
 
-    /// 隐藏对话UI（对话结束时调用）
-    public void HideDialogue()
-    {
-        gameObject.SetActive(false);
-        // 通知NPC结束对话
-        currentNPC?.EndDialogue();
-        DialogueManager.Instance.EndDialogue();
-    }
+    // /// 隐藏对话UI（对话结束时调用）
+    // public void HideDialogue()
+    // {
+    //     gameObject.SetActive(false);
+    //     // 通知NPC结束对话
+    //     dialogueTrigger?.EndDialogue();
+    //     DialogueManager.Instance.EndDialogue();
+    // }
 #endregion
 }
