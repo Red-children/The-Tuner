@@ -501,4 +501,15 @@ public class EnemyController : EnemyBase
         return hit.collider == null;
     }
 
+  public void OnWoundEnd()
+    {
+        //取出敌人受伤类
+        EnemyWoundState enemyWoundState = fsm.currentState as  EnemyWoundState;
+        if(enemyWoundState!=null)
+        {
+            enemyWoundState.HandleAnimationFinished();
+            enemyWoundState.isAnimationPlaying = false;
+        }
+    } 
+
 }

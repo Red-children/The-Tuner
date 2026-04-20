@@ -100,4 +100,6 @@ public class FSM : MonoBehaviour
         if (currentState != null)
             currentStateName = currentState.GetType().Name;
     }
+
+    
 }

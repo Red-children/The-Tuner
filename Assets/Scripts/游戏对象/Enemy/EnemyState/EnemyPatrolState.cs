@@ -149,18 +149,18 @@ public class EnemyPatrolState : EnemyStateBase
     /// <summary>
     /// 在导航网格上生成一个随机有效点
     /// </summary>
-    public Vector3 GetRandomNavMeshPoint(Vector3 center, float radius)
-    {
-        for (int i = 0; i < 30; i++)
+        public Vector3 GetRandomNavMeshPoint(Vector3 center, float radius)
         {
-            Vector3 randomPos = center + (Vector3)(Random.insideUnitCircle * radius);
-            randomPos.z = 0;
-            if (NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+            for (int i = 0; i < 30; i++)
             {
-                return hit.position;
+                Vector3 randomPos = center + (Vector3)(Random.insideUnitCircle * radius);
+                randomPos.z = 0;
+                if (NavMesh.SamplePosition(randomPos, out UnityEngine.AI.NavMeshHit hit, 1.0f, NavMesh.AllAreas))
+                {
+                    return hit.position;
+                }
             }
+            return center; // 没找到就返回中心点
         }
-        return center; // 没找到就返回中心点
-    }
 
 }
