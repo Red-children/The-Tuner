@@ -24,10 +24,10 @@ public class UICommunication : MonoBehaviour
 #region 生命周期
     private void Awake()
     {
-        if (dialogueTexts != null)
-            dialogueTexts[0].text = string.Empty;
-            dialogueTexts[1].text = string.Empty;
-        
+        if (dialogueTexts == null)
+        {
+            Debug.Log("UICommunication 组件缺失");
+        }
         // 自动获取自己归属的对话面板（非单例）
         dialoguePanel = GetComponent<UIPanelDialogue>();
     }

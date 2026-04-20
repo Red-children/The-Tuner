@@ -193,7 +193,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Text01
+  m_Text: 
 --- !u!1 &4860558245650720771
 GameObject:
   m_ObjectHideFlags: 0
@@ -1340,7 +1340,6 @@ MonoBehaviour:
   exitTime: 1
   exitAnimDuration: 0
   uiCommunication: {fileID: 5353817801148870137}
-  currentNPC: {fileID: 0}
   fadeDuration: 0.4
   rotateDuration: 0.5
   scaleDuration: 0.5
@@ -1613,4 +1612,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Text02
+  m_Text: 
