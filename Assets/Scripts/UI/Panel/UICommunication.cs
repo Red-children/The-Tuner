@@ -109,7 +109,8 @@ public class UICommunication : MonoBehaviour
     }
     private void CloseDialogueSafe()
     {
-        dialoguePanel.HideDialogue();
+        // dialoguePanel.HideDialogue();
+        UIManager.Instance.ClosePanel(UIManager.UIConst.Dialogue);
     }
     private void KillCurrentTween()
     {

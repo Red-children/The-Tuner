@@ -179,6 +179,19 @@ public class UIBasePanel : MonoBehaviour
     {
         return t.DOLocalMove(to + t.localPosition, moveT, true).SetEase(Ease.OutQuad);
     }
+
+    protected Tween FadeIn(Text text, float t)
+    {
+        if (text == null) return null;
+        return text.DOFade(1, t).From(0).SetEase(Ease.OutQuad);
+    }
+
+    protected Tween FadeOut(Text text, float t)
+    {
+        if (text == null) return null;
+        return text.DOFade(0, t).SetEase(Ease.OutQuad);
+    }
+
     protected Tween FadeIn(Image img, float t)
     {
         if (img == null) return null;

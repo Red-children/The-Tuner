@@ -1,9 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using UnityEditor.AppleTV;
 public class UIPanelDialogue : UIBasePanel
 {
-    //  对话数据
+    [Header("对话数据")]
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;
     [Header("归属的NPC")]
@@ -32,6 +33,7 @@ public class UIPanelDialogue : UIBasePanel
     [Header("装饰层")]
     [SerializeField] private Image haloMask;
     [SerializeField] private Image blackMask;
+    [SerializeField] private Text[] texts;
 
 #region 覆写动画
     protected override void PlayEnterAnimation()
@@ -43,6 +45,7 @@ public class UIPanelDialogue : UIBasePanel
         _seq.Join(EnterMidRing());
         _seq.Join(EnterMidRedBox());
         _seq.Join(EnterForeYellowBox());
+        _seq.Append(EnterTexts());
         _seq.AppendCallback(IdleHaloMask); // 循环动画用Callback
 
         _seq.OnComplete(() =>
@@ -68,6 +71,7 @@ public class UIPanelDialogue : UIBasePanel
         KillAllLoopingAnimations();
 
         _seq = DOTween.Sequence();
+        _seq.Append(ExitTexts());
         _seq.Join(ExitBlackMask());
         _seq.Join(ExitHaloMask());
         _seq.Join(ExitForeYellowBox());
@@ -132,6 +136,16 @@ public class UIPanelDialogue : UIBasePanel
         Sequence seq = DOTween.Sequence();
         seq.Append(FadeInRotateIn(imagesForeYellowBox, fadeDuration, 5f, rotateDuration));
         seq.Append(ResetAndFillFadeIn(halosForeYellowBox, (float)0.25 * fadeDuration));
+        return seq;
+    }
+    
+    Tween EnterTexts()
+    {
+        Sequence seq = DOTween.Sequence();
+        foreach(var t in texts)
+        {
+            seq.Join(FadeIn(t, (float)0.2 * fadeDuration));
+        }
         return seq;
     }
 #endregion
@@ -215,6 +229,16 @@ public class UIPanelDialogue : UIBasePanel
     Tween ExitBlackMask()
     {
         return FadeOut(blackMask, (float)0.5 * fadeDuration);
+    }
+
+    Tween ExitTexts()
+    {
+        Sequence seq = DOTween.Sequence();
+        foreach(var t in texts)
+        {
+            seq.Join(FadeOut(t, (float)0.2 * fadeDuration));
+        }
+        return seq;
     }
 #endregion
 

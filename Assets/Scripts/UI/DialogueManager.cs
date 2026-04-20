@@ -24,7 +24,7 @@ public class DialogueManager
     public void StartDialogue(NPCCommunication npc, string[] lines)
     {
         // 1. 打开对话面板（自动挂到 Canvas_System 或 Canvas_Main）
-        // _currentDialoguePanel = UIManager.Instance.OpenPanel(UIManager.UIConst.Dialogue) as UIPanelDialogue;
+        _currentDialoguePanel = UIManager.Instance.OpenPanel(UIManager.UIConst.Dialogue) as UIPanelDialogue;
 
         if (_currentDialoguePanel == null)
         {
@@ -44,7 +44,7 @@ public class DialogueManager
     {
         if (_currentDialoguePanel != null)
         {
-            // UIManager.Instance.ClosePanel(UIManager.UIConst.Dialogue);
+            UIManager.Instance.ClosePanel(UIManager.UIConst.Dialogue);
             _currentDialoguePanel = null;
         }
     }
