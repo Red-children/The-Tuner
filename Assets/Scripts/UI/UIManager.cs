@@ -36,6 +36,7 @@ public class UIManager
             {UIConst.Dialogue, "PanelDialogue"},
             {UIConst.PlayerHurt, "PanelPlayerHurtEffect"},
             {UIConst.Pause, "PanelPause"},
+            {UIConst.Echo, "PanelEcho"},
         };
 
         canvasModeDict = new Dictionary<string, int>
@@ -46,6 +47,7 @@ public class UIManager
             { UIConst.Dialogue, 1 },   // 对话 → 系统Canvas
             { UIConst.PlayerHurt, 0},  // 受伤 → 主Canvas
             { UIConst.Pause, 1},       // 暂停 → 系统Canvas
+            { UIConst.Echo, 0},        // 对话 → 主Canvas
         };
         prefabDict = new Dictionary<string, GameObject>();
         panelDict = new Dictionary<string, UIBasePanel>();
@@ -58,6 +60,7 @@ public class UIManager
         public const string Dialogue = "UIDialogue";
         public const string PlayerHurt = "UIPanelPlayerHurtEffect";
         public const string Pause = "UIPanelPause";
+        public const string Echo = "UIPanelEcho";
     }
 
 

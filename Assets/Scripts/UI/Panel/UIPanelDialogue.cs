@@ -1,13 +1,15 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using System;
+using System.Collections.Generic;
 public class UIPanelDialogue : UIBasePanel
 {
-    //  对话数据
+    [Header("对话数据")]
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;
-    [Header("归属的NPC")]
-    public NPCCommunication currentNPC;
+    [Header("对话文本")]
+    public DialogueData dialogueData;
     //  面板动画
     [Header("动画组件")]
     [Header("动画参数")]
@@ -21,18 +23,17 @@ public class UIPanelDialogue : UIBasePanel
     [Header("底层环")]
     [SerializeField] private Image bgRing;
     [Header("红色文本框")]
-    // [SerializeField] private Transform transMidRedBox;
     [SerializeField] private Image[] imagesMidRedBox;
     [Header("中层环")]
     [SerializeField] private Transform midRing;
     [Header("黄色文本框")]
-    // [SerializeField] private Transform transForeYellowBox;
     [SerializeField] private Image[] imagesForeYellowBox;
     [SerializeField] private Image[] halosForeYellowBox;
     [Header("装饰层")]
     [SerializeField] private Image haloMask;
     [SerializeField] private Image blackMask;
-
+    [SerializeField] private Text[] texts;
+    private Action _onPanelReady;
 #region 覆写动画
     protected override void PlayEnterAnimation()
     {
@@ -43,11 +44,14 @@ public class UIPanelDialogue : UIBasePanel
         _seq.Join(EnterMidRing());
         _seq.Join(EnterMidRedBox());
         _seq.Join(EnterForeYellowBox());
+        _seq.Append(EnterTexts());
         _seq.AppendCallback(IdleHaloMask); // 循环动画用Callback
 
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
+            _onPanelReady?.Invoke();
+            _onPanelReady = null;
         });
 
         _seq.SetTarget(gameObject);
@@ -68,6 +72,7 @@ public class UIPanelDialogue : UIBasePanel
         KillAllLoopingAnimations();
 
         _seq = DOTween.Sequence();
+        _seq.Append(ExitTexts());
         _seq.Join(ExitBlackMask());
         _seq.Join(ExitHaloMask());
         _seq.Join(ExitForeYellowBox());
@@ -91,10 +96,9 @@ public class UIPanelDialogue : UIBasePanel
 #region 生命周期
     private void Awake()
     {
-        //  Override Settings
         exitAnimDuration = 1.2f;
         _seq =DOTween.Sequence();
-        // texts = new Text[2];
+        // EventBus.Instance.Subscribe<DialogueStartEvent>(OnDialogue);
     }
 #endregion
 
@@ -132,6 +136,16 @@ public class UIPanelDialogue : UIBasePanel
         Sequence seq = DOTween.Sequence();
         seq.Append(FadeInRotateIn(imagesForeYellowBox, fadeDuration, 5f, rotateDuration));
         seq.Append(ResetAndFillFadeIn(halosForeYellowBox, (float)0.25 * fadeDuration));
+        return seq;
+    }
+    
+    Tween EnterTexts()
+    {
+        Sequence seq = DOTween.Sequence();
+        foreach(var t in texts)
+        {
+            seq.Join(FadeIn(t, (float)0.2 * fadeDuration));
+        }
         return seq;
     }
 #endregion
@@ -216,28 +230,35 @@ public class UIPanelDialogue : UIBasePanel
     {
         return FadeOut(blackMask, (float)0.5 * fadeDuration);
     }
+
+    Tween ExitTexts()
+    {
+        Sequence seq = DOTween.Sequence();
+        foreach(var t in texts)
+        {
+            seq.Join(FadeOut(t, (float)0.2 * fadeDuration));
+        }
+        return seq;
+    }
 #endregion
 
 #region 业务
-    /// 绑定发起对话的NPC
-    public void BindNPC(NPCCommunication npc)
-    {
-        currentNPC = npc;
-    }
     /// 显示对话UI
-    public void ShowDialogue(string[] lines)
+    private void ShowDialogue(DialogueLines lines)
     {
         gameObject.SetActive(true);
-        uiCommunication.StartDialogue(lines);
+        _onPanelReady += () => uiCommunication.StartDialogue(lines);
+    }
+    /// 绑定对话者
+    private void BindSpeaker(string[] speakers)
+    {
+        uiCommunication.SetSpeakers(speakers);
     }
 
-    /// 隐藏对话UI（对话结束时调用）
-    public void HideDialogue()
+    public void OnDialogue(DialogueData data)
     {
-        gameObject.SetActive(false);
-        // 通知NPC结束对话
-        currentNPC?.EndDialogue();
-        DialogueManager.Instance.EndDialogue();
+        ShowDialogue(data.GetDialogueLines());
+        BindSpeaker(data.GetSpeakers());
     }
 #endregion
 }

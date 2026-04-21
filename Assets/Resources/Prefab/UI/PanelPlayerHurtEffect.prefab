@@ -86,11 +86,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8971648487285029012}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3febc2117afa03c4cafeb2e760cde45e, type: 3}
+  m_Script: {fileID: 11500000, guid: 164abf6f33138d447990314defa6c4a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   playableDirector: {fileID: 0}
-  _enterTime: 0
-  _exitTime: 1
-  _exitAnimDuration: 1
+  enterTime: 0
+  exitTime: 1
+  exitAnimDuration: 1
   image: {fileID: 8971648487285029015}
