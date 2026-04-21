@@ -3,31 +3,25 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public interface IDialogueTrigger
-{
-    public List<KeyValuePair<int, string>> GetDialogueLines();
-    string[] GetSpeaker();
-    public void EndDialogue();
-}
 /// NPC交互核心脚本：挂载在NPC主体
 /// 受NPC主控脚本控制，负责玩家检测、交互触发
-public class NPCCommunication : MonoBehaviour, IDialogueTrigger
+public class NPCCommunication : MonoBehaviour
 {
     [Header("检测区域子物体")]
     public GameObject detectArea;   // 由子物体负责玩家检测，主控控制启用/禁用
-    [Header("对话内容数组（可编辑）")]
-    // public string[] dialogueLines;
-    public List<KeyValuePair<int, string>> DialogueLines;
-    public string[] speaker;
+    [Header("对话内容")]
+    // public List<KeyValuePair<int, string>> DialogueLines;
+    // public string[] speaker;
+    [SerializeField] private DialogueData dialogueData;
     [Header("2D UI提示偏移")]
-    public Vector2 promptOffset = new Vector2(0, 1.2f);
+    public Vector2 promptOffset = new(0, 1.2f);
     [Header("提示词字体")]
     [SerializeField] private TMP_FontAsset ChineseFont;
     [Header("提示词信息")]
     public string interactPromptInfo = "【F 交互】";
     //  动态生成的交互提示
     private GameObject _interactPrompt;
-    private Action onPanelReady;
+    // private Action onPanelReady;
 
     // 玩家是否在检测范围内
     private bool _isPlayerInRange;
@@ -35,15 +29,6 @@ public class NPCCommunication : MonoBehaviour, IDialogueTrigger
     private bool _isInDialogue;
 
     private Canvas _targetCanvas;
-    void InitText()
-    {
-        speaker = new string[] { "NPC", "Riff" };
-        DialogueLines = new List<KeyValuePair<int, string>>
-        {
-            new(0, "TestTestTestTestTestTestTest\nTestTestTestTestTest"),
-            new(1, "Test\nTestTest\nTestTestTest\nTest\nTestTestTest\nTestTest")
-        };
-    }
     private void CreateInteractPrompt()
     {
         // 创建提示物体
@@ -68,10 +53,7 @@ public class NPCCommunication : MonoBehaviour, IDialogueTrigger
 
         _interactPrompt = promptObj;
     }
-#region 对话逻辑 Interface IDialogueTrigger
-
-    public List<KeyValuePair<int, string>> GetDialogueLines() => DialogueLines;
-    public string[] GetSpeaker() => speaker;
+#region 对话逻辑 
 
     /// 开始对话
     private void StartDialogue()
@@ -81,16 +63,14 @@ public class NPCCommunication : MonoBehaviour, IDialogueTrigger
         if (_interactPrompt != null)
             _interactPrompt.SetActive(false);
         // 发布【进入对话】事件 → 玩家主控失活移动/攻击
-        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Dialogue) as UIPanelDialogue;
-        panel.OnDialogue(this);
-        EventBus.Instance.Trigger(new DialogueStartEvent(this));
+        // var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Dialogue) as UIPanelDialogue;
+        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
+        panel.OnDialogue(dialogueData);
+        EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData));
     }
-    /// 结束对话（由UI调度器调用）
-    public void EndDialogue()
+    private void OnDialogueEnd(DialogueEndEvent evt)
     {
         _isInDialogue = false;
-        // 发布【对话结束】事件 → 玩家主控激活移动/攻击
-        EventBus.Instance.Trigger<DialogueEndEvent>(new DialogueEndEvent());
     }
 
 #endregion
@@ -108,8 +88,7 @@ public class NPCCommunication : MonoBehaviour, IDialogueTrigger
         // 启用检测区域（由主控控制开关）
         if (detectArea != null)
             detectArea.SetActive(true);
-
-        InitText();
+        EventBus.Instance.Subscribe<DialogueEndEvent>(OnDialogueEnd);
     }
     private void Update()
     {

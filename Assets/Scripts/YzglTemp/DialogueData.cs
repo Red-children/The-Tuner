@@ -22,6 +22,7 @@ public struct LinesEntry
 [CreateAssetMenu(fileName = "NewDialogueData", menuName = "Dialogue/DialogueData")]
 public class DialogueData : ScriptableObject
 {
+    // [SerializeField] private 
     [SerializeField] private DialogueLines dialogue = new();
     [SerializeField] private string[] speakers = {"", ""};
 

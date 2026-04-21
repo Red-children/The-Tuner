@@ -1,10 +1,10 @@
 // 对话开始事件
 public struct DialogueStartEvent
 {
-    public IDialogueTrigger trigger;
-    public DialogueStartEvent (IDialogueTrigger trigger)
+    public DialogueData data;
+    public DialogueStartEvent (DialogueData data)
     {
-        this.trigger = trigger;
+        this.data = data;
     }
 }
 
