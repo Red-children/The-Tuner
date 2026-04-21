@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DialogueTrigger01 : MonoBehaviour
+public class DialogueTrigger : MonoBehaviour
 {
 #region 数据
     [Header("对话数据")]
@@ -36,7 +36,7 @@ public class DialogueTrigger01 : MonoBehaviour
 
 #region Trigger
 
-    void OnTriggerEnter2D(Collider2D other)
+    public void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player") && !_triggered)
         {

@@ -23,7 +23,7 @@ public struct LinesEntry
 public class DialogueData : ScriptableObject
 {
     [SerializeField] private DialogueLines dialogue = new();
-    [SerializeField] private string[] speakers = {"", ""};
+    [SerializeField] private string[] speakers = {"回响", "瑞符"};
 
 #region 接口
     public DialogueLines GetDialogueLines() => dialogue;
