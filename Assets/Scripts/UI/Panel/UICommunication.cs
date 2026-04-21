@@ -66,7 +66,6 @@ public class UICommunication : MonoBehaviour
         _speaker = speakers;
     }
 
-    // public void StartDialogue(List<KeyValuePair<int, string>> lines)
     public void StartDialogue(DialogueLines lines)
     {
         if (lines.entries == null || lines.entries.Count == 0)

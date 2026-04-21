@@ -41,7 +41,6 @@ public class PlayerDialogueHandler : MonoBehaviour
     private void OnDialogueStart(DialogueStartEvent evt)
     {
         Debug.Log("对话开始 - 禁用玩家控制");
-        
         if (_playerController != null)
             _playerController.enabled = false;
         
@@ -50,7 +49,7 @@ public class PlayerDialogueHandler : MonoBehaviour
         
         if (_playerDash != null)
             _playerDash.enabled = false;
-        if(_playerMovement != null)
+        if(_playerMovement != null && evt.freeze)
             _playerMovement.enabled = false;
     }
 

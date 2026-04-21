@@ -2,9 +2,11 @@
 public struct DialogueStartEvent
 {
     public DialogueData data;
-    public DialogueStartEvent (DialogueData data)
+    public bool freeze;
+    public DialogueStartEvent (DialogueData data, bool freeze = false)
     {
         this.data = data;
+        this.freeze = freeze;
     }
 }
 
