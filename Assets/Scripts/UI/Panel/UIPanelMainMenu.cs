@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.Animations;
 using UnityEngine.Playables;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class UIPanelMainMenu : UIBasePanel
 {
@@ -43,6 +43,7 @@ public class UIPanelMainMenu : UIBasePanel
     void OnNewGameClick()
     {
         //TODO:
+        SceneManager.LoadScene("Test01");
     }
     void OnSettingsClick()
     {

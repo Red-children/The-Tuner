@@ -984,9 +984,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playableDirector: {fileID: 6487058332146483130}
-  _enterTime: 0
-  _exitTime: 1
-  _exitAnimDuration: 1
+  enterTime: 0
+  exitTime: 1
+  exitAnimDuration: 1
   _btnNewGame: {fileID: 8717030030331234733}
   _btnSettings: {fileID: 5607577929528809625}
   _btnExit: {fileID: 8227572616243484447}
