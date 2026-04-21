@@ -16,7 +16,8 @@ public enum StateType
     Approach,    // 接近状态（新增）用于优化追逐行为，在玩家进入追逐范围但未进入攻击范围时切换到该状态，调整朝向并准备攻击
     NoiseScreamWarning,   // 噪声嘶吼预警
     NoiseScreamAttack,    // 噪声嘶吼释放
-    NoiseStun             // 噪声眩晕（被完美打断）
+    NoiseStun,             // 噪声眩晕（被完美打断）
+    Confused,   // 疑惑状态：丢失视野后短暂停留，尝试重新发现玩家
 
 }
 #endregion
@@ -65,6 +66,7 @@ public class FSM : MonoBehaviour
         states.Add(StateType.Wound, factory.CreateWoundState(this));
         states.Add(StateType.Approach, factory.CreateApproachState(this));
         states.Add(StateType.Dead, factory.CreateDeadState(this));
+        //states.Add(StateType.Confused, new EnemyConfusedState(this));
 
         // 根据数据类型注册特殊状态
         if (Data is NoiseMonsterData)
