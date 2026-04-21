@@ -13,6 +13,14 @@ public class BossRuntime : MonoBehaviour
     public int currentPhase = 1;
     public bool hasPhaseChanged = false;
 
+    [Header("霸体系统")]
+    public float superArmorTimer = 0f;
+    public bool isSuperArmor => superArmorTimer > 0f;
+
+    [Header("阶段无敌")]
+    public float phaseInvincibleTimer = 0f;
+    public bool isPhaseInvincible => phaseInvincibleTimer > 0f;
+
     [Header("数据访问")]
     [SerializeField] private BossData originalData;
 

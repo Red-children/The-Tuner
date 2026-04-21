@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[System.Serializable]
 public class BossWoundState : IState
 {
     private BossController controller;
@@ -17,9 +16,9 @@ public class BossWoundState : IState
 
     public void OnStart()
     {
-        Debug.Log("Boss ½øÈë Wound ×´Ì¬");
         runtime.getHit = false;
         timer = 0f;
+
         controller.animator?.SetTrigger("Hurt");
     }
 
@@ -41,6 +40,8 @@ public class BossWoundState : IState
                 return;
             }
 
+            runtime.superArmorTimer = 5f;
+
             if (runtime.target != null)
                 fsm.ChangeState(BossStateType.Chase);
             else
@@ -50,7 +51,6 @@ public class BossWoundState : IState
 
     public void OnExit()
     {
-        Debug.Log("Boss ÍË³ö Wound ×´Ì¬");
     }
 
     private bool ShouldChangePhase()

@@ -17,9 +17,10 @@ public class BossPhaseChangeState : IState
 
     public void OnStart()
     {
-        Debug.Log("Boss 进入阶段切换状态");
         phaseTimer = 0f;
         phaseCompleted = false;
+
+        runtime.phaseInvincibleTimer = 5f;
 
         controller.animator?.SetTrigger("PhaseChange");
         ApplyPhaseUpgrade();
@@ -29,17 +30,14 @@ public class BossPhaseChangeState : IState
     {
         phaseTimer += Time.deltaTime;
 
-        float phaseChangeDuration = 2f;
-        if (!phaseCompleted && phaseTimer >= phaseChangeDuration)
+        if (!phaseCompleted && phaseTimer >= 5f)
         {
             phaseCompleted = true;
             OnPhaseChangeFinished();
         }
 
         if (runtime.getHit)
-        {
             runtime.getHit = false;
-        }
     }
 
     private void ApplyPhaseUpgrade()
@@ -48,7 +46,6 @@ public class BossPhaseChangeState : IState
         runtime.hasPhaseChanged = true;
         runtime.currentMoveSpeed *= 1.2f;
         runtime.currentChaseSpeed *= 1.2f;
-        Debug.Log("Boss 进入新阶段，属性增强！");
     }
 
     private void OnPhaseChangeFinished()
@@ -67,7 +64,6 @@ public class BossPhaseChangeState : IState
 
     public void OnExit()
     {
-        Debug.Log("Boss 退出阶段切换状态");
         controller.animator?.ResetTrigger("PhaseChange");
     }
 }

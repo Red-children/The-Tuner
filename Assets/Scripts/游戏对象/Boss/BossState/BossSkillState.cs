@@ -16,14 +16,15 @@ public class BossSkillState : IState
 
     public void OnStart()
     {
-        Debug.Log("Boss½øÈëSkill×´Ì¬");
         skillUsed = false;
+        runtime.superArmorTimer = 999f;
     }
 
     public void OnUpdate()
     {
         if (runtime.target == null)
         {
+            runtime.superArmorTimer = 0f;
             fsm.ChangeState(BossStateType.Idle);
             return;
         }
@@ -36,6 +37,8 @@ public class BossSkillState : IState
 
         if (skillUsed)
         {
+            runtime.superArmorTimer = 0f;
+
             float distance = Vector3.Distance(controller.transform.position, runtime.target.position);
 
             if (distance <= runtime.Data.normalAttackRange)
@@ -47,6 +50,6 @@ public class BossSkillState : IState
 
     public void OnExit()
     {
-        Debug.Log("BossÍË³öSkill×´Ì¬");
+        runtime.superArmorTimer = 0f;
     }
 }

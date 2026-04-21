@@ -38,14 +38,19 @@ public class BossController : EnemyBase
 
     public override void Wound(float damage, RhythmRank rank)
     {
-        if (runtime.getHit) return;
+        if (runtime.isSuperArmor || runtime.isPhaseInvincible)
+            return;
+
+        if (runtime.getHit)
+            return;
+
         runtime.getHit = true;
         runtime.currentHealth -= damage;
 
         animator?.SetTrigger("Hurt");
 
         ShowDamageText(transform.position, damage, rank);
-        manager?.ChangeState(BossStateType.Wound); 
+        manager?.ChangeState(BossStateType.Wound);
     }
 
     public override void OnKilled()

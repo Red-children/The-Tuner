@@ -23,7 +23,7 @@ public class BossFSM : MonoBehaviour
         states.Add(BossStateType.Wound, new BossWoundState(Controller));
         states.Add(BossStateType.Skill, new BossSkillState(Controller));
         states.Add(BossStateType.PhaseChange, new BossPhaseChangeState(Controller));
-        states.Add(BossStateType.Dead, new BossDeadState(Controller)); 
+        states.Add(BossStateType.Dead, new BossDeadState(Controller));
 
         ChangeState(BossStateType.Idle);
     }
@@ -36,8 +36,7 @@ public class BossFSM : MonoBehaviour
             return;
         }
 
-        if (currentState != null)
-            currentState.OnExit();
+        currentState?.OnExit();
 
         currentState = states[newState];
         currentState.OnStart();
@@ -46,5 +45,13 @@ public class BossFSM : MonoBehaviour
     void Update()
     {
         currentState?.OnUpdate();
+
+        if (Runtime == null) return;
+
+        if (Runtime.superArmorTimer > 0f)
+            Runtime.superArmorTimer -= Time.deltaTime;
+
+        if (Runtime.phaseInvincibleTimer > 0f)
+            Runtime.phaseInvincibleTimer -= Time.deltaTime;
     }
 }

@@ -22,6 +22,12 @@ public class BossAttackState : IState
 
     public void OnUpdate()
     {
+        if (controller.skill != null && controller.skill.CanUseSkill())
+        {
+            fsm.ChangeState(BossStateType.Skill);
+            return;
+        }
+
         if (runtime.target == null)
         {
             fsm.ChangeState(BossStateType.Idle);
