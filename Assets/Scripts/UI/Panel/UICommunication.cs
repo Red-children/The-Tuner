@@ -27,8 +27,6 @@ public class UICommunication : MonoBehaviour
         {
             Debug.Log("UICommunication 组件缺失");
         }
-        // 自动获取自己归属的对话面板
-        // dialoguePanel = GetComponent<UIPanelDialogue>();
 
         _speaker = new string[2] {null, null};
     }

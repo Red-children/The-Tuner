@@ -75,16 +75,20 @@ public class UIPanelEcho : UIBasePanel
 #endregion
 
 #region 生命周期
-    private void Awake()
+    void Awake()
     {
         exitAnimDuration = 1.2f;
         _seq =DOTween.Sequence();
         // EventBus.Instance.Subscribe<DialogueStartEvent>(OnDialogue);
         EventBus.Instance.Subscribe<DialogueEndEvent>(OnDialogueEnd);
     }
-#endregion
+    void OnDestroy()
+    {
+        EventBus.Instance.Unsubscribe<DialogueEndEvent>(OnDialogueEnd);
+    }
+    #endregion
 
-#region 过场动画
+    #region 过场动画
 
     Tween EnterMidRedBox()
     {

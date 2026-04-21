@@ -38,6 +38,10 @@ public class PanelPlayerHurtEffect : UIBasePanel
     {
         EventBus.Instance.Subscribe<PlayerHurtEvent>(OnPlayerHurt);
     }
+    private void OnDestroy()
+    {
+        EventBus.Instance.Unsubscribe<PlayerHurtEvent>(OnPlayerHurt);
+    }
     private void Update()
     {
         // EasyTest();
