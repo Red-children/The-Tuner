@@ -1,9 +1,9 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+
 public class UIPanelEcho : UIBasePanel
 {
     [Header("对话数据")]
@@ -20,14 +20,11 @@ public class UIPanelEcho : UIBasePanel
     [SerializeField] private float scaleDuration = 0.5f;
     private Sequence _seq;
     [Header("红色文本框")]
-    // [SerializeField] private Transform transMidRedBox;
     [SerializeField] private Image[] imagesMidRedBox;
     [Header("黄色文本框")]
-    // [SerializeField] private Transform transForeYellowBox;
     [SerializeField] private Image[] imagesForeYellowBox;
     [SerializeField] private Image[] halosForeYellowBox;
-    [Header("装饰层")]
-    [SerializeField] private Image blackMask;
+    [Header("文本组件")]
     [SerializeField] private Text[] texts;
     private Action _onPanelReady;
 #region 覆写动画
@@ -54,6 +51,7 @@ public class UIPanelEcho : UIBasePanel
         if(_seq == null) return;
         _seq.Kill();
     }
+
     protected override void PlayExitAnimation(bool destroyAfter)
     {
         _isPlayingAnimation = true;
@@ -61,7 +59,6 @@ public class UIPanelEcho : UIBasePanel
 
         _seq = DOTween.Sequence();
         _seq.Append(ExitTexts());
-        _seq.Join(ExitBlackMask());
         _seq.Join(ExitForeYellowBox());
         _seq.Join(ExitMidRedBox());
 
@@ -90,13 +87,23 @@ public class UIPanelEcho : UIBasePanel
 
     Tween EnterMidRedBox()
     {
-        return FadeInRotateIn(imagesMidRedBox, (float)0.75 * fadeDuration, 5f, rotateDuration);
+        Sequence seq = DOTween.Sequence();
+        foreach(var img in imagesMidRedBox)
+        {
+            if (img == null) continue;
+            seq.Join(MoveIn(img.transform, new Vector3(-300, 0, 0), fadeDuration));
+        }
+        return seq;
     }
 
     Tween EnterForeYellowBox()
     {
         Sequence seq = DOTween.Sequence();
-        seq.Append(FadeInRotateIn(imagesForeYellowBox, fadeDuration, 5f, rotateDuration));
+        foreach(var img in imagesForeYellowBox)
+        {
+            if (img == null) continue;
+            seq.Join(MoveIn(img.transform, new Vector3(300, 0, 0), fadeDuration));
+        }
         seq.Append(ResetAndFillFadeIn(halosForeYellowBox, (float)0.25 * fadeDuration));
         return seq;
     }
@@ -115,19 +122,25 @@ public class UIPanelEcho : UIBasePanel
 #region 退场动画
     Tween ExitMidRedBox()
     {
-        return FadeOutRotateOut(imagesMidRedBox, (float)0.75 * fadeDuration, 5f, rotateDuration);
+        Sequence seq = DOTween.Sequence();
+        foreach(var img in imagesMidRedBox)
+        {
+            if (img == null) continue;
+            seq.Join(MoveOut(img.transform, new Vector3(-600, 0, 0), fadeDuration));
+        }
+        return seq;
     }
 
     Tween ExitForeYellowBox()
     {
         Sequence seq = DOTween.Sequence();
-        seq.Append(FadeOutFillOut(halosForeYellowBox, (float)0.25 * fadeDuration));
-        seq.Append(FadeOutRotateOut(imagesForeYellowBox, (float)0.75 * fadeDuration, 5f, rotateDuration));
+        foreach(var img in imagesForeYellowBox)
+        {
+            if (img == null) continue;
+            seq.Join(MoveOut(img.transform, new Vector3(600, 0, 0), fadeDuration));
+        }
+        seq.Join(FadeOutFillOut(halosForeYellowBox, (float)0.25 * fadeDuration));
         return seq;
-    }
-    Tween ExitBlackMask()
-    {
-        return FadeOut(blackMask, (float)0.5 * fadeDuration);
     }
 
     Tween ExitTexts()

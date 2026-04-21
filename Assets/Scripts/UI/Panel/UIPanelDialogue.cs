@@ -23,12 +23,10 @@ public class UIPanelDialogue : UIBasePanel
     [Header("底层环")]
     [SerializeField] private Image bgRing;
     [Header("红色文本框")]
-    // [SerializeField] private Transform transMidRedBox;
     [SerializeField] private Image[] imagesMidRedBox;
     [Header("中层环")]
     [SerializeField] private Transform midRing;
     [Header("黄色文本框")]
-    // [SerializeField] private Transform transForeYellowBox;
     [SerializeField] private Image[] imagesForeYellowBox;
     [SerializeField] private Image[] halosForeYellowBox;
     [Header("装饰层")]
@@ -262,7 +260,6 @@ public class UIPanelDialogue : UIBasePanel
         uiCommunication.SetSpeakers(speakers);
     }
 
-    // public void OnDialogue(DialogueStartEvent evt)
     public void OnDialogue(IDialogueTrigger trigger)
     {
         BindDialogueSource(trigger);

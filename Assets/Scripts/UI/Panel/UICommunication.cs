@@ -22,8 +22,7 @@ public class UICommunication : MonoBehaviour
     private bool _isTyping; //  是否正在打字动画
 
     private Tweener _textTweener;
-    // 获取自己父物体的面板脚本
-    [SerializeField] private UIPanelDialogue dialoguePanel;
+    // [SerializeField] private UIPanelDialogue dialoguePanel;
 #region 生命周期
     private void Awake()
     {
@@ -31,8 +30,8 @@ public class UICommunication : MonoBehaviour
         {
             Debug.Log("UICommunication 组件缺失");
         }
-        // 自动获取自己归属的对话面板（非单例）
-        dialoguePanel = GetComponent<UIPanelDialogue>();
+        // 自动获取自己归属的对话面板
+        // dialoguePanel = GetComponent<UIPanelDialogue>();
 
         _speaker = new string[2] {null, null};
     }
@@ -120,7 +119,7 @@ public class UICommunication : MonoBehaviour
         }
         else
         {
-            if (dialoguePanel != null)
+            // if (dialoguePanel != null)
             Invoke(nameof(CloseDialogueSafe), 0.01f);
         }
     }

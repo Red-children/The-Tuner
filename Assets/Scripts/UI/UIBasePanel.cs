@@ -174,6 +174,13 @@ public class UIBasePanel : MonoBehaviour
     {
         return t.DOLocalMove(t.localPosition, moveT, true).From(from + t.localPosition).SetEase(Ease.InQuad);
     }
+    protected Tween MoveIn(Transform[] transforms, Vector3 from, float moveT)
+    {
+        Sequence seq = DOTween.Sequence();
+        foreach(var t in transforms)
+            seq.Join(t.DOLocalMove(t.localPosition, moveT, true).From(from + t.localPosition).SetEase(Ease.InQuad));
+        return seq;
+    }
 
     protected Tween MoveOut(Transform t, Vector3 to, float moveT)
     {
