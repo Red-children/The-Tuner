@@ -10,14 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f51de2919c3d488478a2343cd233b1d7, type: 3}
-  m_Name: Dialogue01
+  m_Name: Dialogue00
   m_EditorClassIdentifier: 
   dialogue:
     entries:
     - id: 0
-      line: "\u300C\u524D\u65B9\u68C0\u6D4B\u5230\u5931\u8C10\u4F53\u3002\u6570\u91CF\uFF1A\u5C11\u3002\u5A01\u80C1\u7B49\u7EA7\uFF1A\u4F4E\u3002\u300D"
+      line: "\u300C\u951A\u70B9\u8C10\u5F8B\u6CE2\u52A8\u5F02\u5E38\u3002\u5931\u8C10\u6D53\u5EA6\u4E0A\u5347\u4E2D\u3002\u300D"
     - id: 1
-      line: "\u300C\u5B83\u4EEC\u628A\u8C10\u5F8B\u5168\u6405\u4E71\u4E86\u2026\u2026\u300D"
+      line: "\u300C\u2026\u2026\u96BE\u542C\uFF0C\u96BE\u542C\uFF0C\u6211\u8981\u54C8\u6C14\u4E86\u3002\u300D"
+    - id: 0
+      line: "\u300C\u5EFA\u8BAE\u6CBF\u5931\u8C10\u6CE2\u52A8\u65B9\u5411\u524D\u8FDB\u3002\u300D"
   speakers:
   - "\u56DE\u54CD"
   - "\u745E\u7B26"
