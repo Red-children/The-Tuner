@@ -70,6 +70,7 @@ public class FSM : MonoBehaviour
         if (Data is NoiseMonsterData)
         {
             states.Add(StateType.NoiseScreamWarning, new NoiseScreamWarningState(this));
+        
             states.Add(StateType.NoiseScreamAttack, new NoiseScreamAttackState(this));
             states.Add(StateType.NoiseStun, new NoiseStunState(this));
             foreach (var state in states)

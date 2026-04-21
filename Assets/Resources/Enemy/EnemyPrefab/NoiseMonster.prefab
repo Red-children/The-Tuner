@@ -1,5 +1,84 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &438798905
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 438798906}
+  - component: {fileID: 438798908}
+  - component: {fileID: 438798907}
+  m_Layer: 0
+  m_Name: Weapon2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &438798906
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438798905}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.26, y: -1.6, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6971854539851177559}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!60 &438798908
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438798905}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -1.5131642, y: 0.43813932}
+      - {x: -4.026718, y: -0.84655416}
+      - {x: -9.333469, y: -2.313935}
+      - {x: -8.766215, y: -4.2489357}
+      - {x: -1.7382991, y: -3.1160665}
+      - {x: -1.281905, y: -1.8417528}
+--- !u!114 &438798907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 438798905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1770174ae795ced4db0a50ffceb87f3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  owner: {fileID: 2272484490529471324}
+  damage: 0
+  hitCooldown: 0.5
 --- !u!1 &2272484492031809750
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,7 +91,7 @@ GameObject:
   - component: {fileID: 2272484492031809748}
   - component: {fileID: 2272484492031809771}
   m_Layer: 0
-  m_Name: Weapon
+  m_Name: Weapon1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58,12 +137,13 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -2.3561354, y: -0.46790123}
-      - {x: -4.026718, y: -0.84655416}
-      - {x: -6.835771, y: -3.364942}
-      - {x: -5.8314185, y: -5.6623573}
+    - - {x: -4.6381836, y: 2.020559}
+      - {x: -5.928427, y: -0.32478082}
+      - {x: -7.043232, y: -8.060907}
+      - {x: -4.102591, y: -8.150816}
+      - {x: -0.6253495, y: -7.6789103}
       - {x: -1.7382991, y: -3.1160665}
-      - {x: -1.281905, y: -1.8417528}
+      - {x: -0.86698633, y: 0.56643414}
 --- !u!114 &2272484492031809771
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,7 +472,7 @@ PrefabInstance:
     - target: {fileID: 4125022150300041416, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: b41272485bbfc2f4592860d4a0fd6fb2, type: 3}
+      objectReference: {fileID: 21300000, guid: 0a206ff4417c1a5468d77df69d7166fc, type: 3}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -411,11 +491,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.12
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.82
+      value: 3.79
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -427,15 +507,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -471,6 +551,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 4125022150300041418, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
+    - {fileID: 9171717363495848224, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}
 --- !u!1 &6971854539851177555 stripped
 GameObject:
@@ -494,15 +575,37 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 14.87, y: 14.58}
+    oldSize: {x: 10.14, y: 14.59}
     newSize: {x: 3, y: 3}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 11.022703, y: 12.460018}
+  m_Size: {x: 10, y: 12.5}
   m_EdgeRadius: 0
+--- !u!195 &1793599784440368782
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6971854539851177555}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 7.434984
+  m_Speed: 3.5
+  m_Acceleration: 1000
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 2
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 14.579999
+  m_BaseOffset: 7.2899995
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!114 &2272484490529471324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -517,6 +620,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ownerRoom: {fileID: 0}
   spriteRenderer: {fileID: 0}
+  comboHitColliders:
+  - {fileID: 2272484492031809748}
+  - {fileID: 438798908}
   agent: {fileID: 0}
   isFacingRight: 1
   data: {fileID: 11400000, guid: a5b29488a93d3db4aa05654b24f2bcc3, type: 2}
@@ -524,7 +630,6 @@ MonoBehaviour:
   chaseArea: {fileID: 6971854538634974099}
   patrolCenter: {fileID: 0}
   patrolPoints: []
-  weaponCollider: {fileID: 2272484492031809748}
   runtime: {fileID: 0}
   fsm: {fileID: 0}
   warningUI: {fileID: 9043275610140981721}
@@ -553,28 +658,27 @@ MonoBehaviour:
   knockbackForce: {x: 0, y: 0}
   knockbackDistance: 0
   originalData: {fileID: 0}
---- !u!195 &1793599784440368782
-NavMeshAgent:
+--- !u!95 &1054242208
+Animator:
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6971854539851177555}
   m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 7.434984
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 14.579999
-  m_BaseOffset: 7.2899995
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 01df1d562da79c241ada2de06aa04115, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &6971854539851177559 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4125022150300041417, guid: 7e429e970afd0fc409b05bd28c19b50d, type: 3}

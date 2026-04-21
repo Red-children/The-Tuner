@@ -14,6 +14,9 @@ using UnityEditor;
 /// </summary>
 public class EnemyController : EnemyBase
 {
+
+    [Header("攻击配置")]
+    public List<Collider2D> comboHitColliders = new List<Collider2D>(); // 普通敌人可以不填，使用 weaponCollider
     //网格地图导航智能体
     public NavMeshAgent agent;
 
@@ -27,8 +30,6 @@ public class EnemyController : EnemyBase
     public Collider2D chaseArea;            // 追逐范围碰撞体
     public Transform patrolCenter;          // 巡逻中心点
     public Transform[] patrolPoints;        // 巡逻点数组
-
-    public Collider2D weaponCollider;        // 武器碰撞体，用于近战攻击的伤害判定
 
     private Vector2 currentForward; //目前正确的方向
 
@@ -44,43 +45,46 @@ public class EnemyController : EnemyBase
     void Awake()
     {
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
-
         if (weapon == null) weapon = GetComponentInChildren<WeaponInfo>();
-
-        if (warningUI == null)
-            warningUI = GetComponentInChildren<EnemyWarningUI>(true);
+        if (warningUI == null) warningUI = GetComponentInChildren<EnemyWarningUI>(true);
         currentForward = isFacingRight ? Vector2.right : Vector2.left;
 
-        // 初始化武器碰撞体伤害脚本
-        if (weaponCollider != null)
-        {
-            var hitScript = weaponCollider.GetComponent<EnemyWeaponHit>();
-            if (hitScript == null)
-                hitScript = weaponCollider.gameObject.AddComponent<EnemyWeaponHit>();
-            hitScript.owner = this;
-            // 根据敌人数据类型获取伤害值
-            if (data is MeleeEnemyData meleeData)
-                hitScript.damage = meleeData.attackDamage;
-            // 初始禁用
-            weaponCollider.enabled = false;
-        }
+        // ========== 统一初始化连击碰撞体列表 ==========
+        // 如果列表为空，尝试从武器子物体下自动查找所有碰撞体并填充（作为后备）
+        if (comboHitColliders == null) comboHitColliders = new List<Collider2D>();
 
-        if (weaponCollider == null)
+        if (comboHitColliders.Count == 0)
         {
-            // 优先从武器对象下找
+            // 优先从武器对象下查找
             if (weapon != null)
-                weaponCollider = weapon.GetComponentInChildren<Collider2D>();
-            // 找不到则通过名称查找
-            if (weaponCollider == null)
+            {
+                var cols = weapon.GetComponentsInChildren<Collider2D>();
+                if (cols.Length > 0) comboHitColliders.AddRange(cols);
+            }
+            // 如果还没找到，尝试通过名称查找 "Weapon"
+            if (comboHitColliders.Count == 0)
             {
                 Transform weaponTrans = transform.Find("Weapon");
                 if (weaponTrans != null)
-                    weaponCollider = weaponTrans.GetComponent<Collider2D>();
+                {
+                    var col = weaponTrans.GetComponent<Collider2D>();
+                    if (col) comboHitColliders.Add(col);
+                }
             }
-            if (weaponCollider == null)
-                Debug.LogError($"[{gameObject.name}] 未找到武器碰撞体！");
+            if (comboHitColliders.Count == 0)
+                Debug.LogError($"[{gameObject.name}] 未找到任何武器碰撞体！请手动拖拽到 comboHitColliders 列表。");
         }
 
+        // 遍历列表，为每个碰撞体挂载 EnemyWeaponHit 脚本并配置伤害
+        foreach (var col in comboHitColliders)
+        {
+            if (col == null) continue;
+            var hitScript = col.GetComponent<EnemyWeaponHit>();
+            if (hitScript == null) hitScript = col.gameObject.AddComponent<EnemyWeaponHit>();
+            hitScript.owner = this;
+            if (data is MeleeEnemyData meleeData) hitScript.damage = meleeData.attackDamage;
+            col.enabled = false; // 初始禁用
+        }
 
         // 初始化状态机和运行时数据
         if (Application.isPlaying)
@@ -427,33 +431,7 @@ public class EnemyController : EnemyBase
         transform.eulerAngles = rotation;
     }
 
-    #region  动画回调函数
-    public void OnAttackAnimationEvent()
-    {
-        if (weaponCollider == null)
-        {
-            Debug.LogWarning("尝试重新获取武器碰撞体...");
-            weaponCollider = GetComponentInChildren<Collider2D>();
-            if (weaponCollider == null) return;
-            // 补充伤害脚本初始化...
-        }
-        weaponCollider.enabled = true;
-        weaponCollider.GetComponent<EnemyWeaponHit>()?.ResetHitFlag();
-    }
 
-    public void OnAttackAnimationEventEnd()
-    {
-        if (weaponCollider != null)
-            weaponCollider.enabled = false;
-    }
-
-    public void OnAttackFinished()
-    {
-        // 由动画最后一帧调用，结束攻击状态
-        if (fsm != null)
-            fsm.ChangeState(StateType.Chase);
-    }
-    #endregion
 
     /// <summary>
     /// 设置当前敌人攻击目标
@@ -501,15 +479,27 @@ public class EnemyController : EnemyBase
         return hit.collider == null;
     }
 
-  public void OnWoundEnd()
+    public void OnWoundEnd()
     {
         //取出敌人受伤类
-        EnemyWoundState enemyWoundState = fsm.currentState as  EnemyWoundState;
-        if(enemyWoundState!=null)
+        EnemyWoundState enemyWoundState = fsm.currentState as EnemyWoundState;
+        if (enemyWoundState != null)
         {
             enemyWoundState.HandleAnimationFinished();
             enemyWoundState.isAnimationPlaying = false;
         }
-    } 
+    }
+
+    public void OnComboHit()
+    {
+        if (fsm.currentState is EnemyMeleeAttackState attackState)
+            attackState.OnComboHit();
+    }
+
+    public void OnAttackFinished()
+    {
+        if (fsm.currentState is EnemyMeleeAttackState attackState)
+            attackState.OnAttackFinished();
+    }
 
 }

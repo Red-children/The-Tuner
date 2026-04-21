@@ -15,7 +15,7 @@ MonoBehaviour:
   health: 100000
   moveSpeed: 5
   chaseSpeed: 7
-  idleTime: 2
+  idleTime: 1
   targetLayer:
     serializedVersion: 2
     m_Bits: 128

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -59,16 +60,16 @@ public class EnemyChaseState : EnemyStateBase
 
 
         // 在 EnemyChaseState.OnUpdate 中，距离检查之后、攻击范围判断之前
-        if (data is NoiseMonsterData noiseData)
-        {
-            float dist = Vector2.Distance(manager.transform.position, runtime.target.position);
-            if (dist <= noiseData.noiseScreamRange && Time.time >= runtime.lastNoiseScreamTime + noiseData.noiseScreamCooldown)
-            {
-                runtime.lastNoiseScreamTime = Time.time;
-                manager.ChangeState(StateType.NoiseScreamWarning);
-                return;
-            }
-        }
+        //if (data is NoiseMonsterData noiseData)
+        //  {
+        //    float dist = Vector2.Distance(manager.transform.position, runtime.target.position);
+        //  if (dist <= noiseData.noiseScreamRange && Time.time >= runtime.lastNoiseScreamTime + noiseData.noiseScreamCooldown)
+        //{
+        //  runtime.lastNoiseScreamTime = Time.time;
+        //manager.ChangeState(StateType.NoiseScreamWarning);
+        //return;
+        //}
+        //}
         //测试技能区域 *************************************************
 
 
@@ -114,6 +115,16 @@ public class EnemyChaseState : EnemyStateBase
                 manager.ChangeState(StateType.Approach);
             }
         }
+        else if (data is NoiseMonsterData NoiseData)
+        {
+            // 近战敌人使用OverlapCircle检测是否进入攻击范围，确保敌人能够正确地判断何时可以攻击玩家
+            if (Physics2D.OverlapCircle(controller.GetAttackWorldPos(), NoiseData.attackRange, NoiseData.targetLayer))
+            {
+                manager.ChangeState(StateType.Approach);
+            }
+        }
+
+
     }
 
     public override void OnExit() { }
