@@ -1,14 +1,24 @@
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
+public interface IDialogueTrigger
+{
+    public List<KeyValuePair<int, string>> GetDialogueLines();
+    string[] GetSpeaker();
+    public void EndDialogue();
+}
 /// NPC交互核心脚本：挂载在NPC主体
 /// 受NPC主控脚本控制，负责玩家检测、交互触发
-public class NPCCommunication : MonoBehaviour
+public class NPCCommunication : MonoBehaviour, IDialogueTrigger
 {
     [Header("检测区域子物体")]
     public GameObject detectArea;   // 由子物体负责玩家检测，主控控制启用/禁用
     [Header("对话内容数组（可编辑）")]
-    public string[] dialogueLines;
+    // public string[] dialogueLines;
+    public List<KeyValuePair<int, string>> DialogueLines;
+    public string[] speaker;
     [Header("2D UI提示偏移")]
     public Vector2 promptOffset = new Vector2(0, 1.2f);
     [Header("提示词字体")]
@@ -17,6 +27,7 @@ public class NPCCommunication : MonoBehaviour
     public string interactPromptInfo = "【F 交互】";
     //  动态生成的交互提示
     private GameObject _interactPrompt;
+    private Action onPanelReady;
 
     // 玩家是否在检测范围内
     private bool _isPlayerInRange;
@@ -26,9 +37,12 @@ public class NPCCommunication : MonoBehaviour
     private Canvas _targetCanvas;
     void InitText()
     {
-        dialogueLines = new string[2];
-        dialogueLines[0] = "TestTestTestTestTestTestTest\nTestTestTestTestTest";
-        dialogueLines[1] = "Test\nTestTest\nTestTestTest\nTest\nTestTestTest\nTestTest";
+        speaker = new string[] { "NPC", "Riff" };
+        DialogueLines = new List<KeyValuePair<int, string>>
+        {
+            new(0, "TestTestTestTestTestTestTest\nTestTestTestTestTest"),
+            new(1, "Test\nTestTest\nTestTestTest\nTest\nTestTestTest\nTestTest")
+        };
     }
     private void CreateInteractPrompt()
     {
@@ -54,6 +68,33 @@ public class NPCCommunication : MonoBehaviour
 
         _interactPrompt = promptObj;
     }
+#region 对话逻辑 Interface IDialogueTrigger
+
+    public List<KeyValuePair<int, string>> GetDialogueLines() => DialogueLines;
+    public string[] GetSpeaker() => speaker;
+
+    /// 开始对话
+    private void StartDialogue()
+    {
+        _isInDialogue = true;
+        // 隐藏交互提示
+        if (_interactPrompt != null)
+            _interactPrompt.SetActive(false);
+        // 发布【进入对话】事件 → 玩家主控失活移动/攻击
+        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Dialogue) as UIPanelDialogue;
+        panel.OnDialogue(this);
+        EventBus.Instance.Trigger(new DialogueStartEvent(this));
+    }
+    /// 结束对话（由UI调度器调用）
+    public void EndDialogue()
+    {
+        _isInDialogue = false;
+        // 发布【对话结束】事件 → 玩家主控激活移动/攻击
+        EventBus.Instance.Trigger<DialogueEndEvent>(new DialogueEndEvent());
+    }
+
+#endregion
+#region 生命周期
     private void Awake()
     {
         //  自动获取Canvas & 相机
@@ -79,7 +120,7 @@ public class NPCCommunication : MonoBehaviour
         // 玩家在范围内 + 按下F键 → 启动对话
         if (_isPlayerInRange && Input.GetKeyDown(KeyCode.F))
         {
-            // Debug.Log("Player Pressed F");
+            Debug.Log("Player Pressed F");
             StartDialogue();
         }
     }
@@ -93,6 +134,7 @@ public class NPCCommunication : MonoBehaviour
         Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
         _interactPrompt.transform.position = screenPos;
     }
+#endregion
 
     #region 玩家检测触发（由子物体碰撞调用）
     /// 玩家进入检测区域
@@ -111,28 +153,6 @@ public class NPCCommunication : MonoBehaviour
             _interactPrompt.SetActive(false);
     }
 #endregion
-
-#region 对话逻辑
-    /// 开始对话
-    private void StartDialogue()
-    {
-        _isInDialogue = true;
-        // 隐藏交互提示
-        if (_interactPrompt != null)
-            _interactPrompt.SetActive(false);
-        // 发布【进入对话】事件 → 玩家主控失活移动/攻击
-        EventBus.Instance.Trigger<DialogueStartEvent>(new DialogueStartEvent());
-        // 调度UI显示对话
-        DialogueManager.Instance.StartDialogue(this, dialogueLines);
-    }
-    /// 结束对话（由UI调度器调用）
-    public void EndDialogue()
-    {
-        _isInDialogue = false;
-        // 发布【对话结束】事件 → 玩家主控激活移动/攻击
-        EventBus.Instance.Trigger<DialogueEndEvent>(new DialogueEndEvent());
-    }
-    #endregion
 
     #region 供NPC主控脚本调用的接口
     /// <summary>
