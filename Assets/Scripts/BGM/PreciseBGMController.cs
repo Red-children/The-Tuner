@@ -68,9 +68,9 @@ public class PreciseBGMController : MonoBehaviour
         if (RhythmManager.Instance != null && _songData != null)
         {
             double dspStart = _progressManager.DspStartTime; // 记录的音乐开始时间
-            double firstOffset = _songData.firstOffset;       // 歌曲第一拍偏移（需在 BgmSongData 中配置）
+            double firstOffset = _songData.GetFirstOffset();       // 歌曲第一拍偏移（需在 BgmSongData 中配置）
 
-            RhythmManager.Instance.bpm = (int)_songData.BPM; // 同步 BPM
+            RhythmManager.Instance.bpm = _songData.GetBPM(); // 同步 BPM
             //通知实时计算
             RhythmManager.Instance.StartRhythm(dspStart, firstOffset);
 

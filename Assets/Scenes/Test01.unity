@@ -249,6 +249,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueData: {fileID: 11400000, guid: 5286e148029671b40bf171a81bc44005, type: 2}
   trigger: {fileID: 366789178}
+  playfreeze: 0
 --- !u!61 &366789178
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -420,6 +421,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueData: {fileID: 11400000, guid: 686ca6887524f1c48b5064bed6d72f16, type: 2}
   trigger: {fileID: 953780412}
+  playfreeze: 0
 --- !u!1001 &974693719
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -757,6 +759,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueData: {fileID: 11400000, guid: 8ccefd2c73a674146b24d706d4ee100b, type: 2}
   trigger: {fileID: 1200059447}
+  playfreeze: 1
 --- !u!1 &1463898611
 GameObject:
   m_ObjectHideFlags: 0
@@ -766,8 +769,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1463898613}
-  - component: {fileID: 1463898614}
   - component: {fileID: 1463898615}
+  - component: {fileID: 1463898614}
   m_Layer: 0
   m_Name: GameStart
   m_TagString: Untagged
@@ -830,6 +833,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueData: {fileID: 11400000, guid: 8fbcded337b435d459a0bfc229ba8948, type: 2}
   trigger: {fileID: 1463898614}
+  playfreeze: 1
 --- !u!1 &1618350387
 GameObject:
   m_ObjectHideFlags: 0

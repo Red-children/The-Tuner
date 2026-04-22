@@ -9,6 +9,8 @@ public class DialogueTrigger : MonoBehaviour
     [SerializeField] private DialogueData dialogueData;
     [Header("触发器组件")]
     [SerializeField] private Collider2D trigger;
+    [Header("是否冻结玩家")]
+    [SerializeField] private bool playfreeze = false;
 #endregion
 
 #region 轻量化状态标志
@@ -31,7 +33,7 @@ public class DialogueTrigger : MonoBehaviour
         // 发布【进入对话】事件 → 玩家主控失活移动/攻击
         var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
         panel.OnDialogue(dialogueData);
-        EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData));
+        EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData, playfreeze));
     }
 
 #region Trigger
