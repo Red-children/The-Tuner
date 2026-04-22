@@ -31,8 +31,11 @@ public class CanvasManager
     {
         if (_canvasMain != null) return _canvasMain;
 
-        // 先找场景里已有的
-        _canvasMain = Object.FindFirstObjectByType<Canvas>();
+        var systemObj = GameObject.Find("Canvas_Main");
+        if (systemObj != null)
+        {
+            _canvasSystem = systemObj.GetComponent<Canvas>();
+        }
 
         // 找不到 → 自动创建
         if (_canvasMain == null)

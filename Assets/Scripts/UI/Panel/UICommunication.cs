@@ -88,7 +88,7 @@ public class UICommunication : MonoBehaviour
 
         dialogueTexts[currentText.id].text = string.Empty;
         _isTyping = true;
-        _textTweener = dialogueTexts[currentText.id].DOText(currentText.line, currentText.line.Length * textSpeed)
+        _textTweener = dialogueTexts[currentText.id].DOText(currentText.line, currentText.line.Length * textSpeed, true)
             .SetEase(Ease.Linear)
             .OnComplete(() =>
             {
