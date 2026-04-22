@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f51de2919c3d488478a2343cd233b1d7, type: 3}
-  m_Name: Dialogue01
+  m_Name: Dialogue04-0
   m_EditorClassIdentifier: 
   dialogue:
     entries:
     - id: 0
-      line: "\u300C\u524D\u65B9\u68C0\u6D4B\u5230\u5931\u8C10\u4F53\u3002\u6570\u91CF\uFF1A\u5C11\u3002\u5A01\u80C1\u7B49\u7EA7\uFF1A\u4F4E\u3002\u300D"
+      line: "\u300C<b>\u8282\u62CD\u504F\u5DEE</b>\u3002\u5171\u632F\u4E2D\u65AD\u3002\u8BF7\u91CD\u65B0\u5C1D\u8BD5\u3002\u300D"
     - id: 1
-      line: "\u300C\u5B83\u4EEC\u628A\u8C10\u5F8B\u5168\u6405\u4E71\u4E86\u2026\u2026\u300D"
+      line: "\u300C\u5495\u989D\u2026\u2026\u518D\u6765\u4E00\u6B21\uFF01\u300D"
   speakers:
   - "\u56DE\u54CD"
   - "\u745E\u7B26"
