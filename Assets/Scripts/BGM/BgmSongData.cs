@@ -31,4 +31,8 @@ public class BgmSongData : MonoBehaviour
             bgmAudioSource.volume = 1f;                     // 默认全音量，主控可调整
         }
     }
+    public void SwitchBGM(BGMData data)
+    {
+        BGM = data;
+    }
 }

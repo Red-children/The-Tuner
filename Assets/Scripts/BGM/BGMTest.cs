@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class BGMTest : MonoBehaviour
 {
     [SerializeField] private Button _btn;
+    [SerializeField] private BGMData BGM;
     public double delay = 100;
     void Awake()
     {
@@ -20,8 +21,7 @@ public class BGMTest : MonoBehaviour
     // 核心：点击按钮发送事件
     void SendPlayBGMEvent()
     {
-        PlayBGMEvent evt = new PlayBGMEvent { time = AudioSettings.dspTime };
-        EventBus.Instance.Trigger(evt);
+        EventBus.Instance.Trigger<PlayBGMEvent>(new(BGM));
         Debug.Log("BGMTest Button Triggerred");
     }
 

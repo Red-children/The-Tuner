@@ -7,7 +7,7 @@ using UnityEngine;
 public class PreciseBGMController : MonoBehaviour
 {
     // 子模块引用（挂载在同一对象上）
-    [SerializeField] private BgmSongData _songData;                 // 歌曲信息
+    [SerializeField] private BgmSongData songData;                 // 歌曲信息
     [SerializeField] private BgmProgressManager _progressManager;   // 进度管理器
 
     private Coroutine _progressSamplerCoroutine; // 进度采样协程
@@ -18,11 +18,12 @@ public class PreciseBGMController : MonoBehaviour
         //模块初始化
         AutoGetSubModules();        
         // 只初始化进度管理器，倍率和指示器模块禁用
-        _progressManager?.Init(_songData);
-       
-
+        _progressManager?.Init(songData);
+    
         // 订阅播放事件
         EventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);  
+        
+        DontDestroyOnLoad(gameObject);
     }
 
     private void OnDestroy()
@@ -41,13 +42,13 @@ public class PreciseBGMController : MonoBehaviour
     // 自动获取子模块（避免手动赋值）
     private void AutoGetSubModules()
     {
-        if (_songData == null) _songData = GetComponent<BgmSongData>();
+        if (songData == null) songData = GetComponent<BgmSongData>();
         if (_progressManager == null) _progressManager = GetComponent<BgmProgressManager>();
         
      
         // 检查子模块是否齐全
-        // if (_songData == null || _progressManager == null || _multiplierManager == null || _indicatorManager == null)
-        if (_songData == null || _progressManager == null)
+        // if (songData == null || _progressManager == null || _multiplierManager == null || _indicatorManager == null)
+        if (songData == null || _progressManager == null)
         {
             Debug.LogError("PreciseBGMController: 缺少子模块！请确保所有子模块挂载在同一对象上");
         }
@@ -65,17 +66,17 @@ public class PreciseBGMController : MonoBehaviour
         _progressManager?.StartBgmPlay();
 
         // 同步节奏管理器
-        if (RhythmManager.Instance != null && _songData != null)
+        if (RhythmManager.Instance != null && songData != null)
         {
             double dspStart = _progressManager.DspStartTime; // 记录的音乐开始时间
-            double firstOffset = _songData.GetFirstOffset();       // 歌曲第一拍偏移（需在 BgmSongData 中配置）
+            double firstOffset = songData.GetFirstOffset();       // 歌曲第一拍偏移（需在 BgmSongData 中配置）
 
-            RhythmManager.Instance.bpm = _songData.GetBPM(); // 同步 BPM
+            RhythmManager.Instance.bpm = songData.GetBPM(); // 同步 BPM
             //通知实时计算
             RhythmManager.Instance.StartRhythm(dspStart, firstOffset);
 
             // 如果需要，同步 BPM
-            // RhythmManager.Instance.bpm = (int)_songData.BPM;
+            // RhythmManager.Instance.bpm = (int)songData.BPM;
             // 注意：修改 bpm 后需重新计算 beatInterval，可在 StartRhythm 中处理
         }
 
@@ -90,10 +91,10 @@ public class PreciseBGMController : MonoBehaviour
     // 高精度进度采样协程（替代Update，减少空判断）
     private IEnumerator PreciseProgressSampler()
     {
-        if (_songData == null) yield break;
+        if (songData == null) yield break;
 
         
-        float interval = _songData.sampleIntervalMs / 1000f;//每拍的时间间隔 单位换算，把采样频率换算成ms 
+        float interval = songData.sampleIntervalMs / 1000f;//每拍的时间间隔 单位换算，把采样频率换算成ms 
 
         //不受时间缩放影响的等待对象 绝对的时间
         WaitForSecondsRealtime wait = new WaitForSecondsRealtime(interval); 
@@ -128,6 +129,12 @@ public class PreciseBGMController : MonoBehaviour
             StopCoroutine(_progressSamplerCoroutine);
             _progressSamplerCoroutine = null;
         }
+    }
+    public void ChangeBGM(BGMData data)
+    {
+        StopBGM();
+        songData.SwitchBGM(data);
+        OnPlayBGM(new());
     }
     #endregion
 
