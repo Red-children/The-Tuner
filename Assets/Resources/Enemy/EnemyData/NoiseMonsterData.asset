@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9bd4e1d51710ae41af60348a2fdbb84, type: 3}
   m_Name: NoiseMonsterData
   m_EditorClassIdentifier: 
-  health: 100000
+  health: 100
   moveSpeed: 5
   chaseSpeed: 7
   idleTime: 1

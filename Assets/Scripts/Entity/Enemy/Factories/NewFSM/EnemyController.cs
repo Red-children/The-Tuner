@@ -198,29 +198,6 @@ public class EnemyController : EnemyBase
         }
     }
 
-    #region  敌人死亡逻辑
-    // 死亡处理
-    public void Dead()
-    {
-        StartCoroutine(DeadCoroutine());
-    }
-
-    /// <summary>
-    /// 死亡协程，延迟销毁以确保受伤状态有足够时间处理
-    /// </summary>
-    /// <returns></returns>
-    private IEnumerator DeadCoroutine()
-    {
-        runtime.getHit = false;
-
-        // 调用基类的OnKilled方法
-        OnKilled();
-
-        // 等待1秒，确保受伤状态有足够时间处理
-        yield return null;
-
-        Destroy(gameObject);
-    }
 
     // 显示伤害飘字
     public override void ShowDamageText(Vector3 targetPosition, float damage, RhythmRank rank)
@@ -255,30 +232,31 @@ public class EnemyController : EnemyBase
 
     // 被杀死时调用
     public override void OnKilled()
+{
+    if (isDead) return;  // 防止重复调用
+    isDead = true;
+    
+    Debug.Log($"{gameObject.name} 已被杀死");
+
+    // 触发敌人死亡事件（传递敌人信息）
+    EventBus.Instance.Trigger(new EnemyDiedStruct(this, transform.position));
+
+    // 注销敌人
+    if (ownerRoom != null)
     {
-        isDead = true;
-        Debug.Log($"{gameObject.name} 已被杀死");
-
-        // 触发敌人死亡事件（传递敌人信息）
-        EventBus.Instance.Trigger(new EnemyDiedStruct(this, transform.position));
-
-        // 注销敌人（添加null检查避免异常）
-        if (ownerRoom != null)
-        {
-            ownerRoom.UnregisterEnemy(this);
-            Debug.Log($"{gameObject.name} 已从房间注销");
-        }
-        else
-        {
-            Debug.LogWarning($"{gameObject.name} 的ownerRoom为null，无法注销");
-        }
-
-        // 播放死亡特效（使用安全的属性访问器）
-        //if (runtime?.DeadEff != null)
-        //    Instantiate(runtime.DeadEff, transform.position, transform.rotation);
+        ownerRoom.UnregisterEnemy(this);
+        Debug.Log($"{gameObject.name} 已从房间注销");
+    }
+    else
+    {
+        Debug.LogWarning($"{gameObject.name} 的ownerRoom为null，无法注销");
     }
 
-    #endregion
+    // 切换到死亡状态，播放死亡动画
+    fsm?.ChangeState(StateType.Dead);
+}
+
+
 
     #region  检测玩家进入预警区域的回调函数
 
@@ -501,5 +479,14 @@ public class EnemyController : EnemyBase
         if (fsm.currentState is EnemyMeleeAttackState attackState)
             attackState.OnAttackFinished();
     }
+
+    /// <summary>
+    /// 由死亡动画的最后一帧事件调用，用于执行死亡后的清理逻辑。
+    /// </summary>
+    public void OnDeathAnimationFinished()
+{
+    Debug.Log($"[{name}] 死亡动画结束，销毁对象");
+    Destroy(gameObject);
+}
 
 }
