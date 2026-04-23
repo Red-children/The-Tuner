@@ -8,8 +8,8 @@ public class UIPanelDialogue : UIBasePanel
     [Header("对话数据")]
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;
-    [Header("归属的NPC")]
-    public IDialogueTrigger dialogueTrigger;
+    [Header("对话文本")]
+    public DialogueData dialogueData;
     //  面板动画
     [Header("动画组件")]
     [Header("动画参数")]
@@ -243,13 +243,8 @@ public class UIPanelDialogue : UIBasePanel
 #endregion
 
 #region 业务
-    /// 绑定发起对话的来源
-    private void BindDialogueSource(IDialogueTrigger trigger)
-    {
-        dialogueTrigger = trigger;
-    }
     /// 显示对话UI
-    private void ShowDialogue(List<KeyValuePair<int, string>> lines)
+    private void ShowDialogue(DialogueLines lines)
     {
         gameObject.SetActive(true);
         _onPanelReady += () => uiCommunication.StartDialogue(lines);
@@ -260,11 +255,10 @@ public class UIPanelDialogue : UIBasePanel
         uiCommunication.SetSpeakers(speakers);
     }
 
-    public void OnDialogue(IDialogueTrigger trigger)
+    public void OnDialogue(DialogueData data)
     {
-        BindDialogueSource(trigger);
-        ShowDialogue(trigger.GetDialogueLines());
-        BindSpeaker(trigger.GetSpeaker());
+        ShowDialogue(data.GetDialogueLines());
+        BindSpeaker(data.GetSpeakers());
     }
 #endregion
 }

@@ -183,11 +183,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: bc915bf2a9a4eb249aaac6b6c6a56a66, type: 3}
-    m_FontSize: 42
+    m_Font: {fileID: 12800000, guid: 77a6ec50bf75d584191a4e018bba0059, type: 3}
+    m_FontSize: 36
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 4
+    m_MinSize: 3
     m_MaxSize: 42
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -1441,6 +1441,7 @@ MonoBehaviour:
   exitTime: 1
   exitAnimDuration: 0
   uiCommunication: {fileID: 5353817801148870137}
+  dialogueData: {fileID: 11400000, guid: 8fbcded337b435d459a0bfc229ba8948, type: 2}
   fadeDuration: 0.4
   rotateDuration: 0.5
   scaleDuration: 0.5
@@ -1766,11 +1767,11 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: bc915bf2a9a4eb249aaac6b6c6a56a66, type: 3}
-    m_FontSize: 42
+    m_Font: {fileID: 12800000, guid: 77a6ec50bf75d584191a4e018bba0059, type: 3}
+    m_FontSize: 36
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 4
+    m_MinSize: 3
     m_MaxSize: 42
     m_Alignment: 0
     m_AlignByGeometry: 0

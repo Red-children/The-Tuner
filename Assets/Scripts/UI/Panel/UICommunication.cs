@@ -1,10 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
-
 /// <summary>
 /// 对话UI显示脚本：DOTween + UGUI Text 版
 /// </summary>
@@ -16,7 +12,8 @@ public class UICommunication : MonoBehaviour
 
     [Header("文字速度")]
     public float textSpeed = 0.05f;
-    private List<KeyValuePair<int, string>> _currentLines;
+    // private List<KeyValuePair<int, string>> _currentLines;
+    private DialogueLines _currentLines;
     private int _currentLineIndex;
     private string[] _speaker;
     private bool _isTyping; //  是否正在打字动画
@@ -30,8 +27,6 @@ public class UICommunication : MonoBehaviour
         {
             Debug.Log("UICommunication 组件缺失");
         }
-        // 自动获取自己归属的对话面板
-        // dialoguePanel = GetComponent<UIPanelDialogue>();
 
         _speaker = new string[2] {null, null};
     }
@@ -50,7 +45,7 @@ public class UICommunication : MonoBehaviour
 #endregion
     private void TryNextDialogue()
     {
-        if (_currentLines == null || dialogueTexts == null) return;
+        if (_currentLines.entries == null || dialogueTexts == null) return;
 
         if (_isTyping)
         {
@@ -69,9 +64,9 @@ public class UICommunication : MonoBehaviour
         _speaker = speakers;
     }
 
-    public void StartDialogue(List<KeyValuePair<int, string>> lines)
+    public void StartDialogue(DialogueLines lines)
     {
-        if (lines == null || lines.Count == 0)
+        if (lines.entries == null || lines.entries.Count == 0)
         {
             Debug.LogWarning("对话内容为空");
             return;
@@ -86,14 +81,14 @@ public class UICommunication : MonoBehaviour
 
     private void TypeLine()
     {
-        KeyValuePair<int, string> currentText = _currentLines[_currentLineIndex];
+        LinesEntry currentText = _currentLines.entries[_currentLineIndex];
 
-        if (_speaker[currentText.Key] != null) 
-            speakerTexts[currentText.Key].text = _speaker[currentText.Key];
+        if (_speaker[currentText.id] != null) 
+            speakerTexts[currentText.id].text = _speaker[currentText.id];
 
-        dialogueTexts[currentText.Key].text = string.Empty;
+        dialogueTexts[currentText.id].text = string.Empty;
         _isTyping = true;
-        _textTweener = dialogueTexts[currentText.Key].DOText(currentText.Value, currentText.Value.Length * textSpeed)
+        _textTweener = dialogueTexts[currentText.id].DOText(currentText.line, currentText.line.Length * textSpeed, true)
             .SetEase(Ease.Linear)
             .OnComplete(() =>
             {
@@ -104,8 +99,8 @@ public class UICommunication : MonoBehaviour
     private void ShowFullLine()
     {
         KillCurrentTween();
-        var currentLine = _currentLines[_currentLineIndex];
-        dialogueTexts[currentLine.Key].text = _currentLines[_currentLineIndex].Value;
+        LinesEntry currentLine = _currentLines.entries[_currentLineIndex];
+        dialogueTexts[currentLine.id].text = _currentLines.entries[_currentLineIndex].line;
         _isTyping = false;
     }
 
@@ -113,19 +108,14 @@ public class UICommunication : MonoBehaviour
     {
         _currentLineIndex++;
 
-        if (_currentLineIndex < _currentLines.Count)
+        if (_currentLineIndex < _currentLines.entries.Count)
         {
             TypeLine();
         }
         else
         {
-            // if (dialoguePanel != null)
-            Invoke(nameof(CloseDialogueSafe), 0.01f);
+            EventBus.Instance.Trigger(new DialogueEndEvent());
         }
-    }
-    private void CloseDialogueSafe()
-    {
-        UIManager.Instance.ClosePanel(UIManager.UIConst.Dialogue);
     }
     private void KillCurrentTween()
     {

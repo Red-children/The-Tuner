@@ -9,8 +9,8 @@ public class UIPanelEcho : UIBasePanel
     [Header("对话数据")]
     [Header("对话UI脚本")]
     public UICommunication uiCommunication;
-    [Header("归属的NPC")]
-    public IDialogueTrigger dialogueTrigger;
+    [Header("对话文本")]
+    public DialogueData dialogueData;
     //  面板动画
     [Header("动画组件")]
     [Header("动画参数")]
@@ -75,15 +75,20 @@ public class UIPanelEcho : UIBasePanel
 #endregion
 
 #region 生命周期
-    private void Awake()
+    void Awake()
     {
         exitAnimDuration = 1.2f;
         _seq =DOTween.Sequence();
         // EventBus.Instance.Subscribe<DialogueStartEvent>(OnDialogue);
+        EventBus.Instance.Subscribe<DialogueEndEvent>(OnDialogueEnd);
     }
-#endregion
+    void OnDestroy()
+    {
+        EventBus.Instance.Unsubscribe<DialogueEndEvent>(OnDialogueEnd);
+    }
+    #endregion
 
-#region 过场动画
+    #region 过场动画
 
     Tween EnterMidRedBox()
     {
@@ -155,13 +160,13 @@ public class UIPanelEcho : UIBasePanel
 #endregion
 
 #region 业务
-    /// 绑定发起对话的来源
-    private void BindDialogueSource(IDialogueTrigger trigger)
+    ///  对话结束关闭面板
+    private void OnDialogueEnd(DialogueEndEvent evt)
     {
-        dialogueTrigger = trigger;
+        UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
     }
     /// 显示对话UI
-    private void ShowDialogue(List<KeyValuePair<int, string>> lines)
+    private void ShowDialogue(DialogueLines lines)
     {
         gameObject.SetActive(true);
         _onPanelReady += () => uiCommunication.StartDialogue(lines);
@@ -172,12 +177,10 @@ public class UIPanelEcho : UIBasePanel
         uiCommunication.SetSpeakers(speakers);
     }
 
-    // public void OnDialogue(DialogueStartEvent evt)
-    public void OnDialogue(IDialogueTrigger trigger)
+    public void OnDialogue(DialogueData data)
     {
-        BindDialogueSource(trigger);
-        ShowDialogue(trigger.GetDialogueLines());
-        BindSpeaker(trigger.GetSpeaker());
+        ShowDialogue(data.GetDialogueLines());
+        BindSpeaker(data.GetSpeakers());
     }
 #endregion
 }
