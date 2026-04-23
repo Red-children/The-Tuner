@@ -50,7 +50,11 @@ public struct AttackMultiplierChangedEvent
 public struct PlayBGMEvent
 {
     //  TODO:
-    public double time; // 事件发生时间
+    public BGMData data;
+    public PlayBGMEvent(BGMData d)
+    {
+        data = d;
+    }
 }
 public struct BGMProgressUpdateEvent
 {

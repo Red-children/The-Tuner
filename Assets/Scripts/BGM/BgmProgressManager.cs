@@ -29,7 +29,7 @@ public class BgmProgressManager : MonoBehaviour
     // 启动BGM播放（精准调度）
     public void StartBgmPlay()
     {
-        if (_songData == null || _songData.BgmAudioSource == null || _songData.BgmClip == null)
+        if (_songData == null || _songData.BgmAudioSource == null || _songData.GetAudioClip() == null)
         {
             Debug.LogError("BgmProgressManager: 歌曲配置或音频源未初始化！");
             return;
@@ -72,7 +72,7 @@ public class BgmProgressManager : MonoBehaviour
         double currentDspTime = AudioSettings.dspTime;
         PreciseTime = (float)(currentDspTime - DspStartTime);
         // 限制进度不超过歌曲总时长
-        PreciseTime = Mathf.Clamp(PreciseTime, 0, _songData.BgmClip.length);
+        PreciseTime = Mathf.Clamp(PreciseTime, 0, _songData.GetAudioClip().length);
     }
 
     // 检查是否播放完成
