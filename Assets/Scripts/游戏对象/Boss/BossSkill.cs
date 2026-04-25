@@ -25,17 +25,16 @@ public class BossSkill : MonoBehaviour
 
         activeZones.RemoveAll(zone => zone == null);
 
-        int skillCount = 3;
+        int skillCount = 2;
         int random = Random.Range(0, skillCount);
+
         switch (random)
         {
             case 0:
-                Teleport();
+                TeleportAwayFromPlayer();
                 break;
+
             case 1:
-                PullPlayer();
-                break;
-            case 2:
                 SummonContaminatedZone();
                 break;
         }
@@ -43,47 +42,40 @@ public class BossSkill : MonoBehaviour
         lastUseTime = Time.time;
     }
 
-    void Teleport()
+    void TeleportAwayFromPlayer()
     {
-        Vector3 dir = (transform.position - runtime.target.position).normalized;
-        transform.position = runtime.target.position + dir * runtime.Data.teleportOffset;
-    }
+        Debug.Log("使用技能1");
 
-    void PullPlayer()
-    {
+        if (runtime.target == null) return;
+
         Vector3 dir = (transform.position - runtime.target.position).normalized;
-        Rigidbody rb = runtime.target.GetComponent<Rigidbody>();
-        if (rb) rb.MovePosition(transform.position - dir * runtime.Data.pullDistance);
-        else runtime.target.position = transform.position - dir * runtime.Data.pullDistance;
+
+        if (dir == Vector3.zero)
+            dir = Vector3.right; // 防止贴脸0向量
+
+        transform.position = transform.position + dir * runtime.Data.teleportOffset;
     }
 
     // ========== 污染区域技能 ==========
     private void SummonContaminatedZone()
     {
-        activeZones.RemoveAll(zone => zone == null);
-        if (activeZones.Count >= runtime.Data.maxZoneCount)
-        {
-            Debug.Log("污染区域数量已达上限");
-            return;
-        }
+        Debug.Log("使用技能2");
 
         Vector3 spawnPos = transform.position + (Vector3)(Random.insideUnitCircle * 5f);
 
-        GameObject zoneObj = new GameObject("ContaminatedZone");
-        zoneObj.transform.position = spawnPos;
-        zoneObj.tag = "ContaminatedZone";
+        GameObject zoneObj = Instantiate(runtime.Data.contaminatedZonePrefab, spawnPos, Quaternion.identity);
 
-        SpriteRenderer sr = zoneObj.AddComponent<SpriteRenderer>();
-        sr.sprite = CreateSquareSprite();
-        sr.color = new Color(0.8f, 0.2f, 0.8f, 0.5f);
+        var logic = zoneObj.GetComponent<ContaminatedZoneLogic>();
+        Debug.Log("逻辑组件：" + logic);
 
-        CircleCollider2D col = zoneObj.AddComponent<CircleCollider2D>();
-        col.radius = 2f;
-        col.isTrigger = true;
+        if (logic != null)
+        {
+            logic.Initialize(runtime.Data, this);
+        }
 
-        var zoneLogic = zoneObj.AddComponent<ContaminatedZoneLogic>();
-        zoneLogic.Initialize(runtime.Data, this);
-        activeZones.Add(zoneObj);
+        Debug.Log("生成污染区域：" + zoneObj);
+
+        lastUseTime = Time.time;
     }
 
     public void RemoveZone(GameObject zone)
