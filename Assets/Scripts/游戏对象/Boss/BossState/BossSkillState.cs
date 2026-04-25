@@ -16,6 +16,7 @@ public class BossSkillState : IState
 
     public void OnStart()
     {
+        Debug.Log("Boss½øÈëSkill×´Ì¬");
         skillUsed = false;
         runtime.superArmorTimer = 999f;
     }
