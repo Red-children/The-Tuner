@@ -69,7 +69,7 @@ public class WaveManager : MonoBehaviour
             total += wave.enemyCount;
         currentRoom.SetTotalEnemies(total);
 
-        StartNextWave();
+        //StartNextWave();
     }
     #endregion
 
@@ -126,7 +126,7 @@ public class WaveManager : MonoBehaviour
             // 所有波次完成，停止活动
             isWaveActive = false;
             Debug.Log("所有波次完成");
-            
+
 
             // 生成随机Buff选项并发布事件
             List<BuffData> options = GenerateRandomBuffs(3);
@@ -134,6 +134,10 @@ public class WaveManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 减少敌人数量对外接口
+    /// </summary>
+    /// <param name="t"></param>
     public void DecreasedEnemyNumber(EnemyDiedStruct t)
     {
         enemiesRemaining--;
@@ -148,6 +152,17 @@ public class WaveManager : MonoBehaviour
         }
         return BuffPool.Instance.GetRandomBuffs(count);
     }
+
+    public void OnStartNextWave()
+    {
+        StartNextWave();
+    }
+
+    public void OnWaveEnd()
+    {
+        EndWave();
+    } 
+
 
 
 }
