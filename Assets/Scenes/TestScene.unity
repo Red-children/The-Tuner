@@ -30139,9 +30139,10 @@ GameObject:
   - component: {fileID: 622953468}
   - component: {fileID: 622953467}
   - component: {fileID: 622953474}
-  m_Layer: 0
+  - component: {fileID: 622953475}
+  m_Layer: 6
   m_Name: Boss
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -30165,6 +30166,8 @@ MonoBehaviour:
   currentChaseSpeed: 5
   currentPhase: 1
   hasPhaseChanged: 0
+  superArmorTimer: 0
+  phaseInvincibleTimer: 0
   originalData: {fileID: 11400000, guid: 6273c9ee56235814cae6978fd57974d6, type: 2}
 --- !u!114 &622953468
 MonoBehaviour:
@@ -30200,7 +30203,7 @@ MonoBehaviour:
   ownerRoom: {fileID: 0}
   target: {fileID: 0}
   spriteRenderer: {fileID: 0}
-  bossData: {fileID: 0}
+  bossData: {fileID: 11400000, guid: 6273c9ee56235814cae6978fd57974d6, type: 2}
   manager: {fileID: 0}
   runtime: {fileID: 0}
   skill: {fileID: 0}
@@ -30340,6 +30343,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &622953475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 622953466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b51c005dd4526c4489a4c4bd2fea5f84, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  lastUseTime: 0
 --- !u!1 &659967471
 GameObject:
   m_ObjectHideFlags: 0
@@ -60072,6 +60088,8 @@ MonoBehaviour:
   currentChaseSpeed: 0
   currentPhase: 1
   hasPhaseChanged: 0
+  superArmorTimer: 0
+  phaseInvincibleTimer: 0
   originalData: {fileID: 0}
 --- !u!4 &1618786538 stripped
 Transform:

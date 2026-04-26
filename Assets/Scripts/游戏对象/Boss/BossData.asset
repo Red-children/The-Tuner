@@ -33,7 +33,7 @@ MonoBehaviour:
   postureRegenDelay: 2
   staggerDuration: 3
   postureDamageMultiplier: 1
-  contaminatedZonePrefab: {fileID: 0}
+  contaminatedZonePrefab: {fileID: 3673495101405655303, guid: 4153ff6a9cdfa234ea8ca39d1a148df3, type: 3}
   zoneDamagePerSecond: 10
   zoneSpawnInterval: 3
   minionPrefab: {fileID: 0}
