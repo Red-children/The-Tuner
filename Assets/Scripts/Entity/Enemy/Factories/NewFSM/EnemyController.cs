@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.Mathematics;
+
+
 
 
 #if UNITY_EDITOR
@@ -232,29 +236,29 @@ public class EnemyController : EnemyBase
 
     // 被杀死时调用
     public override void OnKilled()
-{
-    if (isDead) return;  // 防止重复调用
-    isDead = true;
-    
-    Debug.Log($"{gameObject.name} 已被杀死");
-
-    // 触发敌人死亡事件（传递敌人信息）
-    EventBus.Instance.Trigger(new EnemyDiedStruct(this, transform.position));
-
-    // 注销敌人
-    if (ownerRoom != null)
     {
-        ownerRoom.UnregisterEnemy(this);
-        Debug.Log($"{gameObject.name} 已从房间注销");
-    }
-    else
-    {
-        Debug.LogWarning($"{gameObject.name} 的ownerRoom为null，无法注销");
-    }
+        if (isDead) return;  // 防止重复调用
+        isDead = true;
 
-    // 切换到死亡状态，播放死亡动画
-    fsm?.ChangeState(StateType.Dead);
-}
+        Debug.Log($"{gameObject.name} 已被杀死");
+
+        // 触发敌人死亡事件（传递敌人信息）
+        EventBus.Instance.Trigger(new EnemyDiedStruct(this, transform.position));
+
+        // 注销敌人
+        if (ownerRoom != null)
+        {
+            ownerRoom.UnregisterEnemy(this);
+            Debug.Log($"{gameObject.name} 已从房间注销");
+        }
+        else
+        {
+            Debug.LogWarning($"{gameObject.name} 的ownerRoom为null，无法注销");
+        }
+
+        // 切换到死亡状态，播放死亡动画
+        fsm?.ChangeState(StateType.Dead);
+    }
 
 
 
@@ -484,9 +488,9 @@ public class EnemyController : EnemyBase
     /// 由死亡动画的最后一帧事件调用，用于执行死亡后的清理逻辑。
     /// </summary>
     public void OnDeathAnimationFinished()
-{
-    Debug.Log($"[{name}] 死亡动画结束，销毁对象");
-    Destroy(gameObject);
-}
+    {
+        Debug.Log($"[{name}] 死亡动画结束，销毁对象");
+        Destroy(gameObject);
+    }
 
 }

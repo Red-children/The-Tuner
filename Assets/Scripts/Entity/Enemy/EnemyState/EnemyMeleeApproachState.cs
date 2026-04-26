@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.AI;
 
 /// <summary>
 /// 近战敌人接近状态
@@ -26,47 +27,76 @@ public class EnemyMeleeApproachState : EnemyStateBase
             currentDirection = (runtime.target.position - manager.transform.position).normalized;
     }
 
-    public override void OnUpdate()
+   public override void OnUpdate()
+{
+    if (runtime.getHit) { manager.ChangeState(StateType.Wound); return; }
+    if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
+
+    controller.FaceTarget(runtime.target.position);
+
+    // 视线检测
+    if (!controller.CanSeePlayer())
     {
+        runtime.isPursuing = false;
+        runtime.ignoreTargetUntilTime = Time.time + 3f;
+        manager.ChangeState(StateType.Patrol);
+        return;
+    }
 
-        
-        if (runtime.getHit) { manager.ChangeState(StateType.Wound); return; }
-        if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
+    // 用攻击点的扇形检测来判断是否进入攻击状态
+    MeleeEnemyData meleeData = data as MeleeEnemyData;
+    if (meleeData == null) { manager.ChangeState(StateType.Patrol); return; }
 
-        // 处理数据转换
-        MeleeEnemyData meleeData = data as MeleeEnemyData;
-        if (meleeData == null) return;
-        // 计算与目标的距离和方向
-        float distance = Vector2.Distance(manager.transform.position, runtime.target.position);
-        Vector2 toTarget = (runtime.target.position - manager.transform.position).normalized;
+    Vector2 attackWorldPos = controller.GetAttackWorldPos();
+    Vector2 toPlayer = (Vector2)runtime.target.position - attackWorldPos;
+    float distanceToPlayer = toPlayer.magnitude;
 
-        // 如果在攻击范围内，切换到攻击状态
-        if (distance <= meleeData.attackRange)
+    // 距离检测
+    if (distanceToPlayer <= meleeData.attackRange)
+    {
+        // 角度检测：玩家是否在攻击点的前方锥形内
+        Vector2 forward = controller.isFacingRight ? Vector2.right : Vector2.left;
+        float angle = Vector2.Angle(forward, toPlayer.normalized);
+        if (angle <= meleeData.attackAngle * 0.5f)
         {
             manager.ChangeState(StateType.Attack);
             return;
         }
-
-        // 定期更新朝向，避免过于频繁的转向计算
-        RaycastHit2D hit = Physics2D.Raycast(manager.transform.position, currentDirection, 1.5f, LayerMask.GetMask("Wall"));
-        Vector2 desiredDirection = hit.collider != null ? (toTarget + (Vector2)manager.transform.right).normalized : toTarget;
-
-        // 平滑转向
-        float angleDelta = Vector2.SignedAngle(currentDirection, desiredDirection);
-        float maxDelta = maxTurnAnglePerSec * Time.deltaTime;
-        float newAngle = Mathf.MoveTowardsAngle(
-            Vector2.SignedAngle(Vector2.right, currentDirection),
-            Vector2.SignedAngle(Vector2.right, desiredDirection),
-            maxDelta
-        );
-        currentDirection = Quaternion.Euler(0, 0, newAngle) * Vector2.right;
-
-        // 移动敌人
-        manager.transform.position += (Vector3)currentDirection * data.moveSpeed * Time.deltaTime;
-
-        // 更新朝向
-       controller.FaceTarget(runtime.target.position);
     }
+
+    // 如果玩家跑远了，回到追击状态
+    float distanceToTarget = Vector2.Distance(manager.transform.position, runtime.target.position);
+    if (distanceToTarget > meleeData.approachDistance * 1.2f) // 稍微给点余量
+    {
+        manager.ChangeState(StateType.Chase);
+        return;
+    }
+
+    // 在接近状态下，可以做战术移动（侧移、保持距离等）
+    // 也可以简单保持当前位置，面向玩家
+    // 这里可以加上最小距离控制，防止贴脸推人
+    float stoppingDistance = meleeData.stopMinRange;
+    if (distanceToTarget > stoppingDistance)
+    {
+        // 缓慢靠近
+        NavMeshAgent agent = controller.agent;
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.SetDestination(runtime.target.position);
+            agent.speed = data.moveSpeed * 0.5f; // 接近时速度放慢
+        }
+    }
+    else
+    {
+        // 太近了，停下
+        NavMeshAgent agent = controller.agent;
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.ResetPath();
+        }
+        
+    }
+}
 
     public override void OnExit() { }
 }

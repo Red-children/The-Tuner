@@ -22,8 +22,6 @@ public class EnemyChaseState : EnemyStateBase
 
     public override void OnUpdate()
     {
-
-
         // 如果受到攻击，立即切换到受伤状态
         if (runtime.getHit) { manager.ChangeState(StateType.Wound); return; }
 
@@ -85,19 +83,8 @@ public class EnemyChaseState : EnemyStateBase
         // 先让敌人转向（视觉朝向）
         controller.FaceTarget(runtime.target.position);
 
-        // 移动：交给NavMeshAgent
-        NavMeshAgent agent = controller.agent;
-        if (agent != null && agent.isOnNavMesh)
-        {
-            //让敌人追击玩家
-            agent.SetDestination(runtime.target.position);
 
-            // 可选：根据节奏调整速度（保留你的节奏系统）
-            float beatProgress = (float)RhythmManager.Instance.BeatProgress;
-            float speedMultiplier = Mathf.Sin(beatProgress * Mathf.PI);
-            agent.speed = runtime.currentChaseSpeed * Mathf.Lerp(0.6f, 1.4f, speedMultiplier);
-        }
-
+        float distanceToTarget = Vector2.Distance(manager.transform.position, runtime.target.position);
         // 根据敌人类型判断是否进入攻击范围
         if (data is RangedEnemyData rangedData)
         {
@@ -107,14 +94,7 @@ public class EnemyChaseState : EnemyStateBase
                 manager.ChangeState(StateType.Approach);
             }
         }
-        else if (data is MeleeEnemyData meleeData)
-        {
-            // 近战敌人使用OverlapCircle检测是否进入攻击范围，确保敌人能够正确地判断何时可以攻击玩家
-            if (Physics2D.OverlapCircle(controller.GetAttackWorldPos(), meleeData.attackRange, meleeData.targetLayer))
-            {
-                manager.ChangeState(StateType.Approach);
-            }
-        }
+
         else if (data is NoiseMonsterData NoiseData)
         {
             // 近战敌人使用OverlapCircle检测是否进入攻击范围，确保敌人能够正确地判断何时可以攻击玩家
@@ -122,6 +102,24 @@ public class EnemyChaseState : EnemyStateBase
             {
                 manager.ChangeState(StateType.Approach);
             }
+        }
+        else if (data is MeleeEnemyData meleeData)
+        {
+            if (distanceToTarget <= meleeData.approachDistance)
+            {
+                manager.ChangeState(StateType.Approach);
+                return;
+            }
+        }
+
+        // 5. 否则继续追击移动
+        NavMeshAgent agent = controller.agent;
+        if (agent != null && agent.isOnNavMesh)
+        {
+            agent.SetDestination(runtime.target.position);
+            float beatProgress = (float)RhythmManager.Instance.BeatProgress;
+            float speedMultiplier = Mathf.Sin(beatProgress * Mathf.PI);
+            agent.speed = runtime.currentChaseSpeed * Mathf.Lerp(0.6f, 1.4f, speedMultiplier);
         }
 
 

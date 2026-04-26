@@ -13,6 +13,13 @@ public class MeleeEnemyData : EnemyData
     public int attackDamage = 10;
     public Vector2 attackOffset = new Vector2(1f, 0f);
 
+    [Header("敌人进入接近状态开始调整攻击的距离")]
+    public float approachDistance ;
+
+    [Header("敌人与玩家间保持的最小距离如果低于这个距离敌人将不会移动")]
+    public float stopMinRange;
+
+
     public float Atk = 10;
 
     
