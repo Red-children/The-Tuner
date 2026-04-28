@@ -94,6 +94,7 @@ public class EnemyMeleeApproachState : EnemyStateBase
         {
             agent.ResetPath();
         }
+        manager.ChangeState (StateType.Attack);
         
     }
 }

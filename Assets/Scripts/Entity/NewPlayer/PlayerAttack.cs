@@ -22,6 +22,25 @@ public class PlayerAttack : MonoBehaviour
 
     private void Update()
     {
+        var weapon = playerWeapon?.GetCurrentWeapon();
+        #region  低音炮检测相关
+        // 判断是否为低音炮——直接通过 WeaponStats 的 weaponType 枚举来判断
+        if (weapon != null && weapon.weaponType == WeaponType.BassCannon)
+        {
+            // 低音炮：蓄力逻辑
+            if (Input.GetMouseButtonDown(0))
+            {
+                weapon.StartCharge();
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                weapon.ReleaseCharge();
+                EventBus.Instance.Trigger(new PlayerAtkEvent());
+            }
+            return; // 蓄力武器不触发普通射击
+        }
+        #endregion
+
         if (Input.GetMouseButtonDown(0))
         {
             TryShoot();
@@ -31,6 +50,7 @@ public class PlayerAttack : MonoBehaviour
         {
             TryMelee();
         }
+
     }
 
     private void TryShoot()

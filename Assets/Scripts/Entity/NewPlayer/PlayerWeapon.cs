@@ -56,6 +56,8 @@ public class PlayerWeapon : MonoBehaviour
             currentWeapon.transform.rotation = Quaternion.Euler(0, 0, weaponAngle);
         }
 
+        
+
     }
 
     /// <summary>
