@@ -9,7 +9,9 @@ public enum WeaponType
     
     BassCannon
 }
-
+/// <summary>
+/// 武器攻击类型
+/// </summary>
 public enum WeaponAttackType
 {
     Single,
@@ -19,20 +21,20 @@ public enum WeaponAttackType
 public struct PlayerFiredEvent { }
 
 
-#region ������
+#region 武器统计数据类
 [System.Serializable]
 public class WeaponStats
 {
-    public int id;                       // ����������ΨһID������ Inspector �����ã�
-    public WeaponType weaponType;
+    public int id;                        // 武器唯一ID
+    public WeaponType weaponType;        // 武器类型
     public string weaponName;
-    public float damage = 10f;     //����˺�
-    public float fireRate = 0.5f;        // ����������룩
+    public float damage = 10f;     // 伤害值
+    public float fireRate = 0.5f;        // 射击频率
     public int maxAmmo = 10;
     public WeaponAttackType attackType = WeaponAttackType.Single;
-    public int multiBulletCount = 5;     // ������������
-    public GameObject bulletPrefab;      // �ӵ�Prefab
-    public float reloadTime;  // װ��ʱ�䣨�룩
+    public int multiBulletCount = 5;     // 多子弹数量
+    public GameObject bulletPrefab;      // 子弹Prefab
+    public float reloadTime;  // 重新时间间隔
 
     public float shakeIntensity = 0.01f;
 
@@ -52,12 +54,16 @@ public class WeaponStats
 
 [CreateAssetMenu(fileName = "WeaponBase", menuName = "Weapon/WeaponBase")]
 
-//���ݿ��ļ�
+// 武器基础数据类
 public class WeaponBase : ScriptableObject
 {
     public List<WeaponStats> weaponList;
 
-    // ��ȡָ�����͵���������
+    /// <summary>
+    /// 获取武器统计数据
+    /// </summary>
+    /// <param name="type">武器类型</param>
+    /// <returns>武器统计数据</returns>
     public WeaponStats GetWeaponStats(WeaponType type)
     {
         foreach (var weapon in weaponList)
