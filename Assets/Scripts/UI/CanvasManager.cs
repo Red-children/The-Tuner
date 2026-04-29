@@ -1,5 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
+// public enum Canvas
+// {
+//     Main = 0,
+//     System = 1,
+// }
 public class CanvasManager
 {
     private static CanvasManager instance;
@@ -16,7 +21,12 @@ public class CanvasManager
             return instance;
         }
     }
-    //  0 = Canvas_Main & 1 = Canvas_System
+
+    /// <summary>
+    /// 根据指定模式获取或创建对应的画布
+    /// </summary>
+    /// <param name="mode">画布模式：0 = Main_Canvas，1 = System_Canvas</param>
+    /// <returns>
     public Canvas TouchCanvas(int mode)
     {
         //  TODO:Canvas存在时返回Canvas引用，不存在时创建Canvas并返回引用
