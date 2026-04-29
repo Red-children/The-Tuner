@@ -24,6 +24,14 @@ MonoBehaviour:
     bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
     reloadTime: 0
     shakeIntensity: 0.01
+    chargeTime: 1.2
+    overchargeThreshold: 0.85
+    perfectChargeDamage: 60
+    missChargeDamage: 15
+    selfDamageRatio: 0.3
+    weakReleaseDamageRatio: 0.3
+    chargeShakeBase: 0.03
+    chargeShakeMax: 0.15
   - id: 0
     weaponType: 1
     weaponName: 2
@@ -35,6 +43,14 @@ MonoBehaviour:
     bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
     reloadTime: 2.99
     shakeIntensity: 0.1
+    chargeTime: 1.2
+    overchargeThreshold: 0.85
+    perfectChargeDamage: 60
+    missChargeDamage: 15
+    selfDamageRatio: 0.3
+    weakReleaseDamageRatio: 0.3
+    chargeShakeBase: 0.03
+    chargeShakeMax: 0.15
   - id: 0
     weaponType: 2
     weaponName: 3
@@ -46,3 +62,30 @@ MonoBehaviour:
     bulletPrefab: {fileID: 5622687992341628680, guid: 23f9546b54110754cb84e6db33da844d, type: 3}
     reloadTime: 1.56
     shakeIntensity: 0.01
+    chargeTime: 1.2
+    overchargeThreshold: 0.85
+    perfectChargeDamage: 60
+    missChargeDamage: 15
+    selfDamageRatio: 0.3
+    weakReleaseDamageRatio: 0.3
+    chargeShakeBase: 0.03
+    chargeShakeMax: 0.15
+  - id: 0
+    weaponType: 3
+    weaponName: 3
+    damage: 2000
+    fireRate: 1
+    maxAmmo: 35
+    attackType: 0
+    multiBulletCount: 0
+    bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
+    reloadTime: 1.56
+    shakeIntensity: 0.01
+    chargeTime: 1.2
+    overchargeThreshold: 0.85
+    perfectChargeDamage: 88.17
+    missChargeDamage: 218.2
+    selfDamageRatio: 0.3
+    weakReleaseDamageRatio: 0.3
+    chargeShakeBase: 0.03
+    chargeShakeMax: 0.15

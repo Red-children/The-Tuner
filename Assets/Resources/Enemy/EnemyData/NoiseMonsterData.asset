@@ -28,9 +28,11 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   attackAngle: 60
-  attackRange: 1.5
+  attackRange: 2.56
   attackDamage: 10
   attackOffset: {x: 1, y: 0}
+  approachDistance: 5
+  stopMinRange: 2
   Atk: 10
   maxChaseDistance: 15
   isNoiseMonster: 1
