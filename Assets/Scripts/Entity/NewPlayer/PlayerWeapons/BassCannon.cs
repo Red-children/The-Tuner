@@ -6,6 +6,7 @@ using UnityEngine;
 /// </summary>
 public class BassCannon : WeaponInfo
 {
+    [Header("蓄力参数")]
     private bool isCharging = false;
     private float chargeTimer = 0f;
 
@@ -57,7 +58,7 @@ public class BassCannon : WeaponInfo
     private void ReleaseCharge()
     {
         if (!isCharging) return;
-
+        //计算蓄力进度
         float progress = Mathf.Clamp01(chargeTimer / weaponStats.chargeTime);
 
         if (progress >= 1.0f)
@@ -73,10 +74,11 @@ public class BassCannon : WeaponInfo
                               : weaponStats.missChargeDamage;
 
             SpawnChargeProjectile(finalDamage, rank.rank == RhythmRank.Perfect);
-            EventBus.Instance.Trigger(new CameraShakeEvent { intensity = rank.rank == RhythmRank.Perfect ? 0.4f : 0.15f });
+            EventBus.Instance.Trigger(new CameraShakeEvent { intensity = (rank.rank == RhythmRank.Perfect)? 0.4f : 0.15f });
         }
         else
         {
+            // 弱蓄力释放 伤害计算公式 （基础伤害 * 弱蓄力伤害倍率）
             SpawnChargeProjectile(weaponStats.damage * weaponStats.weakReleaseDamageRatio, false);
         }
 
@@ -84,6 +86,11 @@ public class BassCannon : WeaponInfo
         chargeTimer = 0f;
     }
 
+    /// <summary>
+    /// 生成蓄力子弹
+    /// </summary>
+    /// <param name="damage">伤害值</param>
+    /// <param name="isPerfect">是否完美</param>
     private void SpawnChargeProjectile(float damage, bool isPerfect)
     {
         GameObject bulletObj = Instantiate(weaponStats.bulletPrefab, firePoint.position, firePoint.rotation);
@@ -125,6 +132,7 @@ public class BassCannon : WeaponInfo
             // 随蓄力进度，方向切换越来越快
             float interval = Mathf.Lerp(0.2f, 0.06f, progress);
             directionSwitchTimer += Time.deltaTime;
+            //持续切换方向
             if (directionSwitchTimer >= interval)
             {
                 directionSwitchTimer = 0f;

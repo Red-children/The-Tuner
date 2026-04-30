@@ -32,6 +32,6 @@ MonoBehaviour:
   attackDamage: 10
   attackOffset: {x: 1, y: 0}
   approachDistance: 2
-  stopMinRange: 1
+  stopMinRange: 1.2
   Atk: 10
   maxChaseDistance: 15
