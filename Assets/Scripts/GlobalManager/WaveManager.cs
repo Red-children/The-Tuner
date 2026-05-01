@@ -69,7 +69,7 @@ public class WaveManager : MonoBehaviour
             total += wave.enemyCount;
         currentRoom.SetTotalEnemies(total);
 
-        //StartNextWave();
+        StartNextWave();
     }
     #endregion
 
