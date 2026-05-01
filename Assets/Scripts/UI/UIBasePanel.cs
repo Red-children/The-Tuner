@@ -339,5 +339,21 @@ public class UIBasePanel : MonoBehaviour
             seq.Join(FadeOut(img, t));
         return seq;
     }
+    
+    /* Inspictor窗体绑定 */
+    public void OnButtonSelected(Button button)
+    {
+        if (button == null) return;
+        if (_isPlayingAnimation) return;
+        button.transform.DOKill();
+        button.transform.DOScale(1.1f, 0.1f).SetEase(Ease.OutSine);
+    }
+    public void OnButtonDeselected(Button button)
+    {
+        if (button == null) return;
+        if (_isPlayingAnimation) return;
+        button.transform.DOKill();
+        button.transform.DOScale(1f, 0.1f).SetEase(Ease.InSine);
+    }
 #endregion
 }
