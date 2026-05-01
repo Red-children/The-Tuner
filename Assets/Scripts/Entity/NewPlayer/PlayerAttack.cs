@@ -1,18 +1,19 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+/// <summary>
+/// 玩家攻击模块
+/// </summary>
 public class PlayerAttack : MonoBehaviour
 {
     [Header("Melee Attack")]
     public float meleeRange = 1.5f;
     public int meleeDamage = 20;
     public float meleeCoolDown = 0.5f;
-    public float shootCoolDown = 0.1f;
 
     private PlayerWeapon playerWeapon;
     private PlayerStats stats;
     private double lastMeleeTime = -999f;
-    private double lastShootTime = -999f;
 
     private void Awake()
     {
@@ -23,60 +24,16 @@ public class PlayerAttack : MonoBehaviour
     private void Update()
     {
         var weapon = playerWeapon?.GetCurrentWeapon();
-        #region  低音炮检测相关
-        // 判断是否为低音炮——直接通过 WeaponStats 的 weaponType 枚举来判断
-        if (weapon != null && weapon.weaponType == WeaponType.BassCannon)
-        {
-            // 低音炮：蓄力逻辑
-            if (Input.GetMouseButtonDown(0))
-            {
-                weapon.StartCharge();
-            }
-            if (Input.GetMouseButtonUp(0))
-            {
-                weapon.ReleaseCharge();
-                EventBus.Instance.Trigger(new PlayerAtkEvent());
-            }
-            return; // 蓄力武器不触发普通射击
-        }
-        #endregion
 
-        if (Input.GetMouseButtonDown(0))
+        if (weapon != null)
         {
-            TryShoot();
+            weapon.HandleFireInput();
         }
 
         if (Input.GetKeyDown(KeyCode.V))
         {
             TryMelee();
         }
-
-    }
-
-    private void TryShoot()
-    {
-        double currentTime = AudioSettings.dspTime;
-        if (currentTime <= lastShootTime + shootCoolDown)
-        {
-            Debug.Log("[PlayerAttack] Shoot is cooling down");
-            return;
-        }
-
-        lastShootTime = currentTime;
-        var rhythmResult = SampleRhythm(currentTime, "Shoot");
-        var weapon = playerWeapon != null ? playerWeapon.GetCurrentWeapon() : null;
-
-        if (weapon != null)
-        {
-            weapon.Shoot(GetPlayerAttack(), rhythmResult.multiplier, rhythmResult.rank);
-            Debug.Log($"[PlayerAttack] Shoot success | Weapon={weapon.name} | Multiplier={rhythmResult.multiplier}");
-        }
-        else
-        {
-            Debug.LogWarning("[PlayerAttack] No weapon found");
-        }
-
-        EventBus.Instance.Trigger(new PlayerAtkEvent());
     }
 
     private void TryMelee()
@@ -97,7 +54,7 @@ public class PlayerAttack : MonoBehaviour
 
     private void MeleeAttack(float rhythmMultiplier)
     {
-        float finalDamage = (GetPlayerAttack() + meleeDamage) * rhythmMultiplier;
+        float finalDamage = (stats.TotalAttack + meleeDamage) * rhythmMultiplier;
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, meleeRange, LayerMask.GetMask("Enemy"));
 
         bool hitEnemy = false;
@@ -136,11 +93,6 @@ public class PlayerAttack : MonoBehaviour
             damage = finalDamage,
             hitPoint = transform.position
         });
-    }
-
-    private float GetPlayerAttack()
-    {
-        return stats != null ? stats.TotalAttack : 0f;
     }
 
     private RhythmManager.RankResult SampleRhythm(double inputDspTime, string source)

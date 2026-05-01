@@ -23,7 +23,7 @@ MonoBehaviour:
     multiBulletCount: 0
     bulletPrefab: {fileID: 3300294133681505736, guid: 7a2f1aab2f5b5204ba39e14f2723bb9d, type: 3}
     reloadTime: 0
-    shakeIntensity: 0.01
+    shakeIntensity: 0.1
     chargeTime: 1.2
     overchargeThreshold: 0.85
     perfectChargeDamage: 60
@@ -88,4 +88,4 @@ MonoBehaviour:
     selfDamageRatio: 0.3
     weakReleaseDamageRatio: 0.3
     chargeShakeBase: 0.03
-    chargeShakeMax: 0.15
+    chargeShakeMax: 0.05

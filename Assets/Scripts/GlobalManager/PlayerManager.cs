@@ -6,8 +6,8 @@ public class PlayerManager : MonoBehaviour
     public static PlayerManager Instance { get; private set; }
     
     [Header("玩家状态")]
-    [SerializeField] private bool isInvincible = false;
-    [SerializeField] private float invincibilityTimer = 0f;
+    [SerializeField] private bool isInvincible = false;//是否无敌状态
+    [SerializeField] private float invincibilityTimer = 0f;//无敌时间计时器
     
     // 组件引用
     private PlayerHealth playerHealth;

@@ -26,7 +26,7 @@ public class EnemyMeleeAttackState : EnemyStateBase
                 if (col) col.enabled = false;
         }
 
-        controller.ShowAttackWarning();
+
         manager.animator.SetTrigger("Attack");
         Debug.Log($"[{controller.name}] 进入攻击状态，连击段数: {(comboColliders?.Count ?? 1)}");
     }
