@@ -82,6 +82,9 @@ public class UIPanelMainMenu : UIBasePanel
     {
         if(_seq == null) return;
         _seq.Kill();
+
+        if (target) target.rectTransform.DOKill();
+        if (score) score.rectTransform.DOKill();
     }
     protected override void PlayExitAnimation(bool destroyAfter)
     {
