@@ -56,6 +56,8 @@ public class HubDialogueController : MonoBehaviour
 
         _isInDialogue = false;
 
+        UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
+
         if (HubManager.Instance == null)
         {
             Debug.LogWarning("HubDialogueController: HubManager 不存在");

@@ -113,9 +113,10 @@ public class UIManager
             return false;
         }
 
+        panelDict.Remove(name);
         panel.ClosePanel();
         panel.OnCloseComplete += () => {
-            panelDict.Remove(name);
+            Debug.Log($"{name} 面板已销毁");
         };
         return true;
     }

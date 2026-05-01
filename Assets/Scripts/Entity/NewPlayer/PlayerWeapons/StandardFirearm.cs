@@ -3,42 +3,27 @@ using UnityEngine;
 
 public class StandardFirearm : WeaponInfo
 {
-    /// <summary>
-    /// 处理武器输入
-    /// </summary>
     public override void HandleFireInput()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            TryFire();
-        }
+        TryFire();
     }
 
-    /// <summary>
-    /// 武器开火
-    /// </summary>
-    /// <param name="damage">伤害值</param>
-    /// <param name="rhythmMultiplier">节奏乘数</param>
-    /// <param name="rank">节奏等级</param>
     public override void Fire(float damage, float rhythmMultiplier, RhythmRank rank)
     {
-        if (isReloading) return;        //武器 正在装填返回
-        if (weaponStats == null) return;//武器数据为空返回
+        if (isReloading) return;
+        if (weaponStats == null) return;
 
-        double currentTime = AudioSettings.dspTime;//记录当前时间
-        if (currentTime < lastShootTime + weaponStats.fireRate) return;//射击间隔过短返回
+        double currentTime = AudioSettings.dspTime;
+        if (currentTime < lastShootTime + weaponStats.fireRate) return;
 
-        //子弹不足启动自动装填然后返回
         if (currentAmmo <= 0)
         {
             StartReload();
             return;
         }
 
-        //如果是是玩家的武器
         if (owner == WeaponOwner.Player)
         {
-            //触发子弹变化事件 提供UI监听
             EventBus.Instance.Trigger(new AmmoChangedEvent
             {
                 currentAmmo = currentAmmo,
@@ -46,25 +31,17 @@ public class StandardFirearm : WeaponInfo
                 weaponId = weaponStats.id
             });
         }
-        //伤害计算 公式为（玩家伤害+武器伤害）*节奏倍率
+
         float finalDamage = (damage + weaponStats.damage) * rhythmMultiplier;
-        //触发屏幕振动
         EventBus.Instance.Trigger(new CameraShakeEvent { intensity = weaponStats.shakeIntensity });
-        //生成子弹
         SpawnBullet(finalDamage, rank);
 
-        //扣除子弹
         currentAmmo--;
-        //记录开火事件用于下一次开火间隔的判断-
         lastShootTime = currentTime;
     }
 
-    /// <summary>
-    /// 尝试开火
-    /// </summary>
     private void TryFire()
     {
-        //获取当前节奏等级和节奏倍率
         var rhythmResult = SampleRhythm(AudioSettings.dspTime, "Shoot");
         float playerAttack = GetPlayerAttack();
         Fire(playerAttack, rhythmResult.multiplier, rhythmResult.rank);

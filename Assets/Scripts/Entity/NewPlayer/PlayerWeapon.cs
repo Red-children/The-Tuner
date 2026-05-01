@@ -26,38 +26,24 @@ public class PlayerWeapon : MonoBehaviour
 
     private void Update()
     {
-        // ���ּ��л�
-        for (int i = 0; i < weapons.Length; i++)
-        {
-            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
-            {
-                SwitchToWeapon(i);
-                break;
-            }
-        }
-
-        // �����л�
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll != 0 && weapons.Length > 0)
-        {
-            int delta = scroll > 0 ? 1 : -1;
-            int newIndex = (currentIndex + delta + weapons.Length) % weapons.Length;
-            SwitchToWeapon(newIndex);
-        }
-
-        // ����ָ�����
+        if (currentWeapon == null) return;
 
         Vector2 directionMouse = Camera.main.ScreenToWorldPoint(Input.mousePosition) - currentWeapon.transform.position;
+        float weaponAngle = Mathf.Atan2(directionMouse.y, directionMouse.x) * Mathf.Rad2Deg;
+        currentWeapon.transform.rotation = Quaternion.Euler(0, 0, weaponAngle);
+    }
 
-        if (currentWeapon != null)
-        {
-            Vector2 weaponDir = directionMouse; // ��������ҵ����һ��
-            float weaponAngle = Mathf.Atan2(weaponDir.y, weaponDir.x) * Mathf.Rad2Deg;
-            currentWeapon.transform.rotation = Quaternion.Euler(0, 0, weaponAngle);
-        }
+    public void SwitchWeapon(int index)
+    {
+        SwitchToWeapon(index);
+    }
 
-        
-
+    public void SwitchWeaponByScroll(float scrollDelta)
+    {
+        if (weapons.Length == 0) return;
+        int delta = scrollDelta > 0 ? 1 : -1;
+        int newIndex = (currentIndex + delta + weapons.Length) % weapons.Length;
+        SwitchToWeapon(newIndex);
     }
 
     /// <summary>

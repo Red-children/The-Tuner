@@ -31,20 +31,11 @@ public class BassCannon : WeaponInfo
     /// </summary>
     public override void HandleFireInput()
     {
-        if (Input.GetMouseButtonDown(0))
-        {
-            StartCharge();
-        }
-        if (Input.GetMouseButtonUp(0))
-        {
-            ReleaseCharge();
-            EventBus.Instance.Trigger(new PlayerAtkEvent());
-        }
     }
     /// <summary>
     /// 开始蓄力
     /// </summary>
-    private void StartCharge()
+    public void StartCharge()
     {
         isCharging = true;
         chargeTimer = 0f;
@@ -55,10 +46,12 @@ public class BassCannon : WeaponInfo
     /// <summary>
     /// 释放蓄力
     /// </summary>
-    private void ReleaseCharge()
+    public void ReleaseCharge()
     {
         if (!isCharging) return;
-        //计算蓄力进度
+
+        EventBus.Instance.Trigger(new PlayerAtkEvent());
+
         float progress = Mathf.Clamp01(chargeTimer / weaponStats.chargeTime);
 
         if (progress >= 1.0f)
