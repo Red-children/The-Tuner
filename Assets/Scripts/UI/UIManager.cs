@@ -114,9 +114,10 @@ public class UIManager
         }
 
         panel.ClosePanel();
-        panel.OnCloseComplete += () => {
+        panel.RegisterOnCloseComplete(() =>
+        {
             panelDict.Remove(name);
-        };
+        });
         return true;
     }
     public bool ClosePanel(UIBasePanel panel)
@@ -132,9 +133,10 @@ public class UIManager
             }
         }
         panel.ClosePanel();
-        panel.OnCloseComplete += () => {
+        panel.RegisterOnCloseComplete(() =>
+        {
             panelDict.Remove(name);
-        };
+        });
         return true;
     }
 

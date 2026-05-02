@@ -28,7 +28,16 @@ public class UIBasePanel : MonoBehaviour
     private bool _pendingClose = false;
     private bool _shouldBeVisible = true;
     private bool _pendingHide = false;
-    public Action OnCloseComplete;
+    protected Action OnCloseComplete;
+    public void RegisterOnCloseComplete(Action callback)
+    {
+        OnCloseComplete += callback;
+    }
+
+    public void UnregisterOnCloseComplete(Action callback)
+    {
+        OnCloseComplete -= callback;
+    }
 #endregion
 #region 面板操作
     public virtual void OpenPanel(string name)
@@ -39,9 +48,6 @@ public class UIBasePanel : MonoBehaviour
         _isRemoved = false;
         _pendingClose = false;
         _pendingHide = false;
-
-        // if (playableDirector == null || playableDirector.playableAsset == null)
-        //     return;
 
         PlayEnterAnimation();
     }

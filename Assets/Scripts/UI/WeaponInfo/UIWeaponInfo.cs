@@ -39,6 +39,9 @@ public class UIWeaponInfo : MonoBehaviour
     void OnWeaponChange(WeaponChangedEvent evt)
     {
         currentWeapon = evt.newWeapon;
+        if (currentWeapon == null) return;
+        text.SetDisplayText("Ammo: " + currentWeapon.CurrentAmmo.ToString());
+        return;
     }
     #endregion
 }
