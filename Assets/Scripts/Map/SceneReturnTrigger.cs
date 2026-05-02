@@ -74,7 +74,7 @@ public class SceneReturnTrigger : MonoBehaviour
 
         _isInDialogue = false;
 
-        UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
+        UIManager.Instance.DestroyPanelBeforeSceneSwitch(UIManager.UIConst.Echo);
 
         if (!string.IsNullOrEmpty(targetSpawnPointName))
         {

@@ -35,18 +35,39 @@ public class HubDialogueController : MonoBehaviour
 
     public void StartDialogue()
     {
+        //判空检测
+        if (_isInDialogue)
+            return;
+
         if (dialogueData == null)
         {
             Debug.LogWarning("HubDialogueController: 未设置对话数据");
+            ResetHubPlayerDetectState();
+            return;
+        }
+
+        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
+        if (panel == null)
+        {
+            Debug.LogWarning("HubDialogueController: 无法打开Echo面板");
+            ResetHubPlayerDetectState();
             return;
         }
 
         _isInDialogue = true;
         _hasTriggered = true;
-
-        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
         panel.OnDialogue(dialogueData);
         EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData, freezePlayer));
+    }
+
+    private void ResetHubPlayerDetectState()
+    {
+        if (detectArea != null)
+        {
+            var detect = detectArea.GetComponent<HubPlayerDetect>();
+            if (detect != null)
+                detect.ResetDialogueState();
+        }
     }
 
     private void OnDialogueEnd(DialogueEndEvent evt)
@@ -56,22 +77,28 @@ public class HubDialogueController : MonoBehaviour
 
         _isInDialogue = false;
 
-        UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
+        ResetHubPlayerDetectState();
 
-        if (HubManager.Instance == null)
+        bool isFirstDialogue = HubManager.Instance != null && !HubManager.Instance.hasTalkedToHub;
+
+        if (isFirstDialogue)
         {
-            Debug.LogWarning("HubDialogueController: HubManager 不存在");
-            return;
-        }
+            HubManager.Instance.hasTalkedToHub = true;
+            UIManager.Instance.DestroyPanelBeforeSceneSwitch(UIManager.UIConst.Echo);
 
-        var target = HubManager.Instance.GetCurrentTarget();
-        if (target == null || string.IsNullOrEmpty(target.sceneName))
+            var target = HubManager.Instance.GetCurrentTarget();
+            if (target == null || string.IsNullOrEmpty(target.sceneName))
+            {
+                Debug.LogWarning("HubDialogueController: 当前章节无目标场景");
+                return;
+            }
+
+            PlayerSpawnInfo.spawnPointName = target.spawnPointName;
+            SceneManager.LoadScene(target.sceneName);
+        }
+        else
         {
-            Debug.LogWarning("HubDialogueController: 当前章节无目标场景");
-            return;
+            UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
         }
-
-        PlayerSpawnInfo.spawnPointName = target.spawnPointName;
-        SceneManager.LoadScene(target.sceneName);
     }
 }
