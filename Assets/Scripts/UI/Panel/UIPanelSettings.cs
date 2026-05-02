@@ -1,90 +1,79 @@
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
-/// <summary>
-/// 设置面板 - 纯视觉DEMO
-/// 功能：ESC开关、左侧选项卡、右侧滚动、滑块+输入框双向联动
-/// </summary>
 public class UIPanelSettings : UIBasePanel
 {
-    [Header("=== 核心面板 ===")]
-    public GameObject panelRoot; // 总面板
+#region 声明
+    [Header("数据")]
+    [SerializeField] private Slider masterVolumeSlider;
+    [SerializeField] private Slider sfxVolumeSlider;
+    // 缓存 Slider 与 SettingType 的对应关系
+    private Dictionary<SettingType, Slider> _mapSlider;
+    [Header("动画组件")]
+    [Header("Background")]
+    [SerializeField] private Image backgroundColor;
+    [SerializeField] private Image backgroundMask;
+    [SerializeField] private Image backgroundBlackLine;
+    [Header("Mid")]
+    [SerializeField] private Image midLineVerRed;
+    [SerializeField] private Image midLineHorRed;
+    [SerializeField] private Image midLineHorBlue;
+    [SerializeField] private Image midLineVerBlue;
+    [Header("Foreground")]
+    [SerializeField] private Button buttonBack;
+    [SerializeField] private Image settingsBackground;
+    [SerializeField] private Image foregroundDecoration;
+    [SerializeField] private RectTransform transSettingPanel;
+    [SerializeField] private Button[] entries;
+#endregion
 
-    [Header("=== 左侧选项卡 ===")]
-    public List<GameObject> tabButtons; // 所有选项卡
-    public List<GameObject> tabPages;   // 对应右侧页面
-
-    [Header("=== 音量设置（视觉示例） ===")]
-    public Slider masterVolumeSlider;
-    public InputField masterVolumeInput;
-
-    private int currentTabIndex = 0;
-
+#region 生命周期
     void Start()
     {
-        // 默认隐藏面板
-        panelRoot.SetActive(false);
-
-        // 初始化默认选中第一个选项卡
-        SwitchTab(0);
-
-        // 绑定音量交互（纯视觉）
-        BindVolumeEvents();
+        BuildSliderMap();
+        LoadAllSettings();
+        RegisterCallbacks();
     }
-
-    void Update()
+    private void BuildSliderMap()
     {
-        // ESC 呼出/关闭面板
-        if (Input.GetKeyDown(KeyCode.Escape))
+        _mapSlider = new Dictionary<SettingType, Slider>
         {
-            TogglePanel();
+            { SettingType.MasterVolume, masterVolumeSlider },
+            { SettingType.SFXVolume, sfxVolumeSlider }
+        };
+    }
+    
+    private void LoadAllSettings()
+    {
+        var allSettings = SettingsManager.Instance.GetValues();
+        
+        foreach (var kvp in allSettings)
+        {
+            if (_mapSlider.TryGetValue(kvp.Key, out var slider))
+            {
+                slider.value = kvp.Value.amount;
+            }
         }
     }
-
-    /// <summary>
-    /// 开关面板显示/隐藏
-    /// </summary>
-    public void TogglePanel()
+    
+    private void RegisterCallbacks()
     {
-        bool isActive = !panelRoot.activeSelf;
-        panelRoot.SetActive(isActive);
+        // 监听 Slider 变化
+        masterVolumeSlider.onValueChanged.AddListener(val => 
+            SettingsManager.Instance.SetValue(SettingType.MasterVolume, (int)val));
+        
+        sfxVolumeSlider.onValueChanged.AddListener(val => 
+            SettingsManager.Instance.SetValue(SettingType.SFXVolume, (int)val));
+        
+        // 监听设置变化（其他系统修改时更新 UI）
+        SettingsManager.Instance.RegisterCallback(SettingType.MasterVolume, () => 
+            masterVolumeSlider.value = SettingsManager.Instance.GetValue(SettingType.MasterVolume));
+        
+        SettingsManager.Instance.RegisterCallback(SettingType.SFXVolume, () => 
+            sfxVolumeSlider.value = SettingsManager.Instance.GetValue(SettingType.SFXVolume));
     }
-
-    /// <summary>
-    /// 切换左侧选项卡
-    /// </summary>
-    public void SwitchTab(int index)
-    {
-        currentTabIndex = index;
-
-        // 隐藏所有页面
-        foreach (var page in tabPages)
-            page.SetActive(false);
-
-        // 显示选中页面
-        tabPages[index].SetActive(true);
-    }
-
-    /// <summary>
-    /// 绑定滑块与输入框（纯视觉联动）
-    /// </summary>
-    void BindVolumeEvents()
-    {
-        // 滑块拖动 → 更新输入框
-        masterVolumeSlider.onValueChanged.AddListener((value) =>
-        {
-            masterVolumeInput.text = Mathf.Round(value).ToString();
-        });
-
-        // 输入框输入 → 更新滑块
-        masterVolumeInput.onValueChanged.AddListener((text) =>
-        {
-            if (float.TryParse(text, out float num))
-            {
-                num = Mathf.Clamp(num, 0, 100);
-                masterVolumeSlider.value = num;
-            }
-        });
-    }
+#endregion
 }

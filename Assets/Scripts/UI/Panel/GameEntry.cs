@@ -1,13 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 //  进入游戏加载主界面
 public class GameEntry : MonoBehaviour
 {
-    void Update()
+    [SerializeField] private SettingData settingData;
+    void Awake()
     {
-        if (Input.GetMouseButtonDown(2))
-            UIManager.Instance.OpenPanel(UIManager.UIConst.MainMenu);
+        SettingsManager.Instance.InitSettings(settingData);
+    }
+    void Start()
+    {
+        UIManager.Instance.OpenPanel(UIManager.UIConst.MainMenu);
     }
 }
