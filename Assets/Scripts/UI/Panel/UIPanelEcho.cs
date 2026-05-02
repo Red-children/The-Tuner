@@ -27,6 +27,7 @@ public class UIPanelEcho : UIBasePanel
     [Header("文本组件")]
     [SerializeField] private Text[] texts;
     private Action _onPanelReady;
+
 #region 覆写动画
     protected override void PlayEnterAnimation()
     {
@@ -80,12 +81,12 @@ public class UIPanelEcho : UIBasePanel
         exitAnimDuration = 1.2f;
         _seq =DOTween.Sequence();
         // EventBus.Instance.Subscribe<DialogueStartEvent>(OnDialogue);
-        EventBus.Instance.Subscribe<DialogueEndEvent>(OnDialogueEnd);
+        // EventBus.Instance.Subscribe<DialogueEndEvent>(OnDialogueEnd);
     }
-    void OnDestroy()
-    {
-        EventBus.Instance.Unsubscribe<DialogueEndEvent>(OnDialogueEnd);
-    }
+    // void OnDestroy()
+    // {
+    //     EventBus.Instance.Unsubscribe<DialogueEndEvent>(OnDialogueEnd);
+    // }
     #endregion
 
     #region 过场动画
@@ -161,10 +162,10 @@ public class UIPanelEcho : UIBasePanel
 
 #region 业务
     ///  对话结束关闭面板
-    private void OnDialogueEnd(DialogueEndEvent evt)
-    {
-        UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
-    }
+    // private void OnDialogueEnd(DialogueEndEvent evt)
+    // {
+    //     UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
+    // }
     /// 显示对话UI
     private void ShowDialogue(DialogueLines lines)
     {

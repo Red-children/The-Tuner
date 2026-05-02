@@ -119,6 +119,24 @@ public class UIManager
         };
         return true;
     }
+    public bool ClosePanel(UIBasePanel panel)
+    {
+        if (panel == null) return false;
+        string name = null;
+        foreach (var pair in panelDict)
+        {
+            if (pair.Value == panel)
+            {
+                name = pair.Key;
+                break;
+            }
+        }
+        panel.ClosePanel();
+        panel.OnCloseComplete += () => {
+            panelDict.Remove(name);
+        };
+        return true;
+    }
 
     /// <summary>
     /// 场景切换前强制清理面板（同步销毁GameObject并移除字典引用）
