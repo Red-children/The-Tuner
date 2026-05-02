@@ -28,7 +28,21 @@ public class UIBasePanel : MonoBehaviour
     private bool _pendingClose = false;
     private bool _shouldBeVisible = true;
     private bool _pendingHide = false;
+    protected Action OnOpenComplete;
     protected Action OnCloseComplete;
+    public void RegisterOnOpenComplete(Action callback)
+    {
+        OnOpenComplete += callback;
+    }
+    public void UnregisterOnOpenComplete(Action callback)
+    {
+        OnOpenComplete -= callback;
+    }
+    protected void TriggerOnOpenComplete()
+    {
+        OnOpenComplete?.Invoke();
+        OnOpenComplete = null;
+    }
     public void RegisterOnCloseComplete(Action callback)
     {
         OnCloseComplete += callback;
@@ -37,6 +51,11 @@ public class UIBasePanel : MonoBehaviour
     public void UnregisterOnCloseComplete(Action callback)
     {
         OnCloseComplete -= callback;
+    }
+    protected void TriggerOnCloseComplete()
+    {
+        OnCloseComplete?.Invoke();
+        OnCloseComplete = null;
     }
 #endregion
 #region 面板操作
@@ -79,6 +98,16 @@ public class UIBasePanel : MonoBehaviour
         }
 
         PlayExitAnimation(false); // 隐藏=不销毁
+    }
+
+    public virtual void HidePanel(Action onComplete = null)
+    {
+        if (_isPlayingAnimation)
+        {
+            _pendingHide = true;
+            return;
+        }
+        PlayExitAnimation(false, onComplete);
     }
 
     public virtual void ShowPanel()
@@ -124,6 +153,11 @@ public class UIBasePanel : MonoBehaviour
             Invoke(nameof(DestroyImmediate), exitAnimDuration);
         else
             Invoke(nameof(HideImmediately), exitAnimDuration);
+    }
+
+    protected virtual void PlayExitAnimation(bool destroyAfter, Action onComplete = null)
+    {
+        //TODO:
     }
 
     private IEnumerator WaitAndPause(float waitTime)

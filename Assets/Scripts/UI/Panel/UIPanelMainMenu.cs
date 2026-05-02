@@ -36,8 +36,9 @@ public class UIPanelMainMenu : UIBasePanel
     [SerializeField] private Image target;
     // ScreenMask
     [SerializeField] private Image screenMask;
-
+#region 流程控制标志
     private Action _onPanelReady;
+#endregion
 #region 初始化
     void Init()
     {
@@ -249,6 +250,8 @@ public class UIPanelMainMenu : UIBasePanel
 #endregion
 
 #region 按钮回调函数
+    private bool _buttonStart = true;
+    private bool _buttonSettings = true;
     void OnStartClick()
     {
         //TODO:
@@ -257,8 +260,21 @@ public class UIPanelMainMenu : UIBasePanel
     }
     void OnSettingsClick()
     {
+        if (!_buttonSettings) return;
+        _buttonSettings = false;
         //TODO:
         Debug.Log("Button Settings Clicked");
+        HidePanel();
+
+        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Settings);
+        panel.RegisterOnCloseComplete(OnSettingsBack);
+    }
+    void OnSettingsBack()
+    {
+        var panel = UIManager.Instance.GetPanel(UIManager.UIConst.Settings);
+        panel.UnregisterOnCloseComplete(OnSettingsBack);
+        ShowPanel();
+        _buttonSettings = true;
     }
     // void OnExitClick()
     // {
