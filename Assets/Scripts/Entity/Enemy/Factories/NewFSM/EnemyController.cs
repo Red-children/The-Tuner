@@ -450,10 +450,7 @@ public class EnemyController : EnemyBase
         float angle = Vector2.Angle(forward, toPlayer);//计算转向角
         float halfAngle = data.visionAngle * 0.5f;//计算半角
 
-        Debug.Log($"[{name}] 视线检测:\n" +
-                  $"  前方方向(forward): {forward}\n" +
-                  $"  指向玩家方向: {toPlayer.normalized}\n" +
-                  $"  夹角: {angle:F2}°, 半角阈值: {halfAngle:F2}°");
+   
 
         if (angle > halfAngle) { Debug.Log("角度检测不通过"); return false; }
 

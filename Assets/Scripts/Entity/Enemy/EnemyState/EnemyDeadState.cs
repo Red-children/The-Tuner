@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -37,7 +38,7 @@ public class EnemyDeadState : EnemyStateBase
 
     public override void OnExit()
     {
-        // 一般不需要退出，但保留清理
+
     }
 }
 

@@ -30,6 +30,16 @@ public class PlayerDash : MonoBehaviour
             if (currentDashEnergy > maxDashEnergy)
                 currentDashEnergy = maxDashEnergy;
         }
+
+        HandleDashInput();
+    }
+
+    private void HandleDashInput()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            TryDash();
+        }
     }
 
     public bool TryDash()

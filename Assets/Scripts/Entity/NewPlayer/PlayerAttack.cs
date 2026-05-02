@@ -9,12 +9,45 @@ public class PlayerAttack : MonoBehaviour
         playerWeapon = GetComponent<PlayerWeapon>();
     }
 
-    public void TryFire()
+    private void Update()
     {
-        var weapon = playerWeapon?.GetCurrentWeapon();
-        if (weapon != null)
+        HandleShootInput();
+        HandleMeleeInput();
+    }
+
+    private void HandleShootInput()
+    {
+        if (playerWeapon == null) return;
+
+        WeaponInfo currentWeapon = playerWeapon.GetCurrentWeapon();
+        if (currentWeapon == null) return;
+
+        if (currentWeapon is BassCannon bassCannon)
         {
-            weapon.HandleFireInput();
+            if (Input.GetMouseButtonDown(0))
+            {
+                bassCannon.StartCharge();
+            }
+            if (Input.GetMouseButtonUp(0))
+            {
+                bassCannon.ReleaseCharge();
+            }
+        }
+        else if (currentWeapon is StandardFirearm)
+        {
+            if (Input.GetMouseButton(0))
+            {
+                currentWeapon.HandleFireInput();
+            }
+        }
+    }
+
+    private void HandleMeleeInput()
+    {
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            // 近战攻击逻辑
+            // 这里可以触发近战动画事件
         }
     }
 }

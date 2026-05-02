@@ -43,10 +43,6 @@ public class EnemyWoundState : EnemyStateBase
 
     public override void OnUpdate()
     {
-        if (runtime.currentHealth <= 0)
-        {
-            manager.ChangeState(StateType.Dead);
-        }
     }
 
     public override void OnExit()
