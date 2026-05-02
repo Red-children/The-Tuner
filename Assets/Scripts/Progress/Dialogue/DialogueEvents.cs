@@ -10,5 +10,5 @@ public struct DialogueStartEvent
     }
 }
 
-// 对话结束事件
+// 对话结束事件 不是对话面板关闭事件
 public struct DialogueEndEvent { }

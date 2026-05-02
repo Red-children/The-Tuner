@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,6 +12,8 @@ public class DialogueTrigger : MonoBehaviour
     [SerializeField] private Collider2D trigger;
     [Header("是否冻结玩家")]
     [SerializeField] private bool playfreeze = false;
+    private UIPanelEcho _panel;
+    public Action onPanelClose;
 #endregion
 
 #region 轻量化状态标志
@@ -23,6 +26,8 @@ public class DialogueTrigger : MonoBehaviour
     public void OnDialogueEnd(DialogueEndEvent evt)
     {
         _isInDialogue = false;
+        if (UIManager.Instance.ClosePanel(_panel))
+            onPanelClose?.Invoke();
     }
 
     public void StartDialogue()
@@ -31,8 +36,8 @@ public class DialogueTrigger : MonoBehaviour
         _triggered = true;
         // 隐藏交互提示
         // 发布【进入对话】事件 → 玩家主控失活移动/攻击
-        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
-        panel.OnDialogue(dialogueData);
+        _panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
+        _panel.OnDialogue(dialogueData);
         EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData, playfreeze));
     }
 

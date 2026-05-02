@@ -21,14 +21,13 @@ public class NPCCommunication : MonoBehaviour
     public string interactPromptInfo = "【F 交互】";
     //  动态生成的交互提示
     private GameObject _interactPrompt;
-    // private Action onPanelReady;
 
     // 玩家是否在检测范围内
     private bool _isPlayerInRange;
     // 是否正在对话
     private bool _isInDialogue;
-
     private Canvas _targetCanvas;
+    private UIPanelEcho _panel;
     private void CreateInteractPrompt()
     {
         // 创建提示物体
@@ -63,14 +62,14 @@ public class NPCCommunication : MonoBehaviour
         if (_interactPrompt != null)
             _interactPrompt.SetActive(false);
         // 发布【进入对话】事件 → 玩家主控失活移动/攻击
-        // var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Dialogue) as UIPanelDialogue;
-        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
-        panel.OnDialogue(dialogueData);
+        _panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
+        _panel.OnDialogue(dialogueData);
         EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData));
     }
     private void OnDialogueEnd(DialogueEndEvent evt)
     {
         _isInDialogue = false;
+        UIManager.Instance.ClosePanel(_panel);
     }
 
 #endregion

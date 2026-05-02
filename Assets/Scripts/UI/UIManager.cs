@@ -119,6 +119,24 @@ public class UIManager
         };
         return true;
     }
+    public bool ClosePanel(UIBasePanel panel)
+    {
+        if (panel == null) return false;
+        string name = null;
+        foreach (var pair in panelDict)
+        {
+            if (pair.Value == panel)
+            {
+                name = pair.Key;
+                break;
+            }
+        }
+        panel.ClosePanel();
+        panel.OnCloseComplete += () => {
+            panelDict.Remove(name);
+        };
+        return true;
+    }
     //  隐藏界面（不销毁，保留在字典中）
     public bool HidePanel(string name)
     {
