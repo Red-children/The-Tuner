@@ -9,7 +9,7 @@ public static class PlayerSpawnInfo
 
 public class HubManager : MonoBehaviour
 {
-    public static HubManager Instance { get; private set; }
+    public static HubManager Instance { get; private set; }//
 
     [Serializable]
     public class ChapterTarget
@@ -23,6 +23,9 @@ public class HubManager : MonoBehaviour
 
     [Header("剧情进度")]
     public int currentChapter = 0;
+
+    [Header("主脑对话状态")]
+    public bool hasTalkedToHub = false;
 
     void Awake()
     {

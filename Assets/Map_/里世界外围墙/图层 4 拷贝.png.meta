@@ -47,7 +47,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 512
+  spritePixelsToUnits: 256
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -109,9 +109,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 512
+        y: 768
         width: 78
-        height: 512
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -130,9 +130,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 0
+        y: 512
         width: 78
-        height: 512
+        height: 256
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -142,6 +142,48 @@ TextureImporter:
       bones: []
       spriteID: 683a164b6af5f604dafa00387f4f13f8
       internalID: -124158762
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u56FE\u5C42 4 \u62F7\u8D1D_2"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 256
+        width: 78
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a3814048a5cc5484e873be083aba0d1a
+      internalID: -1292033811
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "\u56FE\u5C42 4 \u62F7\u8D1D_3"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 78
+        height: 256
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b583aa6f1d6975f48a502a7233bab890
+      internalID: 2095277173
       vertices: []
       indices: 
       edges: []
@@ -159,6 +201,8 @@ TextureImporter:
     nameFileIdTable:
       "\u56FE\u5C42 4 \u62F7\u8D1D_0": 1987646028
       "\u56FE\u5C42 4 \u62F7\u8D1D_1": -124158762
+      "\u56FE\u5C42 4 \u62F7\u8D1D_2": -1292033811
+      "\u56FE\u5C42 4 \u62F7\u8D1D_3": 2095277173
   spritePackingTag: 
   pSDRemoveMatte: 0
   pSDShowRemoveMatteOption: 0

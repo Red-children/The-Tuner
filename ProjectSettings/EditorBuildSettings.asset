@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PlayScene/TheBegining.unity
     guid: 40ebb7c6e0b81304abfaf0dba8713d47
+  - enabled: 1
+    path: Assets/Scenes/PlayScene/TheStage.unity
+    guid: 80e5c0a26029d6b4692b5536e2fcba5f
   m_configObjects: {}

@@ -137,6 +137,23 @@ public class UIManager
         };
         return true;
     }
+
+    /// <summary>
+    /// 场景切换前强制清理面板（同步销毁GameObject并移除字典引用）
+    /// 避免异步回调因场景销毁而丢失，导致字典残留脏引用
+    /// </summary>
+    public void DestroyPanelBeforeSceneSwitch(string name)
+    {
+        if (panelDict.TryGetValue(name, out UIBasePanel panel))
+        {
+            panelDict.Remove(name);
+            if (panel != null)
+            {
+                Object.Destroy(panel.gameObject);
+            }
+        }
+    }
+
     //  隐藏界面（不销毁，保留在字典中）
     public bool HidePanel(string name)
     {
