@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class AutoClear : MonoBehaviour
 {
-    public int time = 2;
+    public float time = 2;
     void Start()
     {
         Destroy(gameObject, time);
