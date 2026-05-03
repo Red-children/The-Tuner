@@ -1,10 +1,9 @@
 using UnityEngine;
-using UnityEngine.Playables;
-using System.Collections;
 using DG.Tweening;
 using UnityEngine.UI;
 using System;
 
+[RequireComponent(typeof(RectTransform), typeof(UISoundPlayer))]
 public class UIBasePanel : MonoBehaviour
 {
     [Header("动画参数")]
