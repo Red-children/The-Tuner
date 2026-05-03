@@ -790,7 +790,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1957659314
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1075,6 +1075,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 298850705}
     m_Modifications:
+    - target: {fileID: 4786531088145537830, guid: e991d88a3ca0f83458501248f8302445, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4786531089012267520, guid: e991d88a3ca0f83458501248f8302445, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1206,19 +1210,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5176449025823058195, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5176449025823058195, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5176449025823058195, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 461.5
       objectReference: {fileID: 0}
     - target: {fileID: 5176449025823058195, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -345
       objectReference: {fileID: 0}
     - target: {fileID: 5176449025972616275, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1226,11 +1230,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5176449025972616275, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5176449026484961134, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_Name
       value: PanelSettings
+      objectReference: {fileID: 0}
+    - target: {fileID: 5176449026484961134, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5176449026484961135, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_Pivot.x
@@ -1318,27 +1326,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5176449026750471298, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5176449026888872524, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5176449027477367077, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5176449027477367077, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5176449027477367077, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 461.5
       objectReference: {fileID: 0}
     - target: {fileID: 5176449027477367077, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -145
       objectReference: {fileID: 0}
     - target: {fileID: 5176449027697532400, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1346,7 +1354,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5176449027697532400, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5176449027697532400, guid: 5206b3e3b966e6741a9e8901a14e64f0, type: 3}
       propertyPath: m_AnchorMin.x
