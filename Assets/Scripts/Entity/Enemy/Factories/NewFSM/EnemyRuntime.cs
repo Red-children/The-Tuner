@@ -13,6 +13,7 @@ public class EnemyRuntime : MonoBehaviour
     
     public float ignoreTargetUntilTime;     // 在此时间之前忽略目标（用于放弃追击后的冷却）
     [Header("运行时状态")]
+    public bool isDead;                     // 是否死亡
 
 
     public Transform target;          // 当前目标

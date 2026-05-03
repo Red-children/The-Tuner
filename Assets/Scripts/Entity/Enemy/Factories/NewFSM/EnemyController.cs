@@ -157,6 +157,8 @@ public class EnemyController : EnemyBase
     /// <param name="rank"></param>
     public override void Wound(float damage, RhythmRank rank)
     {
+        if (runtime.isDead) return;
+
         //测试打断逻辑区域 *******************************
         if (runtime.isVulnerable && (rank == RhythmRank.Perfect || rank == RhythmRank.Great))
         {
@@ -174,7 +176,14 @@ public class EnemyController : EnemyBase
         runtime.getHit = true;
         runtime.currentHealth -= damage;
 
-
+        // 检查是否死亡 —— 直接进入死亡流程，跳过受伤状态
+        if (runtime.currentHealth <= 0)
+        {
+            ShowDamageText(transform.position, damage, rank);
+            OnKilled();
+            fsm?.ChangeState(StateType.Dead);
+            return;
+        }
 
         // 计算击退（使用之前设置的位置）
         Vector2 knockbackDir = ((Vector2)transform.position - runtime.lastAttackerPosition).normalized;
@@ -234,11 +243,15 @@ public class EnemyController : EnemyBase
     }
 
 
-    // 被杀死时调用
+    // 被杀死时调用（仅处理数据逻辑，状态切换由调用方负责）
     public override void OnKilled()
     {
         if (isDead) return;  // 防止重复调用
         isDead = true;
+
+        // 同步运行时死亡标记，供 Bullet 等外部模块检测
+        if (runtime != null)
+            runtime.isDead = true;
 
         Debug.Log($"{gameObject.name} 已被杀死");
 
@@ -255,9 +268,6 @@ public class EnemyController : EnemyBase
         {
             Debug.LogWarning($"{gameObject.name} 的ownerRoom为null，无法注销");
         }
-
-        // 切换到死亡状态，播放死亡动画
-        fsm?.ChangeState(StateType.Dead);
     }
 
 
@@ -431,6 +441,7 @@ public class EnemyController : EnemyBase
     {
         if (warningUI != null)
             warningUI.PlayWarning();
+        Debug.Log("敌人发出攻击预警");
     }
     /// <summary>
     /// 检测敌人是否能看到玩家
