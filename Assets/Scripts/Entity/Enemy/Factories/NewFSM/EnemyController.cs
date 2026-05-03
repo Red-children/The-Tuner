@@ -461,7 +461,7 @@ public class EnemyController : EnemyBase
         float angle = Vector2.Angle(forward, toPlayer);//计算转向角
         float halfAngle = data.visionAngle * 0.5f;//计算半角
 
-   
+
 
         if (angle > halfAngle) { Debug.Log("角度检测不通过"); return false; }
 
@@ -482,8 +482,17 @@ public class EnemyController : EnemyBase
 
     public void OnComboHit()
     {
-        if (fsm.currentState is EnemyMeleeAttackState attackState)
+        if (fsm.currentState is EnemyMeleeAttackState attackState && data is MeleeEnemyData meleeData)
+        {
+            if (meleeData.AttackPrefab != null)
+            {
+                bool isFacingRight = transform.localScale.x < 0;
+                Vector2 forward = isFacingRight ? Vector2.right : Vector2.left;
+                Vector2 attackPos = (Vector2)transform.position + forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
+                Instantiate(meleeData.AttackPrefab, (Vector3)attackPos, Quaternion.identity);
+            }
             attackState.OnComboHit();
+        }
     }
 
     public void OnAttackFinished()

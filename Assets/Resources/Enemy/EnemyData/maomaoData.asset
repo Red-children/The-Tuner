@@ -35,3 +35,4 @@ MonoBehaviour:
   stopMinRange: 1.2
   Atk: 10
   maxChaseDistance: 15
+  AttackPrefab: {fileID: 3670556270691226231, guid: 54137b3ea37bfbe4084254bf73eef936, type: 3}

@@ -8,6 +8,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "MeleeEnemyData", menuName = "Enemy/Melee Data")]
 public class MeleeEnemyData : EnemyData
 {
+
+    [Header("攻击配置")]
+    [Tooltip("攻击角度，用于计算攻击范围")]
     public float attackAngle = 60f;
     public float attackRange = 1.5f;
     public int attackDamage = 10;
@@ -26,5 +29,8 @@ public class MeleeEnemyData : EnemyData
     [Header("追击配置")]
     [Tooltip("最大追击距离，超过此距离则放弃追击返回巡逻")]
     public float maxChaseDistance = 15f;
+
+    public GameObject AttackPrefab;
+
 
 }
