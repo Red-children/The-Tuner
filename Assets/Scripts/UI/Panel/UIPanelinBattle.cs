@@ -55,6 +55,10 @@ public class UIPanelinBattle : UIBasePanel
         _seq.OnStart(() =>
         {
         });
+        _seq.Join(ExitHPBar());
+        _seq.Join(ExitComboInfo());
+        _seq.Join(ExitRankInfo());
+        _seq.Join(ExitWeaponInfo());
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
@@ -87,6 +91,28 @@ public class UIPanelinBattle : UIBasePanel
     {
         if (rankInfo == null) return null;
         return FadeIn(rankInfo, fadeDuration);
+    }
+#endregion
+#region 退场动画
+    Tween ExitHPBar()
+    {
+        if (HPBar == null) return null;
+        return MoveOut(HPBar, new Vector3(-HPBar.rect.width, 0, 0), moveDuration);
+    }
+    Tween ExitWeaponInfo()
+    {
+        if (weapenInfo == null) return null;
+        return MoveOut(weapenInfo, new Vector3(-weapenInfo.rect.width, 0, 0), moveDuration);
+    }
+    Tween ExitComboInfo()
+    {
+        if (comboInfo == null) return null;
+        return MoveOut(comboInfo, new Vector3(-comboInfo.rect.width, 0, 0), moveDuration);
+    }
+    Tween ExitRankInfo()
+    {
+        if (rankInfo == null) return null;
+        return FadeOut(rankInfo, fadeDuration);
     }
 #endregion
 #region 生命周期
