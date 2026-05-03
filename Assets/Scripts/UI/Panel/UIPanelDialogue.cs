@@ -85,7 +85,8 @@ public class UIPanelDialogue : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            OnCloseComplete?.Invoke();
+            // OnCloseComplete?.Invoke();
+            TriggerOnCloseComplete();
             if(destroyAfter)
                 Destroy(gameObject);
         });

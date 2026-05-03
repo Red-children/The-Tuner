@@ -74,8 +74,9 @@ public class UIPanelMainMenu : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            _onPanelReady?.Invoke();
-            _onPanelReady = null;
+            // _onPanelReady?.Invoke();
+            // _onPanelReady = null;
+            TriggerOnOpenComplete();
         });
         _seq.SetTarget(gameObject);
     }
@@ -97,7 +98,8 @@ public class UIPanelMainMenu : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            OnCloseComplete?.Invoke();
+            // OnCloseComplete?.Invoke();
+            TriggerOnCloseComplete();
             if(destroyAfter)
                 Destroy(gameObject);
         });

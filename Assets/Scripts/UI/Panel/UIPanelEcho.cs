@@ -67,7 +67,8 @@ public class UIPanelEcho : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            OnCloseComplete?.Invoke();
+            // OnCloseComplete?.Invoke();
+            TriggerOnCloseComplete();
             if(destroyAfter)
                 Destroy(gameObject);
         });

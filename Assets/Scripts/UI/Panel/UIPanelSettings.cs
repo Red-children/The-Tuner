@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +12,11 @@ public class UIPanelSettings : UIBasePanel
     [SerializeField] private Slider sfxVolumeSlider;
     // 缓存 Slider 与 SettingType 的对应关系
     private Dictionary<SettingType, Slider> _mapSlider;
+    [Header("动画参数")]
+    [SerializeField] private float rotateDuration = 1f;
+    [SerializeField] private float fadeDuration = 1f;
+    [SerializeField] private float scaleDuration = 1f;
+    private Sequence _seq;
     [Header("动画组件")]
     [Header("Background")]
     [SerializeField] private Image backgroundColor;
@@ -30,7 +35,51 @@ public class UIPanelSettings : UIBasePanel
     [SerializeField] private Button[] entries;
 #endregion
 
+#region 覆写动画
+    protected override void PlayEnterAnimation()
+    {
+        _isPlayingAnimation = true;
+
+        _seq.OnComplete(() =>
+        {
+            _isPlayingAnimation = false;
+        });
+
+        _seq.SetTarget(gameObject);
+    }
+    private void KillAllLoopingAnimations()
+    {
+        if (_seq == null) return;
+
+        _seq.Kill();
+
+        // if (docStar) docStar.DOKill();
+    }
+    protected override void PlayExitAnimation(bool destroyAfter)
+    {
+        _isPlayingAnimation = true;
+        KillAllLoopingAnimations();
+
+        _seq = DOTween.Sequence();
+
+        _seq.OnComplete(() =>
+        {
+            _isPlayingAnimation = false;
+            // OnCloseComplete?.Invoke();
+            TriggerOnCloseComplete();
+            if (destroyAfter)
+                Destroy(gameObject);
+        });
+
+        _seq.SetTarget(gameObject);
+    }
+#endregion
+
 #region 生命周期
+    void Awake()
+    {
+        _seq = DOTween.Sequence();
+    }
     void Start()
     {
         BuildSliderMap();
