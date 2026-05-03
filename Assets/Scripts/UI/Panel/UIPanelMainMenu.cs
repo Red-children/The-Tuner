@@ -42,7 +42,7 @@ public class UIPanelMainMenu : UIBasePanel
 #region 初始化
     void Init()
     {
-        _seq = DOTween.Sequence();
+        // _seq = DOTween.Sequence();
         //  绑定按钮事件
         buttonStart.onClick.AddListener(OnStartClick);
         buttonSettings.onClick.AddListener(OnSettingsClick);
@@ -270,12 +270,14 @@ public class UIPanelMainMenu : UIBasePanel
     private bool _buttonSettings = true;
     void OnStartClick()
     {
+        if (_isPlayingAnimation) return;
         //TODO:
         // SceneManager.LoadScene("Test01");
         Debug.Log("Button Start Clicked");
     }
     void OnSettingsClick()
     {
+        if (_isPlayingAnimation) return;
         if (!_buttonSettings) return;
         _buttonSettings = false;
         //TODO:

@@ -88,7 +88,7 @@ public class UIPanelEcho : UIBasePanel
     void Awake()
     {
         exitAnimDuration = 1.2f;
-        _seq =DOTween.Sequence();
+        // _seq =DOTween.Sequence();
     }
     #endregion
 

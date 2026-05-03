@@ -35,7 +35,6 @@ public class UIPanelinBattle : UIBasePanel
 
         _seq.Kill();
 
-        // if (docStar) docStar.DOKill();
     }
     protected override void PlayExitAnimation(bool destroyAfter)
     {
@@ -61,7 +60,6 @@ public class UIPanelinBattle : UIBasePanel
 #region 生命周期
     void Awake()
     {
-        _seq = DOTween.Sequence();
 
     }
 #endregion

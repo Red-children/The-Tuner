@@ -57,7 +57,7 @@ public class UIPanelDialogue : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            
+
             TriggerOnOpenComplete();
         });
 
@@ -106,7 +106,7 @@ public class UIPanelDialogue : UIBasePanel
     private void Awake()
     {
         exitAnimDuration = 1.2f;
-        _seq =DOTween.Sequence();
+        // _seq =DOTween.Sequence();
         // EventBus.Instance.Subscribe<DialogueStartEvent>(OnDialogue);
     }
 #endregion

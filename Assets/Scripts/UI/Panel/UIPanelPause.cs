@@ -310,7 +310,7 @@ public class UIPanelPause : UIBasePanel
 #region 生命周期
     void Awake()
     {
-        _seq = DOTween.Sequence();
+        // _seq = DOTween.Sequence();
     }
 
 #endregion

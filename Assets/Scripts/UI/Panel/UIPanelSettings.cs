@@ -149,7 +149,7 @@ public class UIPanelSettings : UIBasePanel
 #region 生命周期
     void Awake()
     {
-        _seq = DOTween.Sequence();
+        // _seq = DOTween.Sequence();
         exitAnimDuration = 1f;
     }
     void Start()
