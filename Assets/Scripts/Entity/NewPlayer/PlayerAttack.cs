@@ -35,7 +35,7 @@ public class PlayerAttack : MonoBehaviour
         }
         else if (currentWeapon is StandardFirearm)
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButtonDown(0))
             {
                 currentWeapon.HandleFireInput();
             }
