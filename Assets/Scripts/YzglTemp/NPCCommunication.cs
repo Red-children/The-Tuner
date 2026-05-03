@@ -10,8 +10,6 @@ public class NPCCommunication : MonoBehaviour
     [Header("检测区域子物体")]
     public GameObject detectArea;   // 由子物体负责玩家检测，主控控制启用/禁用
     [Header("对话内容")]
-    // public List<KeyValuePair<int, string>> DialogueLines;
-    // public string[] speaker;
     [SerializeField] private DialogueData dialogueData;
     [Header("2D UI提示偏移")]
     public Vector2 promptOffset = new(0, 1.2f);
@@ -64,12 +62,12 @@ public class NPCCommunication : MonoBehaviour
             _interactPrompt.SetActive(false);
         // 发布【进入对话】事件 → 玩家主控失活移动/攻击
         _panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
+        _panel.RegisterOnCloseComplete(EndDialogue);
         _panel.OnDialogue(dialogueData);
         EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData));
     }
     private void OnDialogueEnd(DialogueEndEvent evt)
     {
-        _panel.RegisterOnCloseComplete(EndDialogue);
         UIManager.Instance.ClosePanel(_panel);
     }
     private void EndDialogue()

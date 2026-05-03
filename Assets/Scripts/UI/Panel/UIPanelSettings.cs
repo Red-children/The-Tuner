@@ -15,7 +15,7 @@ public class UIPanelSettings : UIBasePanel
     [SerializeField] private float rotateDuration = 0.2f;
     [SerializeField] private float fadeDuration = 0.4f;
     [SerializeField] private float scaleDuration = 0.3f;
-    private Sequence _seq;
+    // private Sequence _seq;
     [Header("动画组件")]
     [Header("Background")]
     [SerializeField] private Image backgroundColor;
@@ -62,7 +62,7 @@ public class UIPanelSettings : UIBasePanel
 
         _seq.SetTarget(gameObject);
     }
-    private void KillAllLoopingAnimations()
+    protected override void KillAllLoopingAnimations()
     {
         if (_seq == null) return;
 

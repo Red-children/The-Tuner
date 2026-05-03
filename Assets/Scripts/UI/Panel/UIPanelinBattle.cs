@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class UIPanelinBattle : UIBasePanel
 {
 #region 声明
-    private Sequence _seq;
+    // private Sequence _seq;
     [Header("动画组件")]
     [SerializeField] private Transform HPBar;
     [SerializeField] private Transform comboInfo;
@@ -29,7 +29,7 @@ public class UIPanelinBattle : UIBasePanel
 
         _seq.SetTarget(gameObject);
     }
-    private void KillAllLoopingAnimations()
+    protected override void KillAllLoopingAnimations()
     {
         if (_seq == null) return;
 

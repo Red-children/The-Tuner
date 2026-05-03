@@ -12,7 +12,7 @@ public class UIPanelMainMenu : UIBasePanel
     [SerializeField] private float rotateDuration = 0.3f;
     [SerializeField] private float ScaleDuration = 0.3f;
     [SerializeField] private float MoveDuration = 0.1f;
-    private Sequence _seq;
+    // private Sequence _seq;
     // Background
     [SerializeField] private Image backgroundColor;
     [SerializeField] private Image backgroundRedLine;
@@ -86,7 +86,7 @@ public class UIPanelMainMenu : UIBasePanel
         });
         _seq.SetTarget(gameObject);
     }
-    void KillAllLoopingAnimations()
+    protected override void KillAllLoopingAnimations()
     {
         if(_seq == null) return;
         _seq.Kill();

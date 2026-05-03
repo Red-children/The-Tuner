@@ -17,7 +17,7 @@ public class UIPanelDialogue : UIBasePanel
     [SerializeField] private float fadeDuration = 0.4f;
     [SerializeField] private float rotateDuration = 0.5f;
     [SerializeField] private float scaleDuration = 0.5f;
-    private Sequence _seq;
+    // private Sequence _seq;
     [Header("底层图片")]
     [SerializeField] private Image[] background;
     [Header("底层环")]
@@ -43,7 +43,7 @@ public class UIPanelDialogue : UIBasePanel
             _seq = null;
         }
         _seq = DOTween.Sequence();
-        
+
         _isPlayingAnimation = true;
 
         _seq.Join(EnterBackground());
@@ -57,15 +57,14 @@ public class UIPanelDialogue : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            // _onPanelReady?.Invoke();
-            // _onPanelReady = null;
+            
             TriggerOnOpenComplete();
         });
 
         _seq.SetTarget(gameObject);
     }
 
-    void KillAllLoopingAnimations()
+    protected override void KillAllLoopingAnimations()
     {
         if(_seq == null) return;
         _seq.Kill();

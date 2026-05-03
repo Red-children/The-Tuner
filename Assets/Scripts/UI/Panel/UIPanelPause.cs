@@ -8,7 +8,7 @@ public class UIPanelPause : UIBasePanel
     [SerializeField] private float rotateDuration = 1f;
     [SerializeField] private float fadeDuration = 1f;
     [SerializeField] private float scaleDuration = 1f;
-    private Sequence _seq;
+    // private Sequence _seq;
 
     [Header("动画组件")]
     [Header("背景底色")]
@@ -59,7 +59,7 @@ public class UIPanelPause : UIBasePanel
         _seq.SetTarget(gameObject);
     }
 
-    void KillAllLoopingAnimations()
+    protected override void KillAllLoopingAnimations()
     {
         if (_seq == null) return;
 
