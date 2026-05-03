@@ -96,19 +96,19 @@ public class UIBasePanel : MonoBehaviour
             _pendingHide = true;
             return;
         }
-
+        _shouldBeVisible = false;
         PlayExitAnimation(false); // 隐藏=不销毁
     }
 
-    public virtual void HidePanel(Action onComplete = null)
-    {
-        if (_isPlayingAnimation)
-        {
-            _pendingHide = true;
-            return;
-        }
-        PlayExitAnimation(false, onComplete);
-    }
+    // public virtual void HidePanel(Action onComplete = null)
+    // {
+    //     if (_isPlayingAnimation)
+    //     {
+    //         _pendingHide = true;
+    //         return;
+    //     }
+    //     PlayExitAnimation(false, onComplete);
+    // }
 
     public virtual void ShowPanel()
     {
@@ -117,10 +117,7 @@ public class UIBasePanel : MonoBehaviour
         gameObject.SetActive(true);
         _pendingHide = false;
 
-        if (playableDirector != null && playableDirector.playableAsset != null)
-        {
-            PlayEnterAnimation();
-        }
+        PlayEnterAnimation();
     }
 #endregion
 #region 过场动画相关
@@ -194,7 +191,8 @@ public class UIBasePanel : MonoBehaviour
         gameObject.SetActive(false);
         Destroy(gameObject);
 
-        OnCloseComplete?.Invoke();
+        // OnCloseComplete?.Invoke();
+        TriggerOnCloseComplete();
     }
     protected void HideImmediately()
     {
@@ -335,15 +333,29 @@ public class UIBasePanel : MonoBehaviour
             seq.Join(RotateFromZero(img.rectTransform, rot, rotateT));
         return seq;
     }
-
+    protected Tween FillIn(Image image, float t)
+    {
+        if (image == null) return null;
+        image.fillAmount = 0;
+        return image.DOFillAmount(1, t).From(0);
+    }
+    protected Tween FillIn(Image[] imgs, float t)
+    {
+        Sequence seq = DOTween.Sequence();
+        foreach(var i in imgs)
+        {
+            if (i == null) continue;
+            seq.Join(FillIn(i, t));
+        }
+        return seq;
+    }
     protected Tween ResetAndFillFadeIn(Image[] imgs, float t)
     {
         Sequence seq = DOTween.Sequence();
         foreach (var i in imgs)
         {
             if (i == null) continue;
-            i.fillAmount = 0;
-            seq.Join(i.DOFillAmount(1, t).From(0));
+            seq.Join(FillIn(i, t));
             seq.Join(FadeIn(i, t));
         }
         return seq;

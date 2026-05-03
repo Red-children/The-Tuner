@@ -54,8 +54,14 @@ public class UIPanelMainMenu : UIBasePanel
 
     protected override void PlayEnterAnimation()
     {
-        _isPlayingAnimation = true;
+        if (_seq != null)
+        {
+            _seq.Kill();
+            _seq = null;
+        }
+        _seq = DOTween.Sequence();
 
+        _isPlayingAnimation = true;
         _seq.Append(EnterBackgroundColor());
         _seq.Join(EnterBackgroundRedLine());
         _seq.Join(EnterBackgroundBlueLine());
@@ -94,14 +100,22 @@ public class UIPanelMainMenu : UIBasePanel
         KillAllLoopingAnimations();
 
         _seq = DOTween.Sequence();
+        _seq.OnStart(() =>
+        {
+           screenMask.enabled = true;
+        });
         _seq.Append(ExitScreenMask());
         _seq.OnComplete(() =>
         {
+            screenMask.enabled = false;
             _isPlayingAnimation = false;
-            // OnCloseComplete?.Invoke();
+            _seq.Kill();
+            _seq = null;
+            
             TriggerOnCloseComplete();
             if(destroyAfter)
                 Destroy(gameObject);
+            else HideImmediately();
         });
         _seq.SetTarget(gameObject);
     }
@@ -266,10 +280,13 @@ public class UIPanelMainMenu : UIBasePanel
         _buttonSettings = false;
         //TODO:
         Debug.Log("Button Settings Clicked");
+        RegisterOnCloseComplete(() =>
+        {
+            var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Settings);
+            panel.RegisterOnCloseComplete(OnSettingsBack);
+        });
         HidePanel();
 
-        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Settings);
-        panel.RegisterOnCloseComplete(OnSettingsBack);
     }
     void OnSettingsBack()
     {
@@ -288,6 +305,7 @@ public class UIPanelMainMenu : UIBasePanel
     void Awake()
     {
         Init();
+        exitAnimDuration = 1f;
     }
 #endregion
 }

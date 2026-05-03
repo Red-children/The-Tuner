@@ -47,11 +47,11 @@ public class PanelPlayerHurtEffect : UIBasePanel
         // EasyTest();
     }
     #endregion
-    void EasyTest()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            EventBus.Instance.Trigger<PlayerHurtEvent>(new PlayerHurtEvent());
-        }
-    }
+    // void EasyTest()
+    // {
+    //     if (Input.GetMouseButtonDown(0))
+    //     {
+    //         EventBus.Instance.Trigger<PlayerHurtEvent>(new PlayerHurtEvent());
+    //     }
+    // }
 }
