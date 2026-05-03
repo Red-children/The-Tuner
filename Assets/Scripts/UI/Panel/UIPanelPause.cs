@@ -35,6 +35,13 @@ public class UIPanelPause : UIBasePanel
     #region 覆写动画
     protected override void PlayEnterAnimation()
     {
+        if (_seq != null)
+        {
+            _seq.Kill();
+            _seq = null;
+        }
+        _seq = DOTween.Sequence();
+
         _isPlayingAnimation = true;
 
         _seq.Join(EnterBackgound());

@@ -39,6 +39,13 @@ public class UIPanelSettings : UIBasePanel
 #region 覆写动画
     protected override void PlayEnterAnimation()
     {
+        if (_seq != null)
+        {
+            _seq.Kill();
+            _seq = null;
+        }
+        _seq = DOTween.Sequence();
+
         _isPlayingAnimation = true;
         var layout = entries[0].GetComponentInParent<VerticalLayoutGroup>();
         layout.enabled = false;
@@ -61,7 +68,6 @@ public class UIPanelSettings : UIBasePanel
 
         _seq.Kill();
 
-        // if (docStar) docStar.DOKill();
     }
     protected override void PlayExitAnimation(bool destroyAfter)
     {
