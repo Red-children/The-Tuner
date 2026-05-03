@@ -25,7 +25,6 @@ public class DialogueTrigger : MonoBehaviour
     public void OnDialogueEnd(DialogueEndEvent evt)
     {
         UIManager.Instance.ClosePanel(_panel);
-        _panel.RegisterOnCloseComplete(EndDialogue);
     }
 
     private void EndDialogue()
@@ -41,6 +40,7 @@ public class DialogueTrigger : MonoBehaviour
         // 隐藏交互提示
         // 发布【进入对话】事件 → 玩家主控失活移动/攻击
         _panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
+        _panel.RegisterOnCloseComplete(EndDialogue);
         _panel.OnDialogue(dialogueData);
         EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData, playfreeze));
     }

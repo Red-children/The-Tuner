@@ -7,27 +7,23 @@ using System;
 
 public class UIBasePanel : MonoBehaviour
 {
-    private bool _isRemoved = false;
-    private string _name;
+    [Header("动画参数")]
     private Coroutine _enterCoroutine;
-
-    [Header("Timeline 动画")]
-    [SerializeField] protected PlayableDirector playableDirector;
-
-    [Header("进场开始时间")]
+    protected Sequence _seq;
+    [Tooltip("进场开始时间")]
     [SerializeField] protected float enterTime = 0f;
 
-    [Header("退场开始时间（进场结束时间）")]
+    [Tooltip("退场开始时间（进场结束时间）")]
     [SerializeField] protected float exitTime = 1f;
 
-    [Header("退场动画时长")]
+    [Tooltip("退场动画时长")]
     [SerializeField] protected float exitAnimDuration = 1f;
 #region 状态标记
     // 动画排队标记
     protected bool _isPlayingAnimation = false;
-    private bool _pendingClose = false;
     private bool _shouldBeVisible = true;
-    private bool _pendingHide = false;
+#endregion
+#region 开关回调
     protected Action OnOpenComplete;
     protected Action OnCloseComplete;
     public void RegisterOnOpenComplete(Action callback)
@@ -61,12 +57,8 @@ public class UIBasePanel : MonoBehaviour
 #region 面板操作
     public virtual void OpenPanel(string name)
     {
-        _name = name;
         _shouldBeVisible = true;
         gameObject.SetActive(true);
-        _isRemoved = false;
-        _pendingClose = false;
-        _pendingHide = false;
 
         PlayEnterAnimation();
     }
@@ -75,11 +67,8 @@ public class UIBasePanel : MonoBehaviour
     {
         if (_isPlayingAnimation)
         {
-            _pendingClose = true;
             return;
         }
-
-        _isRemoved = true;
 
         if (_enterCoroutine != null)
         {
@@ -93,21 +82,10 @@ public class UIBasePanel : MonoBehaviour
     {
         if (_isPlayingAnimation)
         {
-            _pendingHide = true;
             return;
         }
-
+        _shouldBeVisible = false;
         PlayExitAnimation(false); // 隐藏=不销毁
-    }
-
-    public virtual void HidePanel(Action onComplete = null)
-    {
-        if (_isPlayingAnimation)
-        {
-            _pendingHide = true;
-            return;
-        }
-        PlayExitAnimation(false, onComplete);
     }
 
     public virtual void ShowPanel()
@@ -115,92 +93,74 @@ public class UIBasePanel : MonoBehaviour
         if (_shouldBeVisible) return;
         _shouldBeVisible = true;
         gameObject.SetActive(true);
-        _pendingHide = false;
 
-        if (playableDirector != null && playableDirector.playableAsset != null)
-        {
-            PlayEnterAnimation();
-        }
+        PlayEnterAnimation();
     }
 #endregion
 #region 过场动画相关
     protected virtual void PlayEnterAnimation()
     {
-        if (playableDirector == null) return;
+        if (_seq != null)
+        {
+            _seq.Kill();
+            _seq = null;
+        }
+        _seq = DOTween.Sequence();
 
         _isPlayingAnimation = true;
-        playableDirector.time = enterTime;
-        playableDirector.Play();
-        _enterCoroutine = StartCoroutine(WaitAndPause(exitTime));
+        //  TODO: Add Tweens here.
+
+        _seq.OnComplete(() =>
+        {
+            _isPlayingAnimation = false;
+
+            TriggerOnOpenComplete();
+        });
+
+        _seq.SetTarget(gameObject);
+    }
+    protected virtual void KillAllLoopingAnimations()
+    {
+        if (_seq == null) return;
+
+        // _seq.Kill();
+        _seq.Complete();
+
     }
     protected virtual void PlayExitAnimation(bool destroyAfter)
     {
         _isPlayingAnimation = true;
+        KillAllLoopingAnimations();
 
-        if (playableDirector == null)
+        _seq = DOTween.Sequence();
+        _seq.OnStart(() =>
         {
+        });
+        //  TODO: Add Tweens here.
+        _seq.OnComplete(() =>
+        {
+            _isPlayingAnimation = false;
+            TriggerOnCloseComplete();
             if (destroyAfter)
-                DestroyImmediate();
-            else
-                HideImmediately();
-            return;
-        }
+                Destroy(gameObject);
+            else HideImmediately();
+        });
 
-        playableDirector.time = exitTime;
-        playableDirector.Play();
-
-        if (destroyAfter)
-            Invoke(nameof(DestroyImmediate), exitAnimDuration);
-        else
-            Invoke(nameof(HideImmediately), exitAnimDuration);
-    }
-
-    protected virtual void PlayExitAnimation(bool destroyAfter, Action onComplete = null)
-    {
-        //TODO:
-    }
-
-    private IEnumerator WaitAndPause(float waitTime)
-    {
-        yield return new WaitForSeconds(waitTime);
-
-        if (playableDirector != null)
-        {
-            playableDirector.Pause();
-        }
-
-        _isPlayingAnimation = false;
-        _enterCoroutine = null;
-
-        // 优先关闭 > 隐藏
-        if (_pendingClose)
-        {
-            _pendingClose = false;
-            ClosePanel();
-        }
-        else if (_pendingHide)
-        {
-            _pendingHide = false;
-            HidePanel();
-        }
+        _seq.SetTarget(gameObject);
     }
 
     protected void DestroyImmediate()
     {
         _isPlayingAnimation = false;
-        _pendingClose = false;
-        _pendingHide = false;
 
         gameObject.SetActive(false);
         Destroy(gameObject);
 
-        OnCloseComplete?.Invoke();
+        TriggerOnCloseComplete();
     }
     protected void HideImmediately()
     {
         _isPlayingAnimation = false;
-        _pendingClose = false;
-        _pendingHide = false;
         _shouldBeVisible = false;
 
         gameObject.SetActive(false);
@@ -335,15 +295,29 @@ public class UIBasePanel : MonoBehaviour
             seq.Join(RotateFromZero(img.rectTransform, rot, rotateT));
         return seq;
     }
-
+    protected Tween FillIn(Image image, float t)
+    {
+        if (image == null) return null;
+        image.fillAmount = 0;
+        return image.DOFillAmount(1, t).From(0);
+    }
+    protected Tween FillIn(Image[] imgs, float t)
+    {
+        Sequence seq = DOTween.Sequence();
+        foreach(var i in imgs)
+        {
+            if (i == null) continue;
+            seq.Join(FillIn(i, t));
+        }
+        return seq;
+    }
     protected Tween ResetAndFillFadeIn(Image[] imgs, float t)
     {
         Sequence seq = DOTween.Sequence();
         foreach (var i in imgs)
         {
             if (i == null) continue;
-            i.fillAmount = 0;
-            seq.Join(i.DOFillAmount(1, t).From(0));
+            seq.Join(FillIn(i, t));
             seq.Join(FadeIn(i, t));
         }
         return seq;

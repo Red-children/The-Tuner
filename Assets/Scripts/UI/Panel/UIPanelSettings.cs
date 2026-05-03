@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
@@ -13,10 +12,10 @@ public class UIPanelSettings : UIBasePanel
     // 缓存 Slider 与 SettingType 的对应关系
     private Dictionary<SettingType, Slider> _mapSlider;
     [Header("动画参数")]
-    [SerializeField] private float rotateDuration = 1f;
-    [SerializeField] private float fadeDuration = 1f;
-    [SerializeField] private float scaleDuration = 1f;
-    private Sequence _seq;
+    [SerializeField] private float rotateDuration = 0.2f;
+    [SerializeField] private float fadeDuration = 0.4f;
+    [SerializeField] private float scaleDuration = 0.3f;
+    // private Sequence _seq;
     [Header("动画组件")]
     [Header("Background")]
     [SerializeField] private Image backgroundColor;
@@ -33,27 +32,42 @@ public class UIPanelSettings : UIBasePanel
     [SerializeField] private Image foregroundDecoration;
     [SerializeField] private RectTransform transSettingPanel;
     [SerializeField] private Button[] entries;
-#endregion
+    [Header("ScreenMask")]
+    [SerializeField] private Image screenMask;
 
+#endregion
 #region 覆写动画
     protected override void PlayEnterAnimation()
     {
-        _isPlayingAnimation = true;
+        if (_seq != null)
+        {
+            _seq.Kill();
+            _seq = null;
+        }
+        _seq = DOTween.Sequence();
 
+        _isPlayingAnimation = true;
+        var layout = entries[0].GetComponentInParent<VerticalLayoutGroup>();
+        layout.enabled = false;
+        _seq.Append(EnterBackground());
+        _seq.Join(EnterButtonBack());
+        _seq.Join(EnterMidDecoration());
+        _seq.Join(EnterSettingsPanel());
+        _seq.Join(EnterEntries());
         _seq.OnComplete(() =>
         {
+            layout.enabled = true; 
             _isPlayingAnimation = false;
         });
 
         _seq.SetTarget(gameObject);
     }
-    private void KillAllLoopingAnimations()
+    protected override void KillAllLoopingAnimations()
     {
         if (_seq == null) return;
 
         _seq.Kill();
 
-        // if (docStar) docStar.DOKill();
     }
     protected override void PlayExitAnimation(bool destroyAfter)
     {
@@ -61,27 +75,87 @@ public class UIPanelSettings : UIBasePanel
         KillAllLoopingAnimations();
 
         _seq = DOTween.Sequence();
-
+        _seq.OnStart(() =>
+        {
+           screenMask.enabled = true; 
+        });
+        _seq.Join(ExitAnimation());
         _seq.OnComplete(() =>
         {
+            screenMask.enabled = false;
             _isPlayingAnimation = false;
-            // OnCloseComplete?.Invoke();
             TriggerOnCloseComplete();
             if (destroyAfter)
                 Destroy(gameObject);
+            else HideImmediately();
         });
 
         _seq.SetTarget(gameObject);
     }
 #endregion
-
+#region 过场动画
+    Tween EnterBackground()
+    {
+        if(!backgroundColor || !backgroundMask || !backgroundBlackLine) return null;
+        Sequence seq = DOTween.Sequence();
+        seq.Join(FadeIn(backgroundColor, fadeDuration));
+        seq.Join(FadeIn(backgroundMask, fadeDuration));
+        seq.Join(FadeIn(backgroundBlackLine, fadeDuration));
+        return seq;
+    }
+    Tween EnterMidDecoration()
+    {
+        if (!midLineHorBlue || !midLineHorRed || !midLineVerBlue || !midLineVerRed) return null;
+        Sequence seq =DOTween.Sequence();
+        seq.Join(FillIn(midLineHorBlue, fadeDuration));
+        seq.Join(FillIn(midLineHorRed, fadeDuration));
+        seq.Join(FillIn(midLineVerBlue, fadeDuration));
+        seq.Join(FillIn(midLineVerRed, fadeDuration));
+        return seq;
+    }
+    Tween EnterButtonBack()
+    {
+        if (buttonBack == null) return null;
+        return ScaleIn(buttonBack.transform, scaleDuration);
+    }
+    Tween EnterSettingsPanel()
+    {
+        if (!settingsBackground || !foregroundDecoration || !transSettingPanel) return null;
+        Sequence seq = DOTween.Sequence();
+        seq.Join(FadeIn(settingsBackground, fadeDuration));
+        seq.Join(FadeIn(foregroundDecoration, fadeDuration));
+        seq.Join(RotateToZero(transSettingPanel, -6, rotateDuration));
+        return seq;
+    }
+    Tween EnterEntries()
+    {
+        if (entries == null) return null;
+        Sequence seq = DOTween.Sequence();
+        foreach(var button in entries)
+        {
+            if (button == null) continue;
+            seq.Join(MoveIn(button.image.rectTransform, new Vector3(0, -100, 0), fadeDuration));
+        }
+        return seq;
+    }
+#endregion
+#region 退场动画
+    Tween ExitAnimation()
+    {
+        if (screenMask == null) return null;
+        return FadeIn(screenMask, fadeDuration);
+    }
+#endregion
 #region 生命周期
     void Awake()
     {
-        _seq = DOTween.Sequence();
+        // _seq = DOTween.Sequence();
+        exitAnimDuration = 1f;
     }
     void Start()
     {
+        buttonBack.onClick.AddListener(OnButtonBackClick);
+
         BuildSliderMap();
         LoadAllSettings();
         RegisterCallbacks();
@@ -123,6 +197,12 @@ public class UIPanelSettings : UIBasePanel
         
         SettingsManager.Instance.RegisterCallback(SettingType.SFXVolume, () => 
             sfxVolumeSlider.value = SettingsManager.Instance.GetValue(SettingType.SFXVolume));
+    }
+#endregion
+#region 按钮回调
+    public void OnButtonBackClick()
+    {
+        UIManager.Instance.ClosePanel(this);
     }
 #endregion
 }

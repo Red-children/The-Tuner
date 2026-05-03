@@ -12,13 +12,13 @@ public class UIPanelEcho : UIBasePanel
     [Header("对话文本")]
     public DialogueData dialogueData;
     //  面板动画
-    [Header("动画组件")]
     [Header("动画参数")]
-    // 动画配置（可复用，改数字就行）
+    // 动画配置
     [SerializeField] private float fadeDuration = 0.4f;
     [SerializeField] private float rotateDuration = 0.5f;
     [SerializeField] private float scaleDuration = 0.5f;
-    private Sequence _seq;
+    [Header("动画组件")]
+    // private Sequence _seq;
     [Header("红色文本框")]
     [SerializeField] private Image[] imagesMidRedBox;
     [Header("黄色文本框")]
@@ -26,11 +26,17 @@ public class UIPanelEcho : UIBasePanel
     [SerializeField] private Image[] halosForeYellowBox;
     [Header("文本组件")]
     [SerializeField] private Text[] texts;
-    // private Action _onPanelReady;
 
 #region 覆写动画
     protected override void PlayEnterAnimation()
     {
+        if (_seq != null)
+        {
+            _seq.Kill();
+            _seq = null;
+        }
+        _seq = DOTween.Sequence();
+
         _isPlayingAnimation = true;
 
         _seq.Join(EnterMidRedBox());
@@ -40,18 +46,18 @@ public class UIPanelEcho : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            // _onPanelReady?.Invoke();
-            // _onPanelReady = null;
+
             TriggerOnOpenComplete();
         });
 
         _seq.SetTarget(gameObject);
     }
 
-    void KillAllLoopingAnimations()
+    protected override void KillAllLoopingAnimations()
     {
         if(_seq == null) return;
-        _seq.Kill();
+        // _seq.Kill();
+        _seq.Complete();
     }
 
     protected override void PlayExitAnimation(bool destroyAfter)
@@ -67,10 +73,11 @@ public class UIPanelEcho : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            // OnCloseComplete?.Invoke();
+
             TriggerOnCloseComplete();
             if(destroyAfter)
                 Destroy(gameObject);
+            else HideImmediately();
         });
 
         _seq.SetTarget(gameObject);
@@ -81,7 +88,7 @@ public class UIPanelEcho : UIBasePanel
     void Awake()
     {
         exitAnimDuration = 1.2f;
-        _seq =DOTween.Sequence();
+        // _seq =DOTween.Sequence();
     }
     #endregion
 
@@ -157,16 +164,10 @@ public class UIPanelEcho : UIBasePanel
 #endregion
 
 #region 业务
-    ///  对话结束关闭面板
-    // private void OnDialogueEnd(DialogueEndEvent evt)
-    // {
-    //     UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
-    // }
     /// 显示对话UI
     private void ShowDialogue(DialogueLines lines)
     {
         gameObject.SetActive(true);
-        // _onPanelReady += () => uiCommunication.StartDialogue(lines);
         RegisterOnOpenComplete(() =>
         {
             uiCommunication.StartDialogue(lines);

@@ -12,7 +12,7 @@ public class UIPanelMainMenu : UIBasePanel
     [SerializeField] private float rotateDuration = 0.3f;
     [SerializeField] private float ScaleDuration = 0.3f;
     [SerializeField] private float MoveDuration = 0.1f;
-    private Sequence _seq;
+    // private Sequence _seq;
     // Background
     [SerializeField] private Image backgroundColor;
     [SerializeField] private Image backgroundRedLine;
@@ -42,7 +42,7 @@ public class UIPanelMainMenu : UIBasePanel
 #region 初始化
     void Init()
     {
-        _seq = DOTween.Sequence();
+        // _seq = DOTween.Sequence();
         //  绑定按钮事件
         buttonStart.onClick.AddListener(OnStartClick);
         buttonSettings.onClick.AddListener(OnSettingsClick);
@@ -54,8 +54,14 @@ public class UIPanelMainMenu : UIBasePanel
 
     protected override void PlayEnterAnimation()
     {
-        _isPlayingAnimation = true;
+        if (_seq != null)
+        {
+            _seq.Kill();
+            _seq = null;
+        }
+        _seq = DOTween.Sequence();
 
+        _isPlayingAnimation = true;
         _seq.Append(EnterBackgroundColor());
         _seq.Join(EnterBackgroundRedLine());
         _seq.Join(EnterBackgroundBlueLine());
@@ -74,13 +80,12 @@ public class UIPanelMainMenu : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            // _onPanelReady?.Invoke();
-            // _onPanelReady = null;
+            
             TriggerOnOpenComplete();
         });
         _seq.SetTarget(gameObject);
     }
-    void KillAllLoopingAnimations()
+    protected override void KillAllLoopingAnimations()
     {
         if(_seq == null) return;
         _seq.Kill();
@@ -94,14 +99,22 @@ public class UIPanelMainMenu : UIBasePanel
         KillAllLoopingAnimations();
 
         _seq = DOTween.Sequence();
+        _seq.OnStart(() =>
+        {
+           screenMask.enabled = true;
+        });
         _seq.Append(ExitScreenMask());
         _seq.OnComplete(() =>
         {
+            screenMask.enabled = false;
             _isPlayingAnimation = false;
-            // OnCloseComplete?.Invoke();
+            _seq.Kill();
+            _seq = null;
+            
             TriggerOnCloseComplete();
             if(destroyAfter)
                 Destroy(gameObject);
+            else HideImmediately();
         });
         _seq.SetTarget(gameObject);
     }
@@ -256,20 +269,32 @@ public class UIPanelMainMenu : UIBasePanel
     private bool _buttonSettings = true;
     void OnStartClick()
     {
+        if (_isPlayingAnimation) return;
+        if (!_buttonStart) return;
+        _buttonStart = false;
+
+        RegisterOnCloseComplete(() =>
+        {
+            SceneManager.LoadScene("DialogueTest");
+        });
+        UIManager.Instance.ClosePanel(this);
         //TODO:
         // SceneManager.LoadScene("Test01");
         Debug.Log("Button Start Clicked");
     }
     void OnSettingsClick()
     {
+        if (_isPlayingAnimation) return;
         if (!_buttonSettings) return;
         _buttonSettings = false;
-        //TODO:
-        Debug.Log("Button Settings Clicked");
+
+        RegisterOnCloseComplete(() =>
+        {
+            var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Settings);
+            panel.RegisterOnCloseComplete(OnSettingsBack);
+        });
         HidePanel();
 
-        var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Settings);
-        panel.RegisterOnCloseComplete(OnSettingsBack);
     }
     void OnSettingsBack()
     {
@@ -288,6 +313,7 @@ public class UIPanelMainMenu : UIBasePanel
     void Awake()
     {
         Init();
+        exitAnimDuration = 1f;
     }
 #endregion
 }

@@ -8,7 +8,7 @@ public class UIPanelPause : UIBasePanel
     [SerializeField] private float rotateDuration = 1f;
     [SerializeField] private float fadeDuration = 1f;
     [SerializeField] private float scaleDuration = 1f;
-    private Sequence _seq;
+    // private Sequence _seq;
 
     [Header("动画组件")]
     [Header("背景底色")]
@@ -35,6 +35,13 @@ public class UIPanelPause : UIBasePanel
     #region 覆写动画
     protected override void PlayEnterAnimation()
     {
+        if (_seq != null)
+        {
+            _seq.Kill();
+            _seq = null;
+        }
+        _seq = DOTween.Sequence();
+
         _isPlayingAnimation = true;
 
         _seq.Join(EnterBackgound());
@@ -52,7 +59,7 @@ public class UIPanelPause : UIBasePanel
         _seq.SetTarget(gameObject);
     }
 
-    void KillAllLoopingAnimations()
+    protected override void KillAllLoopingAnimations()
     {
         if (_seq == null) return;
 
@@ -79,10 +86,10 @@ public class UIPanelPause : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            // OnCloseComplete?.Invoke();
             TriggerOnCloseComplete();
             if (destroyAfter)
                 Destroy(gameObject);
+            else HideImmediately();
         });
 
         _seq.SetTarget(gameObject);
@@ -303,7 +310,7 @@ public class UIPanelPause : UIBasePanel
 #region 生命周期
     void Awake()
     {
-        _seq = DOTween.Sequence();
+        // _seq = DOTween.Sequence();
     }
 
 #endregion
