@@ -27,7 +27,7 @@ MonoBehaviour:
   visionBlockMask:
     serializedVersion: 2
     m_Bits: 256
-  attackAngle: 60
+  attackAngle: 180
   attackRange: 2
   attackDamage: 10
   attackOffset: {x: 1, y: 0}

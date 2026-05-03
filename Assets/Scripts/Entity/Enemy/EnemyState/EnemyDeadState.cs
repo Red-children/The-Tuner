@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using Unity.VisualScripting.FullSerializer;
 using UnityEngine;
 using UnityEngine.AI;
@@ -28,7 +29,6 @@ public class EnemyDeadState : EnemyStateBase
 
         // 触发死亡动画
         manager.animator.SetTrigger("Dead");
-        
     }
 
     public override void OnUpdate()
@@ -39,6 +39,21 @@ public class EnemyDeadState : EnemyStateBase
     public override void OnExit()
     {
 
+    }
+
+    /// <summary>
+    /// 由动画事件调用，死亡动画播放完毕后销毁敌人
+    /// </summary>
+    public void OnDeathAnimationFinished()
+    {
+        if (deathTriggered) return;
+        deathTriggered = true;
+        Debug.Log($"[{controller.name}] 死亡动画结束，销毁敌人");
+
+        if (controller.runtime?.DeadEff != null)
+           UnityEngine.Object.Instantiate(controller.runtime.DeadEff, controller.transform.position, Quaternion.identity);
+
+        UnityEngine.Object.Destroy(controller.gameObject);
     }
 }
 

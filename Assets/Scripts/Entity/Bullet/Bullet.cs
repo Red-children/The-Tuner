@@ -108,7 +108,16 @@ public class Bullet : MonoBehaviour
     /// 处理碰撞逻辑，返回 true 表示子弹应该被销毁
     /// </summary>
     private bool HandleHit(RaycastHit2D hit)
-    {
+    {   
+        // 敌人死亡
+        if (hit.collider.CompareTag("Enemy")&&hit.collider.GetComponent<EnemyController>().runtime.isDead)
+        {
+            DestroyMyself();
+            return true;
+        }
+
+
+
         DoorActivator activator = hit.collider.GetComponent<DoorActivator>();
         if (activator != null)
         {

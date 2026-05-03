@@ -24,6 +24,7 @@ public class StandardFirearm : WeaponInfo
 
         if (owner == WeaponOwner.Player)
         {
+            EventBus.Instance.Trigger(new PlayerFiredEvent());
             EventBus.Instance.Trigger(new AmmoChangedEvent
             {
                 currentAmmo = currentAmmo,

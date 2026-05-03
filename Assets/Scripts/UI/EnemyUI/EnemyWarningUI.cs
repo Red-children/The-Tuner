@@ -2,6 +2,12 @@ using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
+public struct EnemyWarningEvent
+{
+};
+
+
+
 public class EnemyWarningUI : MonoBehaviour
 {
     [Header("攻击预警")]
@@ -35,6 +41,7 @@ public class EnemyWarningUI : MonoBehaviour
     /// </summary>
     public void PlayWarning()
 {
+    EventBus.Instance.Trigger(new EnemyWarningEvent());
     gameObject.SetActive(true);
     _currentTween?.Kill();
 
