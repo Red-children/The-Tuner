@@ -9,7 +9,7 @@ public enum SettingType
 }
 
 [System.Serializable]
-public struct SettingsEntry
+public class SettingsEntry
 {
     public SettingType settingType;
     public string name;
@@ -24,20 +24,13 @@ public struct SettingsEntry
 public class SettingData : ScriptableObject
 {
     [SerializeField] private List<SettingsEntry> entries;
-    private List<SettingsEntry> Init()
+    public List<SettingsEntry> Init()
     {
         return new List<SettingsEntry>(entries);
     }
-
-    private void UpdataSettings(SettingType type, int val)
+    public void UpdateSettings(List<SettingsEntry> newEntries)
     {
-        for(int i = 0; i < entries.Count; ++i)
-        {
-            if  (entries[i].settingType != type) continue;
-            var entry = entries[i];
-            entry.amount = Mathf.Clamp(val, 0, 100);
-            entries[i] = entry;
-            break;
-        }
+        entries.Clear();
+        entries.AddRange(newEntries);
     }
 }

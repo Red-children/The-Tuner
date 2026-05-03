@@ -33,7 +33,7 @@ public class UIPanelDialogue : UIBasePanel
     [SerializeField] private Image haloMask;
     [SerializeField] private Image blackMask;
     [SerializeField] private Text[] texts;
-    private Action _onPanelReady;
+    // private Action _onPanelReady;
 #region 覆写动画
     protected override void PlayEnterAnimation()
     {
@@ -50,8 +50,9 @@ public class UIPanelDialogue : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            _onPanelReady?.Invoke();
-            _onPanelReady = null;
+            // _onPanelReady?.Invoke();
+            // _onPanelReady = null;
+            TriggerOnOpenComplete();
         });
 
         _seq.SetTarget(gameObject);
@@ -84,7 +85,8 @@ public class UIPanelDialogue : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            OnCloseComplete?.Invoke();
+            // OnCloseComplete?.Invoke();
+            TriggerOnCloseComplete();
             if(destroyAfter)
                 Destroy(gameObject);
         });
@@ -247,7 +249,11 @@ public class UIPanelDialogue : UIBasePanel
     private void ShowDialogue(DialogueLines lines)
     {
         gameObject.SetActive(true);
-        _onPanelReady += () => uiCommunication.StartDialogue(lines);
+        // _onPanelReady += () => uiCommunication.StartDialogue(lines);
+        RegisterOnOpenComplete(() =>
+        {
+            uiCommunication.StartDialogue(lines);
+        });
     }
     /// 绑定对话者
     private void BindSpeaker(string[] speakers)

@@ -57,6 +57,7 @@ public class NPCCommunication : MonoBehaviour
     /// 开始对话
     private void StartDialogue()
     {
+        if (_isInDialogue) return;
         _isInDialogue = true;
         // 隐藏交互提示
         if (_interactPrompt != null)
@@ -68,8 +69,14 @@ public class NPCCommunication : MonoBehaviour
     }
     private void OnDialogueEnd(DialogueEndEvent evt)
     {
-        _isInDialogue = false;
+        _panel.RegisterOnCloseComplete(EndDialogue);
         UIManager.Instance.ClosePanel(_panel);
+    }
+    private void EndDialogue()
+    {
+        _panel.UnregisterOnCloseComplete(EndDialogue);
+        _isInDialogue = false;
+        _panel = null;
     }
 
 #endregion
