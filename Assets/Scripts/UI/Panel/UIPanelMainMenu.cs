@@ -80,8 +80,7 @@ public class UIPanelMainMenu : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-            // _onPanelReady?.Invoke();
-            // _onPanelReady = null;
+            
             TriggerOnOpenComplete();
         });
         _seq.SetTarget(gameObject);
@@ -271,6 +270,14 @@ public class UIPanelMainMenu : UIBasePanel
     void OnStartClick()
     {
         if (_isPlayingAnimation) return;
+        if (!_buttonStart) return;
+        _buttonStart = false;
+
+        RegisterOnCloseComplete(() =>
+        {
+            SceneManager.LoadScene("DialogueTest");
+        });
+        UIManager.Instance.ClosePanel(this);
         //TODO:
         // SceneManager.LoadScene("Test01");
         Debug.Log("Button Start Clicked");
@@ -280,8 +287,7 @@ public class UIPanelMainMenu : UIBasePanel
         if (_isPlayingAnimation) return;
         if (!_buttonSettings) return;
         _buttonSettings = false;
-        //TODO:
-        Debug.Log("Button Settings Clicked");
+
         RegisterOnCloseComplete(() =>
         {
             var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Settings);

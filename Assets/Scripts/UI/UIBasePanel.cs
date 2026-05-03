@@ -108,10 +108,13 @@ public class UIBasePanel : MonoBehaviour
         _seq = DOTween.Sequence();
 
         _isPlayingAnimation = true;
+        //  TODO: Add Tweens here.
 
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
+
+            TriggerOnOpenComplete();
         });
 
         _seq.SetTarget(gameObject);
@@ -133,6 +136,7 @@ public class UIBasePanel : MonoBehaviour
         _seq.OnStart(() =>
         {
         });
+        //  TODO: Add Tweens here.
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;

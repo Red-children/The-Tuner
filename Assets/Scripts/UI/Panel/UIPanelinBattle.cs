@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,11 +6,14 @@ using UnityEngine.UI;
 public class UIPanelinBattle : UIBasePanel
 {
 #region 声明
-    // private Sequence _seq;
+    [Header("动画参数")]
+    [SerializeField] private float moveDuration = 0.3f;
+    [SerializeField] private float fadeDuration = 0.3f;
     [Header("动画组件")]
-    [SerializeField] private Transform HPBar;
-    [SerializeField] private Transform comboInfo;
-    [SerializeField] private Transform weapenInfo;
+    [SerializeField] private RectTransform HPBar;
+    [SerializeField] private RectTransform comboInfo;
+    [SerializeField] private RectTransform weapenInfo;
+    [SerializeField] private Image rankInfo;
 #endregion
 #region 覆写动画
     protected override void PlayEnterAnimation()
@@ -22,9 +26,15 @@ public class UIPanelinBattle : UIBasePanel
         _seq = DOTween.Sequence();
 
         _isPlayingAnimation = true;
+        _seq.Join(EnterHPBar());
+        _seq.Join(EnterComboInfo());
+        _seq.Join(EnterRankInfo());
+        _seq.Join(EnterWeaponInfo());
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
+
+            TriggerOnOpenComplete();
         });
 
         _seq.SetTarget(gameObject);
@@ -55,6 +65,28 @@ public class UIPanelinBattle : UIBasePanel
         });
 
         _seq.SetTarget(gameObject);
+    }
+#endregion
+#region 进场动画
+    Tween EnterHPBar()
+    {
+        if (HPBar == null) return null;
+        return MoveIn(HPBar, new Vector3(-HPBar.rect.width, 0, 0), moveDuration);
+    }
+    Tween EnterWeaponInfo()
+    {
+        if (weapenInfo == null) return null;
+        return MoveIn(weapenInfo, new Vector3(-weapenInfo.rect.width, 0, 0), moveDuration);
+    }
+    Tween EnterComboInfo()
+    {
+        if (comboInfo == null) return null;
+        return MoveIn(comboInfo, new Vector3(-comboInfo.rect.width, 0, 0), moveDuration);
+    }
+    Tween EnterRankInfo()
+    {
+        if (rankInfo == null) return null;
+        return FadeIn(rankInfo, fadeDuration);
     }
 #endregion
 #region 生命周期
