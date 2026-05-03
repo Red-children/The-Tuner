@@ -37,6 +37,7 @@ public class UIManager
             {UIConst.PlayerHurt, "PanelPlayerHurtEffect"},
             {UIConst.Pause, "PanelPause"},
             {UIConst.Echo, "PanelEcho"},
+            {UIConst.Settings, "PanelSettings"},
         };
 
         canvasModeDict = new Dictionary<string, int>
@@ -48,6 +49,7 @@ public class UIManager
             { UIConst.PlayerHurt, 0},  // 受伤 → 主Canvas
             { UIConst.Pause, 1},       // 暂停 → 系统Canvas
             { UIConst.Echo, 0},        // 对话 → 主Canvas
+            { UIConst.Settings, 1},    // 设置 → 系统Canvas
         };
         prefabDict = new Dictionary<string, GameObject>();
         panelDict = new Dictionary<string, UIBasePanel>();
@@ -61,9 +63,17 @@ public class UIManager
         public const string PlayerHurt = "UIPanelPlayerHurtEffect";
         public const string Pause = "UIPanelPause";
         public const string Echo = "UIPanelEcho";
+        public const string Settings = "UIPanelSettings";
     }
 
-
+    public UIBasePanel GetPanel(string name)
+    {
+        if (panelDict.TryGetValue(name, out var panel))
+        {
+            return panel;
+        }
+        return null;
+    }
     public UIBasePanel OpenPanel(string name)
     {
         //  检查是否已经打开
@@ -114,9 +124,10 @@ public class UIManager
         }
 
         panel.ClosePanel();
-        panel.OnCloseComplete += () => {
+        panel.RegisterOnCloseComplete(() =>
+        {
             panelDict.Remove(name);
-        };
+        });
         return true;
     }
     public bool ClosePanel(UIBasePanel panel)
@@ -132,9 +143,10 @@ public class UIManager
             }
         }
         panel.ClosePanel();
-        panel.OnCloseComplete += () => {
+        panel.RegisterOnCloseComplete(() =>
+        {
             panelDict.Remove(name);
-        };
+        });
         return true;
     }
 
