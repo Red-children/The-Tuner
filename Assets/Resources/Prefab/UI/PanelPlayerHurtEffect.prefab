@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 8971648487285029013}
   - component: {fileID: 8971648487285029000}
   - component: {fileID: 8971648487285029015}
-  - component: {fileID: 8971648487285029014}
   - component: {fileID: 4430175581249303726}
+  - component: {fileID: 8971648487285029014}
   - component: {fileID: 4806302599695643305}
   m_Layer: 5
   m_Name: PanelPlayerHurtEffect
@@ -79,22 +79,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8971648487285029014
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8971648487285029012}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 164abf6f33138d447990314defa6c4a5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enterTime: 0
-  exitTime: 1
-  exitAnimDuration: 1
-  image: {fileID: 8971648487285029015}
 --- !u!82 &4430175581249303726
 AudioSource:
   m_ObjectHideFlags: 0
@@ -191,6 +175,22 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &8971648487285029014
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8971648487285029012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 164abf6f33138d447990314defa6c4a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enterTime: 0
+  exitTime: 1
+  exitAnimDuration: 1
+  image: {fileID: 8971648487285029015}
 --- !u!114 &4806302599695643305
 MonoBehaviour:
   m_ObjectHideFlags: 0
