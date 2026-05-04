@@ -116,9 +116,5 @@ public class UIPanelinBattle : UIBasePanel
     }
 #endregion
 #region 生命周期
-    void Awake()
-    {
-
-    }
 #endregion
 }

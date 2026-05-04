@@ -1534,6 +1534,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21fec033d19eebf45b1114b47199b638, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundPlayer: {fileID: 4156547343828934787}
   enterTime: 0
   exitTime: 1
   exitAnimDuration: 0

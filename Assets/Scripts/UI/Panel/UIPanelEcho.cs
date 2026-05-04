@@ -85,8 +85,9 @@ public class UIPanelEcho : UIBasePanel
 #endregion
 
 #region 生命周期
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         exitAnimDuration = 1.2f;
         // _seq =DOTween.Sequence();
     }

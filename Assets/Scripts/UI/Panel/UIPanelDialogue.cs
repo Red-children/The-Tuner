@@ -33,7 +33,6 @@ public class UIPanelDialogue : UIBasePanel
     [SerializeField] private Image haloMask;
     [SerializeField] private Image blackMask;
     [SerializeField] private Text[] texts;
-    // private Action _onPanelReady;
 #region 覆写动画
     protected override void PlayEnterAnimation()
     {
@@ -45,7 +44,6 @@ public class UIPanelDialogue : UIBasePanel
         _seq = DOTween.Sequence();
 
         _isPlayingAnimation = true;
-
         _seq.Join(EnterBackground());
         _seq.Join(EnterBackgroundRing());
         _seq.Join(EnterMidRing());
@@ -103,8 +101,9 @@ public class UIPanelDialogue : UIBasePanel
 #endregion
 
 #region 生命周期
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         exitAnimDuration = 1.2f;
         // _seq =DOTween.Sequence();
         // EventBus.Instance.Subscribe<DialogueStartEvent>(OnDialogue);

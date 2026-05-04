@@ -308,10 +308,6 @@ public class UIPanelPause : UIBasePanel
     #endregion
 
 #region 生命周期
-    void Awake()
-    {
-        // _seq = DOTween.Sequence();
-    }
 
 #endregion
 }
