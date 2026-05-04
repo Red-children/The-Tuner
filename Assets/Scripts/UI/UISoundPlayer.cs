@@ -14,7 +14,7 @@ public class UISoundPlayer : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
     private bool isOpen = false;
     private bool isInitialized = false;
-    
+#region 生命周期
     private void Awake()
     {
         
@@ -63,7 +63,8 @@ public class UISoundPlayer : MonoBehaviour
             isOpen = false;
         }
     }
-    
+#endregion 
+#region 追踪音量变化
     private void RegisterVolumeCallback()
     {
         // 注册音效音量变化回调
@@ -77,7 +78,6 @@ public class UISoundPlayer : MonoBehaviour
             SettingsManager.Instance.UnregisterCallback(SettingType.SFXVolume, OnVolumeChanged);
         }
     }
-    
     private void OnVolumeChanged()
     {
         // 音量变化时的处理（可选，如果需要实时改变正在播放的音效）
@@ -92,7 +92,8 @@ public class UISoundPlayer : MonoBehaviour
         
         return volumePercent / 100f;
     }
-    
+#endregion
+#region private 播放音效
     private void PlayOpenSound()
     {
         if (audioSource == null)
@@ -119,8 +120,9 @@ public class UISoundPlayer : MonoBehaviour
         float currentVolume = GetCurrentVolume();
         audioSource.PlayOneShot(onCloseClip, currentVolume);
     }
-    
-    // 可选：提供公有方法供外部调用
+#endregion
+#region 对外接口
+    // 提供公有方法供外部调用
     public void PlayOpenSoundManually()
     {
         PlayOpenSound();
@@ -130,4 +132,5 @@ public class UISoundPlayer : MonoBehaviour
     {
         PlayCloseSound();
     }
+#endregion
 }
