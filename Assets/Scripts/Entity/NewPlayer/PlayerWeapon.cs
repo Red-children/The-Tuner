@@ -7,6 +7,9 @@ public class PlayerWeapon : MonoBehaviour
     public WeaponInfo[] weapons;       //玩家持有的武器列表，初始可以在编辑器里设置，也可以通过捡起武器动态添加
     public WeaponInfo currentWeapon;      //当前武器
 
+    [Header("手臂引用（统一瞄准）")]
+    public PlayerArmController armController;
+
     private int currentIndex = 0;
 
     private void Start()
@@ -31,6 +34,9 @@ public class PlayerWeapon : MonoBehaviour
         Vector2 directionMouse = Camera.main.ScreenToWorldPoint(Input.mousePosition) - currentWeapon.transform.position;
         float weaponAngle = Mathf.Atan2(directionMouse.y, directionMouse.x) * Mathf.Rad2Deg;
         currentWeapon.transform.rotation = Quaternion.Euler(0, 0, weaponAngle);
+
+        if (armController != null)
+            armController.ApplyAiming(currentWeapon.transform.position);
     }
 
     public void SwitchWeapon(int index)

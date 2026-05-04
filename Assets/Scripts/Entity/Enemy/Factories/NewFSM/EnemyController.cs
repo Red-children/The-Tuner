@@ -46,12 +46,16 @@ public class EnemyController : EnemyBase
     [Header("攻击预警UI")]
     [SerializeField] private EnemyWarningUI warningUI; // 在Inspector中拖拽敌人头顶的Canvas
 
+    private SpriteRenderer flashOverlay; // 受伤闪白覆盖层
+
     void Awake()
     {
         if (spriteRenderer == null) spriteRenderer = GetComponent<SpriteRenderer>();
         if (weapon == null) weapon = GetComponentInChildren<WeaponInfo>();
         if (warningUI == null) warningUI = GetComponentInChildren<EnemyWarningUI>(true);
         currentForward = isFacingRight ? Vector2.right : Vector2.left;
+
+        CreateFlashOverlay();
 
         // ========== 统一初始化连击碰撞体列表 ==========
         // 如果列表为空，尝试从武器子物体下自动查找所有碰撞体并填充（作为后备）
@@ -185,11 +189,11 @@ public class EnemyController : EnemyBase
             return;
         }
 
-        // 计算击退（使用之前设置的位置）
-        Vector2 knockbackDir = ((Vector2)transform.position - runtime.lastAttackerPosition).normalized;
-        float knockbackDist = GetKnockbackDistance(rank);
-        runtime.knockbackForce = knockbackDir * knockbackDist;
-        runtime.knockbackDistance = knockbackDist;
+        // // 计算击退（使用之前设置的位置）
+        // Vector2 knockbackDir = ((Vector2)transform.position - runtime.lastAttackerPosition).normalized;
+        // float knockbackDist = GetKnockbackDistance(rank);
+        // runtime.knockbackForce = knockbackDir * knockbackDist;
+        // runtime.knockbackDistance = knockbackDist;
 
         ShowDamageText(transform.position, damage, rank);
         fsm?.ChangeState(StateType.Wound);
@@ -200,16 +204,16 @@ public class EnemyController : EnemyBase
     /// </summary>
     /// <param name="rank"></param>
     /// <returns></returns>
-    private float GetKnockbackDistance(RhythmRank rank)
-    {
-        switch (rank)
-        {
-            case RhythmRank.Perfect: return 2.5f;
-            case RhythmRank.Great: return 1.5f;
-            case RhythmRank.Good: return 0.8f;
-            default: return 0f;
-        }
-    }
+    // private float GetKnockbackDistance(RhythmRank rank)
+    // {
+    //     switch (rank)
+    //     {
+    //         case RhythmRank.Perfect: return 2.5f;
+    //         case RhythmRank.Great: return 1.5f;
+    //         case RhythmRank.Good: return 0.8f;
+    //         default: return 0f;
+    //     }
+    // }
 
 
     // 显示伤害飘字
@@ -480,13 +484,76 @@ public class EnemyController : EnemyBase
         }
     }
 
+    private void CreateFlashOverlay()
+    {
+        GameObject overlayObj = new GameObject("DamageFlashOverlay");
+        overlayObj.transform.SetParent(transform);
+        overlayObj.transform.localPosition = Vector3.zero;
+        overlayObj.transform.localScale = Vector3.one;
+
+        flashOverlay = overlayObj.AddComponent<SpriteRenderer>();
+
+        Texture2D tex = new Texture2D(1, 1);
+        tex.SetPixel(0, 0, Color.white);
+        tex.Apply();
+        flashOverlay.sprite = Sprite.Create(tex, new Rect(0, 0, 1, 1), new Vector2(0.5f, 0.5f));
+
+        flashOverlay.sortingOrder = spriteRenderer != null ? spriteRenderer.sortingOrder + 1 : 10;
+        flashOverlay.sortingLayerName = spriteRenderer != null ? spriteRenderer.sortingLayerName : "Default";
+
+        Color c = Color.white;
+        c.a = 0f;
+        flashOverlay.color = c;
+    }
+
+    public void PlayDamageFlash(float duration = 0.2f)
+    {
+        if (flashOverlay == null) return;
+        StopCoroutine(nameof(DamageFlashCoroutine));
+        StartCoroutine(DamageFlashCoroutine(duration));
+    }
+
+    private System.Collections.IEnumerator DamageFlashCoroutine(float duration)
+    {
+        float half = duration * 0.5f;
+
+        float elapsed = 0f;
+        while (elapsed < half)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / half;
+            Color c = flashOverlay.color;
+            c.a = Mathf.Lerp(0f, 1f, t);
+            flashOverlay.color = c;
+            yield return null;
+        }
+
+        Color full = flashOverlay.color;
+        full.a = 1f;
+        flashOverlay.color = full;
+
+        elapsed = 0f;
+        while (elapsed < half)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / half;
+            Color c = flashOverlay.color;
+            c.a = Mathf.Lerp(1f, 0f, t);
+            flashOverlay.color = c;
+            yield return null;
+        }
+
+        Color clear = flashOverlay.color;
+        clear.a = 0f;
+        flashOverlay.color = clear;
+    }
+
     public void OnComboHit()
     {
         if (fsm.currentState is EnemyMeleeAttackState attackState && data is MeleeEnemyData meleeData)
         {
             if (meleeData.AttackPrefab != null)
             {
-                bool isFacingRight = transform.localScale.x < 0;
                 Vector2 forward = isFacingRight ? Vector2.right : Vector2.left;
                 Vector2 attackPos = (Vector2)transform.position + forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
                 Instantiate(meleeData.AttackPrefab, (Vector3)attackPos, Quaternion.identity);

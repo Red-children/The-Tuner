@@ -25,20 +25,22 @@ public class EnemyWoundState : EnemyStateBase
         Debug.Log($"[{controller.name}] 进入 Wound 状态");
         runtime.getHit = false;
 
+        controller.PlayDamageFlash(0.2f);
+
         NavMeshAgent agent = controller.agent;
         if (agent != null) agent.enabled = false;
 
         // 执行击退位移
-        if (runtime.knockbackDistance > 0f)
-        {
-            Vector2 dir = runtime.knockbackForce.normalized;
-            float dist = runtime.knockbackDistance;
-            RaycastHit2D hit = Physics2D.Raycast(manager.transform.position, dir, dist, LayerMask.GetMask("Wall"));
-            Vector2 targetPos = hit.collider != null
-                ? hit.point - dir * 0.1f
-                : (Vector2)manager.transform.position + runtime.knockbackForce;
-            manager.transform.position = targetPos;
-        }
+        // if (runtime.knockbackDistance > 0f)
+        // {
+        //     Vector2 dir = runtime.knockbackForce.normalized;
+        //     float dist = runtime.knockbackDistance;
+        //     RaycastHit2D hit = Physics2D.Raycast(manager.transform.position, dir, dist, LayerMask.GetMask("Wall"));
+        //     Vector2 targetPos = hit.collider != null
+        //         ? hit.point - dir * 0.1f
+        //         : (Vector2)manager.transform.position + runtime.knockbackForce;
+        //     manager.transform.position = targetPos;
+        // }
     }
 
     public override void OnUpdate()

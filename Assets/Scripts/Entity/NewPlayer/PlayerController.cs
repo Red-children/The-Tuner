@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     public PlayerMovement movement;
     public PlayerAttack attack;
     public PlayerDash dash;
+    public PlayerArmController arm;
 
     // ��ѡ�Ķ���ģ�飬�������
     //public PlayerAnimation animation;

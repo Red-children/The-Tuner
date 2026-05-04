@@ -42,7 +42,7 @@ public class PlayerAnimation : MonoBehaviour
         float moveY = Input.GetAxis("Vertical");
         bool isMoving = Mathf.Abs(moveX) > 0.1f || Mathf.Abs(moveY) > 0.1f;
 
-        animator.SetBool("isMoving", isMoving);
+       // animator.SetBool("isMoving", isMoving);
 
         if (playerMovement != null)
             playerMovement.SetMovementInput(moveX, moveY);
@@ -67,5 +67,17 @@ public class PlayerAnimation : MonoBehaviour
     public void OnChargeAnimationEnd()
     {
         animator.SetBool("isCharging", false);
+    }
+
+    public void PlayBodyAttack()
+    {
+        if (animator != null)
+            animator.SetTrigger("BodyAttack");
+    }
+
+    public void OnBodyAttackAnimationEnd()
+    {
+        if (animator != null)
+            animator.ResetTrigger("BodyAttack");
     }
 }
