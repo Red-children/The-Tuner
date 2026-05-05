@@ -1,23 +1,19 @@
-using System.Collections;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "BossData", menuName = "Data/BossData")]
+[CreateAssetMenu(fileName = "BossData", menuName = "Enemy/Boss Data")]
 public class BossData : MeleeEnemyData
 {
-    [Header("Boss特有属性")]
-    public float specialAttackDamage = 20f;
-    public float phaseChangeHealthThreshold = 0.5f;
-    public float normalAttackRange = 10f;
+    [Header("Boss 远程攻击")]
+    public float rangedAttackRange = 12f;
+    public float rangedAttackDamage = 15f;
+    public GameObject rangedProjectilePrefab;
+    public float rangedAttackCooldown = 3f;
 
-    [Header("架势系统")]
-    public float maxPosture = 100f;
-    public float postureRegenRate = 10f;
-    public float postureRegenDelay = 2f;
-    public float staggerDuration = 3f;
-    public float postureDamageMultiplier = 1f;
+    [Header("Boss 近战攻击")]
+    public float meleeAttackRange = 3f;
+    public float meleeAttackDamage = 25f;
 
-    [Header("技能配置")]
-    public float skillCooldown = 8f;
-    public float skillMinRange = 3f;
-    public float skillMaxRange = 8f;
+    [Header("半血召唤")]
+    public float summonHealthThreshold = 0.5f;
+    public bool hasSummoned = false;
 }

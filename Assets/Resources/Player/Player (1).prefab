@@ -1,36 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &5558824342449270
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5558824342449271}
-  m_Layer: 0
-  m_Name: FirstPos
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5558824342449271
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5558824342449270}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1649, y: 220, z: -0.0058879703}
-  m_LocalScale: {x: 10, y: 10, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 2258368143974959876}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5558825125755750
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,7 +164,7 @@ Transform:
   - {fileID: 2258368144997990828}
   - {fileID: 5558825301138241}
   m_Father: {fileID: 2258368143974959876}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2258368143974959877
 GameObject:
@@ -242,7 +211,6 @@ Transform:
   m_LocalScale: {x: 0.1, y: 0.1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 5558824342449271}
   - {fileID: 5558825355844136}
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -386,6 +354,7 @@ MonoBehaviour:
   - {fileID: 5558825030301081}
   - {fileID: 5558825301138255}
   currentWeapon: {fileID: 0}
+  armController: {fileID: 0}
 --- !u!114 &2258368143974959884
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -398,6 +367,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02b3c79a1c9c6e04f8e6c69b4af61ef3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerAnimation: {fileID: 0}
+  playerLeg: {fileID: 0}
+  playerArm: {fileID: 0}
+  idleArm: {fileID: 0}
 --- !u!114 &2258368143974959886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -511,6 +484,7 @@ MonoBehaviour:
   movement: {fileID: 0}
   attack: {fileID: 0}
   dash: {fileID: 0}
+  arm: {fileID: 0}
   isDead: 0
 --- !u!114 &2258368143974959892
 MonoBehaviour:

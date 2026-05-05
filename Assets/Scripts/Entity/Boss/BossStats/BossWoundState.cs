@@ -28,23 +28,38 @@ public class BossWoundState : EnemyStateBase
                 return;
             }
 
-            if (bossData != null && ShouldChangePhase())
+            if (bossData != null && ShouldSummonMinions())
             {
-                manager.ChangeState(StateType.PhaseChange);
-                return;
+                SummonMinions();
             }
 
             if (runtime.target != null)
                 manager.ChangeState(StateType.Chase);
             else
-                manager.ChangeState(StateType.Idle);
+                manager.ChangeState(StateType.Patrol);
         }
     }
 
-    private bool ShouldChangePhase()
+    private bool ShouldSummonMinions()
     {
+        if (bossData.hasSummoned) return false;
         float healthPercent = runtime.currentHealth / bossData.health;
-        return healthPercent <= bossData.phaseChangeHealthThreshold;
+        return healthPercent <= bossData.summonHealthThreshold;
+    }
+
+    private void SummonMinions()
+    {
+        bossData.hasSummoned = true;
+
+        if (controller.ownerRoom != null && controller.ownerRoom.waveManager != null)
+        {
+            controller.ownerRoom.waveManager.StartWave(controller.ownerRoom);
+            Debug.Log($"[{controller.name}] 半血召唤！通知房间生成小怪");
+        }
+        else
+        {
+            Debug.LogWarning($"[{controller.name}] 无法召唤：ownerRoom 或 waveManager 为空");
+        }
     }
 
     public override void OnExit() { }

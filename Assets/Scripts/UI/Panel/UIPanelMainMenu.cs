@@ -275,7 +275,7 @@ public class UIPanelMainMenu : UIBasePanel
 
         RegisterOnCloseComplete(() =>
         {
-            SceneManager.LoadScene("DialogueTest");
+            SceneManager.LoadScene("The_Inner_World");
         });
         UIManager.Instance.ClosePanel(this);
         //TODO:

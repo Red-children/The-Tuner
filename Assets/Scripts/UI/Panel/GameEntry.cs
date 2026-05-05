@@ -10,6 +10,6 @@ public class GameEntry : MonoBehaviour
     }
     void Start()
     {
-        // UIManager.Instance.OpenPanel(UIManager.UIConst.MainMenu);
+         UIManager.Instance.OpenPanel(UIManager.UIConst.MainMenu);
     }
 }

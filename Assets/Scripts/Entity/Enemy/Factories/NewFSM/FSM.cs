@@ -18,9 +18,7 @@ public enum StateType
     NoiseScreamAttack,    // 噪声嘶吼释放
     NoiseStun,             // 噪声眩晕（被完美打断）
     Confused,   // 疑惑状态：丢失视野后短暂停留，尝试重新发现玩家
-    PhaseChange, // Boss阶段切换
-    Skill,       // Boss技能释放
-
+    BossRangedAttack, // Boss远程攻击
 }
 #endregion
 
@@ -82,11 +80,9 @@ public class FSM : MonoBehaviour
         if (Data is BossData)
         {
             states[StateType.Chase] = new BossChaseState(this);
-            states[StateType.Attack] = new BossAttackState(this);
             states[StateType.Wound] = new BossWoundState(this);
             states[StateType.Dead] = new BossDeadState(this);
-            states.Add(StateType.PhaseChange, new BossPhaseChangeState(this));
-            states.Add(StateType.Skill, new BossSkillState(this));
+            states.Add(StateType.BossRangedAttack, new BossRangedAttackState(this));
         }
 
         ChangeState(StateType.Idle);

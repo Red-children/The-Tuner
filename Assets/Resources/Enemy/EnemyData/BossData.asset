@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39f4b8c9b057b0741bd59ef71c30b77f, type: 3}
+  m_Name: BossData
+  m_EditorClassIdentifier: 
+  health: 1000
+  moveSpeed: 5
+  chaseSpeed: 7
+  idleTime: 2
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  damageTextPrefab: {fileID: 0}
+  deadEff: {fileID: 0}
+  patrolRadius: 5
+  visionAngle: 180
+  visionRange: 10
+  visionBlockMask:
+    serializedVersion: 2
+    m_Bits: 0
+  attackAngle: 180
+  attackRange: 1.5
+  attackDamage: 10
+  attackOffset: {x: 1, y: 0}
+  approachDistance: 0
+  stopMinRange: 0
+  Atk: 10
+  maxChaseDistance: 15
+  AttackPrefab: {fileID: 0}
+  rangedAttackRange: 12
+  rangedAttackDamage: 15
+  rangedProjectilePrefab: {fileID: 0}
+  rangedAttackCooldown: 3
+  meleeAttackRange: 3
+  meleeAttackDamage: 25
+  summonHealthThreshold: 0.5
+  hasSummoned: 1
