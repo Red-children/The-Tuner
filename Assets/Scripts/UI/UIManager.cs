@@ -74,7 +74,7 @@ public class UIManager
         }
         return null;
     }
-    public UIBasePanel OpenPanel(string name)
+    public UIBasePanel OpenPanel(string name, bool visible)
     {
         //  检查是否已经打开
         UIBasePanel panel = null;
@@ -110,8 +110,12 @@ public class UIManager
         GameObject panelObject = GameObject.Instantiate(panelPrefab, parent, false);
         panel = panelObject.GetComponent<UIBasePanel>();
         panelDict.Add(name, panel);
-        panel.OpenPanel(name);
+        panel.OpenPanel(name, visible);
         return panel;
+    }
+    public UIBasePanel OpenPanel(string name)
+    {
+        return OpenPanel(name, true);
     }
 
     public bool ClosePanel(string name)

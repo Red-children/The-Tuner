@@ -1255,7 +1255,7 @@ MonoBehaviour:
   - {fileID: 4786531089688495597}
   - {fileID: 4786531088957413854}
   docRibbon: {fileID: 4786531089250850114}
-  buttonContinue: {fileID: 0}
+  buttonContinue: {fileID: 4786531088049818734}
   buttonReturn: {fileID: 4786531089196782945}
   buttonReset: {fileID: 4786531088920892673}
 --- !u!114 &8991899914579085762

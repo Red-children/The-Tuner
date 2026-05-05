@@ -63,13 +63,18 @@ public class UIBasePanel : MonoBehaviour
     }
 #endregion
 #region 面板操作
-    public virtual void OpenPanel(string name)
+    public virtual void OpenPanel(string name, bool visible)
     {
-        _shouldBeVisible = true;
-        gameObject.SetActive(true);
+        _shouldBeVisible = visible;
+        gameObject.SetActive(visible);
+        if (!visible) return;
         if (soundPlayer)
             soundPlayer.PlayOpenSoundManually();
         PlayEnterAnimation();
+    }
+    public virtual void OpenPanel(string name)
+    {
+        OpenPanel(name, true);
     }
 
     public virtual void ClosePanel()

@@ -270,12 +270,12 @@ public class UIPanelPause : UIBasePanel
 
         Sequence seq = DOTween.Sequence();
 
-        seq.Join(FadeOut(buttonContinue.image, 1f));
-        seq.Join(ScaleOut(buttonContinue.transform, 1f));
-        seq.Join(FadeOut(buttonReset.image, 1f));
-        seq.Join(ScaleOut(buttonReset.transform, 1f));
-        seq.Join(FadeOut(buttonReturn.image, 1f));
-        seq.Join(ScaleOut(buttonReturn.transform, 1f));
+        seq.Join(FadeOut(buttonContinue.image, fadeDuration));
+        seq.Join(ScaleOut(buttonContinue.transform, scaleDuration));
+        seq.Join(FadeOut(buttonReset.image, fadeDuration));
+        seq.Join(ScaleOut(buttonReset.transform, scaleDuration));
+        seq.Join(FadeOut(buttonReturn.image, fadeDuration));
+        seq.Join(ScaleOut(buttonReturn.transform, scaleDuration));
         return seq;
     }
 
