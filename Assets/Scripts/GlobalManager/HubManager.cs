@@ -33,6 +33,11 @@ public class HubManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
+    void Start()
+    {
+        UIManager.Instance.OpenPanel(UIManager.UIConst.Battle);
+
+    }
 
     public ChapterTarget GetCurrentTarget()
     {

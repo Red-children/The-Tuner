@@ -1,57 +1,48 @@
 using UnityEngine;
 
-public class BossChaseState : IState
+public class BossChaseState : EnemyStateBase
 {
-    private BossController controller;
-    private BossFSM fsm;
-    private BossRuntime runtime;
+    private BossData bossData;
 
-    public BossChaseState(BossController bossController)
+    public BossChaseState(FSM manager) : base(manager) { }
+
+    public override void OnStart()
     {
-        controller = bossController;
-        fsm = bossController.manager;
-        runtime = bossController.runtime;
+        bossData = data as BossData;
+        manager.animator.SetTrigger("Move");
+        controller.agent.speed = data.chaseSpeed;
     }
 
-    public void OnStart()
+    public override void OnUpdate()
     {
-        Debug.Log("Boss 进入 Chase 状态");
-    }
+        if (runtime.getHit) { manager.ChangeState(StateType.Wound); return; }
+        if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
-    public void OnUpdate()
-    {
-        // 没有目标就回 Idle
-        if (runtime.target == null)
-        {
-            fsm.ChangeState(StateType.Idle);
-            return;
-        }
+        controller.FaceTarget(runtime.target.position);
+        controller.agent.SetDestination(runtime.target.position);
 
-        // 如果受到伤害，切到 Wound（后面实现）
-        if (runtime.getHit)
-        {
-            fsm.ChangeState(StateType.Wound);
-            return;
-        }
-
-        // 计算方向并移动
-        Vector2 direction = (runtime.target.position - controller.transform.position).normalized;
-        controller.transform.Translate(direction * runtime.currentChaseSpeed * Time.deltaTime);
-
-        // 翻转精灵
-        if (direction.x != 0)
-            controller.spriteRenderer.flipX = direction.x < 0;
-
-        // 如果距离小于攻击范围，切到 Attack（后面实现）
         float distance = Vector2.Distance(controller.transform.position, runtime.target.position);
-        if (distance <= runtime.Data.normalAttackRange) // 注意：BossData 里要有 normalAttackRange
+
+        if (bossData == null) return;
+
+        if (distance <= bossData.meleeAttackRange)
         {
-            fsm.ChangeState(StateType.Attack);
+            manager.ChangeState(StateType.Approach);
+            return;
+        }
+
+        if (distance <= bossData.rangedAttackRange)
+        {
+            if (Random.value > 0.5f)
+            {
+                manager.ChangeState(StateType.Approach);
+            }
+            else
+            {
+                manager.ChangeState(StateType.BossRangedAttack);
+            }
         }
     }
 
-    public void OnExit()
-    {
-        Debug.Log("Boss 退出 Chase 状态");
-    }
+    public override void OnExit() { }
 }

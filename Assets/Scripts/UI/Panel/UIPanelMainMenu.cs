@@ -272,7 +272,7 @@ public class UIPanelMainMenu : UIBasePanel
         soundPlayer.PlayClickSoundManually();
         RegisterOnCloseComplete(() =>
         {
-            SceneManager.LoadScene("DialogueTest");
+            SceneManager.LoadScene("The_Inner_World");
         });
         UIManager.Instance.ClosePanel(this);
         Debug.Log("Button Start Clicked");

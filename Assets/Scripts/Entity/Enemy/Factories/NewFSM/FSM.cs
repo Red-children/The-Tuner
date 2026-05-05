@@ -18,7 +18,7 @@ public enum StateType
     NoiseScreamAttack,    // 噪声嘶吼释放
     NoiseStun,             // 噪声眩晕（被完美打断）
     Confused,   // 疑惑状态：丢失视野后短暂停留，尝试重新发现玩家
-
+    BossRangedAttack, // Boss远程攻击
 }
 #endregion
 
@@ -75,14 +75,15 @@ public class FSM : MonoBehaviour
         
             states.Add(StateType.NoiseScreamAttack, new NoiseScreamAttackState(this));
             states.Add(StateType.NoiseStun, new NoiseStunState(this));
-            foreach (var state in states)
-            {
-                Debug.Log($"噪声已注册状态: {state.Key} -> {state.Value.GetType().Name}");
-            }
         }
 
-        
-        // 未来可以继续添加其他精英怪的状态注册
+        if (Data is BossData)
+        {
+            states[StateType.Chase] = new BossChaseState(this);
+            states[StateType.Wound] = new BossWoundState(this);
+            states[StateType.Dead] = new BossDeadState(this);
+            states.Add(StateType.BossRangedAttack, new BossRangedAttackState(this));
+        }
 
         ChangeState(StateType.Idle);
     }
@@ -92,6 +93,11 @@ public class FSM : MonoBehaviour
         currentState?.OnExit();
         currentState = states[newState];
         currentState.OnStart();
+    }
+
+    public void RegisterState(StateType type, IState state)
+    {
+        states[type] = state;
     }
 
     void Update()

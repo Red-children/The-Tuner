@@ -84,11 +84,21 @@ public class PlayerDash : MonoBehaviour
         {
             float t = elapsed / duration;
             float curveT = dashCurve.Evaluate(t);
-            transform.position = Vector3.Lerp(start, target, curveT);
+            Vector3 nextPos = Vector3.Lerp(start, target, curveT);
+            
+            // 每帧检测墙体碰撞
+            RaycastHit2D hit = Physics2D.Linecast(transform.position, nextPos, LayerMask.GetMask("Wall"));
+            if (hit.collider != null)
+            {
+                // 碰到墙体，停止冲刺
+                transform.position = hit.point - (Vector2)(nextPos - transform.position).normalized * 0.1f;
+                break;
+            }
+            
+            transform.position = nextPos;
             elapsed += Time.deltaTime;
             yield return null;
         }
-        transform.position = target;
 
         isDashing = false;
     }

@@ -1,74 +1,66 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-using UnityEngine;
-
-[System.Serializable]
-public class BossWoundState : IState
+public class BossWoundState : EnemyStateBase
 {
-    private BossController controller;
-    private BossFSM fsm;
-    private BossRuntime runtime;
-
+    private BossData bossData;
     private float timer;
-    private float stunDuration = 0.5f; // Ӳֱʱ�䣬������
+    private float stunDuration = 0.5f;
 
-    public BossWoundState(BossController bossController)
-    {
-        controller = bossController;
-        fsm = bossController.manager;
-        runtime = bossController.runtime;
-    }
+    public BossWoundState(FSM manager) : base(manager) { }
 
-    public void OnStart()
+    public override void OnStart()
     {
-        Debug.Log("Boss ���� Wound ״̬");
-        runtime.getHit = false; // �����ܻ���ǣ������ٴν���
+        bossData = data as BossData;
+        manager.animator.SetTrigger("Wound");
+        runtime.getHit = false;
         timer = 0f;
-
-        // ���ڴ˲����ܻ�����
-        // controller.animator?.SetTrigger("Hurt");
     }
 
-    public void OnUpdate()
+    public override void OnUpdate()
     {
         timer += Time.deltaTime;
 
-        // Ӳֱ�������ж���һ��
         if (timer >= stunDuration)
         {
             if (runtime.currentHealth <= 0)
             {
-                fsm.ChangeState(StateType.Dead);
+                manager.ChangeState(StateType.Dead);
                 return;
             }
 
-            // ����Ƿ���Ҫ�л��׶Σ�Ѫ��������ֵ��
-            if (ShouldChangePhase())
+            if (bossData != null && ShouldSummonMinions())
             {
-                // ����н׶��л�״̬�����й�ȥ������ֱ�ӻ� Chase
-                // fsm.ChangeState(StateType.PhaseChange);
-                // return;
+                SummonMinions();
             }
 
-            // ��Ŀ����׷����Ŀ���� Idle
             if (runtime.target != null)
-                fsm.ChangeState(StateType.Chase);
+                manager.ChangeState(StateType.Chase);
             else
-                fsm.ChangeState(StateType.Idle);
+                manager.ChangeState(StateType.Patrol);
         }
     }
 
-    public void OnExit()
+    private bool ShouldSummonMinions()
     {
-        Debug.Log("Boss �˳� Wound ״̬");
+        if (bossData.hasSummoned) return false;
+        float healthPercent = runtime.currentHealth / bossData.health;
+        return healthPercent <= bossData.summonHealthThreshold;
     }
 
-    private bool ShouldChangePhase()
+    private void SummonMinions()
     {
-        if (runtime.Data == null) return false;
-        float healthPercent = runtime.currentHealth / runtime.Data.health;
-        return healthPercent <= runtime.Data.phaseChangeHealthThreshold;
+        bossData.hasSummoned = true;
+
+        if (controller.ownerRoom != null && controller.ownerRoom.waveManager != null)
+        {
+            controller.ownerRoom.waveManager.StartWave(controller.ownerRoom);
+            Debug.Log($"[{controller.name}] 半血召唤！通知房间生成小怪");
+        }
+        else
+        {
+            Debug.LogWarning($"[{controller.name}] 无法召唤：ownerRoom 或 waveManager 为空");
+        }
     }
+
+    public override void OnExit() { }
 }

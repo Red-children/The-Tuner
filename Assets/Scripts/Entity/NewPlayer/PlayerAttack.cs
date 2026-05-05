@@ -1,8 +1,15 @@
 using UnityEngine;
 
+public struct PlayerAttackEventStruct{}
+
+
 public class PlayerAttack : MonoBehaviour
 {
     private PlayerWeapon playerWeapon;
+    public PlayerAnimation playerAnimation;
+    public PlayerLegController playerLeg;
+    public PlayerArmController playerArm;
+    public PlayerIdleArmController idleArm;
 
     private void Awake()
     {
@@ -27,9 +34,14 @@ public class PlayerAttack : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 bassCannon.StartCharge();
+                playerAnimation?.PlayBodyAttack();
+                playerArm?.PlayArmAttack();
+                idleArm?.PlayArmAttack();
+                
             }
             if (Input.GetMouseButtonUp(0))
             {
+
                 bassCannon.ReleaseCharge();
             }
         }
@@ -38,6 +50,9 @@ public class PlayerAttack : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 currentWeapon.HandleFireInput();
+                playerAnimation?.PlayBodyAttack();
+                playerArm?.PlayArmAttack();
+                idleArm?.PlayArmAttack();
             }
         }
     }
@@ -46,8 +61,10 @@ public class PlayerAttack : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.V))
         {
-            // 近战攻击逻辑
-            // 这里可以触发近战动画事件
+            playerAnimation?.PlayBodyAttack();
+            playerArm?.PlayArmAttack();
+            idleArm?.PlayArmAttack();
+            playerLeg?.PlayLegAttack();
         }
     }
 }
