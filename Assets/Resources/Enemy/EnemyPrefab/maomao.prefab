@@ -352,6 +352,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPursuing: 0
   ignoreTargetUntilTime: 0
+  isDead: 0
   target: {fileID: 0}
   getHit: 0
   currentHealth: 0

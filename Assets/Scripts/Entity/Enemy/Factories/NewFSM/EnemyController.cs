@@ -41,7 +41,7 @@ public class EnemyController : EnemyBase
     // 运行时数据
     [SerializeField] public EnemyRuntime runtime; // 运行时数据，包含当前状态、目标等动态信息
     //状态机实例
-    [SerializeField] private FSM fsm;
+    [SerializeField] public  FSM fsm;
 
     [Header("攻击预警UI")]
     [SerializeField] private EnemyWarningUI warningUI; // 在Inspector中拖拽敌人头顶的Canvas
@@ -132,7 +132,7 @@ public class EnemyController : EnemyBase
     /// 判断敌人类型并返回对应的状态工厂
     /// </summary>
     /// <returns></returns>
-    private IStateFactory GetStateFactory()
+    protected virtual IStateFactory GetStateFactory()
     {
         if (data is MeleeEnemyData) return new MeleeStateFactory();
         if (data is RangedEnemyData) return new RangedStateFactory();

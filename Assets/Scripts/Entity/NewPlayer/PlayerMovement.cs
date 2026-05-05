@@ -7,7 +7,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isStunned = false;
 
     private float rayLengthX = 0.9f;
-    private float rayLengthY = 0.9f;
+    private float rayLengthY = 1.2f;
 
     private float currentMoveX = 0f;
     private float currentMoveY = 0f;

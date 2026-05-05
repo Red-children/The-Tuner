@@ -1,20 +1,19 @@
 using UnityEngine;
 
+public struct PlayerAttackEventStruct{}
+
+
 public class PlayerAttack : MonoBehaviour
 {
     private PlayerWeapon playerWeapon;
-    private PlayerAnimation playerAnimation;
-    private PlayerLegController playerLeg;
-    private PlayerArmController playerArm;
-    private PlayerIdleArmController idleArm;
+    public PlayerAnimation playerAnimation;
+    public PlayerLegController playerLeg;
+    public PlayerArmController playerArm;
+    public PlayerIdleArmController idleArm;
 
     private void Awake()
     {
         playerWeapon = GetComponent<PlayerWeapon>();
-        playerAnimation = GetComponent<PlayerAnimation>();
-        playerLeg = GetComponent<PlayerLegController>();
-        playerArm = GetComponent<PlayerArmController>();
-        idleArm = GetComponent<PlayerIdleArmController>();
     }
 
     private void Update()
@@ -38,9 +37,11 @@ public class PlayerAttack : MonoBehaviour
                 playerAnimation?.PlayBodyAttack();
                 playerArm?.PlayArmAttack();
                 idleArm?.PlayArmAttack();
+                
             }
             if (Input.GetMouseButtonUp(0))
             {
+
                 bassCannon.ReleaseCharge();
             }
         }
