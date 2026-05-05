@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -61,11 +62,21 @@ public class PlayerController : MonoBehaviour
     private void OnPlayerDied(PlayerDiedEvent evt)
     {
         isDead = true;
-        // ���ý���ģ��
+        // 禁用控制模块
         movement.enabled = false;
         attack.enabled = false;
         dash.enabled = false;
-        // �ɴ�����Ϸ���������
+        
+        // 延迟2秒后返回主菜单
+        StartCoroutine(ReturnToMainMenuAfterDelay());
+    }
+    
+    private IEnumerator ReturnToMainMenuAfterDelay()
+    {
+        yield return new WaitForSeconds(2f);
+        
+        // 返回主菜单场景
+        SceneManager.LoadScene("MainMenu");
     }
 
 }

@@ -36,7 +36,7 @@ public class HubManager : MonoBehaviour
     void Start()
     {
         UIManager.Instance.OpenPanel(UIManager.UIConst.Battle);
-
+        UIManager.Instance.OpenPanel(UIManager.UIConst.Crosshair);
     }
 
     public ChapterTarget GetCurrentTarget()

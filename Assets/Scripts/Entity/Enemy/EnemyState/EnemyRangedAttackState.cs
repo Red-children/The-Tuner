@@ -29,8 +29,8 @@ public class EnemyRangedAttackState : EnemyStateBase
         float distance = Vector2.Distance(manager.transform.position, runtime.target.position);
         float attackRange = (controller.data as RangedEnemyData).attackRange;
 
-        //距离过近或者过远都切换到接近状态
-        if (distance > attackRange || distance < attackRange * 0.6f)
+        // 距离过远切换到接近状态（与接近状态判断一致）
+        if (distance > attackRange)
         {
             manager.ChangeState(StateType.Approach);
             return;
@@ -44,12 +44,25 @@ public class EnemyRangedAttackState : EnemyStateBase
             return;
         }
 
+        // 调试信息：显示武器状态
+        Debug.Log($"[{controller.name}] 武器状态: weapon={controller.weapon != null}, firePoint={controller.weapon.firePoint != null}, projectilePrefab={controller.weapon.GetComponent<EnemyRangedWeapon>()?.projectilePrefab != null}");
+
+        // 直接瞄准目标方向（不转向）
+        Vector2 direction = (runtime.target.position - controller.transform.position).normalized;
+        
+        // 根据方向设置武器朝向
+        if (controller.weapon.firePoint != null)
+        {
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            controller.weapon.firePoint.rotation = Quaternion.Euler(0, 0, angle);
+        }
+
         // 执行攻击逻辑（带冷却时间）
         if (Time.time >= lastAttackTime + attackCooldown)
         {
+            Debug.Log($"[{controller.name}] 执行远程攻击，伤害: {((controller.data) as RangedEnemyData).Atk}");
             controller.weapon.Shoot(((controller.data) as RangedEnemyData).Atk, 1, RhythmRank.Good);
             lastAttackTime = Time.time;
-            Debug.Log($"[{controller.name}] 远程攻击，伤害: {((controller.data) as RangedEnemyData).Atk}");
         }
     }
 
