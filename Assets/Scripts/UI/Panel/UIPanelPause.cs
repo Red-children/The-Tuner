@@ -6,9 +6,9 @@ using Image = UnityEngine.UI.Image;
 public class UIPanelPause : UIBasePanel
 {
     [Header("动画参数")]
-    [SerializeField] private float rotateDuration = 1f;
-    [SerializeField] private float fadeDuration = 1f;
-    [SerializeField] private float scaleDuration = 1f;
+    [SerializeField] private float rotateDuration = 0.4f;
+    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private float scaleDuration = 0.3f;
     // private Sequence _seq;
 
     [Header("动画组件")]

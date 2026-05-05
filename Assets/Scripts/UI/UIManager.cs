@@ -38,6 +38,7 @@ public class UIManager
             {UIConst.Pause, "PanelPause"},
             {UIConst.Echo, "PanelEcho"},
             {UIConst.Settings, "PanelSettings"},
+            {UIConst.Loading, "PanelLoading"},
         };
 
         canvasModeDict = new Dictionary<string, int>
@@ -50,6 +51,7 @@ public class UIManager
             { UIConst.Pause, 1},       // 暂停 → 系统Canvas
             { UIConst.Echo, 0},        // 对话 → 主Canvas
             { UIConst.Settings, 1},    // 设置 → 系统Canvas
+            { UIConst.Loading, 1},     // 加载 → 系统Canvas
         };
         prefabDict = new Dictionary<string, GameObject>();
         panelDict = new Dictionary<string, UIBasePanel>();
@@ -64,6 +66,7 @@ public class UIManager
         public const string Pause = "UIPanelPause";
         public const string Echo = "UIPanelEcho";
         public const string Settings = "UIPanelSettings";
+        public const string Loading = "UIPanelLoading";
     }
 
     public UIBasePanel GetPanel(string name)
