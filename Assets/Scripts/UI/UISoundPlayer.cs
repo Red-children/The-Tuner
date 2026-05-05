@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Audio;
 
@@ -7,6 +8,8 @@ public class UISoundPlayer : MonoBehaviour
     [Header("音效配置")]
     [SerializeField] private AudioClip onOpenClip;    // 打开音效
     [SerializeField] private AudioClip onCloseClip;   // 关闭音效
+    [SerializeField] private AudioClip onButtonHoverClip;   //  按钮悬停音效
+    [SerializeField] private AudioClip OnClickClip;   // 点击音效
     
     [Header("Audio Mixer(可选)")]
     [SerializeField] private AudioMixerGroup mixerGroup;
@@ -107,18 +110,20 @@ public class UISoundPlayer : MonoBehaviour
             Debug.LogWarning($"UISoundPlayer: 预制体 {gameObject.name} 未配置打开音效");
             return;
         }
-        
-        float currentVolume = GetCurrentVolume();
-        audioSource.PlayOneShot(onOpenClip, currentVolume);
+
+        PlaySound(onOpenClip, GetCurrentVolume());
     }
     
     private void PlayCloseSound()
     {
+        PlaySound(onCloseClip, GetCurrentVolume());
+    }
+    private void PlaySound(AudioClip clip, float volume)
+    {
         if (audioSource == null) return;
         if (onCloseClip == null) return;
         
-        float currentVolume = GetCurrentVolume();
-        audioSource.PlayOneShot(onCloseClip, currentVolume);
+        audioSource.PlayOneShot(clip, volume);
     }
 #endregion
 #region 对外接口
@@ -131,6 +136,18 @@ public class UISoundPlayer : MonoBehaviour
     public void PlayCloseSoundManually()
     {
         PlayCloseSound();
+    }
+    public void PlayHoverSoundManually()
+    {
+        PlaySoundManually(onButtonHoverClip);
+    }
+    public void PlayClickSoundManually()
+    {
+        PlaySoundManually(OnClickClip);
+    }
+    public void PlaySoundManually(AudioClip clip)
+    {
+        PlaySound(clip, GetCurrentVolume());
     }
 #endregion
 }

@@ -6,13 +6,12 @@ using DG.Tweening;
 
 public class UIPanelMainMenu : UIBasePanel
 {
-    [Header("动画组件")]
     [Header("动画参数")]
     [SerializeField] private float fadeDuration = 0.2f;
     [SerializeField] private float rotateDuration = 0.3f;
     [SerializeField] private float ScaleDuration = 0.3f;
     [SerializeField] private float MoveDuration = 0.1f;
-    // private Sequence _seq;
+    [Header("动画组件")]
     // Background
     [SerializeField] private Image backgroundColor;
     [SerializeField] private Image backgroundRedLine;
@@ -36,9 +35,7 @@ public class UIPanelMainMenu : UIBasePanel
     [SerializeField] private Image target;
     // ScreenMask
     [SerializeField] private Image screenMask;
-#region 流程控制标志
-    private Action _onPanelReady;
-#endregion
+    
 #region 初始化
     void Init()
     {
@@ -272,14 +269,12 @@ public class UIPanelMainMenu : UIBasePanel
         if (_isPlayingAnimation) return;
         if (!_buttonStart) return;
         _buttonStart = false;
-
+        soundPlayer.PlayClickSoundManually();
         RegisterOnCloseComplete(() =>
         {
             SceneManager.LoadScene("The_Inner_World");
         });
         UIManager.Instance.ClosePanel(this);
-        //TODO:
-        // SceneManager.LoadScene("Test01");
         Debug.Log("Button Start Clicked");
     }
     void OnSettingsClick()
@@ -288,6 +283,7 @@ public class UIPanelMainMenu : UIBasePanel
         if (!_buttonSettings) return;
         _buttonSettings = false;
 
+        soundPlayer.PlayClickSoundManually();
         RegisterOnCloseComplete(() =>
         {
             var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Settings);

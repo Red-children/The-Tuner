@@ -30,17 +30,17 @@ public class SettingsManager
     private Dictionary<SettingType, Action> _callbacks;
 #region 数据操作
     // 初始化（只调用一次）
-    public void InitSettings(SettingData data)
+    public bool InitSettings(SettingData data)
     {
         lock (_dictLock)
         {
             if (_entryDict != null)
             {
                 Debug.LogWarning("已初始化，忽略重复调用");
-                return;
+                return false;
             }
 
-            if (data == null) return;
+            if (data == null) return false;
 
             _entryDict = new Dictionary<SettingType, SettingsEntry>();
             _callbacks = new Dictionary<SettingType, Action>();
@@ -51,6 +51,7 @@ public class SettingsManager
                 _entryDict[entry.settingType] = entry;
                 _callbacks[entry.settingType] = null;
             }
+            return true;
         }
     }
 

@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Button = UnityEngine.UI.Button;
 using Image = UnityEngine.UI.Image;
 public class UIPanelPause : UIBasePanel
@@ -28,7 +29,7 @@ public class UIPanelPause : UIBasePanel
     [SerializeField] private Image[] docNotes;
     [SerializeField] private Image docRibbon;
     [Header("按钮")]
-    [SerializeField] private Button buttonCountinue;
+    [SerializeField] private Button buttonContinue;
     [SerializeField] private Button buttonReturn;
     [SerializeField] private Button buttonReset;
 
@@ -160,14 +161,14 @@ public class UIPanelPause : UIBasePanel
 
     Tween EnterButtons()
     {
-        if (buttonCountinue == null) return null;
+        if (buttonContinue == null) return null;
         if (buttonReset == null) return null;
         if (buttonReturn == null) return null;
 
         Sequence seq = DOTween.Sequence();
 
-        seq.Join(FadeIn(buttonCountinue.image, 1f));
-        seq.Join(ScaleIn(buttonCountinue.transform, 1f));
+        seq.Join(FadeIn(buttonContinue.image, 1f));
+        seq.Join(ScaleIn(buttonContinue.transform, 1f));
         seq.Join(FadeIn(buttonReset.image, 1f));
         seq.Join(ScaleIn(buttonReset.transform, 1f));
         seq.Join(FadeIn(buttonReturn.image, 1f));
@@ -263,18 +264,18 @@ public class UIPanelPause : UIBasePanel
 
     Tween ExitButtons()
     {
-        if (buttonCountinue == null) return null;
+        if (buttonContinue == null) return null;
         if (buttonReset == null) return null;
         if (buttonReturn == null) return null;
 
         Sequence seq = DOTween.Sequence();
 
-        seq.Join(FadeOut(buttonCountinue.image, 1f));
-        seq.Join(ScaleOut(buttonCountinue.transform, 1f));
-        seq.Join(FadeOut(buttonReset.image, 1f));
-        seq.Join(ScaleOut(buttonReset.transform, 1f));
-        seq.Join(FadeOut(buttonReturn.image, 1f));
-        seq.Join(ScaleOut(buttonReturn.transform, 1f));
+        seq.Join(FadeOut(buttonContinue.image, fadeDuration));
+        seq.Join(ScaleOut(buttonContinue.transform, scaleDuration));
+        seq.Join(FadeOut(buttonReset.image, fadeDuration));
+        seq.Join(ScaleOut(buttonReset.transform, scaleDuration));
+        seq.Join(FadeOut(buttonReturn.image, fadeDuration));
+        seq.Join(ScaleOut(buttonReturn.transform, scaleDuration));
         return seq;
     }
 
@@ -293,13 +294,18 @@ public class UIPanelPause : UIBasePanel
 
 #region 按钮回调
 
-    public void OnClickCountinue()
+    public void OnClickContinue()
     {
         //  TODO:
+        UIManager.Instance.ClosePanel(this);
     }
     public void OnClickReturn()
     {
-        //  TODO:
+        //  TODO: 返回主菜单
+        RegisterOnCloseComplete(() => {
+            SceneManager.LoadScene("MainMenu");
+        });
+        UIManager.Instance.ClosePanel(this);
     }
     public void OnClickReset()
     {
@@ -308,6 +314,13 @@ public class UIPanelPause : UIBasePanel
     #endregion
 
 #region 生命周期
+    protected override void Awake()
+    {
+        base.Awake();
 
+        buttonContinue.onClick.AddListener(OnClickContinue);
+        buttonReset.onClick.AddListener(OnClickReset);
+        buttonReturn.onClick.AddListener(OnClickReturn);
+    }
 #endregion
 }
