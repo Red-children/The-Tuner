@@ -134,7 +134,7 @@ public class UIBasePanel : MonoBehaviour
 
             TriggerOnOpenComplete();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
     protected virtual void KillAllLoopingAnimations()
@@ -163,7 +163,7 @@ public class UIBasePanel : MonoBehaviour
                 Destroy(gameObject);
             else HideImmediately();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 
