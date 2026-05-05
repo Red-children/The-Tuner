@@ -310,8 +310,9 @@ public class UIPanelMainMenu : UIBasePanel
 #endregion
 
 #region 生命周期
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         Init();
         exitAnimDuration = 1f;
     }

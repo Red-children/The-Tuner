@@ -20,4 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/PlayScene/TheStage.unity
     guid: 80e5c0a26029d6b4692b5536e2fcba5f
+  - enabled: 1
+    path: Assets/Scenes/DialogueTest.unity
+    guid: 3449b2896a9d9ad40910591b1e776155
   m_configObjects: {}

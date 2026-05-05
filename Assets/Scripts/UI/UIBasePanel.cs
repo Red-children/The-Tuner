@@ -1,12 +1,13 @@
 using UnityEngine;
-using UnityEngine.Playables;
-using System.Collections;
 using DG.Tweening;
 using UnityEngine.UI;
 using System;
 
+[RequireComponent(typeof(RectTransform), typeof(UISoundPlayer))]
 public class UIBasePanel : MonoBehaviour
 {
+    [Header("脚本音效")]
+    [SerializeField] protected UISoundPlayer soundPlayer;
     [Header("动画参数")]
     private Coroutine _enterCoroutine;
     protected Sequence _seq;
@@ -22,6 +23,13 @@ public class UIBasePanel : MonoBehaviour
     // 动画排队标记
     protected bool _isPlayingAnimation = false;
     private bool _shouldBeVisible = true;
+#endregion
+#region 生命周期
+    protected virtual void Awake()
+    {
+        if (soundPlayer == null) 
+            soundPlayer = GetComponent<UISoundPlayer>();
+    }
 #endregion
 #region 开关回调
     protected Action OnOpenComplete;
@@ -59,7 +67,8 @@ public class UIBasePanel : MonoBehaviour
     {
         _shouldBeVisible = true;
         gameObject.SetActive(true);
-
+        if (soundPlayer)
+            soundPlayer.PlayOpenSoundManually();
         PlayEnterAnimation();
     }
 
@@ -75,7 +84,8 @@ public class UIBasePanel : MonoBehaviour
             StopCoroutine(_enterCoroutine);
             _enterCoroutine = null;
         }
-
+        if (soundPlayer)
+            soundPlayer.PlayCloseSoundManually();
         PlayExitAnimation(true); // 关闭=销毁
     }
     public virtual void HidePanel()
@@ -85,6 +95,8 @@ public class UIBasePanel : MonoBehaviour
             return;
         }
         _shouldBeVisible = false;
+        if (soundPlayer)
+            soundPlayer.PlayCloseSoundManually();
         PlayExitAnimation(false); // 隐藏=不销毁
     }
 
@@ -93,7 +105,8 @@ public class UIBasePanel : MonoBehaviour
         if (_shouldBeVisible) return;
         _shouldBeVisible = true;
         gameObject.SetActive(true);
-
+        if (soundPlayer)
+            soundPlayer.PlayOpenSoundManually();
         PlayEnterAnimation();
     }
 #endregion

@@ -20,8 +20,9 @@ public class UIPanelPlayerHurtEffect : UIBasePanel
     }
     #endregion
     #region 生命周期
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         if (image == null)
         {
             image = GetComponent<Image>();
