@@ -59,7 +59,7 @@ public class UIPanelSettings : UIBasePanel
             layout.enabled = true; 
             _isPlayingAnimation = false;
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
     protected override void KillAllLoopingAnimations()
@@ -89,7 +89,7 @@ public class UIPanelSettings : UIBasePanel
                 Destroy(gameObject);
             else HideImmediately();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 #endregion

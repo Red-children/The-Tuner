@@ -83,6 +83,7 @@ public class UIPanelMainMenu : UIBasePanel
             
             TriggerOnOpenComplete();
         });
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
     protected override void KillAllLoopingAnimations()
@@ -116,6 +117,7 @@ public class UIPanelMainMenu : UIBasePanel
                 Destroy(gameObject);
             else HideImmediately();
         });
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 

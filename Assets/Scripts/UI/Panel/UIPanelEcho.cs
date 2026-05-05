@@ -49,7 +49,7 @@ public class UIPanelEcho : UIBasePanel
 
             TriggerOnOpenComplete();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 
@@ -79,7 +79,7 @@ public class UIPanelEcho : UIBasePanel
                 Destroy(gameObject);
             else HideImmediately();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 #endregion

@@ -68,8 +68,7 @@ public class UIBasePanel : MonoBehaviour
         _shouldBeVisible = visible;
         gameObject.SetActive(visible);
         if (!visible) return;
-        if (soundPlayer)
-            soundPlayer.PlayOpenSoundManually();
+        PlayOpenSound();
         PlayEnterAnimation();
     }
     public virtual void OpenPanel(string name)
@@ -89,8 +88,7 @@ public class UIBasePanel : MonoBehaviour
             StopCoroutine(_enterCoroutine);
             _enterCoroutine = null;
         }
-        if (soundPlayer)
-            soundPlayer.PlayCloseSoundManually();
+        PlayCloseSound();
         PlayExitAnimation(true); // 关闭=销毁
     }
     public virtual void HidePanel()
@@ -100,8 +98,7 @@ public class UIBasePanel : MonoBehaviour
             return;
         }
         _shouldBeVisible = false;
-        if (soundPlayer)
-            soundPlayer.PlayCloseSoundManually();
+        PlayCloseSound();
         PlayExitAnimation(false); // 隐藏=不销毁
     }
 
@@ -110,12 +107,21 @@ public class UIBasePanel : MonoBehaviour
         if (_shouldBeVisible) return;
         _shouldBeVisible = true;
         gameObject.SetActive(true);
-        if (soundPlayer)
-            soundPlayer.PlayOpenSoundManually();
+        PlayOpenSound();
         PlayEnterAnimation();
     }
 #endregion
 #region 过场动画相关
+    protected virtual void PlayOpenSound()
+    {
+        if (soundPlayer)
+            soundPlayer.PlayOpenSoundManually();
+    }
+    protected virtual void PlayCloseSound()
+    {
+        if (soundPlayer)
+            soundPlayer.PlayCloseSoundManually();
+    }
     protected virtual void PlayEnterAnimation()
     {
         if (_seq != null)
@@ -134,7 +140,7 @@ public class UIBasePanel : MonoBehaviour
 
             TriggerOnOpenComplete();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
     protected virtual void KillAllLoopingAnimations()
@@ -163,7 +169,7 @@ public class UIBasePanel : MonoBehaviour
                 Destroy(gameObject);
             else HideImmediately();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 
@@ -215,6 +221,11 @@ public class UIBasePanel : MonoBehaviour
     {
         if (text == null) return null;
         return text.DOFade(0, t).SetEase(Ease.OutQuad);
+    }
+    protected Tween Fadeout(CanvasGroup canvasGroup, float t)
+    {
+        if (canvasGroup == null) return null;
+        return canvasGroup.DOFade(0, t).SetEase(Ease.OutQuad);
     }
 
     protected Tween FadeIn(Image img, float t)
