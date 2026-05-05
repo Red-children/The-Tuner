@@ -22,14 +22,14 @@ public class PlayerLegController : MonoBehaviour
 
     private void HandleMovementInputAndFacing()
     {
+        // 移动输入（WASD/摇杆）
         float moveX = Input.GetAxis("Horizontal");
         float moveY = Input.GetAxis("Vertical");
-        bool isMoving = Mathf.Abs(moveX) > 0.1f || Mathf.Abs(moveY) > 0.1f;
 
-        if (moveX > 0.1f)
-            spriteRenderer.flipX = true;
-        else if (moveX < -0.1f)
-            spriteRenderer.flipX = false;
+        // 根据鼠标在人物左/右侧决定腿部朝向
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorldPos.z = 0f;
+        spriteRenderer.flipX = mouseWorldPos.x > transform.position.x;
 
         if (playerMovement != null)
             playerMovement.SetMovementInput(moveX, moveY);

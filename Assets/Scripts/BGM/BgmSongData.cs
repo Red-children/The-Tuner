@@ -28,7 +28,7 @@ public class BgmSongData : MonoBehaviour
             bgmAudioSource.spatialBlend = 0;                // 2D音频
             bgmAudioSource.playOnAwake = false;             // 不自动播放
             bgmAudioSource.clip = BGM.GetAudioClip();       // 预设音频剪辑
-            bgmAudioSource.volume = 1f;                     // 默认全音量，主控可调整
+            // bgmAudioSource.volume = 1f;                     // 默认全音量，主控可调整
         }
     }
     public void SwitchBGM(BGMData data)

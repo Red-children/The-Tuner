@@ -6,6 +6,9 @@ using DG.Tweening;
 
 public class UIPanelMainMenu : UIBasePanel
 {
+    [Header("背景语音")]
+    [SerializeField] private MainMenuVoiceFader voiceFader;
+
     [Header("动画参数")]
     [SerializeField] private float fadeDuration = 0.2f;
     [SerializeField] private float rotateDuration = 0.3f;
@@ -270,6 +273,11 @@ public class UIPanelMainMenu : UIBasePanel
         if (!_buttonStart) return;
         _buttonStart = false;
         soundPlayer.PlayClickSoundManually();
+
+        // 淡出背景语音
+        if (voiceFader != null)
+            voiceFader.FadeOutVoice(fadeDuration);
+
         RegisterOnCloseComplete(() =>
         {
             SceneManager.LoadScene("The_Inner_World");
@@ -310,6 +318,10 @@ public class UIPanelMainMenu : UIBasePanel
     {
         base.Awake();
         Init();
+
+        if (voiceFader == null)
+            voiceFader = FindObjectOfType<MainMenuVoiceFader>();
+
         exitAnimDuration = 1f;
     }
 #endregion

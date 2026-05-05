@@ -26,5 +26,7 @@ public class GameEntry : MonoBehaviour
             EventBus.Instance.Trigger(new InitComplete(_isInitialized, Time.time));
             Debug.Log("Init Complete");
         }
+
+        UIManager.Instance.OpenPanel(UIManager.UIConst.MainMenu);
     }
 }

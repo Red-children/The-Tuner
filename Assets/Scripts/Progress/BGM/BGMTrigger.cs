@@ -1,13 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BGMTrigger : MonoBehaviour
 {
-    [SerializeField]private BGMData BGM;
+    [SerializeField] private BGMData BGM;
+    [SerializeField] private bool auto;
     void Start()
     {
-        
+        if (auto)
+            OnTriggerEnter2D();
     }
 
     void Update()

@@ -23,7 +23,7 @@ public class PreciseBGMController : MonoBehaviour
         // 订阅播放事件
         EventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);  
         
-        DontDestroyOnLoad(gameObject);
+        // DontDestroyOnLoad(gameObject);
     }
 
     private void OnDestroy()
