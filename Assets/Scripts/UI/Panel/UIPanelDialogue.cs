@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using System;
-using System.Collections.Generic;
 public class UIPanelDialogue : UIBasePanel
 {
     [Header("对话数据")]
@@ -255,7 +253,6 @@ public class UIPanelDialogue : UIBasePanel
     private void ShowDialogue(DialogueLines lines)
     {
         gameObject.SetActive(true);
-        // _onPanelReady += () => uiCommunication.StartDialogue(lines);
         RegisterOnOpenComplete(() =>
         {
             uiCommunication.StartDialogue(lines);

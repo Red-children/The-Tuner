@@ -1159,6 +1159,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f224c897fae135e4982584abe7a87d3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundPlayer: {fileID: 0}
   enterTime: 0
   exitTime: 1
   exitAnimDuration: 1
@@ -1196,6 +1197,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onOpenClip: {fileID: 8300000, guid: a3c5ef1bdffb0ea49ae7844267dd1721, type: 3}
   onCloseClip: {fileID: 8300000, guid: aa44127f6cc119948b545571790957f4, type: 3}
+  onButtonHoverClip: {fileID: 8300000, guid: 1d318df55ba5e6e469b32e4d96bca710, type: 3}
+  OnClickClip: {fileID: 8300000, guid: 3d7a50ff8afb28b42962cb095da0447c, type: 3}
   mixerGroup: {fileID: 0}
   audioSource: {fileID: 201683416477962559}
 --- !u!1 &5176449026494266784

@@ -345,6 +345,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+        - m_Target: {fileID: 8991899914579085762}
+          m_TargetAssemblyTypeName: UISoundPlayer, Assembly-CSharp
+          m_MethodName: PlayHoverSoundManually
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   - eventID: 1
     callback:
       m_PersistentCalls:
@@ -356,6 +368,18 @@ MonoBehaviour:
           m_Arguments:
             m_ObjectArgument: {fileID: 4786531088049818734}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 8991899914579085762}
+          m_TargetAssemblyTypeName: UISoundPlayer, Assembly-CSharp
+          m_MethodName: PlayHoverSoundManually
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 
@@ -743,7 +767,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4786531088920892672
 RectTransform:
   m_ObjectHideFlags: 0
@@ -876,6 +900,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+        - m_Target: {fileID: 8991899914579085762}
+          m_TargetAssemblyTypeName: UISoundPlayer, Assembly-CSharp
+          m_MethodName: PlayHoverSoundManually
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   - eventID: 1
     callback:
       m_PersistentCalls:
@@ -887,6 +923,18 @@ MonoBehaviour:
           m_Arguments:
             m_ObjectArgument: {fileID: 4786531088920892673}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 8991899914579085762}
+          m_TargetAssemblyTypeName: UISoundPlayer, Assembly-CSharp
+          m_MethodName: PlayHoverSoundManually
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 
@@ -1185,12 +1233,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c053dc65fd67f748833f945aa06f4f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  soundPlayer: {fileID: 8991899914579085762}
   enterTime: 0
   exitTime: 1
   exitAnimDuration: 1
-  rotateDuration: 1
-  fadeDuration: 1
-  scaleDuration: 1
+  rotateDuration: 0.4
+  fadeDuration: 0.5
+  scaleDuration: 0.3
   background: {fileID: 4786531088965926615}
   midCircleInnerMain: {fileID: 4786531088541472668}
   midCircleInnerDot: {fileID: 4786531087996510414}
@@ -1206,7 +1255,7 @@ MonoBehaviour:
   - {fileID: 4786531089688495597}
   - {fileID: 4786531088957413854}
   docRibbon: {fileID: 4786531089250850114}
-  buttonCountinue: {fileID: 4786531088049818734}
+  buttonContinue: {fileID: 0}
   buttonReturn: {fileID: 4786531089196782945}
   buttonReset: {fileID: 4786531088920892673}
 --- !u!114 &8991899914579085762
@@ -1223,6 +1272,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   onOpenClip: {fileID: 8300000, guid: a3c5ef1bdffb0ea49ae7844267dd1721, type: 3}
   onCloseClip: {fileID: 8300000, guid: aa44127f6cc119948b545571790957f4, type: 3}
+  onButtonHoverClip: {fileID: 8300000, guid: 1d318df55ba5e6e469b32e4d96bca710, type: 3}
+  OnClickClip: {fileID: 8300000, guid: 3d7a50ff8afb28b42962cb095da0447c, type: 3}
   mixerGroup: {fileID: 0}
   audioSource: {fileID: 7840072456784456648}
 --- !u!82 &7840072456784456648
@@ -1587,6 +1638,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 1
+        - m_Target: {fileID: 8991899914579085762}
+          m_TargetAssemblyTypeName: UISoundPlayer, Assembly-CSharp
+          m_MethodName: PlayHoverSoundManually
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
   - eventID: 1
     callback:
       m_PersistentCalls:
@@ -1598,6 +1661,18 @@ MonoBehaviour:
           m_Arguments:
             m_ObjectArgument: {fileID: 4786531089196782945}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.UI.Button, UnityEngine.UI
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 8991899914579085762}
+          m_TargetAssemblyTypeName: UISoundPlayer, Assembly-CSharp
+          m_MethodName: PlayHoverSoundManually
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
             m_IntArgument: 0
             m_FloatArgument: 0
             m_StringArgument: 

@@ -4,25 +4,32 @@ using DG.Tweening;
 /// <summary>
 /// 对话UI显示脚本：DOTween + UGUI Text 版
 /// </summary>
+[RequireComponent(typeof(UISoundPlayer))]
 public class UICommunication : MonoBehaviour
 {
+    [Header("音效组件")]
+    [Tooltip("一次性音效脚本")]
+    [SerializeField] private UISoundPlayer soundPlayer;
+    [SerializeField] private AudioSource[] sourceOnspeak;   // 循环打字音效
+    [SerializeField] private AudioClip clipOnStart;         //  音效 对话开始
+    [SerializeField] private AudioClip clipOnNext;          //  音效 下一句
     [Header("对话文本")]
     [SerializeField] private Text[] dialogueTexts;  // 主文本框组件
     [SerializeField] private Text[] speakerTexts;   // 名字文本框组件
 
     [Header("文字速度")]
     public float textSpeed = 0.05f;
-    // private List<KeyValuePair<int, string>> _currentLines;
     private DialogueLines _currentLines;
     private int _currentLineIndex;
     private string[] _speaker;
     private bool _isTyping; //  是否正在打字动画
 
     private Tweener _textTweener;
-    // [SerializeField] private UIPanelDialogue dialoguePanel;
 #region 生命周期
     private void Awake()
     {
+        if (soundPlayer == null) 
+            soundPlayer = GetComponent<UISoundPlayer>();
         if (dialogueTexts == null)
         {
             Debug.Log("UICommunication 组件缺失");
@@ -76,6 +83,7 @@ public class UICommunication : MonoBehaviour
 
         _currentLines = lines;
         _currentLineIndex = 0;
+        soundPlayer.PlaySoundManually(clipOnStart);
         TypeLine();
     }
 
@@ -90,8 +98,15 @@ public class UICommunication : MonoBehaviour
         _isTyping = true;
         _textTweener = dialogueTexts[currentText.id].DOText(currentText.line, currentText.line.Length * textSpeed, true)
             .SetEase(Ease.Linear)
+            .OnStart(() =>
+            {
+                soundPlayer.PlaySoundManually(clipOnNext);
+                sourceOnspeak[currentText.id].loop = true;
+                sourceOnspeak[currentText.id].Play();
+            })
             .OnComplete(() =>
             {
+                sourceOnspeak[currentText.id].Stop();
                 _isTyping = false;
             });
     }
@@ -121,6 +136,7 @@ public class UICommunication : MonoBehaviour
     {
         if (_textTweener != null && _textTweener.IsActive())
         {
+            _textTweener.Complete();
             _textTweener.Kill();
         }
     }
