@@ -42,16 +42,18 @@ public class EnemyChaseState : EnemyStateBase
         //先让敌人转向
         controller.FaceTarget(runtime.target.position);
 
-        //测试视线锥效果的区域 ****************************
-        // 在移动之前加入视觉确认
-        // 视野检查
-        if (!controller.CanSeePlayer())
+        // 远程敌人不使用视线锥检测，近战敌人使用
+        if (!(data is RangedEnemyData))
         {
-            Debug.Log("视线锥检测失败，不允许进入追击状态");
-            runtime.isPursuing = false;
-            runtime.ignoreTargetUntilTime = Time.time + 3f;
-            manager.ChangeState(StateType.Patrol);
-            return;
+            // 视野检查（仅对非远程敌人）
+            if (!controller.CanSeePlayer())
+            {
+                Debug.Log("视线锥检测失败，不允许进入追击状态");
+                runtime.isPursuing = false;
+                runtime.ignoreTargetUntilTime = Time.time + 3f;
+                manager.ChangeState(StateType.Patrol);
+                return;
+            }
         }
         //测试视线锥效果的区域 ****************************
 

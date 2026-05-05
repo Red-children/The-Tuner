@@ -29,41 +29,21 @@ public class EnemyRangedApproachState : EnemyStateBase
         if (runtime.target == null) { manager.ChangeState(StateType.Patrol); return; }
 
         float distance = Vector2.Distance(manager.transform.position, runtime.target.position);
-        float attackRange = (data as RangedEnemyData).attackRange;  // 获取远程敌人的攻击范围
+        float attackRange = (data as RangedEnemyData).attackRange;
 
-        // 定义一个理想的距离范围，敌人会尝试保持在这个范围内进行接近，确保敌人能够在合理的范围内接近玩家并准备攻击，同时根据与玩家的距离动态调整移动方向，形成更智能的接近行为
-        float minDesired = attackRange * 0.6f;
-        float maxDesired = attackRange * 0.9f;
-
-        Vector2 toTarget = (runtime.target.position - manager.transform.position).normalized;
-
-        // 根据与目标的距离调整移动方向，确保敌人能够根据与玩家的距离动态调整移动方向，形成更智能的接近行为
-        if (distance < minDesired)
+        // 简化逻辑：只要在攻击范围内就攻击
+        if (distance <= attackRange)
         {
-            // ̫间距过近，远离目标
-            currentDirection = -toTarget;
-        }
-        else if (distance > maxDesired)
-        {
-            // ̫间距过远，接近目标
-            currentDirection = toTarget;
-        }
-        else
-        {
-            // 间距合适，进入攻击状态
-            currentDirection = Vector2.zero; // 停止移动，保持在当前距离
+            Debug.Log($"[{controller.name}] 进入攻击范围，切换到攻击状态");
             manager.ChangeState(StateType.Attack);
             return;
         }
 
-        // 移动敌人朝向目标
-        manager.transform.position += (Vector3)currentDirection * data.moveSpeed * Time.deltaTime;
+        // 太远，接近目标
+        Vector2 toTarget = (runtime.target.position - manager.transform.position).normalized;
+        manager.transform.position += (Vector3)toTarget * data.moveSpeed * Time.deltaTime;
 
-        // 根据目标位置调整敌人朝向，确保敌人始终面向玩家，形成更自然的行为表现
-        if (runtime.target.position.x > manager.transform.position.x)
-            controller.spriteRenderer.flipX = false;
-        else
-            controller.spriteRenderer.flipX = true;
+        Debug.Log($"[{controller.name}] 接近状态: distance={distance}, attackRange={attackRange}");
     }
 
     public override void OnExit() { }

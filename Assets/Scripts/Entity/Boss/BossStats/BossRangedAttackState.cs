@@ -36,14 +36,14 @@ public class BossRangedAttackState : EnemyStateBase
             Rigidbody2D rb = projectile.GetComponent<Rigidbody2D>();
             if (rb != null)
             {
-                rb.velocity = direction * 8f;
+                rb.velocity = direction * bossData.projectileSpeed;
             }
 
             EnemyWeaponHit hitScript = projectile.GetComponent<EnemyWeaponHit>();
             if (hitScript != null)
             {
                 hitScript.owner = controller;
-                hitScript.damage = (int)bossData.rangedAttackDamage;
+                hitScript.damage = (int)bossData.Atk;
             }
         }
 

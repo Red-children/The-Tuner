@@ -25,22 +25,11 @@ public class BossChaseState : EnemyStateBase
 
         if (bossData == null) return;
 
-        if (distance <= bossData.meleeAttackRange)
+        // 纯粹远程：进入攻击范围就切换到远程攻击
+        if (distance <= bossData.attackRange)
         {
-            manager.ChangeState(StateType.Approach);
+            manager.ChangeState(StateType.BossRangedAttack);
             return;
-        }
-
-        if (distance <= bossData.rangedAttackRange)
-        {
-            if (Random.value > 0.5f)
-            {
-                manager.ChangeState(StateType.Approach);
-            }
-            else
-            {
-                manager.ChangeState(StateType.BossRangedAttack);
-            }
         }
     }
 

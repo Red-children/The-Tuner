@@ -16,6 +16,8 @@ public class BgmProgressManager : MonoBehaviour
     public double DspStartTime { get; private set; }
 
     private BgmSongData _songData; // 依赖歌曲配置
+    private float _masterVolume = 1f;
+    private float _musicVolume = 1f;
 
     // 初始化（由主控调用）
     public void Init(BgmSongData songData)
@@ -24,6 +26,43 @@ public class BgmProgressManager : MonoBehaviour
         IsPlaying = false;
         PreciseTime = 0;
         DspStartTime = 0;
+        
+        // 注册音量变化回调
+        SettingsManager.Instance.RegisterCallback(SettingType.MasterVolume, OnVolumeChanged);
+        SettingsManager.Instance.RegisterCallback(SettingType.SFXVolume, OnVolumeChanged);
+        UpdateVolumeSettings();
+    }
+
+    private void OnDestroy()
+    {
+        // 取消注册回调
+        SettingsManager.Instance.UnregisterCallback(SettingType.MasterVolume, OnVolumeChanged);
+        SettingsManager.Instance.UnregisterCallback(SettingType.SFXVolume, OnVolumeChanged);
+    }
+
+    private void OnVolumeChanged()
+    {
+        UpdateVolumeSettings();
+        ApplyVolumeToAudioSource();
+    }
+
+    private void UpdateVolumeSettings()
+    {
+        // 获取设置中的音量值（0-100）并转换为0-1范围
+        _masterVolume = SettingsManager.Instance.GetValue(SettingType.MasterVolume) / 100f;
+        _musicVolume = SettingsManager.Instance.GetValue(SettingType.SFXVolume) / 100f;
+        
+        Debug.Log($"BGM音量设置更新: 主音量={_masterVolume}, 音乐音量={_musicVolume}");
+    }
+
+    private void ApplyVolumeToAudioSource()
+    {
+        if (_songData?.BgmAudioSource != null)
+        {
+            float finalVolume = _masterVolume * _musicVolume;
+            _songData.BgmAudioSource.volume = finalVolume;
+            Debug.Log($"BGM音量应用: {finalVolume}");
+        }
     }
 
     // 启动BGM播放（精准调度）
@@ -40,6 +79,9 @@ public class BgmProgressManager : MonoBehaviour
             Debug.LogWarning("BgmProgressManager: BGM已在播放中!");
             return;
         }
+
+        // 应用当前音量设置
+        ApplyVolumeToAudioSource();
 
         // 记录DSP开始时间（音频硬件同步，无帧延迟）
         DspStartTime = AudioSettings.dspTime;
