@@ -20,6 +20,7 @@ public class BgmProgressManager : MonoBehaviour
     private float _musicVolume = 1f;
 
     // 初始化（由主控调用）
+    // 初始化（由主控调用）
     public void Init(BgmSongData songData)
     {
         _songData = songData;
@@ -27,9 +28,8 @@ public class BgmProgressManager : MonoBehaviour
         PreciseTime = 0;
         DspStartTime = 0;
         
-        // 注册音量变化回调
-        SettingsManager.Instance.RegisterCallback(SettingType.MasterVolume, OnVolumeChanged);
-        SettingsManager.Instance.RegisterCallback(SettingType.SFXVolume, OnVolumeChanged);
+        // 尝试注册回调（可能因SettingsManager未初始化而失败）
+        TryRegisterCallbacks();
         UpdateVolumeSettings();
     }
 
@@ -48,9 +48,12 @@ public class BgmProgressManager : MonoBehaviour
 
     private void UpdateVolumeSettings()
     {
-        // 获取设置中的音量值（0-100）并转换为0-1范围
-        _masterVolume = SettingsManager.Instance.GetValue(SettingType.MasterVolume) / 100f;
-        _musicVolume = SettingsManager.Instance.GetValue(SettingType.SFXVolume) / 100f;
+        int masterVal = SettingsManager.Instance.GetValue(SettingType.MasterVolume);
+        int musicVal = SettingsManager.Instance.GetValue(SettingType.SFXVolume);
+        
+        // 未初始化时返回-1，使用默认值1.0
+        _masterVolume = masterVal >= 0 ? masterVal / 100f : 1f;
+        _musicVolume = musicVal >= 0 ? musicVal / 100f : 1f;
         
         Debug.Log($"BGM音量设置更新: 主音量={_masterVolume}, 音乐音量={_musicVolume}");
     }
@@ -131,5 +134,32 @@ public class BgmProgressManager : MonoBehaviour
     {
         IsPlaying = true;
         DspStartTime = AudioSettings.dspTime;
+    }
+
+
+    /// <summary> 获取当前有效音量（主音量 × 音乐音量），供外部淡入淡出使用 </summary>
+    public float EffectiveVolume => _masterVolume * _musicVolume;
+
+
+    private bool _callbacksRegistered = false;
+
+    /// <summary> Start中重试注册回调（此时所有Awake已执行完，SettingsManager应已初始化） </summary>
+    private void Start()
+    {
+        TryRegisterCallbacks();
+        UpdateVolumeSettings();
+    }
+
+    private void TryRegisterCallbacks()
+    {
+        if (_callbacksRegistered) return;
+
+        // 通过GetValue检测SettingsManager是否已初始化（未初始化返回-1）
+        if (SettingsManager.Instance.GetValue(SettingType.MasterVolume) < 0) return;
+
+        SettingsManager.Instance.RegisterCallback(SettingType.MasterVolume, OnVolumeChanged);
+        SettingsManager.Instance.RegisterCallback(SettingType.SFXVolume, OnVolumeChanged);
+        _callbacksRegistered = true;
+        Debug.Log("BgmProgressManager: 音量回调注册成功");
     }
 }

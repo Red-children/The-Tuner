@@ -74,6 +74,7 @@ public class PreciseBGMController : MonoBehaviour
 
     #region 事件回调
     // 接收播放BGM事件 得到开始播放的时间
+    // 接收播放BGM事件 得到开始播放的时间
     private void OnPlayBGM(PlayBGMEvent evt)
     {
         // 如果已有BGM在播放，忽略新的播放请求（避免场景切换时BGMTrigger覆盖当前BGM）
@@ -85,32 +86,22 @@ public class PreciseBGMController : MonoBehaviour
 
         Debug.Log("PreciseBGMController: 接收到播放BGM事件");
 
-        // 启动BGM播放
+        // 启动BGM播放（BgmProgressManager会从SettingsManager读取音量并应用）
         _progressManager?.StartBgmPlay();
-
-        // 应用自定义BGM音量（覆盖设置音量）
-        if (songData?.BgmAudioSource != null)
-            songData.BgmAudioSource.volume = bgmVolume;
 
         // 同步节奏管理器
         if (RhythmManager.Instance != null && songData != null)
         {
-            double dspStart = _progressManager.DspStartTime; // 记录的音乐开始时间
-            double firstOffset = songData.GetFirstOffset();       // 歌曲第一拍偏移（需在 BgmSongData 中配置）
+            double dspStart = _progressManager.DspStartTime;
+            double firstOffset = songData.GetFirstOffset();
 
-            RhythmManager.Instance.bpm = songData.GetBPM(); // 同步 BPM
-            //通知实时计算
+            RhythmManager.Instance.bpm = songData.GetBPM();
             RhythmManager.Instance.StartRhythm(dspStart, firstOffset);
-
-            // 如果需要，同步 BPM
-            // RhythmManager.Instance.bpm = (int)songData.BPM;
-            // 注意：修改 bpm 后需重新计算 beatInterval，可在 StartRhythm 中处理
         }
 
         // 启动进度采样协程 先停止旧的协程，避免重复启动
         if (_progressSamplerCoroutine != null) StopCoroutine(_progressSamplerCoroutine);
         _progressSamplerCoroutine = StartCoroutine(PreciseProgressSampler());
-
     }
     #endregion
 
@@ -167,6 +158,9 @@ public class PreciseBGMController : MonoBehaviour
     /// <summary> 淡出BGM（使用DOTween降低AudioSource音量） </summary>
     /// <param name="duration">淡出时长（秒）</param>
     /// <param name="onComplete">淡出完成回调</param>
+    /// <summary> 淡出BGM（使用DOTween降低AudioSource音量） </summary>
+    /// <param name="duration">淡出时长（秒）</param>
+    /// <param name="onComplete">淡出完成回调</param>
     public void FadeOutBGM(float duration, Action onComplete = null)
     {
         if (songData == null || songData.BgmAudioSource == null) return;
@@ -180,9 +174,10 @@ public class PreciseBGMController : MonoBehaviour
             .OnComplete(() =>
             {
                 StopBGM();
-                // 恢复音量以便下次播放
+                // 恢复音量到设置值
+                float targetVol = _progressManager != null ? _progressManager.EffectiveVolume : bgmVolume;
                 if (songData?.BgmAudioSource != null)
-                    songData.BgmAudioSource.volume = bgmVolume;
+                    songData.BgmAudioSource.volume = targetVol;
                 onComplete?.Invoke();
             });
     }
@@ -204,6 +199,9 @@ public class PreciseBGMController : MonoBehaviour
         _progressManager?.StopBgmPlay();
         songData.SwitchBGM(data);
 
+        // 获取设置中的目标音量
+        float targetVolume = _progressManager != null ? _progressManager.EffectiveVolume : bgmVolume;
+
         songData.BgmAudioSource.volume = 0f;
         songData.BgmAudioSource.Play();
         _progressManager?.MarkAsPlaying();
@@ -219,7 +217,7 @@ public class PreciseBGMController : MonoBehaviour
         if (_progressSamplerCoroutine != null) StopCoroutine(_progressSamplerCoroutine);
         _progressSamplerCoroutine = StartCoroutine(PreciseProgressSampler());
 
-        _fadeTween = songData.BgmAudioSource.DOFade(bgmVolume, duration)
+        _fadeTween = songData.BgmAudioSource.DOFade(targetVolume, duration)
             .SetEase(Ease.InQuad)
             .SetUpdate(true)
             .SetTarget(gameObject)
