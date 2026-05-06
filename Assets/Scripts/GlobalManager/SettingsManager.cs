@@ -123,6 +123,11 @@ public class SettingsManager
 #region 回调相关
     public void RegisterCallback(SettingType type, Action func)
     {
+        if (_callbacks == null)
+        {
+            Debug.LogWarning("Setting Callback Register Failed: SettingsManager未初始化");
+            return;
+        }
         if (!_callbacks.ContainsKey(type))
         {
             Debug.LogError("Setting Callback Register Failed:No Such Type of Settings\n");
@@ -132,6 +137,7 @@ public class SettingsManager
     }
     public void UnregisterCallback(SettingType type, Action func)
     {
+        if (_callbacks == null) return;
         if (!_callbacks.ContainsKey(type))
         {
             Debug.LogError("Setting Callback Unregister Failed:No Such Type of Settings\n");
@@ -141,7 +147,7 @@ public class SettingsManager
     }
     private void TriggerCallback(SettingType type)
     {
-        if (!_callbacks.ContainsKey(type))
+        if (_callbacks == null || !_callbacks.ContainsKey(type))
         {
             Debug.LogError("Setting Callback Trigger Failed:No Such Type of Settings\n");
             return;

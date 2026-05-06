@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using DG.Tweening;
 using UnityEngine;
 
 /// <summary>
@@ -10,11 +12,24 @@ public class PreciseBGMController : MonoBehaviour
     [SerializeField] private BgmSongData songData;                 // 歌曲信息
     [SerializeField] private BgmProgressManager _progressManager;   // 进度管理器
 
+    [Header("音量控制")]
+    [Tooltip("BGM默认播放音量（0-1）")]
+    [SerializeField] private float bgmVolume = 0.1f;
+
     private Coroutine _progressSamplerCoroutine; // 进度采样协程
+    private Tweener _fadeTween;                 // 淡入淡出Tween
 
     #region 生命周期
     private void Awake()
     {
+        // 单例保护：如果已有持久化的实例，销毁重复的
+        var existing = FindObjectOfType<PreciseBGMController>();
+        if (existing != null && existing != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         //模块初始化
         AutoGetSubModules();        
         // 只初始化进度管理器，倍率和指示器模块禁用
@@ -23,7 +38,7 @@ public class PreciseBGMController : MonoBehaviour
         // 订阅播放事件
         EventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);  
         
-        // DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 
     private void OnDestroy()
@@ -31,6 +46,7 @@ public class PreciseBGMController : MonoBehaviour
         //停止所有协程 
         StopAllCoroutines();
         EventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);
+        KillFadeTween();
         //摧毁时停止音乐
         _progressManager?.StopBgmPlay();
         
@@ -58,32 +74,34 @@ public class PreciseBGMController : MonoBehaviour
 
     #region 事件回调
     // 接收播放BGM事件 得到开始播放的时间
+    // 接收播放BGM事件 得到开始播放的时间
     private void OnPlayBGM(PlayBGMEvent evt)
     {
+        // 如果已有BGM在播放，忽略新的播放请求（避免场景切换时BGMTrigger覆盖当前BGM）
+        if (_progressManager != null && _progressManager.IsPlaying)
+        {
+            Debug.Log("PreciseBGMController: BGM已在播放中，忽略新的播放事件");
+            return;
+        }
+
         Debug.Log("PreciseBGMController: 接收到播放BGM事件");
 
-        // 启动BGM播放
+        // 启动BGM播放（BgmProgressManager会从SettingsManager读取音量并应用）
         _progressManager?.StartBgmPlay();
 
         // 同步节奏管理器
         if (RhythmManager.Instance != null && songData != null)
         {
-            double dspStart = _progressManager.DspStartTime; // 记录的音乐开始时间
-            double firstOffset = songData.GetFirstOffset();       // 歌曲第一拍偏移（需在 BgmSongData 中配置）
+            double dspStart = _progressManager.DspStartTime;
+            double firstOffset = songData.GetFirstOffset();
 
-            RhythmManager.Instance.bpm = songData.GetBPM(); // 同步 BPM
-            //通知实时计算
+            RhythmManager.Instance.bpm = songData.GetBPM();
             RhythmManager.Instance.StartRhythm(dspStart, firstOffset);
-
-            // 如果需要，同步 BPM
-            // RhythmManager.Instance.bpm = (int)songData.BPM;
-            // 注意：修改 bpm 后需重新计算 beatInterval，可在 StartRhythm 中处理
         }
 
         // 启动进度采样协程 先停止旧的协程，避免重复启动
         if (_progressSamplerCoroutine != null) StopCoroutine(_progressSamplerCoroutine);
         _progressSamplerCoroutine = StartCoroutine(PreciseProgressSampler());
-
     }
     #endregion
 
@@ -135,6 +153,86 @@ public class PreciseBGMController : MonoBehaviour
         StopBGM();
         songData.SwitchBGM(data);
         OnPlayBGM(new());
+    }
+
+    /// <summary> 淡出BGM（使用DOTween降低AudioSource音量） </summary>
+    /// <param name="duration">淡出时长（秒）</param>
+    /// <param name="onComplete">淡出完成回调</param>
+    /// <summary> 淡出BGM（使用DOTween降低AudioSource音量） </summary>
+    /// <param name="duration">淡出时长（秒）</param>
+    /// <param name="onComplete">淡出完成回调</param>
+    public void FadeOutBGM(float duration, Action onComplete = null)
+    {
+        if (songData == null || songData.BgmAudioSource == null) return;
+
+        KillFadeTween();
+
+        _fadeTween = songData.BgmAudioSource.DOFade(0f, duration)
+            .SetEase(Ease.OutQuad)
+            .SetUpdate(true)
+            .SetTarget(gameObject)
+            .OnComplete(() =>
+            {
+                StopBGM();
+                // 恢复音量到设置值
+                float targetVol = _progressManager != null ? _progressManager.EffectiveVolume : bgmVolume;
+                if (songData?.BgmAudioSource != null)
+                    songData.BgmAudioSource.volume = targetVol;
+                onComplete?.Invoke();
+            });
+    }
+
+    /// <summary> 淡入BGM（先切换数据再淡入播放） </summary>
+    /// <param name="data">新的BGM数据</param>
+    /// <param name="duration">淡入时长（秒）</param>
+    /// <param name="onComplete">淡入完成回调</param>
+    /// <summary> 淡入BGM（先切换数据再淡入播放） </summary>
+    /// <param name="data">新的BGM数据</param>
+    /// <param name="duration">淡入时长（秒）</param>
+    /// <param name="onComplete">淡入完成回调</param>
+    public void FadeInBGM(BGMData data, float duration, Action onComplete = null)
+    {
+        if (songData == null || songData.BgmAudioSource == null) return;
+
+        KillFadeTween();
+
+        _progressManager?.StopBgmPlay();
+        songData.SwitchBGM(data);
+
+        // 获取设置中的目标音量
+        float targetVolume = _progressManager != null ? _progressManager.EffectiveVolume : bgmVolume;
+
+        songData.BgmAudioSource.volume = 0f;
+        songData.BgmAudioSource.Play();
+        _progressManager?.MarkAsPlaying();
+
+        if (RhythmManager.Instance != null && songData != null)
+        {
+            double dspStart = _progressManager.DspStartTime;
+            double firstOffset = songData.GetFirstOffset();
+            RhythmManager.Instance.bpm = songData.GetBPM();
+            RhythmManager.Instance.StartRhythm(dspStart, firstOffset);
+        }
+
+        if (_progressSamplerCoroutine != null) StopCoroutine(_progressSamplerCoroutine);
+        _progressSamplerCoroutine = StartCoroutine(PreciseProgressSampler());
+
+        _fadeTween = songData.BgmAudioSource.DOFade(targetVolume, duration)
+            .SetEase(Ease.InQuad)
+            .SetUpdate(true)
+            .SetTarget(gameObject)
+            .OnComplete(() => onComplete?.Invoke());
+    }
+    #endregion
+
+    #region 内部方法
+    private void KillFadeTween()
+    {
+        if (_fadeTween != null && _fadeTween.IsActive())
+        {
+            _fadeTween.Kill();
+            _fadeTween = null;
+        }
     }
     #endregion
 

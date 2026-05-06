@@ -838,6 +838,9 @@ MonoBehaviour:
   exitTime: 1
   exitAnimDuration: 1
   voiceFader: {fileID: 3526603616906507945}
+  mainMenuBGM: {fileID: 11400000, guid: 8d97a3cf5f99acd49ac502684bc0be76, type: 2}
+  gameBGM: {fileID: 11400000, guid: 9bcbece65e2367b4ab5ab504784c2dbe, type: 2}
+  bgmFadeDuration: 1.5
   fadeDuration: 0.2
   rotateDuration: 0.3
   ScaleDuration: 0.3
