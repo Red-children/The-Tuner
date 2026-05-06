@@ -116,6 +116,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damagePerSecond: 10
+  minionPrefab: {fileID: 725547110283411354, guid: 50a29d903c69289498ff954133c13a93, type: 3}
+  spawnInterval: 3
+  maxMinionCount: 3
 --- !u!1 &6119032853314617661
 GameObject:
   m_ObjectHideFlags: 0

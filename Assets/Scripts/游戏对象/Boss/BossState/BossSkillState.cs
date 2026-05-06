@@ -6,6 +6,8 @@ public class BossSkillState : IState
     private BossFSM fsm;
     private BossRuntime runtime;
     private bool skillUsed;
+    private float originMoveSpeed;
+    private float originChaseSpeed;
 
     public BossSkillState(BossController bossController)
     {
@@ -17,8 +19,13 @@ public class BossSkillState : IState
     public void OnStart()
     {
         Debug.Log("Boss进入Skill状态");
+
         skillUsed = false;
         runtime.superArmorTimer = 999f;
+
+        // 记录原速度
+        originMoveSpeed = runtime.currentMoveSpeed;
+        originChaseSpeed = runtime.currentChaseSpeed;
     }
 
     public void OnUpdate()
@@ -52,5 +59,11 @@ public class BossSkillState : IState
     public void OnExit()
     {
         runtime.superArmorTimer = 0f;
+
+        //恢复移动
+        runtime.currentMoveSpeed = runtime.Data.moveSpeed;
+        runtime.currentChaseSpeed = runtime.Data.chaseSpeed;
+
+        Debug.Log("技能状态退出，恢复移动");
     }
 }

@@ -23,43 +23,37 @@ public class BossSkill : MonoBehaviour
     {
         if (runtime.target == null) return;
 
-        activeZones.RemoveAll(zone => zone == null);
+        int random;
 
-        int skillCount = 2;
-        int random = Random.Range(0, skillCount);
+        // 一阶段 
+        if (runtime.currentPhase == 1)
+        {
+            random = Random.Range(0, 1); 
+        }
+        // 二阶段 
+        else
+        {
+            random = Random.Range(0, 2); 
+        }
 
         switch (random)
         {
             case 0:
-                TeleportAwayFromPlayer();
+                SummonContaminatedZone();
                 break;
 
             case 1:
-                SummonContaminatedZone();
+                ShockwaveAttack();
                 break;
         }
 
         lastUseTime = Time.time;
     }
 
-    void TeleportAwayFromPlayer()
-    {
-        Debug.Log("使用技能1");
 
-        if (runtime.target == null) return;
-
-        Vector3 dir = (transform.position - runtime.target.position).normalized;
-
-        if (dir == Vector3.zero)
-            dir = Vector3.right; // 防止贴脸0向量
-
-        transform.position = transform.position + dir * runtime.Data.teleportOffset;
-    }
-
-    // ========== 污染区域技能 ==========
     private void SummonContaminatedZone()
     {
-        Debug.Log("使用技能2");
+        Debug.Log("使用技能1");
 
         Vector3 spawnPos = transform.position + (Vector3)(Random.insideUnitCircle * 5f);
 
@@ -78,10 +72,53 @@ public class BossSkill : MonoBehaviour
         lastUseTime = Time.time;
     }
 
+    void ShockwaveAttack()
+    {
+        Debug.Log("使用技能：冲击波");
+
+        if (runtime.target == null) return;
+
+        // 停止移动
+        runtime.currentMoveSpeed = 0f;
+        runtime.currentChaseSpeed = 0f;
+
+        Transform player = runtime.target;
+
+        Vector3 dir = (player.position - transform.position).normalized;
+        float distance = Vector3.Distance(transform.position, player.position);
+
+        RaycastHit2D hit = Physics2D.Raycast(
+            transform.position,
+            dir,
+            distance,
+            LayerMask.GetMask("Wall")
+        );
+
+        if (hit.collider == null)
+        {
+            DealDamageToPlayer(player.gameObject);
+            Debug.Log("冲击波命中玩家");
+        }
+        else
+        {
+            Debug.Log("冲击波被墙挡住");
+        }
+    }
+
     public void RemoveZone(GameObject zone)
     {
         if (activeZones.Contains(zone))
             activeZones.Remove(zone);
+    }
+
+    void DealDamageToPlayer(GameObject playerObj)
+    {
+        PlayerHealth player = playerObj.GetComponent<PlayerHealth>();
+
+        if (player != null)
+        {
+            player.TakeDamage((int)runtime.Data.specialAttackDamage);
+        }
     }
 
     private Sprite CreateSquareSprite()

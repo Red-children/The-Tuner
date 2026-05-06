@@ -3,7 +3,11 @@ guid: 39f4b8c9b057b0741bd59ef71c30b77f
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - damageTextPrefab: {instanceID: 0}
+  - deadEff: {instanceID: 0}
+  - contaminatedZonePrefab: {instanceID: 0}
+  - minionPrefab: {fileID: 3542882329778536702, guid: 59d8872db87d26643a00b21182aa07f9, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
