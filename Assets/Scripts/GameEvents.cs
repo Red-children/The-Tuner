@@ -50,9 +50,16 @@ public struct AttackMultiplierChangedEvent
 public struct PlayBGMEvent
 {
     //  TODO:
+    public bool change;
     public BGMData data;
     public PlayBGMEvent(BGMData d)
     {
+        change = false;
+        data = d;
+    }
+    public PlayBGMEvent(bool c, BGMData d)
+    {
+        change = c;
         data = d;
     }
 }
