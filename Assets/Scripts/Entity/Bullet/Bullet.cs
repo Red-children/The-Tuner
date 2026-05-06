@@ -205,8 +205,8 @@ public class Bullet : MonoBehaviour
         // 子弹击中墙壁
         else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Wall"))
         {
-            // 墙壁碰撞直接销毁
-            DestroyMyself();
+            // 墙壁碰撞在碰撞点销毁
+            DestroyAtPosition(hit.point);
             return true;
         }
         else
@@ -272,7 +272,25 @@ public class Bullet : MonoBehaviour
     public void DestroyMyself()
     {
         if (destroyEffect != null)
-            Instantiate(destroyEffect, transform.position, transform.rotation);
+        {
+            // 特效位置向上偏移1个单位
+            Vector3 effectPosition = transform.position + Vector3.up * 1f;
+            Instantiate(destroyEffect, effectPosition, transform.rotation);
+        }
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// 在指定位置销毁子弹并播放特效
+    /// </summary>
+    public void DestroyAtPosition(Vector3 hitPosition)
+    {
+        if (destroyEffect != null)
+        {
+            // 在碰撞点生成特效，并向上偏移1个单位
+            Vector3 effectPosition = hitPosition + Vector3.up * 1f;
+            Instantiate(destroyEffect, effectPosition, transform.rotation);
+        }
         Destroy(gameObject);
     }
 

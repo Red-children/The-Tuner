@@ -27,5 +27,5 @@ MonoBehaviour:
   visionBlockMask:
     serializedVersion: 2
     m_Bits: 384
-  attackRange: 1000
+  attackRange: 17
   Atk: 10

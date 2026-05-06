@@ -550,6 +550,9 @@ public class EnemyController : EnemyBase
 
     public void OnComboHit()
     {
+        // 播放攻击特效
+        PlayAttackEffect();
+        
         if (fsm.currentState is EnemyMeleeAttackState attackState && data is MeleeEnemyData meleeData)
         {
             if (meleeData.AttackPrefab != null)
@@ -559,6 +562,29 @@ public class EnemyController : EnemyBase
                 Instantiate(meleeData.AttackPrefab, (Vector3)attackPos, Quaternion.identity);
             }
             attackState.OnComboHit();
+        }
+    }
+
+    /// <summary>
+    /// 播放敌人攻击特效
+    /// </summary>
+    private void PlayAttackEffect()
+    {
+        if (data != null && data.attackEffectPrefab != null)
+        {
+            // 在敌人位置生成攻击特效，根据敌人朝向来旋转
+            Vector3 effectPosition = transform.position;
+            
+            // 根据敌人朝向计算旋转角度（敌人默认朝左）
+            Quaternion effectRotation = Quaternion.Euler(90f, 0f, 0f);
+            if (isFacingRight) // 敌人朝右时才翻转
+            {
+                // 如果敌人朝右，特效需要翻转180度
+                effectRotation *= Quaternion.Euler(0f, 180f, 0f);
+            }
+            
+            Instantiate(data.attackEffectPrefab, effectPosition, effectRotation);
+            Debug.Log($"[{name}] 播放攻击特效，朝向: {(isFacingRight ? "右" : "左")}");
         }
     }
 
