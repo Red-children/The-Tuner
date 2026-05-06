@@ -236,9 +236,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf30297a66d6324288f98f5f385eadd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueData: {fileID: 11400000, guid: 8ccefd2c73a674146b24d706d4ee100b, type: 2}
+  dialogueData: {fileID: 11400000, guid: b9b5b39204c8a464d918a40153eccb14, type: 2}
   targetSceneName: The_Inner_World
-  targetSpawnPointName: BornPos
+  targetSpawnPointName: LevelEntrance
   freezePlayer: 1
 --- !u!4 &314071480
 Transform:

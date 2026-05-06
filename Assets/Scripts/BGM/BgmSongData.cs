@@ -34,5 +34,7 @@ public class BgmSongData : MonoBehaviour
     public void SwitchBGM(BGMData data)
     {
         BGM = data;
+        if (bgmAudioSource != null && data != null)
+            bgmAudioSource.clip = data.GetAudioClip();
     }
 }

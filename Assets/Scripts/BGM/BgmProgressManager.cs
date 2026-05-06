@@ -124,4 +124,12 @@ public class BgmProgressManager : MonoBehaviour
                && !_songData.BgmAudioSource.isPlaying && IsPlaying;
     }
 
+
+
+    /// <summary> 手动标记为播放中（供外部在直接使用AudioSource.Play()后同步状态） </summary>
+    public void MarkAsPlaying()
+    {
+        IsPlaying = true;
+        DspStartTime = AudioSettings.dspTime;
+    }
 }

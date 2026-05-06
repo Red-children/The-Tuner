@@ -9,6 +9,14 @@ public class UIPanelMainMenu : UIBasePanel
     [Header("背景语音")]
     [SerializeField] private MainMenuVoiceFader voiceFader;
 
+    [Header("BGM音乐")]
+    [Tooltip("主菜单循环BGM（Loop 1 start）")]
+    [SerializeField] private BGMData mainMenuBGM;
+    [Tooltip("进入游戏后的BGM（非...LOOP1）")]
+    [SerializeField] private BGMData gameBGM;
+    [Tooltip("BGM淡入淡出时长（秒）")]
+    [SerializeField] private float bgmFadeDuration = 1.5f;
+
     [Header("动画参数")]
     [SerializeField] private float fadeDuration = 0.2f;
     [SerializeField] private float rotateDuration = 0.3f;
@@ -47,6 +55,20 @@ public class UIPanelMainMenu : UIBasePanel
         buttonStart.onClick.AddListener(OnStartClick);
         buttonSettings.onClick.AddListener(OnSettingsClick);
         // _btnExit.onClick.AddListener(OnExitClick);
+
+        // 播放主菜单BGM
+        if (mainMenuBGM != null)
+        {
+            var bgmCtrl = FindObjectOfType<PreciseBGMController>();
+            if (bgmCtrl != null)
+            {
+                bgmCtrl.ChangeBGM(mainMenuBGM);
+            }
+            else
+            {
+                EventBus.Instance.Trigger<PlayBGMEvent>(new(mainMenuBGM));
+            }
+        }
     }
 #endregion
 
@@ -280,10 +302,65 @@ public class UIPanelMainMenu : UIBasePanel
         if (voiceFader != null)
             voiceFader.FadeOutVoice(fadeDuration);
 
-        RegisterOnCloseComplete(() =>
+        // Step 1: 立即打开Loading面板（覆盖一切，无缝衔接）
+        var loading = UIManager.Instance.OpenPanel(UIManager.UIConst.Loading) as UIPanelLoading;
+        var bgmCtrl = FindObjectOfType<PreciseBGMController>();
+
+        if (loading != null)
         {
-            SceneManager.LoadScene("The_Inner_World");
-        });
+            // Step 2: Loading开启动画完成后 → 淡出BGM → 淡入新BGM → 加载场景
+            loading.RegisterOnOpenComplete(() =>
+            {
+                if (bgmCtrl != null)
+                {
+                    bgmCtrl.FadeOutBGM(bgmFadeDuration, () =>
+                    {
+                        if (gameBGM != null)
+                        {
+                            bgmCtrl.FadeInBGM(gameBGM, bgmFadeDuration, () =>
+                            {
+                                SceneManager.LoadScene("The_Inner_World");
+                            });
+                        }
+                        else
+                        {
+                            SceneManager.LoadScene("The_Inner_World");
+                        }
+                    });
+                }
+                else
+                {
+                    SceneManager.LoadScene("The_Inner_World");
+                }
+            });
+        }
+        else
+        {
+            // Loading打不开的fallback
+            if (bgmCtrl != null)
+            {
+                bgmCtrl.FadeOutBGM(bgmFadeDuration, () =>
+                {
+                    if (gameBGM != null)
+                    {
+                        bgmCtrl.FadeInBGM(gameBGM, bgmFadeDuration, () =>
+                        {
+                            SceneManager.LoadScene("The_Inner_World");
+                        });
+                    }
+                    else
+                    {
+                        SceneManager.LoadScene("The_Inner_World");
+                    }
+                });
+            }
+            else
+            {
+                SceneManager.LoadScene("The_Inner_World");
+            }
+        }
+
+        // Step 3: 关闭主菜单（在Loading后面，用户看不到）
         UIManager.Instance.ClosePanel(this);
         Debug.Log("Button Start Clicked");
     }

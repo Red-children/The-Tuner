@@ -17,6 +17,10 @@ public class HubDialogueController : MonoBehaviour
     [Header("是否冻结玩家")]
     [SerializeField] private bool freezePlayer = true;
 
+    [Header("Loading过渡")]
+    [Tooltip("切换场景前是否显示Loading面板")]
+    [SerializeField] private bool showLoading = true;
+
     private bool _isInDialogue = false;
     private bool _hasTriggered = false;
 
@@ -94,11 +98,29 @@ public class HubDialogueController : MonoBehaviour
             }
 
             PlayerSpawnInfo.spawnPointName = target.spawnPointName;
-            SceneManager.LoadScene(target.sceneName);
+            LoadTargetScene(target.sceneName);
         }
         else
         {
             UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
         }
+    }
+
+    private void LoadTargetScene(string sceneName)
+    {
+        if (showLoading)
+        {
+            var loading = UIManager.Instance.OpenPanel(UIManager.UIConst.Loading) as UIPanelLoading;
+            if (loading != null)
+            {
+                loading.RegisterOnOpenComplete(() =>
+                {
+                    SceneManager.LoadScene(sceneName);
+                });
+                return;
+            }
+        }
+
+        SceneManager.LoadScene(sceneName);
     }
 }
