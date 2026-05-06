@@ -37,6 +37,8 @@ public class EnemyController : EnemyBase
 
     private Vector2 currentForward; //目前正确的方向
 
+    [HideInInspector] public int currentAttackIndex; // 当前使用的攻击类型索引（用于多攻击模式）
+
     [Header("状态机组件")]
     // 运行时数据
     [SerializeField] public EnemyRuntime runtime; // 运行时数据，包含当前状态、目标等动态信息
@@ -559,10 +561,19 @@ public class EnemyController : EnemyBase
             {
                 Vector2 forward = isFacingRight ? Vector2.right : Vector2.left;
                 Vector2 attackPos = (Vector2)transform.position + forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
-                Instantiate(meleeData.AttackPrefab, (Vector3)attackPos, Quaternion.identity);
+                
             }
             attackState.OnComboHit();
         }
+      if (fsm.currentState is EnemyRangedAttackState rangedState && data is RangedEnemyData rangeData)
+      {
+            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+cube.transform.position = transform.position + Vector3.up * 2f;
+var renderer = cube.GetComponent<MeshRenderer>();
+renderer.material.color = Color.red;
+            rangedState.OnComboHit();
+      }
+
     }
 
     /// <summary>
@@ -572,26 +583,84 @@ public class EnemyController : EnemyBase
     {
         if (data != null && data.attackEffectPrefab != null)
         {
-            // 在敌人位置生成攻击特效，根据敌人朝向来旋转
+            // 在敌人位置生成攻击特效
             Vector3 effectPosition = transform.position;
             
-            // 根据敌人朝向计算旋转角度（敌人默认朝左）
-            Quaternion effectRotation = Quaternion.Euler(90f, 0f, 0f);
-            if (isFacingRight) // 敌人朝右时才翻转
+            // 根据武器指向计算特效旋转
+            Quaternion effectRotation;
+            if (weapon != null && weapon.firePoint != null)
             {
-                // 如果敌人朝右，特效需要翻转180度
-                effectRotation *= Quaternion.Euler(0f, 180f, 0f);
+                // 使用武器的瞄准方向
+                effectRotation = weapon.firePoint.rotation * Quaternion.Euler(90f, 0f, 0f);
             }
-            
-            Instantiate(data.attackEffectPrefab, effectPosition, effectRotation);
-            Debug.Log($"[{name}] 播放攻击特效，朝向: {(isFacingRight ? "右" : "左")}");
+            else
+            {
+                // 没有武器时根据敌人朝向
+                effectRotation = Quaternion.Euler(90f, 0f, 0f);
+                if (!isFacingRight)
+                {
+                    effectRotation *= Quaternion.Euler(0f, 180f, 0f);
+                }
+            }
+
+            // 远程敌人多攻击模式：使用对应攻击类型的特效
+            GameObject effectPrefab = data.attackEffectPrefab;
+            if (data is RangedEnemyData rangedData && rangedData.attackEffectPrefabs != null
+                && currentAttackIndex < rangedData.attackEffectPrefabs.Length
+                && rangedData.attackEffectPrefabs[currentAttackIndex] != null)
+            {
+                effectPrefab = rangedData.attackEffectPrefabs[currentAttackIndex];
+            }
+
+            InstantiateEffect(effectPrefab, effectPosition, effectRotation);
+            Debug.Log($"[{name}] 播放攻击特效，攻击类型索引: {currentAttackIndex}");
         }
+    }
+
+    /// <summary>
+    /// 实例化特效并修复材质颜色丢失问题
+    /// </summary>
+    private GameObject InstantiateEffect(GameObject prefab, Vector3 position, Quaternion rotation)
+    {
+        GameObject effect = Instantiate(prefab, position, rotation);
+
+        // 修复实例化时材质颜色丢失的问题
+        ParticleSystem ps = effect.GetComponentInChildren<ParticleSystem>();
+        if (ps != null)
+        {
+            ParticleSystem.MainModule main = ps.main;
+            // 如果粒子系统的 Start Color 使用了随机颜色，保留它
+            if (main.startColor.mode == ParticleSystemGradientMode.Color)
+            {
+                Color startColor = main.startColor.color;
+                main.startColor = startColor;
+            }
+        }
+
+        // 修复 SpriteRenderer 颜色丢失
+        SpriteRenderer[] renderers = effect.GetComponentsInChildren<SpriteRenderer>();
+        foreach (var renderer in renderers)
+        {
+            if (renderer.color == Color.white)
+            {
+                // 尝试从预制体引用恢复颜色
+                SpriteRenderer prefabRenderer = prefab.GetComponentInChildren<SpriteRenderer>();
+                if (prefabRenderer != null)
+                {
+                    renderer.color = prefabRenderer.color;
+                }
+            }
+        }
+
+        return effect;
     }
 
     public void OnAttackFinished()
     {
         if (fsm.currentState is EnemyMeleeAttackState attackState)
             attackState.OnAttackFinished();
+        else if (fsm.currentState is EnemyRangedAttackState rangedState)
+            rangedState.OnAttackFinished();
     }
 
     /// <summary>

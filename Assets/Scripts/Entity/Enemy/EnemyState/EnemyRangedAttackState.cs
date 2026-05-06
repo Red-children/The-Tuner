@@ -9,13 +9,41 @@ public class EnemyRangedAttackState : EnemyStateBase
 {
     private float lastAttackTime = 0f;
     private float attackCooldown = 1.5f;
+    private bool attackFinished;
+    private int currentAttackIndex; // 本次攻击选择的类型索引
 
     public EnemyRangedAttackState(FSM manager) : base(manager) { }
 
     public override void OnStart()
     {
-        Debug.Log($"[{controller.name}] 进入远程攻击状态");
-        lastAttackTime = Time.time;
+        // 冷却判断：如果还在冷却中，不进入攻击状态
+        if (Time.time < lastAttackTime + attackCooldown)
+        {
+            Debug.Log($"[{controller.name}] 攻击冷却中，返回接近状态");
+            manager.ChangeState(StateType.Approach);
+            return;
+        }
+
+        attackFinished = false;
+
+        // 随机选择攻击类型
+        RangedEnemyData rangedData = controller.data as RangedEnemyData;
+        if (rangedData != null && rangedData.attackAnimationIndex != null && rangedData.attackAnimationIndex.Length > 0)
+        {
+            currentAttackIndex = UnityEngine.Random.Range(0, rangedData.attackAnimationIndex.Length);
+        }
+        else
+        {
+            currentAttackIndex = 0;
+        }
+
+        // 通知控制器当前攻击类型（用于特效选择）
+        controller.currentAttackIndex = currentAttackIndex;
+
+        // 设置动画参数，选择对应的攻击动画
+        manager.animator.SetInteger("AttackIndex", currentAttackIndex);
+        manager.animator.SetTrigger("Attack");
+        Debug.Log($"[{controller.name}] 进入远程攻击状态，攻击类型: {currentAttackIndex}");
     }
 
     public override void OnUpdate()
@@ -44,9 +72,6 @@ public class EnemyRangedAttackState : EnemyStateBase
             return;
         }
 
-        // 调试信息：显示武器状态
-        Debug.Log($"[{controller.name}] 武器状态: weapon={controller.weapon != null}, firePoint={controller.weapon.firePoint != null}, projectilePrefab={controller.weapon.GetComponent<EnemyRangedWeapon>()?.projectilePrefab != null}");
-
         // 直接瞄准目标方向（不转向）
         Vector2 direction = (runtime.target.position - controller.transform.position).normalized;
         
@@ -56,15 +81,41 @@ public class EnemyRangedAttackState : EnemyStateBase
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             controller.weapon.firePoint.rotation = Quaternion.Euler(0, 0, angle);
         }
-
-        // 执行攻击逻辑（带冷却时间）
-        if (Time.time >= lastAttackTime + attackCooldown)
-        {
-            Debug.Log($"[{controller.name}] 执行远程攻击，伤害: {((controller.data) as RangedEnemyData).Atk}");
-            controller.weapon.Shoot(((controller.data) as RangedEnemyData).Atk, 1, RhythmRank.Good);
-            lastAttackTime = Time.time;
-        }
     }
 
     public override void OnExit() { }
+
+    // 由动画事件（经Controller转发）调用，执行远程攻击
+    public void OnComboHit()
+    {
+        
+        if (attackFinished) return;
+
+        if (controller.weapon == null)
+        {
+            Debug.LogWarning($"[{controller.name}] 远程敌人缺少武器组件，无法执行攻击");
+            return;
+        }
+
+        // 根据攻击类型选择伤害值
+        RangedEnemyData rangedData = controller.data as RangedEnemyData;
+        float damage = rangedData != null ? rangedData.Atk : 10f;
+        if (rangedData != null && rangedData.attackDamages != null && currentAttackIndex < rangedData.attackDamages.Length)
+        {
+            damage = rangedData.attackDamages[currentAttackIndex];
+        }
+
+        Debug.Log($"[{controller.name}] 动画事件触发远程攻击，攻击类型: {currentAttackIndex}，伤害: {damage}");
+        controller.weapon.Shoot(damage, 1, RhythmRank.Good);
+        lastAttackTime = Time.time;
+    }
+
+    // 由动画事件调用，结束攻击状态
+    public void OnAttackFinished()
+    {
+        if (attackFinished) return;
+        attackFinished = true;
+        Debug.Log($"[{controller.name}] 远程攻击结束，返回接近状态");
+        manager.ChangeState(StateType.Patrol);
+    }
 }
