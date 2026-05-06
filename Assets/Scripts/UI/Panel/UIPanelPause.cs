@@ -297,7 +297,8 @@ public class UIPanelPause : UIBasePanel
     public void OnClickContinue()
     {
         //  TODO:
-        UIManager.Instance.ClosePanel(this);
+        // UIManager.Instance.ClosePanel(this);
+        HidePanel();
     }
     public void OnClickReturn()
     {

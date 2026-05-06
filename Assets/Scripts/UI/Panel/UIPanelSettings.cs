@@ -134,7 +134,7 @@ public class UIPanelSettings : UIBasePanel
         foreach(var button in entries)
         {
             if (button == null) continue;
-            seq.Join(MoveIn(button.image.rectTransform, new Vector3(0, -100, 0), fadeDuration));
+            seq.Join(MoveIn(button.image.rectTransform, new Vector3(0, -100, 0), rotateDuration));
         }
         return seq;
     }
