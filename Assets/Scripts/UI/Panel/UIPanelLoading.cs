@@ -86,7 +86,7 @@ public class UIPanelLoading : UIBasePanel
 #region 进场动画
     Tween EnterBackground()
     {
-        if (backgroundColor == null || backgroundBottom == null || backgroundDecoration) return null;
+        if (backgroundColor == null || backgroundBottom == null || backgroundDecoration == null) return null;
         Sequence seq = DOTween.Sequence();
         seq.Join(FadeIn(backgroundColor, 0.5f * fadeDuration));
         seq.Join(FillIn(backgroundDecoration, 0.5f *fadeDuration));
@@ -120,9 +120,9 @@ public class UIPanelLoading : UIBasePanel
     {
         if (loadingBackground == null || loadingBottom == null || loadingMask == null) return null;
         Sequence seq = DOTween.Sequence();
-        _seq.Append(loadingBackground.rectTransform.DOScaleX(1, scaleDuration).From(0));
-        _seq.Append(ResetAndFillFadeIn(loadingBottom,scaleDuration));
-        _seq.Join(loadingMask.DOFillAmount(0.35f, scaleDuration));
+        seq.Append(loadingBackground.rectTransform.DOScaleX(1, scaleDuration).From(0));
+        seq.Append(ResetAndFillFadeIn(loadingBottom,scaleDuration));
+        seq.Join(loadingMask.DOFillAmount(0.35f, scaleDuration));
         return seq;
     }
     Tween EnterDecorations()
@@ -140,9 +140,22 @@ public class UIPanelLoading : UIBasePanel
         if (screenMask == null) return null;
         if (canvasGroup == null) return null;
         Sequence seq = DOTween.Sequence();
-        _seq.Append(FadeIn(screenMask, fadeDuration));
-        _seq.Append(Fadeout(canvasGroup, fadeDuration));
+        seq.Append(FadeIn(screenMask, fadeDuration));
+        seq.Append(Fadeout(canvasGroup, fadeDuration));
         return seq;
+    }
+#endregion
+#region 结束信号
+    public void Complete(bool delete)
+    {
+        if (loadingMask == null) return;
+        
+        loadingMask.DOFillAmount(1f, scaleDuration)
+                   .OnComplete(() =>
+                   {
+                       if (delete) UIManager.Instance.ClosePanel(this);
+                       else HidePanel();
+                   });
     }
 #endregion
 }
