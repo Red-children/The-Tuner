@@ -44,7 +44,7 @@ public class CanvasManager
         var systemObj = GameObject.Find("Canvas_Main");
         if (systemObj != null)
         {
-            _canvasSystem = systemObj.GetComponent<Canvas>();
+            _canvasMain = systemObj.GetComponent<Canvas>();
         }
 
         // 找不到 → 自动创建

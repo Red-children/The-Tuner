@@ -49,7 +49,7 @@ AudioSource:
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -143,8 +143,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bbffe90a5112664992fbda56a2efbef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _songData: {fileID: 6457067744661211835}
+  songData: {fileID: 0}
   _progressManager: {fileID: 6457067744661211832}
+  bgmVolume: 0.1
 --- !u!114 &6457067744661211832
 MonoBehaviour:
   m_ObjectHideFlags: 0

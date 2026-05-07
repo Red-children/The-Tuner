@@ -131,10 +131,10 @@ public class UIManager
         }
 
         panel.ClosePanel();
-        panel.RegisterOnCloseComplete(() =>
-        {
-            panelDict.Remove(name);
-        });
+        // panel.RegisterOnCloseComplete(() =>
+        // {
+        //     panelDict.Remove(name);
+        // });
         return true;
     }
     public bool ClosePanel(UIBasePanel panel)
@@ -150,13 +150,31 @@ public class UIManager
             }
         }
         panel.ClosePanel();
-        panel.RegisterOnCloseComplete(() =>
-        {
-            panelDict.Remove(name);
-        });
+        // panel.RegisterOnCloseComplete(() =>
+        // {
+        //     panelDict.Remove(name);
+        // });
         return true;
     }
+    public void RemovePanel(UIBasePanel panel)
+    {
+        if (panel == null) return;
 
+        string keyToRemove = null;
+        foreach (var pair in panelDict)
+        {
+            if (pair.Value == panel)
+            {
+                keyToRemove = pair.Key;
+                break;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(keyToRemove))
+        {
+            panelDict.Remove(keyToRemove);
+        }
+    }
     /// <summary>
     /// 场景切换前强制清理面板（同步销毁GameObject并移除字典引用）
     /// 避免异步回调因场景销毁而丢失，导致字典残留脏引用

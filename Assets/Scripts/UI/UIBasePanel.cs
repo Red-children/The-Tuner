@@ -30,6 +30,10 @@ public class UIBasePanel : MonoBehaviour
         if (soundPlayer == null) 
             soundPlayer = GetComponent<UISoundPlayer>();
     }
+    protected virtual void OnDestroy()
+    {
+        UIManager.Instance.RemovePanel(this);
+    }
 #endregion
 #region 开关回调
     protected Action OnOpenComplete;

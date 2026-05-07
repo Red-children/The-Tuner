@@ -92,18 +92,18 @@ public class LevelEntrance : MonoBehaviour
         // 使用 PreciseBGMController.ChangeBGM 切换关卡音乐（会先停止当前BGM再播放）
         if (levelBGM != null)
         {
-            var bgmCtrl = FindObjectOfType<PreciseBGMController>();
-            if (bgmCtrl != null)
-            {
-                Debug.Log($"切换关卡BGM: {levelBGM.name}");
-                bgmCtrl.ChangeBGM(levelBGM);
-            }
-            else
-            {
+            // var bgmCtrl = FindObjectOfType<PreciseBGMController>();
+            // if (bgmCtrl != null)
+            // {
+            //     Debug.Log($"切换关卡BGM: {levelBGM.name}");
+            //     bgmCtrl.ChangeBGM(levelBGM);
+            // }
+            // else
+            // {
                 // fallback: 通过事件总线触发
                 Debug.Log($"播放关卡BGM: {levelBGM.name}");
                 EventBus.Instance.Trigger<PlayBGMEvent>(new PlayBGMEvent(levelBGM));
-            }
+            // }
         }
         else
         {

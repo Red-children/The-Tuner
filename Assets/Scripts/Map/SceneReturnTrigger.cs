@@ -65,7 +65,10 @@ public class SceneReturnTrigger : MonoBehaviour
             LoadTargetScene();
             return;
         }
-
+        panel.RegisterOnCloseComplete(() =>
+        {
+            LoadTargetScene();
+        });
         panel.OnDialogue(dialogueData);
         EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData, freezePlayer));
     }
@@ -76,16 +79,10 @@ public class SceneReturnTrigger : MonoBehaviour
             return;
 
         _isInDialogue = false;
+        // UIManager.Instance.DestroyPanelBeforeSceneSwitch(UIManager.UIConst.Echo);
+        // LoadTargetScene();
+        UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
 
-        if (!string.IsNullOrEmpty(targetSceneName))
-        {
-            UIManager.Instance.DestroyPanelBeforeSceneSwitch(UIManager.UIConst.Echo);
-            LoadTargetScene();
-        }
-        else
-        {
-            UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
-        }
     }
 
     private void LoadTargetScene()
@@ -106,6 +103,7 @@ public class SceneReturnTrigger : MonoBehaviour
                 {
                     SceneManager.LoadScene(targetSceneName);
                 });
+                loading.ShowPanel();
                 return;
             }
         }

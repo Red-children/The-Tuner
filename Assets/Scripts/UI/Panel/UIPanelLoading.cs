@@ -51,8 +51,8 @@ public class UIPanelLoading : UIBasePanel
         _seq.OnComplete(() =>
         {
             _isPlayingAnimation = false;
-
             TriggerOnOpenComplete();
+            Complete(false);
         });
         _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
@@ -164,10 +164,6 @@ public class UIPanelLoading : UIBasePanel
     {
         base.Awake();
         DontDestroyOnLoad(gameObject);
-    }
-    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        ShowPanel();
     }
 #endregion
 }

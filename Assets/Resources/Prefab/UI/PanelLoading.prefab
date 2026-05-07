@@ -221,7 +221,7 @@ MonoBehaviour:
   decCircle: {fileID: 3598716945525927882}
   decCubes: {fileID: 3598716945652322833}
   screenMask: {fileID: 3598716946448714618}
-  canvasGroup: {fileID: 0}
+  canvasGroup: {fileID: 4941898345503880884}
 --- !u!114 &3598716944465710548
 MonoBehaviour:
   m_ObjectHideFlags: 0
