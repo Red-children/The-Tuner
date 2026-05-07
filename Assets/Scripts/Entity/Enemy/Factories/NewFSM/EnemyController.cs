@@ -43,7 +43,7 @@ public class EnemyController : EnemyBase
     // 运行时数据
     [SerializeField] public EnemyRuntime runtime; // 运行时数据，包含当前状态、目标等动态信息
     //状态机实例
-    [SerializeField] public  FSM fsm;
+    [SerializeField] public FSM fsm;
 
     [Header("攻击预警UI")]
     [SerializeField] private EnemyWarningUI warningUI; // 在Inspector中拖拽敌人头顶的Canvas
@@ -554,25 +554,21 @@ public class EnemyController : EnemyBase
     {
         // 播放攻击特效
         PlayAttackEffect();
-        
+
         if (fsm.currentState is EnemyMeleeAttackState attackState && data is MeleeEnemyData meleeData)
         {
             if (meleeData.AttackPrefab != null)
             {
                 Vector2 forward = isFacingRight ? Vector2.right : Vector2.left;
                 Vector2 attackPos = (Vector2)transform.position + forward * meleeData.attackOffset.x + Vector2.up * meleeData.attackOffset.y;
-                
+
             }
             attackState.OnComboHit();
         }
-      if (fsm.currentState is EnemyRangedAttackState rangedState && data is RangedEnemyData rangeData)
-      {
-            GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-cube.transform.position = transform.position + Vector3.up * 2f;
-var renderer = cube.GetComponent<MeshRenderer>();
-renderer.material.color = Color.red;
+        if (fsm.currentState is EnemyRangedAttackState rangedState && data is RangedEnemyData rangeData)
+        {
             rangedState.OnComboHit();
-      }
+        }
 
     }
 
@@ -585,7 +581,7 @@ renderer.material.color = Color.red;
         {
             // 在敌人位置生成攻击特效
             Vector3 effectPosition = transform.position;
-            
+
             // 根据武器指向计算特效旋转
             Quaternion effectRotation;
             if (weapon != null && weapon.firePoint != null)
