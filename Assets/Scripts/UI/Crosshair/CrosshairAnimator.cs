@@ -1,67 +1,70 @@
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
+
 
 public class CrosshairAnimator : MonoBehaviour
 {
-    //小准星依旧用动画系统控制
-    public Animator _animSmall;          // 小准星 Animator
+    [System.Serializable]
+    struct Crosshair
+    {
+        public CanvasGroup canvasGroup;
+        public Image center;
+        public Image inner;
+        public Image outer;
+        public Image curve;
+        public Image halo;
+        public Image cross;
+    }
+    [Header("准星设置")]
+    [SerializeField] private Crosshair blue;
+    [SerializeField] private Crosshair red;
+    [Header("透明度动画速度")]
+    [SerializeField] private float fadeToRedSpeed = 0.2f;   // 命中渐变慢
+    [SerializeField] private float fadeToBlueSpeed = 0.1f;   // 复原更快
 
-    [Header("大准星动画控制")]
-    [SerializeField] private float maxScale = 1.2f;
-    [SerializeField] private float minScale = 0.8f;
-    [SerializeField] private AnimationCurve scaleCurve;    // 可选，自定义缩放曲线
-
-    private Image _crosshairBig;          // 大准星 Image
+    private Tween _currentTween;
 
     private void Start()
     {
-        Init();
     }
 
-    private void Update()
+#region 精准命中 (DOTween 动画)
+public void PlayHitAnimation(RhythmRank rank)
     {
-        CrosshairBigScaleAnimation();
-    }
+        if (rank == RhythmRank.Miss) return;
+        Debug.Log("Crosshair PlayHitAnimation");
+        // 打断上一个动画，防止重叠
+        _currentTween?.Kill();
+        _currentTween = null;
 
-    #region 精准命中
-    public void PlayHitAnimation(RhythmRank rank)
+        // 创建序列动画
+        Sequence seq = DOTween.Sequence();
+
+        // 蓝色淡出 + 红色淡入（同时）
+        seq.Join(FadeCrosshair(blue, 0, fadeToRedSpeed));
+        seq.Join(FadeCrosshair(red, 1, fadeToRedSpeed));
+
+        // 停留一下 → 快速切回蓝色
+        seq.AppendInterval(0.1f);
+        seq.Append(FadeCrosshair(red, 0, fadeToBlueSpeed));
+        seq.Append(FadeCrosshair(blue, 1, fadeToBlueSpeed));
+
+        _currentTween = seq;
+    }
+#endregion
+    // 渐变一组准星的透明度
+    private Tween FadeCrosshair(Crosshair ch, float targetAlpha, float duration)
     {
-        if (_animSmall == null) return;
-        if (rank != RhythmRank.Miss)
-        {
-            _animSmall.Play("PreciseHit", 0, 0f);
-        }
-    }
-    #endregion
+        if (ch.canvasGroup == null) return null;
+        Sequence seq = DOTween.Sequence();
+        seq.Join(ch.canvasGroup.DOFade(targetAlpha, duration));
 
-    #region 初始化
-    public void Init()
+        return seq;
+    }
+    // 节奏指示器
+    private void ScaleIndicator()
     {
-        // 获取大准星 Image
-        Transform big = transform.Find("CrosshairBig");
-        if (big != null) _crosshairBig = big.GetComponent<Image>();
-        if (_crosshairBig == null) Debug.LogError("找不到大准星 Image");
-
-        // 获取小准星 Animator（如果未手动赋值）
-        if (_animSmall == null)
-        {
-            Transform small = transform.Find("CrosshairSmall");
-            if (small != null) _animSmall = small.GetComponent<Animator>();
-        }
+        
     }
-    #endregion
-
-    #region 大准星缩放动画
-    public void CrosshairBigScaleAnimation() 
-    {
-        // 每帧更新大准星缩放
-        if (RhythmManager.Instance != null && _crosshairBig != null)
-        {
-            float progress = (float)RhythmManager.Instance.BeatProgress; // 0~1
-            float t = scaleCurve != null ? scaleCurve.Evaluate(progress) : progress;
-            float scale = Mathf.Lerp(maxScale, minScale, t);
-            _crosshairBig.rectTransform.localScale = Vector3.one * scale;
-        }
-    }
-    #endregion
 }

@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LevelEntrance : MonoBehaviour
 {
@@ -52,6 +50,11 @@ public class LevelEntrance : MonoBehaviour
 
         // 直接传送玩家
         other.transform.position = targetSpawnPoint.position;
+        // 召唤UI界面
+        if (UIManager.Instance.GetPanel(UIManager.UIConst.Crosshair) == null)
+        {
+            UIManager.Instance.ShowPanel(UIManager.UIConst.Crosshair);
+        }
     }
     
     private void PlayLevelMusic()

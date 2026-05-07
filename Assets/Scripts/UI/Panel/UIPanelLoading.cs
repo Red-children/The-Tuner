@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIPanelLoading : UIBasePanel
@@ -156,6 +157,17 @@ public class UIPanelLoading : UIBasePanel
                        if (delete) UIManager.Instance.ClosePanel(this);
                        else HidePanel();
                    });
+    }
+#endregion
+#region 生命周期
+    protected override void Awake()
+    {
+        base.Awake();
+        DontDestroyOnLoad(gameObject);
+    }
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ShowPanel();
     }
 #endregion
 }

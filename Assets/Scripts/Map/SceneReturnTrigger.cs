@@ -97,7 +97,9 @@ public class SceneReturnTrigger : MonoBehaviour
 
         if (showLoading)
         {
-            var loading = UIManager.Instance.OpenPanel(UIManager.UIConst.Loading) as UIPanelLoading;
+            var loading = UIManager.Instance.GetPanel(UIManager.UIConst.Loading) as UIPanelLoading;
+            if (loading == null) 
+                loading = UIManager.Instance.OpenPanel(UIManager.UIConst.Loading) as UIPanelLoading;
             if (loading != null)
             {
                 loading.RegisterOnOpenComplete(() =>

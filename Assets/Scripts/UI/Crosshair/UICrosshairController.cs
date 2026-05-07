@@ -3,22 +3,12 @@ using UnityEngine;
 public class UICrosshairController : MonoBehaviour
 {
     [Header("子组件")]
-    [SerializeField] private CrosshairSpriteLoader _spriteLoader; //图片加载器
-    [SerializeField] private CrosshairAnimator _animator;         //动画控制子脚本
-
-    [SerializeField] private double _dspStartTime;                //记录开始时间
+    [SerializeField] private CrosshairAnimator _animator;
 
     private void Awake()
     {
-        _spriteLoader = GetComponent<CrosshairSpriteLoader>();                                
-        _animator = GetComponent<CrosshairAnimator>();
-        if (_spriteLoader == null) Debug.LogError("缺少 CrosshairSpriteLoader");
-        if (_animator == null) Debug.LogError("缺少 CrosshairAnimator");
-    }
-
-    private void Start()
-    {
-        _spriteLoader?.InitCrosshairSprites();  //初始化图片
+        if (_animator == null)
+            _animator = GetComponent<CrosshairAnimator>();
     }
 
     private void OnEnable()
@@ -38,7 +28,12 @@ public class UICrosshairController : MonoBehaviour
 
     private void OnEnemyHit(EnemyHitEvent evt)
     {
-        RhythmRank rank = RhythmManager.Instance.GetRank().rank;
-        _animator?.PlayHitAnimation(rank);
+        Debug.Log("Crosshair Receive Event Mouse Down");
+        Debug.Log($"rank == {evt.rank}");
+        // if (RhythmManager.Instance == null) return;
+        if (_animator == null) return;
+        // RhythmRank rank = RhythmManager.Instance.GetRank().rank;
+        // _animator.PlayHitAnimation(rank);
+        _animator.PlayHitAnimation(evt.rank);
     }
 }
