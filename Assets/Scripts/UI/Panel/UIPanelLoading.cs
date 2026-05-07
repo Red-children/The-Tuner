@@ -1,3 +1,4 @@
+using System.Collections;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -52,7 +53,7 @@ public class UIPanelLoading : UIBasePanel
         {
             _isPlayingAnimation = false;
             TriggerOnOpenComplete();
-            Complete(false);
+            // Complete(false);
         });
         _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
@@ -157,6 +158,29 @@ public class UIPanelLoading : UIBasePanel
                        if (delete) UIManager.Instance.ClosePanel(this);
                        else HidePanel();
                    });
+    }
+#endregion
+#region 场景加载
+    public IEnumerator LoadSceneAsync(string sceneName)
+    {
+        // 等待进度条动画完成
+        yield return new WaitForSeconds(scaleDuration + 0.1f); // 稍微多等一点确保进度条动画完成
+        
+        // 强制等待一帧
+        yield return null;
+        
+        // 异步加载场景
+        AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName);
+        
+        // 可选：显示加载进度
+        while (!asyncLoad.isDone)
+        {
+            // 可以在这里更新进度条
+            if (loadingMask != null)
+                loadingMask.fillAmount = 0.35f + asyncLoad.progress * 0.65f;
+            
+            yield return null;
+        }
     }
 #endregion
 #region 生命周期

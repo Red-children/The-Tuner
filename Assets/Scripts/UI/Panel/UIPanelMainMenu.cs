@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System;
 using DG.Tweening;
+using System.Collections;
 
 public class UIPanelMainMenu : UIBasePanel
 {
@@ -10,18 +11,18 @@ public class UIPanelMainMenu : UIBasePanel
     [SerializeField] private MainMenuVoiceFader voiceFader;
 
     [Header("BGM音乐")]
-    [Tooltip("主菜单循环BGM（Loop 1 start）")]
+    [Tooltip("主菜单循环BGM(Loop 1 start)")]
     [SerializeField] private BGMData mainMenuBGM;
-    [Tooltip("进入游戏后的BGM（非...LOOP1）")]
+    [Tooltip("进入游戏后的BGM(非...LOOP1)")]
     [SerializeField] private BGMData gameBGM;
-    [Tooltip("BGM淡入淡出时长（秒）")]
+    [Tooltip("BGM淡入淡出时长(秒)")]
     [SerializeField] private float bgmFadeDuration = 1.5f;
 
     [Header("动画参数")]
     [SerializeField] private float fadeDuration = 0.2f;
     [SerializeField] private float rotateDuration = 0.3f;
-    [SerializeField] private float ScaleDuration = 0.3f;
-    [SerializeField] private float MoveDuration = 0.1f;
+    [SerializeField] private float scaleDuration = 0.3f;
+    [SerializeField] private float moveDuration = 0.1f;
     [Header("动画组件")]
     // Background
     [SerializeField] private Image backgroundColor;
@@ -62,7 +63,7 @@ public class UIPanelMainMenu : UIBasePanel
             var bgmCtrl = FindObjectOfType<PreciseBGMController>();
             if (bgmCtrl != null)
             {
-                bgmCtrl.ChangeBGM(mainMenuBGM);
+                bgmCtrl.SwitchBGM(mainMenuBGM);
             }
             else
             {
@@ -181,7 +182,7 @@ public class UIPanelMainMenu : UIBasePanel
     Tween EnterArrow()
     {
         if (arrow == null) return null;
-        return MoveIn(arrow.transform, new Vector3(0, 0, 0), MoveDuration);
+        return MoveIn(arrow.transform, new Vector3(0, 0, 0), moveDuration);
     }
     Tween EnterMidRings()
     {
@@ -203,19 +204,19 @@ public class UIPanelMainMenu : UIBasePanel
         Sequence seq = DOTween.Sequence();
         foreach(var card in cards)
         {
-            seq.Append(MoveIn(card.transform, new Vector3(0, 10, 0), MoveDuration));
+            seq.Append(MoveIn(card.transform, new Vector3(0, 10, 0), moveDuration));
         }
         return seq;
     }
     Tween EnterButtonStart()
     {
         if (buttonStart == null) return null;
-        return MoveIn(buttonStart.transform, new Vector3(0, 10, 0), MoveDuration);
+        return MoveIn(buttonStart.transform, new Vector3(0, 10, 0), moveDuration);
     }
     Tween EnterButtonSettings()
     {
         if (buttonSettings == null) return null;
-        return MoveIn(buttonSettings.transform, new Vector3(0, 10, 0), MoveDuration);
+        return MoveIn(buttonSettings.transform, new Vector3(0, 10, 0), moveDuration);
     }
     Tween EnterScore()
     {
@@ -228,7 +229,7 @@ public class UIPanelMainMenu : UIBasePanel
     Tween EnterGun()
     {
         if (gun == null) return null;
-        return MoveIn(gun.transform, new Vector3(10, 0, 0), MoveDuration);
+        return MoveIn(gun.transform, new Vector3(10, 0, 0), moveDuration);
     }
     Tween EnterDecorations()
     {
@@ -296,74 +297,27 @@ public class UIPanelMainMenu : UIBasePanel
         if (_isPlayingAnimation) return;
         if (!_buttonStart) return;
         _buttonStart = false;
-        soundPlayer.PlayClickSoundManually();
 
-        // 淡出背景语音
+        soundPlayer.PlayClickSoundManually();
         if (voiceFader != null)
             voiceFader.FadeOutVoice(fadeDuration);
 
-        // Step 1: 立即打开Loading面板（覆盖一切，无缝衔接）
+        // 打开 Loading
         var loading = UIManager.Instance.OpenPanel(UIManager.UIConst.Loading) as UIPanelLoading;
-        var bgmCtrl = FindObjectOfType<PreciseBGMController>();
-
-        if (loading != null)
-        {
-            // Step 2: Loading开启动画完成后 → 淡出BGM → 淡入新BGM → 加载场景
-            loading.RegisterOnOpenComplete(() =>
-            {
-                if (bgmCtrl != null)
-                {
-                    bgmCtrl.FadeOutBGM(bgmFadeDuration, () =>
-                    {
-                        if (gameBGM != null)
-                        {
-                            bgmCtrl.FadeInBGM(gameBGM, bgmFadeDuration, () =>
-                            {
-                                SceneManager.LoadScene("The_Inner_World");
-                            });
-                        }
-                        else
-                        {
-                            SceneManager.LoadScene("The_Inner_World");
-                        }
-                    });
-                }
-                else
-                {
-                    SceneManager.LoadScene("The_Inner_World");
-                }
-            });
-        }
-        else
-        {
-            // Loading打不开的fallback
-            if (bgmCtrl != null)
-            {
-                bgmCtrl.FadeOutBGM(bgmFadeDuration, () =>
-                {
-                    if (gameBGM != null)
-                    {
-                        bgmCtrl.FadeInBGM(gameBGM, bgmFadeDuration, () =>
-                        {
-                            SceneManager.LoadScene("The_Inner_World");
-                        });
-                    }
-                    else
-                    {
-                        SceneManager.LoadScene("The_Inner_World");
-                    }
-                });
-            }
-            else
-            {
-                SceneManager.LoadScene("The_Inner_World");
-            }
-        }
-
-        // Step 3: 关闭主菜单（在Loading后面，用户看不到）
+        
+        // 关闭菜单
         UIManager.Instance.ClosePanel(this);
-        Debug.Log("Button Start Clicked");
+
+        // 等待 Loading 动画播完后加载场景
+        loading.RegisterOnOpenComplete(() =>
+        {
+            loading.Complete(false);
+            
+            // 启动场景加载协程 - 在 Loading 面板上执行
+            loading.StartCoroutine(loading.LoadSceneAsync("The_Inner_World"));
+        });
     }
+
     void OnSettingsClick()
     {
         if (_isPlayingAnimation) return;
