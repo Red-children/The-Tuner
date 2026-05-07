@@ -25,15 +25,15 @@ public class BossSkill : MonoBehaviour
 
         int random;
 
-        // 一阶段 
+        // 一阶段
         if (runtime.currentPhase == 1)
         {
-            random = Random.Range(0, 1); 
+            random = Random.Range(0, 1);
         }
-        // 二阶段 
+        // 二阶段
         else
         {
-            random = Random.Range(0, 2); 
+            random = Random.Range(0, 2);
         }
 
         switch (random)
@@ -49,7 +49,6 @@ public class BossSkill : MonoBehaviour
 
         lastUseTime = Time.time;
     }
-
 
     private void SummonContaminatedZone()
     {
@@ -74,19 +73,46 @@ public class BossSkill : MonoBehaviour
 
     void ShockwaveAttack()
     {
+        StartCoroutine(ShockwaveCoroutine());
+    }
+
+    private System.Collections.IEnumerator ShockwaveCoroutine()
+    {
         Debug.Log("使用技能：冲击波");
 
-        if (runtime.target == null) return;
+        if (runtime.target == null)
+            yield break;
 
         // 停止移动
         runtime.currentMoveSpeed = 0f;
         runtime.currentChaseSpeed = 0f;
 
+        // 预警
+        Debug.Log("冲击波预警开始");
+
+        yield return new WaitForSeconds(runtime.Data.shockwaveWarningTime);
+
         Transform player = runtime.target;
 
         Vector3 dir = (player.position - transform.position).normalized;
-        float distance = Vector3.Distance(transform.position, player.position);
 
+        float distance = Vector3.Distance(
+            transform.position,
+            player.position
+        );
+
+        // 超出范围
+        if (distance > runtime.Data.shockwaveRadius)
+        {
+            Debug.Log("玩家超出冲击波范围");
+
+            runtime.currentMoveSpeed = runtime.Data.moveSpeed;
+            runtime.currentChaseSpeed = runtime.Data.chaseSpeed;
+
+            yield break;
+        }
+
+        // 墙体检测
         RaycastHit2D hit = Physics2D.Raycast(
             transform.position,
             dir,
@@ -94,15 +120,29 @@ public class BossSkill : MonoBehaviour
             LayerMask.GetMask("Wall")
         );
 
+        // 没墙 → 命中
         if (hit.collider == null)
         {
-            DealDamageToPlayer(player.gameObject);
-            Debug.Log("冲击波命中玩家");
+            PlayerHealth playerHealth =
+                player.GetComponent<PlayerHealth>();
+
+            if (playerHealth != null)
+            {
+                playerHealth.TakeDamage(
+                    (int)runtime.Data.shockwaveDamage
+                );
+
+                Debug.Log("冲击波命中玩家");
+            }
         }
         else
         {
             Debug.Log("冲击波被墙挡住");
         }
+
+        // 恢复移动
+        runtime.currentMoveSpeed = runtime.Data.moveSpeed;
+        runtime.currentChaseSpeed = runtime.Data.chaseSpeed;
     }
 
     public void RemoveZone(GameObject zone)
@@ -125,11 +165,18 @@ public class BossSkill : MonoBehaviour
     {
         Texture2D tex = new Texture2D(64, 64);
         Color[] pixels = new Color[64 * 64];
+
         for (int i = 0; i < pixels.Length; i++)
             pixels[i] = Color.white;
+
         tex.SetPixels(pixels);
         tex.Apply();
-        return Sprite.Create(tex, new Rect(0, 0, 64, 64), Vector2.one * 0.5f);
+
+        return Sprite.Create(
+            tex,
+            new Rect(0, 0, 64, 64),
+            Vector2.one * 0.5f
+        );
     }
 
     // 内部逻辑类（不新建文件）
@@ -158,10 +205,12 @@ public class BossSkill : MonoBehaviour
             if (IsPlayerInside())
             {
                 damageTimer += Time.deltaTime;
+
                 if (damageTimer >= 1f)
                 {
                     damageTimer -= 1f;
-                    // 对玩家造成伤害（兼容多种方式）
+
+                    // 对玩家造成伤害
                     DealDamageToPlayer(data.zoneDamagePerSecond);
                 }
             }
@@ -175,22 +224,30 @@ public class BossSkill : MonoBehaviour
         {
             GameObject playerObj = player.gameObject;
 
-            // 方式1：检查是否实现了 IDamageable 接口
-            IDamageable damageable = playerObj.GetComponent<IDamageable>();
+            // 方式1：检查接口
+            IDamageable damageable =
+                playerObj.GetComponent<IDamageable>();
+
             if (damageable != null)
             {
                 damageable.TakeDamage(damage);
                 return;
             }
 
-            // 方式2：尝试 SendMessage（玩家脚本需实现 TakeDamage 方法）
-            playerObj.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
+            // 方式2：SendMessage
+            playerObj.SendMessage(
+                "TakeDamage",
+                damage,
+                SendMessageOptions.DontRequireReceiver
+            );
         }
 
         private bool IsPlayerInside()
         {
             Collider2D col = GetComponent<Collider2D>();
-            return col != null && col.bounds.Contains(player.position);
+
+            return col != null &&
+                   col.bounds.Contains(player.position);
         }
 
         private System.Collections.IEnumerator SpawnMinions()
@@ -198,9 +255,14 @@ public class BossSkill : MonoBehaviour
             while (currentHealth > 0)
             {
                 yield return new WaitForSeconds(data.zoneSpawnInterval);
+
                 if (data.minionPrefab != null)
                 {
-                    Instantiate(data.minionPrefab, transform.position + Random.insideUnitSphere * 2f, Quaternion.identity);
+                    Instantiate(
+                        data.minionPrefab,
+                        transform.position + Random.insideUnitSphere * 2f,
+                        Quaternion.identity
+                    );
                 }
             }
         }
@@ -208,10 +270,12 @@ public class BossSkill : MonoBehaviour
         public void TakeDamage(float damage)
         {
             currentHealth -= damage;
+
             if (currentHealth <= 0)
             {
                 if (owner != null)
                     owner.RemoveZone(gameObject);
+
                 Destroy(gameObject);
             }
         }

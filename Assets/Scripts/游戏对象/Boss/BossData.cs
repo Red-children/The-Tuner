@@ -27,4 +27,9 @@ public class BossData : EnemyData
     public GameObject minionPrefab;              // 生成的小怪预制体
     public float zoneMaxHealth = 50f;            // 区域生命值
     public int maxZoneCount = 3;                 // 同时存在的最大区域数量
+
+    [Header("冲击波技能")]
+    public float shockwaveDamage = 20f;
+    public float shockwaveWarningTime = 1.5f;
+    public float shockwaveRadius = 999f;
 }
