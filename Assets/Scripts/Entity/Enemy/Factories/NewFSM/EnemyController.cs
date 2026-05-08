@@ -579,8 +579,24 @@ public class EnemyController : EnemyBase
     {
         if (data != null && data.attackEffectPrefab != null)
         {
-            // 在敌人位置生成攻击特效
-            Vector3 effectPosition = transform.position;
+            // 计算特效生成位置
+            Vector3 effectPosition;
+            
+            // 近战敌人使用攻击位置偏移
+            if (data is MeleeEnemyData meleeData)
+            {
+                // 使用 GetAttackWorldPos 获取正确的攻击位置
+                effectPosition = GetAttackWorldPos();
+            }
+            // 远程敌人使用武器发射点或敌人位置
+            else if (weapon != null && weapon.firePoint != null)
+            {
+                effectPosition = weapon.firePoint.position;
+            }
+            else
+            {
+                effectPosition = transform.position;
+            }
 
             // 根据武器指向计算特效旋转
             Quaternion effectRotation;

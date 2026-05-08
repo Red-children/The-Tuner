@@ -59,10 +59,11 @@ PolygonCollider2D:
   m_Points:
     m_Paths:
     - - {x: -1.5131642, y: 0.43813932}
-      - {x: -4.026718, y: -0.84655416}
-      - {x: -9.333469, y: -2.313935}
-      - {x: -8.766215, y: -4.2489357}
-      - {x: -1.7382991, y: -3.1160665}
+      - {x: -5.02583, y: 3.4657063}
+      - {x: -15.791243, y: 0.9877701}
+      - {x: -21.790298, y: -1.5019712}
+      - {x: -17.214668, y: -7.841999}
+      - {x: -2.6607776, y: -7.4374404}
       - {x: -1.281905, y: -1.8417528}
 --- !u!114 &438798907
 MonoBehaviour:
@@ -138,8 +139,8 @@ PolygonCollider2D:
   m_Points:
     m_Paths:
     - - {x: -4.6381836, y: 2.020559}
-      - {x: -5.928427, y: -0.32478082}
-      - {x: -7.043232, y: -8.060907}
+      - {x: -19.27351, y: 4.0613575}
+      - {x: -25.241116, y: -6.9410396}
       - {x: -4.102591, y: -8.150816}
       - {x: -0.6253495, y: -7.6789103}
       - {x: -1.7382991, y: -3.1160665}
@@ -651,6 +652,7 @@ MonoBehaviour:
   chaseArea: {fileID: 6971854538634974099}
   patrolCenter: {fileID: 0}
   patrolPoints: []
+  currentAttackIndex: 0
   runtime: {fileID: 0}
   fsm: {fileID: 0}
   warningUI: {fileID: 9043275610140981721}
@@ -668,6 +670,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isPursuing: 0
   ignoreTargetUntilTime: 0
+  isDead: 0
   target: {fileID: 0}
   getHit: 0
   currentHealth: 0

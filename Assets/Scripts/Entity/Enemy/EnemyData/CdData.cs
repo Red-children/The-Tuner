@@ -27,9 +27,7 @@ public class CdData : EnemyData
     [Tooltip("最大追击距离，超过此距离则放弃追击返回巡逻")]
     public float maxChaseDistance = 15f;
 
-    [Header("攻击特效")]
-    [Tooltip("敌人攻击时播放的特效预制体")]
-    public GameObject attackEffectPrefab;
+  
 
     [Header("Cd敌人特有配置")]
     [Tooltip("Cd敌人特有属性")]
