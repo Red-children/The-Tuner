@@ -56,7 +56,7 @@ public class UIPanelDialogue : UIBasePanel
 
             TriggerOnOpenComplete();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 
@@ -93,7 +93,7 @@ public class UIPanelDialogue : UIBasePanel
                 Destroy(gameObject);
             else HideImmediately();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 #endregion

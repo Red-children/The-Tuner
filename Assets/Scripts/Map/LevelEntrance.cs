@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class LevelEntrance : MonoBehaviour
 {
@@ -52,6 +50,11 @@ public class LevelEntrance : MonoBehaviour
 
         // 直接传送玩家
         other.transform.position = targetSpawnPoint.position;
+        // 召唤UI界面
+        if (UIManager.Instance.GetPanel(UIManager.UIConst.Crosshair) == null)
+        {
+            UIManager.Instance.ShowPanel(UIManager.UIConst.Crosshair);
+        }
     }
     
     private void PlayLevelMusic()
@@ -80,19 +83,27 @@ public class LevelEntrance : MonoBehaviour
         if (rhythmManager != null)
         {
             Debug.Log("启动节奏管理器");
-            // 这里可以调用节奏管理器的启动方法
-            // rhythmManager.StartRhythm();
         }
         else
         {
             Debug.LogWarning("未找到RhythmManager");
         }
         
-        // 直接使用传送门配置的BGMData播放音乐
+        // 使用 PreciseBGMController.ChangeBGM 切换关卡音乐（会先停止当前BGM再播放）
         if (levelBGM != null)
         {
-            Debug.Log($"播放关卡BGM: {levelBGM.name}");
-            EventBus.Instance.Trigger<PlayBGMEvent>(new PlayBGMEvent(levelBGM));
+            // var bgmCtrl = FindObjectOfType<PreciseBGMController>();
+            // if (bgmCtrl != null)
+            // {
+            //     Debug.Log($"切换关卡BGM: {levelBGM.name}");
+            //     bgmCtrl.ChangeBGM(levelBGM);
+            // }
+            // else
+            // {
+                // fallback: 通过事件总线触发
+                Debug.Log($"播放关卡BGM: {levelBGM.name}");
+                EventBus.Instance.Trigger<PlayBGMEvent>(new PlayBGMEvent(levelBGM));
+            // }
         }
         else
         {

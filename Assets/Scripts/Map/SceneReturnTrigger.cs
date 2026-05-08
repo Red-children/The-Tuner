@@ -3,8 +3,7 @@ using UnityEngine.SceneManagement;
 
 /// <summary>
 /// 场景加载后自动返回触发器
-/// 场景加载后自动开始对话 → 对话结束后切换到目标场景
-/// 用于表世界这类过渡场景，无需玩家交互
+/// 场景加载后自动开始对话 → 对话结束后切换到目标场景（带Loading过渡）
 /// </summary>
 public class SceneReturnTrigger : MonoBehaviour
 {
@@ -19,6 +18,10 @@ public class SceneReturnTrigger : MonoBehaviour
 
     [Header("是否冻结玩家")]
     [SerializeField] private bool freezePlayer = true;
+
+    [Header("Loading过渡")]
+    [Tooltip("切换场景前是否显示Loading面板")]
+    [SerializeField] private bool showLoading = true;
 
     private bool _isInDialogue = false;
 
@@ -58,11 +61,14 @@ public class SceneReturnTrigger : MonoBehaviour
         var panel = UIManager.Instance.OpenPanel(UIManager.UIConst.Echo) as UIPanelEcho;
         if (panel == null)
         {
-            Debug.LogWarning("SceneReturnTrigger: 无法打开Echo面板，跳过对话，直接返回目标场景");
-            SceneManager.LoadScene(targetSceneName);
+            Debug.LogWarning("SceneReturnTrigger: 无法打开Echo面板，跳过对话，直接加载目标场景");
+            LoadTargetScene();
             return;
         }
-
+        panel.RegisterOnCloseComplete(() =>
+        {
+            LoadTargetScene();
+        });
         panel.OnDialogue(dialogueData);
         EventBus.Instance.Trigger(new DialogueStartEvent(dialogueData, freezePlayer));
     }
@@ -73,12 +79,33 @@ public class SceneReturnTrigger : MonoBehaviour
             return;
 
         _isInDialogue = false;
+        // UIManager.Instance.DestroyPanelBeforeSceneSwitch(UIManager.UIConst.Echo);
+        // LoadTargetScene();
+        UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
 
-        UIManager.Instance.DestroyPanelBeforeSceneSwitch(UIManager.UIConst.Echo);
+    }
 
+    private void LoadTargetScene()
+    {
         if (!string.IsNullOrEmpty(targetSpawnPointName))
         {
             PlayerSpawnInfo.spawnPointName = targetSpawnPointName;
+        }
+
+        if (showLoading)
+        {
+            var loading = UIManager.Instance.GetPanel(UIManager.UIConst.Loading) as UIPanelLoading;
+            if (loading == null) 
+                loading = UIManager.Instance.OpenPanel(UIManager.UIConst.Loading) as UIPanelLoading;
+            if (loading != null)
+            {
+                loading.RegisterOnOpenComplete(() =>
+                {
+                    SceneManager.LoadScene(targetSceneName);
+                });
+                loading.ShowPanel();
+                return;
+            }
         }
 
         SceneManager.LoadScene(targetSceneName);

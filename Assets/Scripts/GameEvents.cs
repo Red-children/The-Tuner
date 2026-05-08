@@ -45,14 +45,30 @@ public struct AttackMultiplierChangedEvent
 }
 
 
-
+public struct BGMChangeEvent
+{
+    public BGMData songData;
+    public bool startRhythm;
+    public BGMChangeEvent (BGMData data, bool startRhythm)
+    {
+        songData = data;
+        this.startRhythm = startRhythm;
+    }
+}
 
 public struct PlayBGMEvent
 {
     //  TODO:
+    public bool change;
     public BGMData data;
     public PlayBGMEvent(BGMData d)
     {
+        change = false;
+        data = d;
+    }
+    public PlayBGMEvent(bool c, BGMData d)
+    {
+        change = c;
         data = d;
     }
 }

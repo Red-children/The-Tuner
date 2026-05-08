@@ -56,18 +56,18 @@ public class UILoader : MonoBehaviour
 #region ESC 事件处理
     private void ESCEvent()
     {
-        if (panelPause.gameObject.activeSelf)
+        if (panelPause == null)
         {
-            panelPause.HidePanel();
+            panelPause = UIManager.Instance.OpenPanel(UIManager.UIConst.Pause) as UIPanelPause;
         }
-        else 
+        if (!panelPause.gameObject.activeSelf)
         {
-            Time.timeScale = 0f;
             panelPause.RegisterOnCloseComplete(() =>
             {
                 Time.timeScale = 1f;
             });
             panelPause.ShowPanel();
+            Time.timeScale = 0f;
         }
     }
 #endregion

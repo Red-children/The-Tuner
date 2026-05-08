@@ -36,7 +36,7 @@ public class UIPanelinBattle : UIBasePanel
 
             TriggerOnOpenComplete();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
     protected override void KillAllLoopingAnimations()
@@ -67,7 +67,7 @@ public class UIPanelinBattle : UIBasePanel
                 Destroy(gameObject);
             else HideImmediately();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 #endregion

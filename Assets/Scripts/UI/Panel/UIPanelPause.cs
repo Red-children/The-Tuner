@@ -6,9 +6,9 @@ using Image = UnityEngine.UI.Image;
 public class UIPanelPause : UIBasePanel
 {
     [Header("动画参数")]
-    [SerializeField] private float rotateDuration = 1f;
-    [SerializeField] private float fadeDuration = 1f;
-    [SerializeField] private float scaleDuration = 1f;
+    [SerializeField] private float rotateDuration = 0.4f;
+    [SerializeField] private float fadeDuration = 0.5f;
+    [SerializeField] private float scaleDuration = 0.3f;
     // private Sequence _seq;
 
     [Header("动画组件")]
@@ -56,7 +56,7 @@ public class UIPanelPause : UIBasePanel
         {
             _isPlayingAnimation = false;
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 
@@ -92,7 +92,7 @@ public class UIPanelPause : UIBasePanel
                 Destroy(gameObject);
             else HideImmediately();
         });
-
+        _seq.SetUpdate(true);
         _seq.SetTarget(gameObject);
     }
 #endregion
@@ -297,7 +297,8 @@ public class UIPanelPause : UIBasePanel
     public void OnClickContinue()
     {
         //  TODO:
-        UIManager.Instance.ClosePanel(this);
+        // UIManager.Instance.ClosePanel(this);
+        HidePanel();
     }
     public void OnClickReturn()
     {

@@ -27,7 +27,7 @@ public class EnemyPatrolState : EnemyStateBase
         Debug.Log("敌人进入巡逻状态");
         if (controller.patrolPoints == null || controller.patrolPoints.Length == 0)
         {
-            Debug.LogWarning("没有设置巡逻点，使用随机巡逻");
+            // Debug.LogWarning("没有设置巡逻点，使用随机巡逻");
             GetNewRandomTarget(); // 生成新的随机目标
         }
         else

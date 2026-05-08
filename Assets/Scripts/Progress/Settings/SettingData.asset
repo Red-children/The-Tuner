@@ -15,7 +15,7 @@ MonoBehaviour:
   entries:
   - settingType: 0
     name: "\u4E3B\u97F3\u91CF"
-    amount: 100
+    amount: 8
     available: 1
   - settingType: 1
     name: "\u97F3\u6548"

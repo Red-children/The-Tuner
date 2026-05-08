@@ -38,6 +38,7 @@ public class UIManager
             {UIConst.Pause, "PanelPause"},
             {UIConst.Echo, "PanelEcho"},
             {UIConst.Settings, "PanelSettings"},
+            {UIConst.Loading, "PanelLoading"},
         };
 
         canvasModeDict = new Dictionary<string, int>
@@ -50,6 +51,7 @@ public class UIManager
             { UIConst.Pause, 1},       // 暂停 → 系统Canvas
             { UIConst.Echo, 0},        // 对话 → 主Canvas
             { UIConst.Settings, 1},    // 设置 → 系统Canvas
+            { UIConst.Loading, 1},     // 加载 → 系统Canvas
         };
         prefabDict = new Dictionary<string, GameObject>();
         panelDict = new Dictionary<string, UIBasePanel>();
@@ -64,6 +66,7 @@ public class UIManager
         public const string Pause = "UIPanelPause";
         public const string Echo = "UIPanelEcho";
         public const string Settings = "UIPanelSettings";
+        public const string Loading = "UIPanelLoading";
     }
 
     public UIBasePanel GetPanel(string name)
@@ -128,10 +131,10 @@ public class UIManager
         }
 
         panel.ClosePanel();
-        panel.RegisterOnCloseComplete(() =>
-        {
-            panelDict.Remove(name);
-        });
+        // panel.RegisterOnCloseComplete(() =>
+        // {
+        //     panelDict.Remove(name);
+        // });
         return true;
     }
     public bool ClosePanel(UIBasePanel panel)
@@ -147,13 +150,31 @@ public class UIManager
             }
         }
         panel.ClosePanel();
-        panel.RegisterOnCloseComplete(() =>
-        {
-            panelDict.Remove(name);
-        });
+        // panel.RegisterOnCloseComplete(() =>
+        // {
+        //     panelDict.Remove(name);
+        // });
         return true;
     }
+    public void RemovePanel(UIBasePanel panel)
+    {
+        if (panel == null) return;
 
+        string keyToRemove = null;
+        foreach (var pair in panelDict)
+        {
+            if (pair.Value == panel)
+            {
+                keyToRemove = pair.Key;
+                break;
+            }
+        }
+
+        if (!string.IsNullOrEmpty(keyToRemove))
+        {
+            panelDict.Remove(keyToRemove);
+        }
+    }
     /// <summary>
     /// 场景切换前强制清理面板（同步销毁GameObject并移除字典引用）
     /// 避免异步回调因场景销毁而丢失，导致字典残留脏引用
