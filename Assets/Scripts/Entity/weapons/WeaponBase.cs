@@ -38,6 +38,9 @@ public class WeaponStats
 
     public float shakeIntensity = 0.01f;
 
+    [Header("开火特效")]
+    [Tooltip("开火时播放的特效预制体")]
+    public GameObject fireEffectPrefab;  // 开火特效
 
     [Header("蓄力配置（仅 BassCannon 等蓄力武器有效）")]
     public float chargeTime = 1.2f;              // 蓄满所需时间

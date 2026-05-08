@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee87e32162deaad4aad17b9f993cf4c4, type: 3}
+  m_Name: CdData
+  m_EditorClassIdentifier: 
+  health: 100
+  moveSpeed: 5
+  chaseSpeed: 7
+  idleTime: 2
+  targetLayer:
+    serializedVersion: 2
+    m_Bits: 128
+  damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
+  deadEff: {fileID: 0}
+  patrolRadius: 5
+  attackEffectPrefab: {fileID: 3670556270691226231, guid: 54137b3ea37bfbe4084254bf73eef936, type: 3}
+  visionAngle: 180
+  visionRange: 10
+  visionBlockMask:
+    serializedVersion: 2
+    m_Bits: 256
+  attackAngle: 180
+  attackRange: 1.5
+  attackDamage: 10
+  attackOffset: {x: 1, y: 0}
+  approachDistance: 2
+  stopMinRange: 0.2
+  Atk: 10
+  maxChaseDistance: 15
+  attackEffectPrefab: {fileID: 0}
+  cdSpecialAttribute: 1

@@ -26,6 +26,9 @@ public class EnemyRangedWeapon : WeaponInfo
             return;
         }
 
+        // 播放开火特效
+        PlayFireEffect();
+
         // 创建弹丸
         GameObject projectile = Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
         
@@ -48,6 +51,19 @@ public class EnemyRangedWeapon : WeaponInfo
                 hitScript.owner = enemyController;
                 hitScript.damage = (int)damage;
             }
+        }
+    }
+
+    /// <summary>
+    /// 播放开火特效
+    /// </summary>
+    private void PlayFireEffect()
+    {
+        if (weaponStats != null && weaponStats.fireEffectPrefab != null && firePoint != null)
+        {
+            // 在开火点生成特效，沿着X轴旋转90度
+            Quaternion effectRotation = firePoint.rotation * Quaternion.Euler(90f, 0f, 0f);
+            Instantiate(weaponStats.fireEffectPrefab, firePoint.position, effectRotation);
         }
     }
 }

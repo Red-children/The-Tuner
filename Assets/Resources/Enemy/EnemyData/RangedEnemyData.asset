@@ -22,10 +22,14 @@ MonoBehaviour:
   damageTextPrefab: {fileID: 3653391638784797419, guid: 75c5ecf851a79484f98c3e3f110c8ead, type: 3}
   deadEff: {fileID: 0}
   patrolRadius: 5
+  attackEffectPrefab: {fileID: 1890612338124089023, guid: 4bee8762b92dfd443af9ba27c8b8d805, type: 3}
   visionAngle: 180
   visionRange: 10
   visionBlockMask:
     serializedVersion: 2
     m_Bits: 384
-  attackRange: 1000
+  attackRange: 17
   Atk: 10
+  attackEffectPrefabs: []
+  attackDamages: []
+  attackAnimationIndex: 

@@ -22,6 +22,9 @@ public class StandardFirearm : WeaponInfo
             return;
         }
 
+        // 播放开火特效
+        PlayFireEffect();
+
         if (owner == WeaponOwner.Player)
         {
             EventBus.Instance.Trigger(new PlayerFiredEvent());
@@ -39,6 +42,19 @@ public class StandardFirearm : WeaponInfo
 
         currentAmmo--;
         lastShootTime = currentTime;
+    }
+
+    /// <summary>
+    /// 播放开火特效
+    /// </summary>
+    private void PlayFireEffect()
+    {
+        if (weaponStats.fireEffectPrefab != null && firePoint != null)
+        {
+            // 在开火点生成特效，沿着X轴旋转90度
+            Quaternion effectRotation = firePoint.rotation * Quaternion.Euler(-90f, 0f, 0f);
+            Instantiate(weaponStats.fireEffectPrefab, firePoint.position, effectRotation);
+        }
     }
 
     private void TryFire()

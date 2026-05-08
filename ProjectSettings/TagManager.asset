@@ -24,7 +24,7 @@ TagManager:
   - DamageNumber
   - PlayerBullet
   - EnemyBullet
-  - 
+  - Effect
   - 
   - 
   - 
@@ -55,4 +55,7 @@ TagManager:
     locked: 0
   - name: Weapon
     uniqueID: 2225659765
+    locked: 0
+  - name: Effect
+    uniqueID: 1881283115
     locked: 0
