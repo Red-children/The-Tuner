@@ -31,6 +31,9 @@ public class LevelEntrance : MonoBehaviour
         
         // 播放关卡音乐
         PlayLevelMusic();
+UIManager.Instance.OpenPanel(UIManager.UIConst.Battle);
+UIManager.Instance.OpenPanel(UIManager.UIConst.Crosshair);
+
     }
     
     private void OnTriggerStay2D(Collider2D other)

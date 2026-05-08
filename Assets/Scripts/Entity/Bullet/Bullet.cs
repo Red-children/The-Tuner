@@ -29,10 +29,6 @@ public class Bullet : MonoBehaviour
 
     private void Start()
     {
-        // 初始化子弹特效，如果未赋值则从 Resources 加载
-        if (destroyEffect == null)
-            destroyEffect = Resources.Load<GameObject>("Eff");
-
         // 获取精灵渲染器
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
@@ -132,9 +128,6 @@ public class Bullet : MonoBehaviour
         {
             EnemyBase enemy = hit.collider.GetComponent<EnemyBase>();
 
-
-
-
             if (enemy != null)
             {
 
@@ -170,6 +163,8 @@ public class Bullet : MonoBehaviour
 
                     // 调整视觉层级，让子弹显示在敌人前面
                     AdjustVisualLayerForPenetration();
+
+                      transform.position = hit.point + (Vector2)transform.right * 0.1f;
 
                     // 检查是否达到最大穿透次数
                     if (currentPenetrationCount >= maxPenetrationCount)
@@ -273,7 +268,6 @@ public class Bullet : MonoBehaviour
     {
         if (destroyEffect != null)
         {
-            // 特效位置向上偏移1个单位
             Vector3 effectPosition = transform.position + Vector3.up * 1f;
             Instantiate(destroyEffect, effectPosition, transform.rotation);
         }
@@ -287,7 +281,6 @@ public class Bullet : MonoBehaviour
     {
         if (destroyEffect != null)
         {
-            // 在碰撞点生成特效，并向上偏移1个单位
             Vector3 effectPosition = hitPosition + Vector3.up * 1f;
             Instantiate(destroyEffect, effectPosition, transform.rotation);
         }

@@ -118,7 +118,7 @@ MonoBehaviour:
   moveSpeed: 20
   damage: 10
   destroyEffect: {fileID: 4366305579818522082, guid: d53e2d63f070c5343b88011a605fd4ac, type: 3}
-  canPenetrate: 1
+  canPenetrate: 0
   maxPenetrationCount: 3
   currentPenetrationCount: 0
   penetrationDamageReduction: 0.2

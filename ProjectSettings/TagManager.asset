@@ -59,3 +59,6 @@ TagManager:
   - name: Effect
     uniqueID: 1881283115
     locked: 0
+  - name: Prop
+    uniqueID: 897515855
+    locked: 0

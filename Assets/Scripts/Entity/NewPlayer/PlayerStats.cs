@@ -75,7 +75,7 @@ public class PlayerStats : MonoBehaviour
         currentHealth = Mathf.Clamp(currentHealth + delta, 0, maxHealth);
         if (oldHealth != currentHealth)
         {
-            EventBus.Instance.Trigger(new PlayerHealthChangedEvent(currentHealth, maxHealth));
+            EventBus.Instance.Trigger(new PlayerHealthChangedEventStruct { currentHealth = currentHealth, maxHealth = maxHealth });
             if (currentHealth <= 0)
                 EventBus.Instance.Trigger(new PlayerDiedEvent());
         }
