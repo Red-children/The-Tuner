@@ -39,3 +39,6 @@ MonoBehaviour:
   minionPrefab: {fileID: 725547110283411354, guid: 50a29d903c69289498ff954133c13a93, type: 3}
   zoneMaxHealth: 50
   maxZoneCount: 3
+  shockwaveDamage: 600
+  shockwaveWarningTime: 1.5
+  shockwaveRadius: 999
