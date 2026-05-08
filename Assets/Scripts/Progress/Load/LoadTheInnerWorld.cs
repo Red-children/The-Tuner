@@ -17,6 +17,7 @@ public class LoadTheInnerWorld : MonoBehaviour
     {
         _bgm = FindObjectOfType<PreciseBGMController>();
         SceneManager.sceneLoaded += OnSceneLoaded;
+        LoadNormalUI();
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
@@ -48,7 +49,20 @@ public class LoadTheInnerWorld : MonoBehaviour
         var loading = UIManager.Instance.GetPanel(UIManager.UIConst.Loading) as UIPanelLoading;
         loading?.Complete(false);
     }
+    void LoadNormalUI()
+    {
+        var fight = UIManager.Instance.GetPanel(UIManager.UIConst.Battle);
+        if (fight == null)
+            fight = UIManager.Instance.OpenPanel(UIManager.UIConst.Battle);
+        if (!fight.isActiveAndEnabled)
+            fight.ShowPanel();
 
+        var crosshair = UIManager.Instance.GetPanel(UIManager.UIConst.Crosshair);
+        if (crosshair == null)
+            crosshair = UIManager.Instance.OpenPanel(UIManager.UIConst.Crosshair);
+        if (!crosshair.isActiveAndEnabled)
+            crosshair.ShowPanel();
+    }
     void OnDestroy()
     {
         SceneManager.sceneLoaded -= OnSceneLoaded;

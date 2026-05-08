@@ -11,7 +11,7 @@ public struct InitComplete
     }
 }
 //  进入游戏加载主界面
-public class GameEntry : MonoBehaviour
+public class GameEntre : MonoBehaviour
 {
     [Tooltip("调试选项-加载主页面")]
     public bool LoadMainMenu = true;

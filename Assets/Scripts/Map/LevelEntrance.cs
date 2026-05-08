@@ -31,6 +31,8 @@ public class LevelEntrance : MonoBehaviour
         
         // 播放关卡音乐
         PlayLevelMusic();
+
+        CallUI();
     }
     
     private void OnTriggerStay2D(Collider2D other)
@@ -75,7 +77,20 @@ public class LevelEntrance : MonoBehaviour
         // 启动节奏管理系统
         StartRhythmSystem();
     }
-    
+    private void CallUI()
+    {
+        var fight = UIManager.Instance.GetPanel(UIManager.UIConst.Battle);
+        if (fight == null)
+            fight = UIManager.Instance.OpenPanel(UIManager.UIConst.Battle);
+        if (!fight.isActiveAndEnabled)
+            fight.ShowPanel();
+
+        var crosshair = UIManager.Instance.GetPanel(UIManager.UIConst.Crosshair);
+        if (crosshair == null)
+            crosshair = UIManager.Instance.OpenPanel(UIManager.UIConst.Crosshair);
+        if (!crosshair.isActiveAndEnabled)
+            crosshair.ShowPanel();
+    }
     private void StartRhythmSystem()
     {
         // 查找节奏管理器
