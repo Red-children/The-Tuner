@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b0b0d597be19b449874a1234935f5d3, type: 3}
   m_Name: FightMusic1
   m_EditorClassIdentifier: 
-  firstOffset: 0
-  BPM: 0
+  firstOffset: 1.2
+  BPM: 120
   audioClip: {fileID: 8300000, guid: 709042684d82d344eb737b9d4aeaea15, type: 3}
+  loop: 1

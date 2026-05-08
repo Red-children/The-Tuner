@@ -32,7 +32,7 @@ MonoBehaviour:
     weakReleaseDamageRatio: 0.3
     chargeShakeBase: 0.03
     chargeShakeMax: 0.15
-  - id: 0
+  - id: 1
     weaponType: 1
     weaponName: 2
     damage: 10
@@ -51,7 +51,7 @@ MonoBehaviour:
     weakReleaseDamageRatio: 0.3
     chargeShakeBase: 0.03
     chargeShakeMax: 0.15
-  - id: 0
+  - id: 2
     weaponType: 2
     weaponName: 3
     damage: 25
@@ -70,7 +70,7 @@ MonoBehaviour:
     weakReleaseDamageRatio: 0.3
     chargeShakeBase: 0.03
     chargeShakeMax: 0.15
-  - id: 0
+  - id: 3
     weaponType: 3
     weaponName: 3
     damage: 2000
