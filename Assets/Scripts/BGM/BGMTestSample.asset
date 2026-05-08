@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b0b0d597be19b449874a1234935f5d3, type: 3}
   m_Name: BGMTestSample
   m_EditorClassIdentifier: 
-  firstOffset: 0
-  BPM: 0
+  firstOffset: 10
+  BPM: 120
   audioClip: {fileID: 8300000, guid: 26ee02f753c512347aa0c4cbb25cd0e8, type: 3}
+  loop: 1

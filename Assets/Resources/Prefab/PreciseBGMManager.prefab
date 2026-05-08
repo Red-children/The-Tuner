@@ -143,9 +143,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bbffe90a5112664992fbda56a2efbef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  songData: {fileID: 0}
+  songData: {fileID: 6457067744661211835}
   _progressManager: {fileID: 6457067744661211832}
   bgmVolume: 0.1
+  defaultFadeDuration: 0.5
 --- !u!114 &6457067744661211832
 MonoBehaviour:
   m_ObjectHideFlags: 0

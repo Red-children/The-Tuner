@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class BGMTrigger : MonoBehaviour
 {
@@ -7,7 +8,10 @@ public class BGMTrigger : MonoBehaviour
     void Start()
     {
         if (auto)
+        {
             OnTriggerEnter2D();
+        }
+
     }
 
     void Update()

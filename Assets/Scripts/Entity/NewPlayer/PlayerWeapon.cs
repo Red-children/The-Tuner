@@ -67,11 +67,12 @@ public class PlayerWeapon : MonoBehaviour
         currentWeapon.gameObject.SetActive(true);
         currentIndex = index;
 
-        // ���������л��¼����� UI ��ģ�����
         EventBus.Instance.Trigger(new WeaponChangedEvent
         {
             newWeapon = currentWeapon,
+            weaponId = currentWeapon.WeaponId,
         });
+        Debug.Log("Fuck Change Weapon");
     }
 
     /// <summary>
