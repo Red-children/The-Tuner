@@ -85,7 +85,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &7776052493600061594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,7 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
+  m_IgnoreReversedGraphics: 0
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
@@ -115,8 +115,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 057b196604c29df47bbd8ce7f463f4dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveHeight: 1
+  moveHeight: 2
   duration: 1
+  perfectColor: {r: 1, g: 0.8, b: 0, a: 1}
+  greatColor: {r: 0.3, g: 0.8, b: 1, a: 1}
+  goodColor: {r: 1, g: 1, b: 1, a: 1}
+  missColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  perfectScale: 1.5
+  greatScale: 1.2
+  goodScale: 1
   damageText: {fileID: 1858862405347149778}
 --- !u!1 &6848523055578229643
 GameObject:
@@ -211,8 +218,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 20
-  m_fontSizeBase: 20
+  m_fontSize: 15
+  m_fontSizeBase: 15
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18

@@ -93,6 +93,7 @@ public class FSM : MonoBehaviour
         currentState?.OnExit();
         currentState = states[newState];
         currentState.OnStart();
+        Controller?.ResetStateTimer();
     }
 
     public void RegisterState(StateType type, IState state)

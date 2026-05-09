@@ -48,6 +48,10 @@ public class EnemyController : EnemyBase
     [Header("攻击预警UI")]
     [SerializeField] private EnemyWarningUI warningUI; // 在Inspector中拖拽敌人头顶的Canvas
 
+    [Header("安全计时器")]
+    [SerializeField] private float stateTimeLimit = 7f; // 单个状态最长停留时间，超时自动死亡
+    private float _stateTimer;
+
     private SpriteRenderer flashOverlay; // 受伤闪白覆盖层
 
     void Awake()
@@ -126,8 +130,22 @@ public class EnemyController : EnemyBase
     // 实现基类的抽象方法
     protected override void UpdateBehavior()
     {
-        // EnemyController使用状态机，这里不需要额外的行为逻辑
-        // 状态机的更新在FSM类中处理
+        // 状态计时器：累加时间，超时则强制死亡
+        _stateTimer += Time.deltaTime;
+        if (_stateTimer >= stateTimeLimit)
+        {
+            Debug.LogWarning($"[{name}] 在状态 {fsm?.currentState?.GetType().Name} 中停留超过 {stateTimeLimit}s，强制死亡");
+            OnKilled();
+            fsm?.ChangeState(StateType.Dead);
+        }
+    }
+
+    /// <summary>
+    /// 由 FSM 在状态切换时调用，重置状态计时器
+    /// </summary>
+    public void ResetStateTimer()
+    {
+        _stateTimer = 0f;
     }
 
     /// <summary>

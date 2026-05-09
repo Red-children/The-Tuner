@@ -38,7 +38,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -140, y: 97}
+  m_AnchoredPosition: {x: -7, y: 97}
   m_SizeDelta: {x: -373, y: -23}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2892708562495276047
@@ -96,7 +96,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2892708562595769105
 RectTransform:
   m_ObjectHideFlags: 0
@@ -193,7 +193,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 11, y: 0}
   m_SizeDelta: {x: -95, y: -50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2892708562735056889
@@ -1427,7 +1427,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -615, y: -430.5}
+  m_AnchoredPosition: {x: -638, y: -430.5}
   m_SizeDelta: {x: -1350, y: -861}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5710153549235843186
@@ -1868,6 +1868,7 @@ GameObject:
   - component: {fileID: 5710153550036417995}
   - component: {fileID: 5710153550036417992}
   - component: {fileID: 1729535232557262672}
+  - component: {fileID: 5740605097705970187}
   m_Layer: 5
   m_Name: UIRankInfo
   m_TagString: Untagged
@@ -1953,6 +1954,23 @@ MonoBehaviour:
     perfect: {fileID: 8087728611382456929}
   scaleDuration: 0.2
   fadeDuration: 0.15
+--- !u!114 &5740605097705970187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5710153550036418006}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72732f0997725c0489d89c13a2f656d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseScale: {x: 1, y: 1, z: 1}
+  beatScale: {x: 1.2, y: 1.2, z: 1.2}
+  scaleDuration: 0.15
+  easeType: 6
+  onlyOnBeatWindow: 0
 --- !u!1 &5710153550171648232
 GameObject:
   m_ObjectHideFlags: 0

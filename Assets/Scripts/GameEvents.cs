@@ -72,6 +72,15 @@ public struct PlayBGMEvent
         data = d;
     }
 }
+
+public struct PlayLevelBGMEvent
+{
+    public BGMData data;
+    public PlayLevelBGMEvent(BGMData data)
+    {
+        this.data = data;
+    }
+}
 public struct BGMProgressUpdateEvent
 {
     public double Progress;

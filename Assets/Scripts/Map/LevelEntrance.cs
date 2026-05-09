@@ -33,6 +33,7 @@ public class LevelEntrance : MonoBehaviour
         PlayLevelMusic();
 UIManager.Instance.OpenPanel(UIManager.UIConst.Battle);
 UIManager.Instance.OpenPanel(UIManager.UIConst.Crosshair);
+UIManager.Instance.OpenPanel(UIManager.UIConst.PlayerHurt);
 
     }
     
@@ -92,21 +93,11 @@ UIManager.Instance.OpenPanel(UIManager.UIConst.Crosshair);
             Debug.LogWarning("未找到RhythmManager");
         }
         
-        // 使用 PreciseBGMController.ChangeBGM 切换关卡音乐（会先停止当前BGM再播放）
+        // 使用 PreciseBGMController 切换关卡音乐
         if (levelBGM != null)
         {
-            // var bgmCtrl = FindObjectOfType<PreciseBGMController>();
-            // if (bgmCtrl != null)
-            // {
-            //     Debug.Log($"切换关卡BGM: {levelBGM.name}");
-            //     bgmCtrl.ChangeBGM(levelBGM);
-            // }
-            // else
-            // {
-                // fallback: 通过事件总线触发
-                Debug.Log($"播放关卡BGM: {levelBGM.name}");
-                EventBus.Instance.Trigger<PlayBGMEvent>(new PlayBGMEvent(levelBGM));
-            // }
+            Debug.Log($"播放关卡BGM: {levelBGM.name}");
+            EventBus.Instance.Trigger(new PlayLevelBGMEvent(levelBGM));
         }
         else
         {

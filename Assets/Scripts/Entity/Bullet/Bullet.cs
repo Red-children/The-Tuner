@@ -164,7 +164,7 @@ public class Bullet : MonoBehaviour
                     // 调整视觉层级，让子弹显示在敌人前面
                     AdjustVisualLayerForPenetration();
 
-                      transform.position = hit.point + (Vector2)transform.right * 0.1f;
+                    transform.position = hit.point + (Vector2)transform.right * 0.1f;
 
                     // 检查是否达到最大穿透次数
                     if (currentPenetrationCount >= maxPenetrationCount)

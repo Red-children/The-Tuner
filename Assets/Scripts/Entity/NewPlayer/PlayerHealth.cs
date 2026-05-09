@@ -31,6 +31,9 @@ public class PlayerHealth : MonoBehaviour
         // 通过 stats 修改血量，它会自动触发 HealthChangedEvent
         stats.ModifyHealth(-damage);
 
+        // 触发受伤事件（供受伤红屏动画等使用）
+        EventBus.Instance.Trigger(new PlayerHurtEvent { damage = damage, isBlocked = false });
+
         // 检查是否死亡
         if (stats.CurrentHealth <= 0)
         {

@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class PreciseBGMController : MonoBehaviour
 {
+    public static PreciseBGMController Instance { get; private set; }
+
     [SerializeField] private BgmSongData songData;
     [SerializeField] private BgmProgressManager _progressManager;
 
@@ -20,27 +22,31 @@ public class PreciseBGMController : MonoBehaviour
     #region 生命周期
     private void Awake()
     {
-        var existing = FindObjectOfType<PreciseBGMController>();
-        if (existing != null && existing != this)
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
 
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
         AutoGetSubModules();
         _progressManager?.Init(songData);
 
         EventBus.Instance.Subscribe<PlayBGMEvent>(OnPlayBGM);
-        EventBus.Instance.Subscribe<BGMChangeEvent>(OnBGMChange); // ✅ 订阅
-
-        DontDestroyOnLoad(gameObject);
+        EventBus.Instance.Subscribe<BGMChangeEvent>(OnBGMChange);
+        EventBus.Instance.Subscribe<PlayLevelBGMEvent>(OnPlayLevelBGM);
     }
 
     private void OnDestroy()
     {
+        if (Instance == this) Instance = null;
+
         StopAllCoroutines();
         EventBus.Instance.Unsubscribe<PlayBGMEvent>(OnPlayBGM);
-        EventBus.Instance.Unsubscribe<BGMChangeEvent>(OnBGMChange); // ✅ 取消
+        EventBus.Instance.Unsubscribe<BGMChangeEvent>(OnBGMChange);
+        EventBus.Instance.Unsubscribe<PlayLevelBGMEvent>(OnPlayLevelBGM);
         KillFadeTween();
         _progressManager?.StopBgmPlay();
     }
@@ -66,7 +72,6 @@ public class PreciseBGMController : MonoBehaviour
         _progressSamplerCoroutine = StartCoroutine(PreciseProgressSampler());
     }
 
-    // ✅ 只接收 BGMData，完美！
     private void OnBGMChange(BGMChangeEvent evt)
     {
         if (evt.songData == null) return;
@@ -76,9 +81,26 @@ public class PreciseBGMController : MonoBehaviour
             SwitchBGM(evt.songData, evt.startRhythm);
         });
     }
+
+    private void OnPlayLevelBGM(PlayLevelBGMEvent evt)
+    {
+        if (evt.data == null) return;
+
+        if (_progressManager != null && _progressManager.IsPlaying)
+        {
+            FadeOutBGM(defaultFadeDuration, () =>
+            {
+                SwitchBGM(evt.data, true);
+            });
+        }
+        else
+        {
+            SwitchBGM(evt.data, true);
+        }
+    }
     #endregion
 
-    #region 核心切换逻辑（只使用 BGMData）
+    #region 核心切换逻辑
     public void SwitchBGM(BGMData data, bool startRhythm = false)
     {
         songData.SwitchBGM(data);

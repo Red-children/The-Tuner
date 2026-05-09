@@ -1038,6 +1038,7 @@ GameObject:
   - component: {fileID: 6894574340407078455}
   - component: {fileID: 8845167315294818897}
   - component: {fileID: 8707035442013623321}
+  - component: {fileID: 5589583811535693804}
   m_Layer: 5
   m_Name: UICrosshair
   m_TagString: Untagged
@@ -1260,3 +1261,20 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
+--- !u!114 &5589583811535693804
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7473615511917618044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72732f0997725c0489d89c13a2f656d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseScale: {x: 1, y: 1, z: 1}
+  beatScale: {x: 1.2, y: 1.2, z: 1.2}
+  scaleDuration: 0.15
+  easeType: 6
+  onlyOnBeatWindow: 0
