@@ -5,19 +5,35 @@ public class StandardFirearm : WeaponInfo
 {
     public override void HandleFireInput()
     {
+        Debug.Log("StandardFirearm: HandleFireInput called");
         TryFire();
     }
 
     public override void Fire(float damage, float rhythmMultiplier, RhythmRank rank)
     {
-        if (isReloading) return;
-        if (weaponStats == null) return;
+        Debug.Log($"StandardFirearm: Fire called - isReloading={isReloading}, weaponStats={weaponStats}, currentAmmo={currentAmmo}");
+        
+        if (isReloading) 
+        {
+            Debug.Log("StandardFirearm: Returning because isReloading");
+            return;
+        }
+        if (weaponStats == null) 
+        {
+            Debug.LogError("StandardFirearm: weaponStats is null!");
+            return;
+        }
 
         double currentTime = AudioSettings.dspTime;
-        if (currentTime < lastShootTime + weaponStats.fireRate) return;
+        if (currentTime < lastShootTime + weaponStats.fireRate) 
+        {
+            Debug.Log("StandardFirearm: Returning because of fire rate");
+            return;
+        }
 
         if (currentAmmo <= 0)
         {
+            Debug.Log("StandardFirearm: Starting reload");
             StartReload();
             return;
         }
@@ -27,6 +43,7 @@ public class StandardFirearm : WeaponInfo
 
         if (owner == WeaponOwner.Player)
         {
+            Debug.Log("StandardFirearm: Triggering PlayerFiredEvent");
             EventBus.Instance.Trigger(new PlayerFiredEvent());
             EventBus.Instance.Trigger(new AmmoChangedEvent
             {
@@ -34,6 +51,10 @@ public class StandardFirearm : WeaponInfo
                 reserveAmmo = -1,
                 weaponId = weaponStats.id
             });
+        }
+        else
+        {
+            Debug.LogWarning($"StandardFirearm: owner is {owner}, not Player!");
         }
 
         float finalDamage = (damage + weaponStats.damage) * rhythmMultiplier;

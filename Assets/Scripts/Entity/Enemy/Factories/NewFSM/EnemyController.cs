@@ -49,7 +49,7 @@ public class EnemyController : EnemyBase
     [SerializeField] private EnemyWarningUI warningUI; // 在Inspector中拖拽敌人头顶的Canvas
 
     [Header("安全计时器")]
-    [SerializeField] private float stateTimeLimit = 7f; // 单个状态最长停留时间，超时自动死亡
+    [SerializeField] private float stateTimeLimit = 12f; // 单个状态最长停留时间，超时自动死亡
     private float _stateTimer;
 
     private SpriteRenderer flashOverlay; // 受伤闪白覆盖层

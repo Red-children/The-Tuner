@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Hub 主脑专用对话控制器
-/// 玩家进入触发区域 → 自动开始对话 → 对话结束后切换到战斗场景
+/// 玩家进入触发区域 → 自动开始对话 → 对话结束后传送玩家到目标位置
 /// 仅用于 Hub 场景，不与其他 NPC 共享
 /// </summary>
 public class HubDialogueController : MonoBehaviour
@@ -16,10 +15,6 @@ public class HubDialogueController : MonoBehaviour
 
     [Header("是否冻结玩家")]
     [SerializeField] private bool freezePlayer = true;
-
-    [Header("Loading过渡")]
-    [Tooltip("切换场景前是否显示Loading面板")]
-    [SerializeField] private bool showLoading = true;
 
     private bool _isInDialogue = false;
     private bool _hasTriggered = false;
@@ -88,41 +83,14 @@ public class HubDialogueController : MonoBehaviour
         if (isFirstDialogue)
         {
             HubManager.Instance.hasTalkedToHub = true;
-            UIManager.Instance.DestroyPanelBeforeSceneSwitch(UIManager.UIConst.Echo);
+            UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
 
-            var target = HubManager.Instance.GetCurrentTarget();
-            if (target == null || string.IsNullOrEmpty(target.sceneName))
-            {
-                Debug.LogWarning("HubDialogueController: 当前章节无目标场景");
-                return;
-            }
-
-            PlayerSpawnInfo.spawnPointName = target.spawnPointName;
-            LoadTargetScene(target.sceneName);
+            // 传送玩家到目标位置
+            HubManager.Instance.TeleportToTarget();
         }
         else
         {
             UIManager.Instance.ClosePanel(UIManager.UIConst.Echo);
         }
-    }
-
-    private void LoadTargetScene(string sceneName)
-    {
-        if (showLoading)
-        {
-            var loading = UIManager.Instance.GetPanel(UIManager.UIConst.Loading) as UIPanelLoading;
-            if (loading == null)
-                loading = UIManager.Instance.OpenPanel(UIManager.UIConst.Loading) as UIPanelLoading;
-            if (loading != null)
-            {
-                loading.RegisterOnOpenComplete(() =>
-                {
-                    SceneManager.LoadScene(sceneName);
-                });
-                return;
-            }
-        }
-
-        SceneManager.LoadScene(sceneName);
     }
 }

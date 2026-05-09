@@ -87,10 +87,10 @@ public class SceneReturnTrigger : MonoBehaviour
 
     private void LoadTargetScene()
     {
-        if (!string.IsNullOrEmpty(targetSpawnPointName))
-        {
-            PlayerSpawnInfo.spawnPointName = targetSpawnPointName;
-        }
+        //if (!string.IsNullOrEmpty(targetSpawnPointName))
+        //{
+        //    PlayerSpawnInfo.spawnPointName = targetSpawnPointName;
+        //}
 
         if (showLoading)
         {

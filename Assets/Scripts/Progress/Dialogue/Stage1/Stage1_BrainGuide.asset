@@ -15,10 +15,6 @@ MonoBehaviour:
   dialogue:
     entries:
     - id: 0
-      line: "\u4F60\u89C1\u5230\u4E3B\u8111\u4E86\u5417\uFF1F"
-    - id: 1
-      line: "\u55EF\uFF0C\u4F46\u4ED6\u8BF4\u4E0D\u6E05\u3002"
-    - id: 0
       line: "\u97F3\u4E50\u5BA4\u6709\u4F4D\u5236\u4F5C\u4EBA\u3002"
     - id: 1
       line: "\u97F3\u4E50\u5236\u4F5C\u4EBA\uFF1F"
@@ -39,5 +35,5 @@ MonoBehaviour:
     - id: 0
       line: "\u6211\u9001\u4F60\u53BB\u3002"
   speakers:
-  - "\u56DE\u54CD"
+  - "\u4E3B\u8111"
   - "\u745E\u7B26"

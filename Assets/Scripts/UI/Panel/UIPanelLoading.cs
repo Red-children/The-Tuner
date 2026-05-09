@@ -9,7 +9,7 @@ public class UIPanelLoading : UIBasePanel
     [Header("动画参数")]
     [SerializeField] private float rotateDuration = 0.4f;
     [SerializeField] private float fadeDuration = 0.5f;
-    [SerializeField] private float scaleDuration = 0.3f;
+    [SerializeField] private float scaleDuration = 0.6f;
     [Header("动画组件")]
     [Header("Background")]
     [SerializeField] private Image backgroundColor;

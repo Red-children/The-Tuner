@@ -49,6 +49,7 @@ public class RunToneFlyingInsect : EnemyBase
         movementModule.SetAttackModule(attackModule);
     }
     
+    
 
 
     // 实现死亡方法
@@ -60,14 +61,15 @@ public class RunToneFlyingInsect : EnemyBase
         // 播放死亡特效
         effectModule.PlayDeathEffect();
         
-        // 触发敌人死亡事件
-        EventBus.Instance.Trigger(new EnemyDiedStruct());
+        // 触发敌人死亡事件（正确传递参数）
+        EventBus.Instance.Trigger(new EnemyDiedStruct(this, transform.position));
         
         StartCoroutine(DeathCoroutine());
         // 飞虫特有的死亡逻辑
         Debug.Log("RunToneFlyingInsect killed");
 
     }
+    
     
 
     // 实现死亡协程（事件系统的问题死亡后不能直接摧毁敌人，需要等待UI更新）
@@ -80,6 +82,7 @@ public class RunToneFlyingInsect : EnemyBase
         yield return null;
         Destroy(gameObject);
     }
+    
     
 
     // 实现受伤方法

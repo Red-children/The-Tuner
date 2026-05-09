@@ -182,6 +182,10 @@ public class UIComboInfo : MonoBehaviour
     
     void OnDestroy()
     {
+        // 取消事件订阅，避免访问已销毁的对象
+        EventBus.Instance.Unsubscribe<ComboChangedEvent>(OnComboChanged);
+        EventBus.Instance.Unsubscribe<ComboBreakEvent>(OnComboBreak);
+        
         // 清理动画，避免内存泄漏
         _coolDownTween?.Kill();
     }

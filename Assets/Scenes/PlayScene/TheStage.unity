@@ -240,6 +240,7 @@ MonoBehaviour:
   targetSceneName: The_Inner_World
   targetSpawnPointName: LevelEntrance
   freezePlayer: 1
+  showLoading: 1
 --- !u!4 &314071480
 Transform:
   m_ObjectHideFlags: 0
@@ -291,6 +292,10 @@ PrefabInstance:
     - target: {fileID: 2558962830911881395, guid: 9fee2de935c80e04baad281b769d1615, type: 3}
       propertyPath: m_Name
       value: MusicRoom
+      objectReference: {fileID: 0}
+    - target: {fileID: 2558962830911881395, guid: 9fee2de935c80e04baad281b769d1615, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2558962830911881421, guid: 9fee2de935c80e04baad281b769d1615, type: 3}
       propertyPath: m_RootOrder
